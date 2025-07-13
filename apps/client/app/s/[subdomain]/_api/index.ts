@@ -1,0 +1,45 @@
+import httpClient from "@/services/httpClient";
+import { Profile } from "@tribe-nest/frontend-shared";
+export type WebPage = {
+  themeName: string;
+  themeVersion: string;
+  page: {
+    title: string;
+    description: string;
+    content: string;
+    pathname: string;
+  };
+  profile: Profile & { subdomain: string };
+  themeSettings: {
+    colors: {
+      primary: string;
+      background: string;
+      text: string;
+      textPrimary: string;
+    };
+    cornerRadius: string;
+    fontFamily: string;
+    logo: string;
+    headerLinks: {
+      label: string;
+      href: string;
+    }[];
+    socialLinks: {
+      icon: string;
+      href: string;
+    }[];
+  };
+};
+
+const getWebPage = async ({ subdomain, pathname }: { subdomain: string; pathname: string }) => {
+  try {
+    const response = await httpClient.get(`/public/websites?subdomain=${subdomain}&pathname=${pathname}`);
+
+    return response.data as WebPage;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export { getWebPage };

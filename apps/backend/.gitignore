@@ -1,0 +1,8 @@
+node_modules
+logs
+build/
+.env
+.env.local
+.env.production
+.env.test
+.env.e2e

@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  # PostgreSQL database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tribenest-postgres-dev
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=tribe
+      - POSTGRES_PASSWORD=tribe
+      - POSTGRES_DB=tribe
+    volumes:
+      - tribenest_postgres_dev_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - tribenest-dev-network
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: tribenest-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - tribenest_redis_dev_data:/data
+    networks:
+      - tribenest-dev-network
+
+volumes:
+  tribenest_postgres_dev_data:
+  tribenest_redis_dev_data:
+
+networks:
+  tribenest-dev-network:
+    driver: bridge

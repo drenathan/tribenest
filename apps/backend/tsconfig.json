@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2016" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "lib": [
+      "es6"
+    ] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
+    "baseUrl": "./",
+    "moduleResolution": "Node",
+    "jsx": "react",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@config/*": ["src/config/*"]
+    },
+    "typeRoots": [
+      "src/types",
+      "node_modules/@types"
+    ] /* Specify multiple folders that act like `./node_modules/@types`. */,
+
+    /* Modules */
+    "module": "commonjs" /* Specify what module code is generated. */,
+    "rootDir": "./src" /* Specify the root folder within your source files. */,
+    "resolveJsonModule": true /* Enable importing .json files */,
+
+    /* JavaScript Support */
+    "allowJs": false /* Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files. */,
+
+    "outDir": "./build" /* Specify an output folder for all emitted files. */,
+
+    /* Interop Constraints */
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables `allowSyntheticDefaultImports` for type compatibility. */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+
+    /* Type Checking */
+    "strict": true /* Enable all strict type-checking options. */,
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied `any` type.. */,
+
+    /* Completeness */
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+    "experimentalDecorators": true /* Enables experimental support for ES7 decorators. */,
+    "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */
+  },
+  "ts-node": {
+    // "swc": true,
+    "compilerOptions": {
+      "sourceMap": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true
+    },
+    "require": ["tsconfig-paths/register"]
+  },
+  "exclude": ["node_modules", "build"],
+  "include": ["src/**/*"]
+}

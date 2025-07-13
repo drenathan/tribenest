@@ -1,0 +1,39 @@
+{
+  "name": "frontends",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "docker:prod": "./scripts/docker-prod.sh",
+    "docker:dev": "./scripts/docker-dev.sh"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "i": "^0.3.7",
+    "npm": "^11.4.2",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
+    "typescript": "5.8.2"
+  },
+  "engines": {
+    "node": ">=23"
+  },
+  "packageManager": "npm@8.19.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@emotion/css": "^11.13.5",
+    "@mui/icons-material": "^7.1.2",
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.4.0",
+    "lzutf8": "^0.6.3",
+    "react-h5-audio-player": "^3.10.0",
+    "react-player": "^3.0.0"
+  }
+}

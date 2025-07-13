@@ -1,0 +1,17 @@
+export const FORBIDDEN_SUBDOMAINS = [
+  "admin",
+  "root",
+  "superadmin",
+  "superuser",
+  "sex",
+  "dre",
+  "drenathan",
+  "super-admin",
+  "super-user",
+  "super-admin",
+  "super-user",
+  "super-admin",
+  "super-user",
+  "super-admin",
+  "porn",
+];

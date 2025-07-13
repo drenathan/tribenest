@@ -1,0 +1,24 @@
+{
+  "CORSRules": [
+    {
+      "AllowedOrigins": [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://api.localhost:8000",
+        "http://client.localhost:3000",
+        "http://admin.localhost:3001",
+        "https://localhost:3000",
+        "https://localhost:3001",
+        "https://api.localhost:8000",
+        "https://client.localhost:3000",
+        "https://admin.localhost:3001",
+        "https://*.coumo.com",
+        "https://*.tribenest.co"
+      ],
+      "AllowedMethods": ["GET", "HEAD", "PUT", "POST"],
+      "AllowedHeaders": ["*"],
+      "ExposeHeaders": ["ETag", "Content-Length", "Content-Type"],
+      "MaxAgeSeconds": 3000
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+export const IS_PRODUCTION = process.env.NODE_ENV === "production";
+export const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
+// @ts-expect-error VALID
+export const IS_E2E = process.env.NODE_ENV === "e2e";
+export const IS_TEST = process.env.NODE_ENV === "test";
+export const PORT = process.env.PORT || 5000;
+export const JWT_SECRET = process.env.JWT_SECRET as string;
+export const ACCESSTOKENTTL = process.env.ACCESSTOKENTTL as string;
+export const SES_ACCESS_KEY_ID = process.env.SES_ACCESS_KEY_ID as string;
+export const SES_SECRET_ACCESS_KEY = process.env.SES_SECRET_ACCESS_KEY as string;
+export const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY as string;
+export const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID as string;
+export const R2_URL = process.env.R2_URL as string;
+export const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME as string;
+export const R2_BUCKET_URL = process.env.R2_BUCKET_URL as string;
+export const DEPLOYMENT = process.env.DEPLOYMENT as string;
+export const OPEN_AI_API_KEY = process.env.OPEN_AI_API_KEY as string;
+export const REDIS_URL = process.env.REDIS_URL as string;
+export const DATABASE_HOST = process.env.DATABASE_HOST as string;
+export const DATABASE_PORT = process.env.DATABASE_PORT as string;
+export const DATABASE_USER = process.env.DATABASE_USER as string;
+export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD as string;
+export const DATABASE_NAME = process.env.DATABASE_NAME as string;
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY as string;
+export const STRIPE_PUBLIC_KEY = process.env.STRIPE_PUBLIC_KEY as string;

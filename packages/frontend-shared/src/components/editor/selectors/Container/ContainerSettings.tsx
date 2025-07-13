@@ -1,0 +1,89 @@
+import React from "react";
+
+import { ToolbarItem, ToolbarSection } from "../../Toolbar";
+import { ToolbarRadio } from "../../Toolbar/ToolbarRadio";
+
+export const ContainerSettings = () => {
+  return (
+    <React.Fragment>
+      <ToolbarSection
+        title="Dimensions"
+        props={["width", "height"]}
+        summary={({ width, height }: any) => {
+          return `${width || 0} x ${height || 0}`;
+        }}
+      >
+        <ToolbarItem propKey="width" type="text" label="Width" />
+        <ToolbarItem propKey="height" type="text" label="Height" />
+      </ToolbarSection>
+      <ToolbarSection
+        title="Colors"
+        props={["background", "color"]}
+        summary={({ background, color }: any) => {
+          return (
+            <div className="flex flex-row-reverse text-foreground">
+              <div
+                style={{ background }}
+                className="shadow-md flex-end w-6 h-6 text-center flex items-center rounded-full bg-black"
+              >
+                <p style={{ color }} className="w-full text-center">
+                  T
+                </p>
+              </div>
+            </div>
+          );
+        }}
+      >
+        <ToolbarItem full={true} propKey="background" type="bg" label="Background" />
+        <ToolbarItem full={true} propKey="color" type="color" label="Text" />
+      </ToolbarSection>
+      <ToolbarSection
+        title="Margin"
+        props={["marginHorizontal", "marginVertical"]}
+        summary={({ marginHorizontal, marginVertical }: any) => {
+          return `${marginHorizontal || 0}px ${marginVertical || 0}px`;
+        }}
+      >
+        <ToolbarItem propKey="marginHorizontal" type="slider" label="Horizontal" />
+        <ToolbarItem propKey="marginVertical" type="slider" label="Vertical" />
+      </ToolbarSection>
+      <ToolbarSection
+        title="Padding"
+        props={["paddingHorizontal", "paddingVertical"]}
+        summary={({ paddingHorizontal, paddingVertical }: any) => {
+          return `${paddingHorizontal || 0}px ${paddingVertical || 0}px`;
+        }}
+      >
+        <ToolbarItem propKey="paddingHorizontal" type="slider" label="Horizontal" />
+        <ToolbarItem propKey="paddingVertical" type="slider" label="Vertical" />
+      </ToolbarSection>
+      <ToolbarSection title="Decoration" props={["radius", "shadow"]}>
+        <ToolbarItem full={true} propKey="radius" type="slider" label="Radius" />
+        <ToolbarItem full={true} propKey="shadow" type="slider" label="Shadow" />
+      </ToolbarSection>
+      <ToolbarSection title="Background Image" props={["backgroundImage"]}>
+        <ToolbarItem full={true} propKey="backgroundImage" type="image" label="Background Image" />
+      </ToolbarSection>
+      <ToolbarSection title="Alignment">
+        <ToolbarItem propKey="flexDirection" type="radio" label="Flex Direction">
+          <ToolbarRadio value="row" label="Row" />
+          <ToolbarRadio value="column" label="Column" />
+        </ToolbarItem>
+        <ToolbarItem propKey="fillSpace" type="radio" label="Fill space">
+          <ToolbarRadio value="yes" label="Yes" />
+          <ToolbarRadio value="no" label="No" />
+        </ToolbarItem>
+        <ToolbarItem propKey="alignItems" type="radio" label="Align Items">
+          <ToolbarRadio value="flex-start" label="Flex start" />
+          <ToolbarRadio value="center" label="Center" />
+          <ToolbarRadio value="flex-end" label="Flex end" />
+        </ToolbarItem>
+        <ToolbarItem propKey="justifyContent" type="radio" label="Justify Content">
+          <ToolbarRadio value="flex-start" label="Flex start" />
+          <ToolbarRadio value="center" label="Center" />
+          <ToolbarRadio value="flex-end" label="Flex end" />
+        </ToolbarItem>
+      </ToolbarSection>
+    </React.Fragment>
+  );
+};
