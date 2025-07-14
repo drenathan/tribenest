@@ -3,7 +3,7 @@ import { BaseService } from "../../baseService";
 import { CreatePostInput, GetPostsInput, UpdatePostInput } from "@src/routes/posts/schema";
 import { MediaType } from "@src/db/types/media";
 import { PaginatedData } from "@src/types";
-import { JsonArray } from "kysely-codegen/dist/db";
+import { JsonArray } from "@src/db/types/generated";
 
 const postTypeToMediaType: Record<PostType, MediaType> = {
   image: "image",
