@@ -2,58 +2,14 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [release]
     tags: ["v*"]
-  pull_request:
-    branches: [release]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: drenathan/tribenest
 
 jobs:
-  create-release:
-    if: github.ref == 'refs/heads/release' && !startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Generate version
-        id: version
-        run: |
-          # Get the latest tag
-          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          echo "Latest tag: $latest_tag"
-
-          # Extract version numbers
-          major=$(echo $latest_tag | sed 's/v\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\1/')
-          minor=$(echo $latest_tag | sed 's/v\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\2/')
-          patch=$(echo $latest_tag | sed 's/v\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\3/')
-
-          # Increment patch version
-          new_patch=$((patch + 1))
-          new_version="v${major}.${minor}.${new_patch}"
-
-          echo "New version: $new_version"
-          echo "version=$new_version" >> $GITHUB_OUTPUT
-
-      - name: Create and push tag
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag ${{ steps.version.outputs.version }}
-          git push origin ${{ steps.version.outputs.version }}
-
   build:
-    needs: create-release
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -62,6 +18,36 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "23"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build applications locally
+        run: |
+          # Build backend
+          cd apps/backend
+          npm ci
+          npm run generate-db-types
+          npm run build
+          cd ../..
+
+          # Build client
+          cd apps/client
+          npm ci
+          npm run build
+          cd ../..
+
+          # Build admin
+          cd apps/admin
+          npm ci
+          npm run build
+          cd ../..
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -79,8 +65,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
