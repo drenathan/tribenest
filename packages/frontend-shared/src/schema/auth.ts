@@ -53,6 +53,7 @@ export type CreatePasswordInput = z.infer<typeof createPasswordSchema>;
 export const createPasswordResolver = zodResolver(createPasswordSchema);
 
 export type CreateAccountInput = z.infer<typeof createAccountSchema>;
+export type PublicCreateAccountInput = CreateAccountInput & { profileId: string; membershipTierId?: string };
 export const createAccountResolver = zodResolver(createAccountSchema);
 export type LoginInput = z.infer<typeof loginSchema>;
 export const loginResolver = zodResolver(loginSchema);

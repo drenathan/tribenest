@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  # Main application (built locally)
+  tribenest-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tribenest-app-test-prod
+    restart: unless-stopped
+    extra_hosts:
+      - "api.localhost:127.0.0.1"
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - tribenest-test-prod-network
+    volumes:
+      # Optional: Mount logs directory for easier debugging
+      - ./logs:/app/logs
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tribenest-postgres-test-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=tribe
+      - POSTGRES_PASSWORD=tribe
+      - POSTGRES_DB=tribe
+    volumes:
+      - tribenest_postgres_test_prod_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # Different port to avoid conflicts with dev
+    networks:
+      - tribenest-test-prod-network
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    container_name: tribenest-redis-test-prod
+    restart: unless-stopped
+    ports:
+      - "6380:6379" # Different port to avoid conflicts with dev
+    volumes:
+      - tribenest_redis_test_prod_data:/data
+    networks:
+      - tribenest-test-prod-network
+
+volumes:
+  tribenest_postgres_test_prod_data:
+  tribenest_redis_test_prod_data:
+
+networks:
+  tribenest-test-prod-network:
+    driver: bridge

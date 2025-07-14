@@ -3,7 +3,16 @@ import PageHeader from "../../-components/layout/page-header";
 import Spacer from "@/components/spacer";
 import { useForm } from "react-hook-form";
 import { createMembershipTierResolver, type CreateMembershipTierInput } from "./-components/schema";
-import { Button, FormError, FormInput, Tabs, TabsContent, TabsList, TabsTrigger, type ApiError } from "@tribe-nest/frontend-shared";
+import {
+  Button,
+  FormError,
+  FormInput,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type ApiError,
+} from "@tribe-nest/frontend-shared";
 import { useMembershipTier } from "@/hooks/mutations/useMembershipTier";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -84,7 +93,6 @@ function RouteComponent() {
               control={methods.control}
               placeholder="Price per month"
               type="number"
-              min={0}
             />
 
             <FormInput<CreateMembershipTierInput>
@@ -93,7 +101,6 @@ function RouteComponent() {
               control={methods.control}
               placeholder="Price per year (optional)"
               type="number"
-              min={0}
             />
           </TabsContent>
           <TabsContent value="yes">
@@ -103,7 +110,6 @@ function RouteComponent() {
               control={methods.control}
               placeholder="Minimum"
               type="number"
-              min={0}
             />
           </TabsContent>
         </Tabs>

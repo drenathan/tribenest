@@ -1,6 +1,6 @@
 import type { AxiosInstance } from "axios";
 import type { UserComponent } from "@craftjs/core";
-import type { CreateAccountInput, LoginInput } from "./schema/auth";
+import type { CreateAccountInput, LoginInput, PublicCreateAccountInput } from "./schema/auth";
 
 export type ApiError = {
   response: {
@@ -208,7 +208,7 @@ export interface PublicAuthState {
 }
 export interface PublicAuthContextType extends PublicAuthState {
   login: (data: LoginInput) => Promise<void>;
-  register: (data: CreateAccountInput) => Promise<void>;
+  register: (data: PublicCreateAccountInput) => Promise<void>;
 
   logout: (persist?: boolean) => Promise<void>;
   updateLocalUser: (data: UpdateLocalUserPayload) => void;

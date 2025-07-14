@@ -7,7 +7,7 @@ import path from "path";
 import next from "next";
 import fs from "fs";
 import { Deployment, InitRouteArgs } from "./types";
-import { DEPLOYMENT, IS_DEVELOPMENT, IS_E2E, IS_PRODUCTION, IS_TEST } from "./config/secrets";
+import { DEPLOYMENT, IS_DEVELOPMENT, IS_E2E, IS_PRODUCTION, IS_TEST, MULTI_TENANT } from "./config/secrets";
 import { initRoutes } from "./routes";
 import i18nInit from "./i18n";
 import { logger } from "./utils/logger";
@@ -20,7 +20,15 @@ export const initApp = async (args: InitRouteArgs) => {
 
   if (IS_PRODUCTION && (!DEPLOYMENT || DEPLOYMENT === Deployment.Server)) {
     // Initialize Next.js app for client subdomain
-    const nextApp = next({ dev: false, dir: path.join(__dirname, "../../client") });
+    const nextApp = next({
+      dev: false,
+      dir: path.join(__dirname, "../../client"),
+      conf: {
+        env: {
+          MULTI_TENANT,
+        },
+      },
+    });
     const nextHandler = nextApp.getRequestHandler();
     await nextApp.prepare();
 

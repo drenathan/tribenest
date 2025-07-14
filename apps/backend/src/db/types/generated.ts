@@ -5,8 +5,9 @@
 
 import type { ColumnType } from "kysely";
 
-export type Generated<T> =
-  T extends ColumnType<infer S, infer I, infer U> ? ColumnType<S, I | undefined, U> : ColumnType<T, T | undefined, T>;
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
 
 export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
 
@@ -89,11 +90,11 @@ export interface MembershipBenefits {
 
 export interface Memberships {
   accountId: string;
+  changedToMembershipId: string | null;
   createdAt: Generated<Timestamp>;
   endDate: Timestamp | null;
   id: Generated<string>;
   membershipTierId: string;
-  paymentCircle: string;
   profileId: string;
   startDate: Timestamp;
   status: string;
@@ -104,6 +105,7 @@ export interface MembershipTiers {
   createdAt: Generated<Timestamp>;
   description: string;
   id: Generated<string>;
+  isDefault: Generated<boolean | null>;
   name: string;
   payWhatYouWant: Generated<boolean | null>;
   payWhatYouWantMaximum: number | null;

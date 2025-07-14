@@ -13,11 +13,11 @@ export const createMembershipTierSchema = z.object({
     .object({
       name: z.string().min(5).max(100),
       description: z.string().min(10).max(1000),
-      priceMonthly: z.coerce.number().min(0).optional(),
-      priceYearly: z.coerce.number().min(0).optional(),
+      priceMonthly: z.coerce.number().min(1).optional(),
+      priceYearly: z.coerce.number().min(1).optional(),
       payWhatYouWant: z.boolean().optional(),
-      payWhatYouWantMinimum: z.coerce.number().min(0).optional(),
-      payWhatYouWantMaximum: z.coerce.number().min(0).optional(),
+      payWhatYouWantMinimum: z.coerce.number().min(1).optional(),
+      payWhatYouWantMaximum: z.coerce.number().min(1).optional(),
       profileId: z.string(),
     })
     .refine(

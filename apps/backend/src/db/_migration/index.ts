@@ -1,5 +1,6 @@
 import { Argument, program } from "commander";
 import { create, migrateDown, migrateToLatest, migrationStatus } from "./migrator";
+import { seedDatabase } from "./seed";
 
 async function cli() {
   program.name("migrate").showHelpAfterError().description("migrate mongo database");
@@ -37,6 +38,14 @@ async function cli() {
     .description("show migration status")
     .action(async () => {
       await migrationStatus();
+    });
+
+  program
+    .command("seed")
+    .description("seed the database")
+    .action(async () => {
+      console.log("Seeding database");
+      await seedDatabase();
     });
 
   await program.parseAsync(process.argv);

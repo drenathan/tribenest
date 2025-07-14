@@ -104,13 +104,39 @@ case "$1" in
     ;;
   "clean")
     echo "Cleaning up development environment..."
-    docker-compose -f $COMPOSE_FILE down -v
-    docker system prune -f
+    docker-compose -f $COMPOSE_FILE down
+    # Only remove unused images, not all containers
+    docker image prune -f
     echo "Development environment cleaned!"
     ;;
   "status")
     echo "Development environment status:"
     docker-compose -f $COMPOSE_FILE ps
+    ;;
+  "reset")
+    echo "Resetting development environment..."
+    docker-compose -f $COMPOSE_FILE down -v
+    # Only remove unused images, not all containers
+    docker image prune -f
+    # restart the services
+    docker-compose -f $COMPOSE_FILE up -d
+
+    # wait for the database to be ready
+    echo "Waiting for database to be ready..."
+    while [ "$(docker inspect --format='{{.State.Health.Status}}' tribenest-postgres-dev 2>/dev/null)" != "healthy" ]; do
+      echo "Database not ready yet, waiting..."
+      sleep 2
+    done
+    echo "Database is ready!"
+    # run migrations
+    cd apps/backend
+    npm run migrate up
+    # seed the database
+    npm run migrate seed
+    # generate db types
+    npm run generate-db-types
+    cd ../..
+    echo "Development environment reset!"
     ;;
   *)
     echo "Usage: $0 {up|down|restart|logs|shell|migrate|clean|status} [app]"

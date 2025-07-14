@@ -9,7 +9,7 @@ import {
   type PublicAuthContextType,
 } from "../types";
 import { type AxiosInstance } from "axios";
-import type { CreateAccountInput, LoginInput } from "../schema/auth";
+import type { CreateAccountInput, LoginInput, PublicCreateAccountInput } from "../schema/auth";
 
 enum Types {
   Initial = "INITIALIZE",
@@ -142,7 +142,7 @@ function PublicAuthProvider({ children, httpClient, setHttpClientToken }: AuthPr
     dispatch({ type: Types.Loading, payload: { isLoading: true } });
 
     try {
-      const response = await httpClient.post("sessions", data);
+      const response = await httpClient.post("/sessions", data);
       const { token, account } = response.data;
       localStorage.setItem(ACCESS_TOKEN_KEY, token);
       setHttpClientToken(token);
@@ -170,11 +170,11 @@ function PublicAuthProvider({ children, httpClient, setHttpClientToken }: AuthPr
     }
   };
 
-  const register = async (data: CreateAccountInput) => {
+  const register = async (data: PublicCreateAccountInput) => {
     dispatch({ type: Types.Loading, payload: { isLoading: true } });
 
     try {
-      const response = await httpClient.post("/accounts", {
+      const response = await httpClient.post("/public/accounts", {
         ...data,
       });
       const { token, account } = response.data;

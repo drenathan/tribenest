@@ -65,8 +65,10 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("pay_what_you_want", "boolean", (col) => col.defaultTo(false))
     .addColumn("pay_what_you_want_minimum", "integer")
     .addColumn("pay_what_you_want_maximum", "integer")
+    .addColumn("is_default", "boolean", (col) => col.defaultTo(false))
     .$call(addDefaultColumns)
     .execute();
+
   await addUpdateUpdatedAtTrigger(db, tables.membership_tiers);
 
   await db.schema
@@ -100,11 +102,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("membership_tier_id", "uuid", (col) =>
       col.notNull().references(`${tables.membership_tiers}.id`).onDelete("cascade"),
     )
-    .addColumn("payment_circle", "text", (col) => col.notNull())
     .addColumn("account_id", "uuid", (col) => col.notNull().references(`${tables.accounts}.id`).onDelete("cascade"))
     .addColumn("start_date", "timestamptz", (col) => col.notNull())
     .addColumn("end_date", "timestamptz")
     .addColumn("status", "text", (col) => col.notNull())
+    .addColumn("changed_to_membership_id", "uuid", (col) => col.references(`${tables.memberships}.id`))
     .$call(addDefaultColumns)
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.memberships);

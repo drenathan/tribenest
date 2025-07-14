@@ -5,6 +5,7 @@ export const FORBIDDEN_SUBDOMAINS = [
   "superuser",
   "sex",
   "dre",
+  "nathan",
   "drenathan",
   "super-admin",
   "super-user",

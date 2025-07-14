@@ -23,3 +23,4 @@ export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD as string;
 export const DATABASE_NAME = process.env.DATABASE_NAME as string;
 export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY as string;
 export const STRIPE_PUBLIC_KEY = process.env.STRIPE_PUBLIC_KEY as string;
+export const MULTI_TENANT = process.env.MULTI_TENANT as string;

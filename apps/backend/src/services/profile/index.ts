@@ -30,6 +30,17 @@ export class ProfileService extends BaseService {
         { profileId: profile.id, accountId, isOwner: true },
         trx,
       );
+      await this.database.models.MembershipTier.insertOne(
+        {
+          name: "Free Membership",
+          description: "Free membership",
+          profileId: profile.id,
+          priceMonthly: 0,
+          priceYearly: 0,
+          payWhatYouWant: false,
+        },
+        trx,
+      );
 
       await trx.commit().execute();
 

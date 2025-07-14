@@ -16,6 +16,11 @@ services:
       - "5432:5432"
     networks:
       - tribenest-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tribe -d tribe"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # Redis cache
   redis:

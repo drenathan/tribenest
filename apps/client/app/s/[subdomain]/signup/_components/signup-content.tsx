@@ -7,6 +7,7 @@ import {
   createAccountResolver,
   EditorButtonWithoutEditor,
   EditorInputWithoutEditor,
+  PublicCreateAccountInput,
   useEditorContext,
   usePublicAuth,
 } from "@tribe-nest/frontend-shared";
@@ -16,12 +17,12 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 
 export function SignupContent() {
-  const { themeSettings, navigate } = useEditorContext();
+  const { themeSettings, navigate, profile } = useEditorContext();
   const { register, isLoading } = usePublicAuth();
   const [errorMessage, setErrorMessage] = useState("");
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
-  const methods = useForm<CreateAccountInput>({
+  const methods = useForm<PublicCreateAccountInput>({
     resolver: createAccountResolver,
     defaultValues: {
       email: "",
@@ -31,10 +32,10 @@ export function SignupContent() {
     },
   });
 
-  const onSubmit = async (data: CreateAccountInput) => {
+  const onSubmit = async (data: PublicCreateAccountInput) => {
     setErrorMessage("");
     try {
-      await register(data);
+      await register({ ...data, profileId: profile!.id });
       navigate(redirect || "/");
     } catch (e: unknown) {
       const error = e as ApiError;
@@ -122,6 +123,7 @@ export function SignupContent() {
                 <EditorInputWithoutEditor
                   placeholder="Password"
                   width="100%"
+                  type="password"
                   onChange={field.onChange}
                   value={field.value}
                 />

@@ -2,11 +2,47 @@ import { CreateMembershipTierInput } from "@src/routes/membershipTiers/schema";
 import { BaseService } from "../baseService";
 import { CreateMembershipBenefitInput } from "@src/routes/membershipBenefits/schema";
 import { BadRequestError } from "@src/utils/app_error";
-
+export type CreateMembershipInput = {
+  profileId: string;
+  membershipTierId?: string;
+  accountId: string;
+  endDate?: Date;
+};
 export class MembershipService extends BaseService {
   public async getMembershipTiers(profileId: string) {
     const data = await this.models.MembershipTier.getManyWithBenefits(profileId);
     return data;
+  }
+
+  public async createMembership(input: CreateMembershipInput) {
+    const { profileId, membershipTierId, accountId, endDate } = input;
+    const membershipTier = membershipTierId
+      ? await this.models.MembershipTier.findOne({ id: membershipTierId })
+      : await this.models.MembershipTier.findOne({ profileId, priceMonthly: 0, priceYearly: 0, payWhatYouWant: false });
+
+    if (!membershipTier) {
+      throw new BadRequestError("Membership tier not found");
+    }
+
+    const existingMembership = await this.models.Membership.findOne({ profileId, accountId, status: "active" });
+
+    const newMembership = await this.models.Membership.insertOne({
+      profileId,
+      accountId,
+      membershipTierId: membershipTier.id,
+      status: "active",
+      startDate: new Date(),
+      endDate,
+    });
+
+    if (existingMembership) {
+      await this.models.Membership.updateOne(
+        { id: existingMembership.id },
+        { status: "changed", changedToMembershipId: newMembership.id },
+      );
+    }
+
+    return newMembership;
   }
 
   public async createMembershipTier(input: CreateMembershipTierInput) {
