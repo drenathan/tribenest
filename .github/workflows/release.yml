@@ -10,7 +10,7 @@ on:
       release_notes:
         description: "Release notes"
         required: false
-        type: string
+        type: markdown
         default: "Release created via GitHub Actions"
 
 jobs:
