@@ -19,7 +19,6 @@ fi
 # Build backend
 cd apps/backend
 echo "🏗️  Building backend..."
-npm run generate-db-types
 npm run build
 cd ../..
 

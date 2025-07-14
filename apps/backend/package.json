@@ -21,7 +21,7 @@
     "start:e2e": "docker compose  --env-file .env.e2e up api",
     "migrate": "ts-node-dev --transpile-only -r tsconfig-paths/register ./src/db/_migration/index",
     "migrate:test": "NODE_ENV=test ts-node-dev --transpile-only -r tsconfig-paths/register ./src/db/_migration/index",
-    "generate-db-types": "kysely-codegen --url postgres://tribe:tribe@localhost:5432/tribe --camel-case",
+    "generate-db-types": "kysely-codegen --url postgres://tribe:tribe@localhost:5432/tribe --camel-case --out-file ./src/db/types/generated.ts",
     "run": "node ./build/db/_migration/index.js up && node ./build/index.js"
   },
   "keywords": [],

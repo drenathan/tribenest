@@ -1,4 +1,4 @@
-import * as GeneratedTypes from "kysely-codegen/dist/db";
+import * as GeneratedTypes from "./generated";
 import { MediaType, MediaParent } from "./media";
 import { ColumnType } from "kysely";
 import { PostType } from "./post";

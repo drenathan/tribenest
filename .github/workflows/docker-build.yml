@@ -32,20 +32,16 @@ jobs:
         run: |
           # Build backend
           cd apps/backend
-          npm ci
-          npm run generate-db-types
           npm run build
           cd ../..
 
           # Build client
           cd apps/client
-          npm ci
           npm run build
           cd ../..
 
           # Build admin
           cd apps/admin
-          npm ci
           npm run build
           cd ../..
 
