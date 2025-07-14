@@ -1,20 +1,34 @@
 import {
-  DATABASE_PORT,
-  DATABASE_HOST,
-  DATABASE_NAME,
   R2_ACCESS_KEY_ID,
   R2_SECRET_ACCESS_KEY,
   SES_ACCESS_KEY_ID,
   SES_SECRET_ACCESS_KEY,
+  DATABASE_HOST,
+  DATABASE_PORT,
   DATABASE_USER,
   DATABASE_PASSWORD,
-  R2_BUCKET_NAME,
-  R2_URL,
+  DATABASE_NAME,
   R2_BUCKET_URL,
-} from "./secrets";
-import { IConfig } from "./types";
+  R2_URL,
+  R2_BUCKET_NAME,
+  SMTP_PASSWORD,
+  SMTP_USER,
+  SMTP_PORT,
+  SMTP_HOST,
+  SMTP_FROM,
+} from "../secrets";
+import { IConfig } from "../types";
 
-const config: IConfig = {
+const config: Partial<IConfig> = {
+  smtp: {
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT),
+    auth: {
+      user: SMTP_USER,
+      pass: SMTP_PASSWORD,
+    },
+    from: SMTP_FROM,
+  },
   worker: {
     normalQueueLockDuration: 1000 * 60 * 10, // 10 minutes
     scheduledQueueLockDuration: 1000 * 60 * 10, // 10 minutes
@@ -23,13 +37,9 @@ const config: IConfig = {
     accessKeyId: SES_ACCESS_KEY_ID,
     secretAccessKey: SES_SECRET_ACCESS_KEY,
     region: "eu-north-1",
-    from: "TribeNest <hello@tribenest.co",
+    from: "Coumo <hello@coumo.com>",
   },
-  mailCatcher: {
-    enabled: false,
-    host: "mailcatcher",
-    port: 1025,
-  },
+
   postgres: {
     host: DATABASE_HOST,
     port: Number(DATABASE_PORT),
@@ -38,7 +48,6 @@ const config: IConfig = {
     database: DATABASE_NAME,
     max: 10,
   },
-
   s3: {
     accessKeyId: R2_ACCESS_KEY_ID,
     secretAccessKey: R2_SECRET_ACCESS_KEY,

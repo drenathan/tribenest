@@ -29,6 +29,15 @@ export interface IConfig {
     presignedUrlExpiration: number;
     bucketUrl: string;
   };
+  smtp: {
+    host: string;
+    port: number;
+    auth: {
+      user: string;
+      pass: string;
+    };
+    from: string;
+  };
 
   worker: {
     normalQueueLockDuration: number;

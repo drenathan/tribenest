@@ -17,19 +17,12 @@ type SendEmailArgs = {
 
 export class EmailClient {
   private transporter: nodemailer.Transporter;
-  constructor(private config = getConfig("ses")) {
+  constructor(private config = getConfig("smtp")) {
     const mailCatcherConfig = getConfig("mailCatcher");
-    const sesClient = new SESv2Client({
-      region: this.config.region,
-      credentials: {
-        accessKeyId: this.config.accessKeyId,
-        secretAccessKey: this.config.secretAccessKey,
-      },
-    });
 
     this.transporter = mailCatcherConfig.enabled
       ? nodemailer.createTransport(mailCatcherConfig)
-      : nodemailer.createTransport({ SES: { sesClient, SendEmailCommand } });
+      : nodemailer.createTransport(this.config);
   }
 
   public async sendEmail(args: SendEmailArgs) {

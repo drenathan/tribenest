@@ -46,6 +46,7 @@ async function cli() {
     .action(async () => {
       console.log("Seeding database");
       await seedDatabase();
+      console.log("Database seeded");
     });
 
   await program.parseAsync(process.argv);

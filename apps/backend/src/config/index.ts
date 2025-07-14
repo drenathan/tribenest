@@ -1,24 +1,12 @@
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.join(__dirname, "../../.env") });
+
+process.env["NODE_CONFIG_DIR"] = path.join(__dirname, "./configs");
+import config from "config";
+
 import { IConfig } from "./types";
 
-const environmentMap = {
-  local: "local",
-  development: "local",
-  production: "prod",
-  test: "test",
-  e2e: "e2e",
-};
-let config = {} as IConfig;
-
-const configPath = path.join(
-  __dirname,
-  `./config.${environmentMap[process.env.NODE_ENV as keyof typeof environmentMap] || "local"}`
-);
-
-config = require(configPath).default;
-
 export const getConfig = <Key extends keyof IConfig>(key: Key): IConfig[Key] => {
-  return config[key] as IConfig[typeof key];
+  return config.get(key) as IConfig[Key];
 };
