@@ -108,15 +108,15 @@ export class ProfileConfigurationModel extends BaseModel<"profileConfigurations"
     // Encrypt sensitive fields before saving
     const encryptedData = EncryptionService.encryptObject(updateData, [
       "smtpPassword",
-      "r2SecretAccessKey",
       "paymentProviderPrivateKey",
       "paymentProviderPublicKey",
       "smtpFrom",
       "smtpUsername",
       "smtpHost",
       "smtpPort",
-      "r2BucketName",
+      "r2SecretAccessKey",
       "r2AccessKeyId",
+      "r2BucketName",
       "r2Endpoint",
       "r2Region",
       "r2BucketUrl",

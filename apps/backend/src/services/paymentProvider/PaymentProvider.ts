@@ -44,4 +44,5 @@ export abstract class PaymentProvider {
 
   public abstract startCharge(input: ChargeInput): Promise<ChargeResponse>;
   public abstract getPaymentStatus(paymentId: string): Promise<PaymentStatus>;
+  public abstract testConnection(): Promise<void>;
 }

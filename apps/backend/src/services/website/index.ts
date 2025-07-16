@@ -116,6 +116,7 @@ export class WebsiteService extends BaseService {
         id: profile.id,
         name: profile.name,
         subdomain: profile.subdomain,
+        paymentProviderName: profileConfiguration?.paymentProviderName,
         paymentProviderPublicKey: profileConfiguration?.paymentProviderPublicKey
           ? EncryptionService.decrypt(profileConfiguration.paymentProviderPublicKey)
           : null,

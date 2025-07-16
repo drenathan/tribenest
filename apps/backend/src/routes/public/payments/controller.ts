@@ -21,18 +21,7 @@ export class PublicPayments extends BaseController {
       throw new NotFoundError("Profile not found");
     }
 
-    const paymentProvider = PaymentProviderFactory.create(
-      (profile?.paymentProviderName as PaymentProviderName) || PaymentProviderName.Stripe,
-      {
-        apiKeys: EncryptionService.decryptObject(
-          {
-            publicKey: profile.paymentProviderPublicKey!,
-            privateKey: profile.paymentProviderPrivateKey!,
-          },
-          ["publicKey", "privateKey"],
-        ),
-      },
-    );
+    const paymentProvider = await this.services.apis.getPaymentProvider(body!.profileId);
 
     const result = await paymentProvider.startCharge({
       amount: body!.amount,

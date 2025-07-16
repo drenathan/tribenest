@@ -16,7 +16,7 @@ export default class ProcessOrderJob extends BaseJob<Args> {
     logger.info({ tags: this.tags }, `Processing order ${orderId}`);
 
     // make sure we can send emails before attempting to create all the files
-    await this.services.profile.getEmailClient(profileId);
+    await this.services.apis.getEmailClient(profileId);
 
     const result = await this.services.public.order.processOrder({ orderId });
 

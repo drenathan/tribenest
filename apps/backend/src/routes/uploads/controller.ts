@@ -12,8 +12,9 @@ export class UploadsController extends BaseController {
     _: NextFunction,
     @Body body?: CreatePresignedUrlInput,
   ): Promise<any> {
-    const { fileName } = body!;
-    const key = `${req.account!.id}/${Date.now()}-${fileName}`;
-    return this.services.apis.s3.getPresignedUrl(key);
+    const { fileName, profileId } = body!;
+    const key = `${profileId}/${Date.now()}-${fileName}`;
+    const s3Client = await this.services.apis.getS3Client(profileId);
+    return s3Client.getPresignedUrl(key);
   }
 }

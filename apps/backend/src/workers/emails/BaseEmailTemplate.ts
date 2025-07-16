@@ -40,7 +40,7 @@ export default abstract class BaseEmailTemplate<T extends BaseTemplateArgs> exte
   }
 
   public async handle(variables: T) {
-    const client = await this.services.profile.getEmailClient(variables.profileId);
+    const client = await this.services.apis.getEmailClient(variables.profileId);
     await client.sendEmail({
       to: variables.to,
       from: variables.from,

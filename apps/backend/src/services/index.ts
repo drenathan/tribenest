@@ -24,7 +24,7 @@ export class Services {
 
   constructor(database: Database) {
     const emitter = new EventEmitter();
-    this.apis = new ApiServices();
+    this.apis = new ApiServices(database);
 
     const args = { database, emitter, apis: this.apis };
     this.emitter = emitter;

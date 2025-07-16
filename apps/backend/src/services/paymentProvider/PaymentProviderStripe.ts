@@ -49,4 +49,8 @@ export class PaymentProviderStripe extends PaymentProvider {
         return PaymentStatus.Failed;
     }
   }
+
+  public async testConnection() {
+    await this.client.paymentMethods.list({ limit: 1 });
+  }
 }

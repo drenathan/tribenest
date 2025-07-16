@@ -210,7 +210,8 @@ export class OrderService extends BaseService {
 
     // Upload to S3
     const s3Key = `orders/${orderId}/${filename}`;
-    const s3Url = await this.apis.s3.uploadFile(archivePath, s3Key);
+    const s3Client = await this.apis.getS3Client(profileId);
+    const s3Url = await s3Client.uploadFile(archivePath, s3Key);
 
     // Get file size
     const stats = fs.statSync(archivePath);
