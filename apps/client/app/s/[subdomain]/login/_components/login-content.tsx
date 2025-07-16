@@ -12,15 +12,18 @@ import {
 } from "@tribe-nest/frontend-shared";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
+import type { MembershipTier } from "@tribe-nest/frontend-shared";
 
 export function LoginContent() {
-  const { themeSettings, navigate } = useEditorContext();
+  const { themeSettings, navigate, profile, httpClient } = useEditorContext();
   const { login, isLoading } = usePublicAuth();
   const [errorMessage, setErrorMessage] = useState("");
+  const [membershipTier, setMembershipTier] = useState<MembershipTier | null>(null);
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+
   const methods = useForm<LoginInput>({
     resolver: loginResolver,
     defaultValues: {
@@ -28,6 +31,27 @@ export function LoginContent() {
       password: "",
     },
   });
+
+  // Fetch membership tier details if membershipTierId is provided
+  useEffect(() => {
+    if (!redirect || !httpClient || !profile) return;
+    const searchFromRedirect = new URLSearchParams(redirect.split("?")[1]);
+    const membershipTierId = searchFromRedirect.get("membershipTierId");
+    if (!membershipTierId) return;
+    httpClient
+      .get(`/public/membership-tiers`, {
+        params: { profileId: profile.id },
+      })
+      .then((res) => {
+        const tier = res.data.find((t: MembershipTier) => t.id === membershipTierId);
+        if (tier) {
+          setMembershipTier(tier);
+        }
+      })
+      .catch(() => {
+        // Silently fail - membership info is not critical for signup
+      });
+  }, [httpClient, profile, redirect]);
 
   const onSubmit = async (data: LoginInput) => {
     setErrorMessage("");
@@ -52,6 +76,42 @@ export function LoginContent() {
         }}
       >
         <h1 className="text-2xl font-bold mb-8">Login</h1>
+
+        {/* Membership Info Banner */}
+        {membershipTier && (
+          <div
+            className="mb-6 p-4 rounded-lg"
+            style={{ backgroundColor: `${themeSettings.colors.primary}${alphaToHexCode(0.1)}` }}
+          >
+            <h3 className="text-lg font-semibold mb-2">Join {membershipTier.name}</h3>
+            <div className="text-sm mb-3">
+              {membershipTier.payWhatYouWant ? (
+                <p>Pay What You Want from ${membershipTier.payWhatYouWantMinimum}/Mo</p>
+              ) : (
+                <p>
+                  {membershipTier.priceMonthly ? `$${membershipTier.priceMonthly}/Mo` : "Free"}
+                  {membershipTier.priceYearly && ` or $${membershipTier.priceYearly}/Yr`}
+                </p>
+              )}
+            </div>
+            {membershipTier.benefits && membershipTier.benefits.length > 0 && (
+              <div className="text-sm">
+                <p className="font-medium mb-1">Benefits:</p>
+                <ul className="space-y-1">
+                  {membershipTier.benefits.slice(0, 3).map((benefit) => (
+                    <li key={benefit.id} className="flex items-center gap-2">
+                      <span className="text-green-500">✓</span>
+                      {benefit.title}
+                    </li>
+                  ))}
+                  {membershipTier.benefits.length > 3 && (
+                    <li className="text-xs opacity-75">+{membershipTier.benefits.length - 3} more benefits</li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="w-full flex flex-col gap-6">
           {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}

@@ -6,6 +6,7 @@ import { EditorButton } from "../Button";
 import { useEditorContext } from "../../context";
 import type { MembershipTier } from "../../../../types";
 import { EditorIcon } from "../Icon";
+import { usePublicAuth } from "../../../../contexts/PublicAuthContext";
 
 type MembershipSectionProps = {
   title: string;
@@ -13,7 +14,8 @@ type MembershipSectionProps = {
 
 export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title }: MembershipSectionProps) => {
   const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([]);
-  const { httpClient, profile, themeSettings } = useEditorContext();
+  const { httpClient, profile, themeSettings, navigate } = useEditorContext();
+  const { isAuthenticated } = usePublicAuth();
 
   const {
     connectors: { connect },
@@ -30,6 +32,16 @@ export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title
         setMembershipTiers(res.data);
       });
   }, [httpClient, profile?.id]);
+
+  const handleJoinClick = (tier: MembershipTier) => {
+    if (!isAuthenticated) {
+      // Redirect to signup with membership tier ID
+      navigate(`/signup?redirect=/membership/checkout?membershipTierId=${tier.id}`);
+    } else {
+      // User is authenticated, proceed to payment
+      navigate(`/membership/checkout?membershipTierId=${tier.id}`);
+    }
+  };
 
   return (
     <div
@@ -75,14 +87,7 @@ export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title
                 ))}
               </ul>
 
-              <EditorButton
-                shouldConnect={false}
-                text="Join"
-                fullWidth
-                onClick={() => {
-                  console.log(tier.id, "clicked");
-                }}
-              />
+              <EditorButton shouldConnect={false} text="Join" fullWidth onClick={() => handleJoinClick(tier)} />
             </div>
           );
         })}
