@@ -195,7 +195,7 @@ export const publicAuthentication = async (
     createdAt: new Date(),
     updatedAt: new Date(),
     endDate: new Date(),
-    paymentCircle: "stripe",
+    changedToMembershipId: null,
     status: "active",
     startDate: new Date(),
   };

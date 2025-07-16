@@ -5,6 +5,7 @@ import { startPaymentSchema, StartPaymentInput } from "./schema";
 import { PaymentProviderFactory } from "@src/services/paymentProvider/PaymentProviderFactory";
 import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";
 import { NotFoundError } from "@src/utils/app_error";
+import { EncryptionService } from "@src/utils/encryption";
 
 export class PublicPayments extends BaseController {
   @RouteHandler()
@@ -23,10 +24,13 @@ export class PublicPayments extends BaseController {
     const paymentProvider = PaymentProviderFactory.create(
       (profile?.paymentProviderName as PaymentProviderName) || PaymentProviderName.Stripe,
       {
-        apiKeys: {
-          publicKey: profile.paymentProviderPublicKey!,
-          privateKey: profile.paymentProviderPrivateKey!,
-        },
+        apiKeys: EncryptionService.decryptObject(
+          {
+            publicKey: profile.paymentProviderPublicKey!,
+            privateKey: profile.paymentProviderPrivateKey!,
+          },
+          ["publicKey", "privateKey"],
+        ),
       },
     );
 

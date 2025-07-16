@@ -9,7 +9,7 @@ import {
   type PublicAuthContextType,
 } from "../types";
 import { type AxiosInstance } from "axios";
-import type { CreateAccountInput, LoginInput, PublicCreateAccountInput } from "../schema/auth";
+import type { LoginInput, PublicCreateAccountInput } from "../schema/auth";
 
 enum Types {
   Initial = "INITIALIZE",

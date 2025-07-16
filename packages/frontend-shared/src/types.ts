@@ -1,6 +1,6 @@
 import type { AxiosInstance } from "axios";
 import type { UserComponent } from "@craftjs/core";
-import type { CreateAccountInput, LoginInput, PublicCreateAccountInput } from "./schema/auth";
+import type { LoginInput, PublicCreateAccountInput } from "./schema/auth";
 
 export type ApiError = {
   response: {

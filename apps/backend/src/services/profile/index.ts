@@ -5,6 +5,7 @@ import { CreateProfileInput, GetMediaInput, UploadMediaInput } from "@src/routes
 import { safeStringify } from "@src/utils/json";
 import { MediaParent } from "@src/db/types/media";
 import { EmailClient } from "@src/workers/emails/EmailClient";
+import { EncryptionService } from "@src/utils/encryption";
 
 export class ProfileService extends BaseService {
   public async validateSubdomain(name: string) {
@@ -93,13 +94,24 @@ export class ProfileService extends BaseService {
       throw new Error("Cannot create email client as profile configuration is not complete");
     }
 
+    const decryptedProfile = EncryptionService.decryptObject(
+      {
+        smtpPassword: profile.smtpPassword,
+        smtpUsername: profile.smtpUsername,
+        smtpHost: profile.smtpHost,
+        smtpPort: profile.smtpPort,
+        smtpFrom: profile.smtpFrom,
+      },
+      ["smtpPassword", "smtpUsername", "smtpHost", "smtpPort", "smtpFrom"],
+    );
+
     return new EmailClient({
-      host: profile.smtpHost,
-      port: parseInt(profile.smtpPort),
-      from: profile.smtpFrom,
+      host: decryptedProfile.smtpHost,
+      port: parseInt(decryptedProfile.smtpPort),
+      from: decryptedProfile.smtpFrom,
       auth: {
-        user: profile.smtpUsername,
-        pass: profile.smtpPassword,
+        user: decryptedProfile.smtpUsername,
+        pass: decryptedProfile.smtpPassword,
       },
     });
   }
@@ -109,6 +121,13 @@ export class ProfileService extends BaseService {
    */
   public async getProfileConfiguration(profileId: string) {
     return this.database.models.ProfileConfiguration.getProfileConfiguration(profileId);
+  }
+
+  /**
+   * Get profile configuration with masked sensitive fields for UI display
+   */
+  public async getProfileConfigurationMasked(profileId: string) {
+    return this.database.models.ProfileConfiguration.getProfileConfigurationMasked(profileId);
   }
 
   /**

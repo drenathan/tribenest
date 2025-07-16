@@ -1,6 +1,7 @@
 import { BadRequestError } from "@src/utils/app_error";
 import { BaseService } from "../baseService";
 import { ActivateThemeInput, UpdateWebsiteVersionInput } from "@src/routes/websites/schema";
+import { EncryptionService } from "@src/utils/encryption";
 
 export class WebsiteService extends BaseService {
   async getWebsitesForProfile(profileId: string) {
@@ -89,11 +90,12 @@ export class WebsiteService extends BaseService {
   }
   async getPublicWebsite({ subdomain, pathname }: { subdomain: string; pathname: string }) {
     const profile = await this.models.Profile.findOne({ subdomain });
-    console.log("profile", subdomain, pathname);
 
     if (!profile) {
       throw new BadRequestError("Profile not found");
     }
+
+    const profileConfiguration = await this.models.ProfileConfiguration.findOne({ profileId: profile.id });
 
     const website = await this.models.WebsiteVersion.getOneWithPages({ profileId: profile.id, isActive: true });
 
@@ -114,6 +116,9 @@ export class WebsiteService extends BaseService {
         id: profile.id,
         name: profile.name,
         subdomain: profile.subdomain,
+        paymentProviderPublicKey: profileConfiguration?.paymentProviderPublicKey
+          ? EncryptionService.decrypt(profileConfiguration.paymentProviderPublicKey)
+          : null,
       },
     };
   }

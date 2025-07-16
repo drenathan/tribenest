@@ -53,7 +53,7 @@ export class ProfilesController extends BaseController {
   @RouteHandler()
   async getProfileConfiguration(req: Request, res: Response, _: NextFunction): Promise<any> {
     const { id } = req.params;
-    const config = await this.services.profile.getProfileConfiguration(id);
+    const config = await this.services.profile.getProfileConfigurationMasked(id);
     return config;
   }
 

@@ -13,6 +13,12 @@ import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
 import { capitalize } from "lodash";
 
+// Utility function to check if a value is masked (contains asterisks)
+const isMaskedValue = (value: string | null | undefined): boolean => {
+  if (!value) return false;
+  return value.includes("*");
+};
+
 // Validation schemas
 const emailConfigSchema = z.object({
   smtpHost: z.string().min(1, "SMTP host is required"),
@@ -57,8 +63,8 @@ function RouteComponent() {
 
   const {
     register,
-    handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
     trigger,
   } = useForm<SettingsFormData>({
@@ -120,43 +126,57 @@ function RouteComponent() {
     setIsLoading(section);
     try {
       const formData: any = {};
-      formData[section] = {
-        smtpHost: section === "email" ? (document.getElementById("smtpHost") as HTMLInputElement)?.value : undefined,
-        smtpPort: section === "email" ? (document.getElementById("smtpPort") as HTMLInputElement)?.value : undefined,
-        smtpUsername:
-          section === "email" ? (document.getElementById("smtpUsername") as HTMLInputElement)?.value : undefined,
-        smtpPassword:
-          section === "email" ? (document.getElementById("smtpPassword") as HTMLInputElement)?.value : undefined,
-        smtpFrom: section === "email" ? (document.getElementById("smtpFrom") as HTMLInputElement)?.value : undefined,
-        r2BucketName:
-          section === "r2" ? (document.getElementById("r2BucketName") as HTMLInputElement)?.value : undefined,
-        r2AccessKeyId:
-          section === "r2" ? (document.getElementById("r2AccessKeyId") as HTMLInputElement)?.value : undefined,
-        r2SecretAccessKey:
-          section === "r2" ? (document.getElementById("r2SecretAccessKey") as HTMLInputElement)?.value : undefined,
-        r2Endpoint: section === "r2" ? (document.getElementById("r2Endpoint") as HTMLInputElement)?.value : undefined,
-        r2Region: section === "r2" ? (document.getElementById("r2Region") as HTMLInputElement)?.value : undefined,
-        r2BucketUrl: section === "r2" ? (document.getElementById("r2BucketUrl") as HTMLInputElement)?.value : undefined,
-        paymentProviderName:
-          section === "payment"
-            ? (document.getElementById("paymentProviderName") as HTMLSelectElement)?.value
-            : undefined,
-        paymentProviderPublicKey:
-          section === "payment"
-            ? (document.getElementById("paymentProviderPublicKey") as HTMLInputElement)?.value
-            : undefined,
-        paymentProviderPrivateKey:
-          section === "payment"
-            ? (document.getElementById("paymentProviderPrivateKey") as HTMLInputElement)?.value
-            : undefined,
-      };
+      const sectionData: any = {};
 
-      // Remove undefined values
-      Object.keys(formData[section]).forEach((key) => {
-        if (formData[section][key] === undefined) {
-          delete formData[section][key];
+      // Get current form values using React Hook Form
+      if (section === "email") {
+        const emailValues = getValues("email");
+        if (emailValues) {
+          sectionData.smtpHost = emailValues.smtpHost;
+          sectionData.smtpPort = emailValues.smtpPort;
+          sectionData.smtpUsername = emailValues.smtpUsername;
+          sectionData.smtpPassword = emailValues.smtpPassword;
+          sectionData.smtpFrom = emailValues.smtpFrom;
+        }
+      } else if (section === "r2") {
+        const r2Values = getValues("r2");
+        if (r2Values) {
+          sectionData.r2BucketName = r2Values.r2BucketName;
+          sectionData.r2AccessKeyId = r2Values.r2AccessKeyId;
+          sectionData.r2SecretAccessKey = r2Values.r2SecretAccessKey;
+          sectionData.r2Endpoint = r2Values.r2Endpoint;
+          sectionData.r2Region = r2Values.r2Region;
+          sectionData.r2BucketUrl = r2Values.r2BucketUrl;
+        }
+      } else if (section === "payment") {
+        const paymentValues = getValues("payment");
+        if (paymentValues) {
+          sectionData.paymentProviderName = paymentValues.paymentProviderName;
+          sectionData.paymentProviderPublicKey = paymentValues.paymentProviderPublicKey;
+          sectionData.paymentProviderPrivateKey = paymentValues.paymentProviderPrivateKey;
+        }
+      }
+
+      // Filter out unchanged masked values and empty values
+      Object.keys(sectionData).forEach((key) => {
+        const newValue = sectionData[key];
+        const currentValue = currentConfig?.[key];
+
+        // Only include if:
+        // 1. Value is not empty
+        // 2. Value has changed from current value
+        // 3. Value is not a masked value (unless it's actually been changed)
+        if (newValue && newValue !== currentValue && !isMaskedValue(newValue)) {
+          formData[section] = formData[section] || {};
+          formData[section][key] = newValue;
         }
       });
+
+      // If no changes, show a message
+      if (!formData[section] || Object.keys(formData[section]).length === 0) {
+        toast.info("No changes detected. Configuration remains unchanged.");
+        return;
+      }
 
       await httpClient.put(`/profiles/${currentProfileAuthorization.profileId}/configuration`, formData);
       toast.success(`${section.charAt(0).toUpperCase() + section.slice(1)} settings saved successfully!`);
@@ -444,7 +464,9 @@ function RouteComponent() {
       <div className="p-4 border rounded-lg">
         <p className="text-sm">
           <strong>Security Note:</strong> All sensitive configuration data (passwords, API keys) are encrypted before
-          being stored in the database using AES-256-GCM encryption.
+          being stored in the database using AES-256-GCM encryption. Sensitive values are masked in the UI for security.
+          You can update any field by entering a new value, or leave masked fields unchanged to preserve existing
+          settings.
         </p>
       </div>
     </div>

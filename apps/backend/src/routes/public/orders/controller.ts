@@ -6,6 +6,7 @@ import { OrderStatus } from "@src/db/types/product";
 import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";
 import { PaymentProviderFactory } from "@src/services/paymentProvider/PaymentProviderFactory";
 import { NotFoundError } from "@src/utils/app_error";
+import { EncryptionService } from "@src/utils/encryption";
 
 export class PublicOrders extends BaseController {
   @RouteHandler()
@@ -38,10 +39,13 @@ export class PublicOrders extends BaseController {
     }
 
     const paymentProvider = PaymentProviderFactory.create(paymentProviderName as PaymentProviderName, {
-      apiKeys: {
-        publicKey: profile.paymentProviderPublicKey!,
-        privateKey: profile.paymentProviderPrivateKey!,
-      },
+      apiKeys: EncryptionService.decryptObject(
+        {
+          publicKey: profile.paymentProviderPublicKey!,
+          privateKey: profile.paymentProviderPrivateKey!,
+        },
+        ["publicKey", "privateKey"],
+      ),
     });
     const paymentStatus = await paymentProvider.getPaymentStatus(paymentId);
 
