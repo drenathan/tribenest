@@ -21,17 +21,20 @@ export async function createProduct(this: ProductService, input: CreateProductIn
         title: input.title,
         description: input.description,
         categoryId: category.id,
-        publishedAt: input.publishedAt,
+        publishedAt: input.publishedAt ? new Date(input.publishedAt) : new Date(),
         isSingle: input.tracks?.length === 1,
         profileId: input.profileId,
+        credits: input.credits,
+        artist: input.artist,
       },
       trx,
     );
 
     const media = await this.database.models.Media.insertOne(
       {
-        url: input.coverImage,
-        size: input.coverImageSize,
+        url: input.coverImage.file,
+        size: input.coverImage.fileSize,
+        filename: input.coverImage.fileName,
         type: MediaType.Image,
         profileId: input.profileId,
         parent: "product",
@@ -55,6 +58,8 @@ export async function createProduct(this: ProductService, input: CreateProductIn
         price: input.price,
         deliveryType: ProductDeliveryType.Digital,
         isDefault: true,
+        upcCode: input.upcCode,
+        payWhatYouWant: input.payWhatYouWant,
       },
       trx,
     );
@@ -68,6 +73,9 @@ export async function createProduct(this: ProductService, input: CreateProductIn
             description: track.description,
             isFeatured: track.isFeatured,
             hasExplicitContent: track.hasExplicitContent,
+            credits: track.credits,
+            isrcCode: track.isrcCode,
+            artist: track.artist,
           },
           trx,
         );

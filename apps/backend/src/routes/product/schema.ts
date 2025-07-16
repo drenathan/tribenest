@@ -31,11 +31,18 @@ export const createProductSchema = z.object({
         .min(5, "Description must be at least 5 characters")
         .max(1000, "Description must be less than 1000 characters"),
       deliveryType: z.nativeEnum(ProductDeliveryType),
-      price: z.number().min(0, "Price must be greater than 0"),
+      price: z.number().min(0, "Price must be at least 0"),
       category: z.nativeEnum(ProductCategory),
       publishedAt: z.string().optional(),
-      coverImage: z.string().url(),
-      coverImageSize: z.number(),
+      payWhatYouWant: z.boolean().optional(),
+      artist: z.string().optional(),
+      credits: z.string().optional(),
+      upcCode: z.string().optional(),
+      coverImage: z.object({
+        file: z.string().url("Cover image is required"),
+        fileSize: z.number(),
+        fileName: z.string(),
+      }),
       profileId: z.string().uuid(),
       tracks: z
         .array(
@@ -43,9 +50,13 @@ export const createProductSchema = z.object({
             title: z.string().optional(),
             file: z.string().url(),
             fileSize: z.number(),
+            fileName: z.string(),
             description: z.string().optional(),
             isFeatured: z.boolean().default(false),
             hasExplicitContent: z.boolean().default(false),
+            artist: z.string().optional(),
+            credits: z.string().optional(),
+            isrcCode: z.string().optional(),
           }),
         )
         .optional(),

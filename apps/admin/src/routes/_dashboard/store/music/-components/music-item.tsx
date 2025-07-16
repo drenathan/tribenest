@@ -53,7 +53,10 @@ export function MusicItem({ product }: Props) {
               <h2 className="text-3xl font-bold text-foreground ">{product.title}</h2>
             </div>
 
-            <div className="mb-4">
+            <div className="">
+              <p className="text-sm leading-relaxed">{product.artist || currentProfileAuthorization?.profile.name}</p>
+            </div>
+            <div className="mb-4 whitespace-pre-line">
               <p className="text-sm text-muted-foreground leading-relaxed">{product.description}</p>
             </div>
 
@@ -65,9 +68,23 @@ export function MusicItem({ product }: Props) {
                   <Badge variant="outline">Album: {defaultVariant?.tracks?.length || 0} tracks</Badge>
                 )}
               </div>
+
+              {defaultVariant?.payWhatYouWant && (
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline">Pay What You Want</Badge>
+                </div>
+              )}
+
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-foreground">${defaultVariant?.price?.toFixed(2) || "0.00"}</span>
+                <span className="font-semibold text-foreground">
+                  {defaultVariant?.price === 0 ? "Free" : `$${defaultVariant?.price?.toFixed(2) || "0.00"}`}
+                </span>
               </div>
+            </div>
+            <div className="mb-4">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Release Date: {product.publishedAt ? new Date(product.publishedAt).toLocaleDateString() : "N/A"}
+              </p>
             </div>
           </div>
         </div>
@@ -106,7 +123,9 @@ export function MusicItem({ product }: Props) {
                     {track.isFeatured && <Star className="w-4 h-4" />}
                   </div>
                   {track.description && (
-                    <p className="text-sm text-muted-foreground truncate mt-1">{track.description}</p>
+                    <p className="text-sm text-muted-foreground truncate mt-1 whitespace-pre-line">
+                      {track.description}
+                    </p>
                   )}
                 </div>
               </div>

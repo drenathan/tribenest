@@ -33,6 +33,7 @@ export function CheckoutPageContent() {
     cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
     2,
   );
+  const isPaidCheckout = total > 0;
 
   // Guest user form
   const guestForm = useForm<GuestUserData>({
@@ -248,7 +249,7 @@ export function CheckoutPageContent() {
             </div>
           )}
 
-          {currentStage === 2 && (
+          {currentStage === 2 && isPaidCheckout && (
             <div
               className="rounded-lg shadow-md p-6"
               style={{
@@ -266,6 +267,24 @@ export function CheckoutPageContent() {
                 firstName={guestUserData?.firstName}
                 lastName={guestUserData?.lastName}
               />
+            </div>
+          )}
+          {currentStage === 2 && !isPaidCheckout && (
+            <div
+              className="rounded-lg shadow-md p-6"
+              style={{
+                backgroundColor: themeSettings.colors.background,
+                border: `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
+                borderRadius: `${themeSettings.cornerRadius}px`,
+              }}
+            >
+              <h2 className="text-2xl font-bold mb-6" style={{ color: themeSettings.colors.text }}>
+                Payment Information
+              </h2>
+              <p className="text-sm text-muted-foreground mb-8">
+                This is a free checkout. You will not be charged anything.
+              </p>
+              <EditorButtonWithoutEditor text="Complete Checkout" onClick={() => {}} fullWidth />
             </div>
           )}
         </div>

@@ -163,7 +163,7 @@ export function MusicDetailsContent() {
                   {product.title}
                 </h2>
                 <h2 className="text-sm font-semibold mt-2" style={{ color: themeSettings.colors.text }}>
-                  {profile?.name || "Unknown Artist"}
+                  {product.artist || profile?.name}
                 </h2>
               </div>
 
@@ -232,7 +232,10 @@ export function MusicDetailsContent() {
         </div>
 
         <div className="p-6">
-          <p className="text-sm" style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}>
+          <p
+            className="text-sm whitespace-pre-line"
+            style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+          >
             {product.description}
           </p>
         </div>
@@ -283,7 +286,7 @@ export function MusicDetailsContent() {
                       </div>
                       {track.description && (
                         <p
-                          className="text-sm truncate mt-1"
+                          className="text-sm truncate mt-1 whitespace-pre-line"
                           style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
                         >
                           {track.description}
@@ -308,8 +311,11 @@ export function MusicDetailsContent() {
           <p className="text-sm font-bold" style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}>
             Credits
           </p>
-          <p className="text-sm" style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}>
-            Very long credits
+          <p
+            className="text-sm whitespace-pre-line"
+            style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+          >
+            {product.credits}
           </p>
         </div>
       </div>
@@ -392,7 +398,7 @@ function BuyNowModalContent({
     <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-6 p-2">
       {variant.payWhatYouWant && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm">Pay What You Want (min ${minPrice})</label>
+          <label className="text-sm">Support the artist beyond the price (min ${minPrice})</label>
           <Controller
             control={methods.control}
             name="price"
@@ -436,7 +442,7 @@ function GiftModalContent({
     <form onSubmit={methods.handleSubmit(onSubmit)} className="flex flex-col gap-6 p-2">
       {variant.payWhatYouWant && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm">Pay What You Want (min ${minPrice})</label>
+          <label className="text-sm">Support the artist beyond the price (min ${minPrice})</label>
           <Controller
             control={methods.control}
             name="price"

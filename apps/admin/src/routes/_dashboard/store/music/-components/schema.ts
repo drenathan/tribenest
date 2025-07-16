@@ -10,25 +10,36 @@ export const createProductSchema = z
       .min(5, "Description must be at least 5 characters")
       .max(1000, "Description must be less than 1000 characters"),
     deliveryType: z.nativeEnum(ProductDeliveryType),
-    price: z.coerce.number().min(0.1, "Price must be greater than 0.1"),
+    price: z.coerce.number().min(0, "Price must be at least 0"),
+    artist: z.string().optional(),
     category: z.nativeEnum(ProductCategory),
+    credits: z.string().optional(),
     publishedAt: z.string().optional(),
     profileId: z.string().uuid().optional(),
-    coverImage: z.union([
-      z.instanceof(File, { message: "Cover image is required" }),
-      z.string().url("Cover image is required"),
-    ]),
-    coverImageSize: z.number(),
+    payWhatYouWant: z.boolean().default(false).optional(),
+    upcCode: z.string().optional(),
+    coverImage: z.object({
+      file: z.union([
+        z.instanceof(File, { message: "Cover image is required" }),
+        z.string().url("Cover image is required"),
+      ]),
+      fileSize: z.number(),
+      fileName: z.string(),
+    }),
     tracks: z
       .array(
         z.object({
           file: z.union([z.instanceof(File, { message: "File is required" }), z.string().url("File is required")]),
           fileSize: z.number(),
+          fileName: z.string(),
           title: z.string().optional(),
           description: z.string().optional(),
           isFeatured: z.boolean().default(false).optional(),
           hasExplicitContent: z.boolean().default(false).optional(),
           id: z.string().uuid(),
+          artist: z.string().optional(),
+          credits: z.string().optional(),
+          isrcCode: z.string().optional(),
         }),
       )
       .optional(),

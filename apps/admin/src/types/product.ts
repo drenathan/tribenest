@@ -17,6 +17,9 @@ export type IProduct = {
   category: ProductCategory;
   media: IMedia[];
   variants: IProductVariant[];
+  artist: string;
+  credits: string;
+  publishedAt: string;
 };
 
 export type IProductVariant = {
@@ -28,6 +31,8 @@ export type IProductVariant = {
   media: IMedia[];
   tracks: IProductTrack[];
   isDefault: boolean;
+  upcCode: string;
+  payWhatYouWant: boolean;
 };
 
 export type IProductTrack = {
@@ -38,4 +43,6 @@ export type IProductTrack = {
   isFeatured: boolean;
   hasExplicitContent: boolean;
   artist: string;
+  credits: string;
+  isrcCode: string;
 };

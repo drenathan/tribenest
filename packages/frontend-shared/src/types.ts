@@ -142,6 +142,9 @@ export type IPublicProduct = {
   category: ProductCategory;
   media: IMedia[];
   variants: IPublicProductVariant[];
+  artist: string;
+  credits: string;
+  publishedAt: string;
 };
 
 export type IPublicProductVariant = {
@@ -155,6 +158,7 @@ export type IPublicProductVariant = {
   isDefault: boolean;
   payWhatYouWant?: boolean;
   payWhatYouWantMaximum?: number;
+  upcCode: string;
 };
 
 export type IPublicProductTrack = {
@@ -165,6 +169,8 @@ export type IPublicProductTrack = {
   isFeatured: boolean;
   hasExplicitContent: boolean;
   artist: string;
+  credits: string;
+  isrcCode: string;
 };
 
 export interface Membership {

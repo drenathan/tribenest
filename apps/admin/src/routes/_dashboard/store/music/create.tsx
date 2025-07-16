@@ -41,134 +41,6 @@ export const Route = createFileRoute("/_dashboard/store/music/create")({
   validateSearch: schema,
 });
 
-// Sortable Track Item Component
-function SortableTrackItem({
-  track,
-  index,
-  type,
-  fields,
-  tracks,
-  methods,
-  removeTrack,
-  handleFeaturedChange,
-  isAlbum,
-}: {
-  track: { id: string };
-  index: number;
-  type: string;
-  fields: { id: string }[];
-  tracks: CreateProductInput["tracks"];
-  methods: UseFormReturn<CreateProductInput>;
-  removeTrack: (index: number) => void;
-  handleFeaturedChange: (index: number, isFeatured: boolean) => void;
-  isAlbum: boolean;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: track.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style}>
-      <AccordionItem value={track.id} className="border-b border-border">
-        <div className="flex items-center gap-2 p-4">
-          {type === "album" && (
-            <div {...attributes} {...listeners} className="flex items-center gap-2 cursor-grab active:cursor-grabbing">
-              <GripVertical className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
-            </div>
-          )}
-
-          <AccordionTrigger className="flex-1 text-left">
-            <div className="flex items-center gap-2">
-              {isAlbum ? (
-                <span className="font-medium">{tracks?.[index]?.title || `Track ${index + 1}`}</span>
-              ) : (
-                <span className="font-medium">Track</span>
-              )}
-              {tracks?.[index]?.isFeatured && (
-                <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">Featured</span>
-              )}
-            </div>
-          </AccordionTrigger>
-
-          {type === "album" && fields.length > 1 && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => removeTrack(index)}
-              className="text-destructive hover:text-destructive"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          )}
-        </div>
-
-        <AccordionContent className="px-4 pb-4">
-          <div className="flex flex-col gap-6">
-            {/* Track Title */}
-            {isAlbum && (
-              <FormInput<CreateProductInput>
-                name={`tracks.${index}.title`}
-                label="Track Title"
-                control={methods.control}
-                placeholder={`Enter track ${index + 1} title`}
-              />
-            )}
-
-            {/* Audio File Upload */}
-            <div className="flex flex-col gap-2">
-              <Label>Audio File</Label>
-              <Input
-                placeholder="Upload file"
-                type="file"
-                accept={".flac,.wav,.aiff"}
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    methods.setValue(`tracks.${index}.file`, e.target.files[0]);
-                    methods.trigger(`tracks.${index}.file`);
-                  }
-                }}
-              />
-              {methods.formState?.errors?.tracks?.[index]?.file && (
-                <FormError message={methods.formState.errors.tracks[index]?.file?.message ?? ""} />
-              )}
-
-              {tracks && tracks[index]?.file && <FileAudioPlayer file={tracks[index].file as File} />}
-            </div>
-
-            {/* Featured Track Checkbox (only for albums) */}
-            {type === "album" && (
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id={`featured-${index}`}
-                  checked={tracks?.[index]?.isFeatured || false}
-                  onCheckedChange={(e) => handleFeaturedChange(index, e as boolean)}
-                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <Label htmlFor={`featured-${index}`} className="cursor-pointer">
-                  Featured Track
-                </Label>
-              </div>
-            )}
-
-            {/* Explicit Content Checkbox */}
-            <FormCheckbox<CreateProductInput>
-              name={`tracks.${index}.hasExplicitContent`}
-              label="Explicit Content"
-              control={methods.control}
-            />
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </div>
-  );
-}
-
 function RouteComponent() {
   const { type } = Route.useSearch();
   const { currentProfileAuthorization } = useAuth();
@@ -183,11 +55,19 @@ function RouteComponent() {
     defaultValues: {
       title: "",
       description: "",
+      artist: currentProfileAuthorization?.profile.name ?? "",
       deliveryType: ProductDeliveryType.Digital,
+      payWhatYouWant: false,
+      credits: "",
+      upcCode: "",
       price: 0,
+      publishedAt: "",
       category: ProductCategory.Music,
-      coverImage: undefined,
-      coverImageSize: 0,
+      coverImage: {
+        file: undefined,
+        fileSize: 0,
+        fileName: "",
+      },
       tracks: [
         {
           file: "" as string | File,
@@ -197,6 +77,7 @@ function RouteComponent() {
           isFeatured: false,
           hasExplicitContent: false,
           id: uuid(),
+          fileName: "",
         },
       ],
     },
@@ -268,6 +149,7 @@ function RouteComponent() {
       isFeatured: false,
       hasExplicitContent: false,
       id: uuid(),
+      fileName: "",
     });
   };
 
@@ -279,22 +161,24 @@ function RouteComponent() {
 
   const onSubmit = async (data: CreateProductInput) => {
     setErrorMessage("");
-
     try {
-      const coverImageFile = data.coverImage as File;
+      const coverImageFile = data.coverImage.file as File;
       const audioFiles = data.tracks?.map((track) => track.file as File).filter(Boolean) || [];
       const [coverImageResult, ...audioResults] = await uploadFiles([coverImageFile, ...audioFiles]);
-
       // Create product with uploaded files
       await createProduct({
         ...data,
-        coverImage: coverImageResult.url,
-        coverImageSize: coverImageResult.size,
+        coverImage: {
+          file: coverImageResult.url,
+          fileSize: coverImageResult.size,
+          fileName: coverImageResult.name,
+        },
         profileId: currentProfileAuthorization?.profileId,
         tracks: data.tracks?.map((track, index) => ({
           ...track,
           file: audioResults[index]?.url || "",
           fileSize: audioResults[index]?.size || 0,
+          fileName: audioResults[index]?.name || "",
         })),
       });
       navigate({ to: "/store/music" });
@@ -337,6 +221,13 @@ function RouteComponent() {
           control={methods.control}
           placeholder={type === "album" ? "Enter the album title" : "Enter the single title"}
         />
+
+        <FormInput<CreateProductInput>
+          name="artist"
+          label={`Artist (Default to ${currentProfileAuthorization?.profile.name} if not provided)`}
+          control={methods.control}
+          placeholder={`Enter the artist name`}
+        />
         <FormInput<CreateProductInput>
           name="description"
           label={type === "album" ? "Album description" : "Single description"}
@@ -353,24 +244,51 @@ function RouteComponent() {
             accept={".jpg,.jpeg,.png"}
             onChange={(e) => {
               if (e.target.files?.[0]) {
-                methods.setValue("coverImage", e.target.files[0]);
-                methods.trigger("coverImage");
+                methods.setValue("coverImage.file", e.target.files[0]);
+                methods.trigger("coverImage.file");
               }
             }}
           />
-          {methods.formState.errors.coverImage && (
-            <FormError message={methods.formState.errors.coverImage.message ?? ""} />
+          {methods.formState.errors.coverImage?.file && (
+            <FormError message={methods.formState.errors.coverImage.file.message ?? ""} />
           )}
 
-          {coverImage && (
-            <img src={URL.createObjectURL(coverImage as File)} alt="Cover Image" className="w-30 h-30 object-cover" />
+          {coverImage.file && (
+            <img
+              src={URL.createObjectURL(coverImage.file as File)}
+              alt="Cover Image"
+              className="w-30 h-30 object-cover"
+            />
           )}
         </div>
         <FormInput<CreateProductInput>
           name="price"
-          label="Price (USD) greater than 0"
+          label="Price USD (Default to 0 for free music)"
           control={methods.control}
           type="number"
+          min={0}
+        />
+        <FormInput<CreateProductInput>
+          name="publishedAt"
+          label="Release Date (Default to today if not provided)"
+          control={methods.control}
+          type="date"
+          className="max-w-fit"
+        />
+        {isAlbum && (
+          <FormInput<CreateProductInput> name="upcCode" label="UPC Code (Optional)" control={methods.control} />
+        )}
+        <FormInput<CreateProductInput>
+          name="credits"
+          label="Credits (Optional)"
+          control={methods.control}
+          textArea={true}
+          placeholder="Produced by: [Producer Name]"
+        />
+        <FormCheckbox<CreateProductInput>
+          name="payWhatYouWant"
+          label="Allow users to pay what they want (Minimum is the price set)"
+          control={methods.control}
         />
 
         {/* Tracks Section */}
@@ -401,6 +319,7 @@ function RouteComponent() {
                       removeTrack={removeTrack}
                       handleFeaturedChange={handleFeaturedChange}
                       isAlbum={isAlbum}
+                      profileName={currentProfileAuthorization?.profile.name || ""}
                     />
                   ))}
                 </Accordion>
@@ -420,6 +339,7 @@ function RouteComponent() {
                   removeTrack={removeTrack}
                   handleFeaturedChange={handleFeaturedChange}
                   isAlbum={isAlbum}
+                  profileName={currentProfileAuthorization?.profile.name || ""}
                 />
               ))}
             </Accordion>
@@ -430,6 +350,158 @@ function RouteComponent() {
           Create {type === "album" ? "Album" : "Single"}
         </Button>
       </form>
+    </div>
+  );
+}
+
+// Sortable Track Item Component
+function SortableTrackItem({
+  track,
+  index,
+  type,
+  fields,
+  tracks,
+  methods,
+  removeTrack,
+  handleFeaturedChange,
+  isAlbum,
+  profileName,
+}: {
+  track: { id: string };
+  index: number;
+  type: string;
+  fields: { id: string }[];
+  tracks: CreateProductInput["tracks"];
+  methods: UseFormReturn<CreateProductInput>;
+  removeTrack: (index: number) => void;
+  handleFeaturedChange: (index: number, isFeatured: boolean) => void;
+  isAlbum: boolean;
+  profileName: string;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: track.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <AccordionItem value={track.id} className="border-b border-border">
+        <div className="flex items-center gap-2 p-4">
+          {type === "album" && (
+            <div {...attributes} {...listeners} className="flex items-center gap-2 cursor-grab active:cursor-grabbing">
+              <GripVertical className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+            </div>
+          )}
+
+          <AccordionTrigger className="flex-1 text-left">
+            <div className="flex items-center gap-2">
+              {isAlbum ? (
+                <span className="font-medium">{tracks?.[index]?.title || `Track ${index + 1}`}</span>
+              ) : (
+                <span className="font-medium">Track</span>
+              )}
+              {tracks?.[index]?.isFeatured && (
+                <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">Featured</span>
+              )}
+            </div>
+          </AccordionTrigger>
+
+          {type === "album" && fields.length > 1 && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => removeTrack(index)}
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
+
+        <AccordionContent className="px-4 pb-4">
+          <div className="flex flex-col gap-6">
+            {/* Audio File Upload */}
+            <div className="flex flex-col gap-2">
+              <Label>Audio File</Label>
+              <Input
+                placeholder="Upload file"
+                type="file"
+                accept={".flac,.wav,.aiff"}
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    methods.setValue(`tracks.${index}.file`, e.target.files[0]);
+                    methods.trigger(`tracks.${index}.file`);
+                  }
+                }}
+              />
+              {methods.formState?.errors?.tracks?.[index]?.file && (
+                <FormError message={methods.formState.errors.tracks[index]?.file?.message ?? ""} />
+              )}
+
+              {tracks && tracks[index]?.file && <FileAudioPlayer file={tracks[index].file as File} />}
+            </div>
+            {/* Track Title */}
+            {isAlbum && (
+              <>
+                <FormInput<CreateProductInput>
+                  name={`tracks.${index}.title`}
+                  label="Track Title"
+                  control={methods.control}
+                  placeholder={`Enter track ${index + 1} title`}
+                />
+                <FormInput<CreateProductInput>
+                  name={`tracks.${index}.artist`}
+                  label={`Artist (Default to ${profileName} if not provided)`}
+                  control={methods.control}
+                  placeholder={`Enter track ${index + 1} artist`}
+                />
+                <FormInput<CreateProductInput>
+                  name={`tracks.${index}.credits`}
+                  label="Credits (Optional)"
+                  control={methods.control}
+                  textArea={true}
+                  placeholder="Enter the credits"
+                />
+              </>
+            )}
+
+            {/* Featured Track Checkbox (only for albums) */}
+            {type === "album" && (
+              <>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={`featured-${index}`}
+                    checked={tracks?.[index]?.isFeatured || false}
+                    onCheckedChange={(e) => handleFeaturedChange(index, e as boolean)}
+                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor={`featured-${index}`} className="cursor-pointer">
+                    Featured Track
+                  </Label>
+                </div>
+              </>
+            )}
+
+            <FormInput<CreateProductInput>
+              name={`tracks.${index}.isrcCode`}
+              label="ISRC Code (Optional)"
+              control={methods.control}
+            />
+
+            {/* Explicit Content Checkbox */}
+            <FormCheckbox<CreateProductInput>
+              name={`tracks.${index}.hasExplicitContent`}
+              label="Explicit Content"
+              control={methods.control}
+            />
+          </div>
+        </AccordionContent>
+      </AccordionItem>
     </div>
   );
 }

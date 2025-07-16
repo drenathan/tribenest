@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useContainerQueryContext, useEditorContext } from "../editor/context";
+import { useEditorContext } from "../editor/context";
 import { useAudioPlayer } from "../../contexts/AudioPlayerContext";
 import { alphaToHexCode } from "../../lib/utils";
 import { css } from "@emotion/css";
