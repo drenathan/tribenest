@@ -12,6 +12,7 @@ export interface IVariables extends BaseTemplateArgs {
 export class AccountWelcomeTemplate extends BaseEmailTemplate<IVariables> {
   name = "ACCOUNT_WELCOME_EMAIL";
   tags = ["email", this.name];
+  retryCount = 3;
 
   public getSubject(variables: IVariables) {
     return "Welcome to the tribe!";
@@ -23,6 +24,7 @@ export class AccountWelcomeTemplate extends BaseEmailTemplate<IVariables> {
       link: "coumo://couple-invite/accept/123456",
       to: [],
       isCreatedFromInvite: false,
+      profileId: "123",
     };
   }
 

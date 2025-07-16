@@ -25,6 +25,12 @@ export enum PaymentProviderName {
   Stripe = "stripe",
 }
 
+export enum PaymentStatus {
+  Pending = "pending",
+  Succeeded = "succeeded",
+  Failed = "failed",
+}
+
 export abstract class PaymentProvider {
   public abstract name: PaymentProviderName;
   private apiKeys: {
@@ -37,4 +43,5 @@ export abstract class PaymentProvider {
   }
 
   public abstract startCharge(input: ChargeInput): Promise<ChargeResponse>;
+  public abstract getPaymentStatus(paymentId: string): Promise<PaymentStatus>;
 }

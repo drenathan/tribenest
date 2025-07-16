@@ -4,6 +4,7 @@ import { FORBIDDEN_SUBDOMAINS } from "./contants";
 import { CreateProfileInput, GetMediaInput, UploadMediaInput } from "@src/routes/profiles/schema";
 import { safeStringify } from "@src/utils/json";
 import { MediaParent } from "@src/db/types/media";
+import { EmailClient } from "@src/workers/emails/EmailClient";
 
 export class ProfileService extends BaseService {
   public async validateSubdomain(name: string) {
@@ -30,6 +31,7 @@ export class ProfileService extends BaseService {
         { profileId: profile.id, accountId, isOwner: true },
         trx,
       );
+      await this.database.models.ProfileConfiguration.insertOne({ profileId: profile.id }, trx);
       await this.database.models.MembershipTier.insertOne(
         {
           name: "Free Membership",
@@ -76,5 +78,29 @@ export class ProfileService extends BaseService {
   public async getProfile(profileId: string) {
     const profile = await this.database.models.Profile.getProfile(profileId);
     return profile;
+  }
+
+  public async getEmailClient(profileId: string) {
+    const profile = await this.database.models.Profile.getProfile(profileId);
+    if (
+      !profile ||
+      !profile.smtpHost ||
+      !profile.smtpUsername ||
+      !profile.smtpPassword ||
+      !profile.smtpPort ||
+      !profile.smtpFrom
+    ) {
+      throw new Error("Cannot create email client as profile configuration is not complete");
+    }
+
+    return new EmailClient({
+      host: profile.smtpHost,
+      port: parseInt(profile.smtpPort),
+      from: profile.smtpFrom,
+      auth: {
+        user: profile.smtpUsername,
+        pass: profile.smtpPassword,
+      },
+    });
   }
 }

@@ -1,29 +1,50 @@
-import { alphaToHexCode, EditorButtonWithoutEditor, useEditorContext } from "@tribe-nest/frontend-shared";
-import { useEffect, useRef, useState } from "react";
+import {
+  alphaToHexCode,
+  ApiError,
+  EditorButtonWithoutEditor,
+  PaymentProviderName,
+  useCart,
+  useEditorContext,
+  usePublicAuth,
+} from "@tribe-nest/frontend-shared";
+import { useCallback, useRef, useState } from "react";
 import { Appearance, loadStripe } from "@stripe/stripe-js";
 import httpClient from "@/services/httpClient";
 import { Elements } from "@stripe/react-stripe-js";
+import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 type Props = {
   amount: number;
   email: string;
+  firstName?: string;
+  lastName?: string;
 };
-export const StripeCheckout = ({ amount, email }: Props) => {
+export const StripeCheckout = ({ amount, email, firstName, lastName }: Props) => {
   const { themeSettings, profile } = useEditorContext();
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const stripePromise = useRef(loadStripe(profile!.paymentProviderPublicKey));
+  const { user } = usePublicAuth();
+  const { cartItems } = useCart();
 
-  useEffect(() => {
-    if (!profile) return;
-    httpClient
-      .post("/public/payments/start", { amount, profileId: profile.id, email })
-      .then((res) => {
-        setClientSecret(res.data.paymentSecret);
-      })
-      .catch((err) => {
-        console.error(err);
+  const stripePromise = useRef(loadStripe(profile!.paymentProviderPublicKey));
+  const { data: paymentIntent } = useQuery<{
+    paymentSecret: string;
+    paymentId: string;
+  }>({
+    queryKey: ["order", profile?.id, email, firstName, lastName, user?.id, cartItems],
+    queryFn: async () => {
+      const res = await httpClient.post("/public/payments/start", {
+        amount,
+        profileId: profile?.id,
+        email,
+        firstName,
+        lastName,
+        accountId: user?.id,
+        cartItems,
       });
-  }, [amount, profile, email]);
+      return res.data;
+    },
+    enabled: !!profile?.id,
+  });
 
   const appearance: Appearance = {
     theme: "flat",
@@ -81,9 +102,18 @@ export const StripeCheckout = ({ amount, email }: Props) => {
 
   return (
     <div>
-      {clientSecret && (
-        <Elements options={{ clientSecret, appearance, loader }} stripe={stripePromise.current}>
-          <CheckoutForm amount={amount} />
+      {paymentIntent?.paymentSecret && paymentIntent?.paymentId && (
+        <Elements
+          options={{ clientSecret: paymentIntent.paymentSecret, appearance, loader }}
+          stripe={stripePromise.current}
+        >
+          <CheckoutForm
+            amount={amount}
+            firstName={firstName}
+            lastName={lastName}
+            email={email}
+            paymentId={paymentIntent.paymentId}
+          />
         </Elements>
       )}
     </div>
@@ -92,45 +122,86 @@ export const StripeCheckout = ({ amount, email }: Props) => {
 
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
-export default function CheckoutForm({ amount }: { amount: number }) {
+export default function CheckoutForm({
+  amount,
+  firstName,
+  lastName,
+  email,
+  paymentId,
+}: {
+  amount: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  paymentId: string;
+}) {
+  const { user } = usePublicAuth();
+  const { profile } = useEditorContext();
+  const { cartItems } = useCart();
   const stripe = useStripe();
   const elements = useElements();
 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isOrderCreated, setIsOrderCreated] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    if (!stripe || !elements) {
-      // Stripe.js hasn't yet loaded.
-      // Make sure to disable form submission until Stripe.js has loaded.
-      return;
-    }
+      if (!stripe || !elements || !profile) {
+        // Stripe.js hasn't yet loaded.
+        // Make sure to disable form submission until Stripe.js has loaded.
+        return;
+      }
 
-    setIsLoading(true);
+      setIsLoading(true);
+      // This function is called even if the form is invalid, we only want to create the order once no matter how many times the user clicks the button
+      if (!isOrderCreated) {
+        try {
+          await httpClient.post("/public/orders", {
+            amount,
+            profileId: profile.id,
+            email,
+            firstName,
+            lastName,
+            accountId: user?.id,
+            cartItems,
+            paymentId,
+            paymentProviderName: PaymentProviderName.Stripe,
+          });
+          setIsOrderCreated(true);
+        } catch (error) {
+          toast.error((error as ApiError).response?.data?.message);
+          console.error(error);
+          setIsLoading(false);
+          return;
+        }
+      }
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        // Make sure to change this to your payment completion page
-        return_url: "http://drenathan1.localhost:3001/checkout/success/stripe",
-      },
-    });
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          // Make sure to change this to your payment completion page
+          return_url: `http://drenathan1.localhost:3001/checkout/finalise?paymentId=${paymentId}&paymentProviderName=${PaymentProviderName.Stripe}`,
+        },
+      });
 
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`. For some payment methods like iDEAL, your customer will
-    // be redirected to an intermediate site first to authorize the payment, then
-    // redirected to the `return_url`.
-    if (error.type === "card_error" || error.type === "validation_error") {
-      setMessage(error.message || "An unexpected error occurred.");
-    } else {
-      setMessage("An unexpected error occurred.");
-    }
+      // This point will only be reached if there is an immediate error when
+      // confirming the payment. Otherwise, your customer will be redirected to
+      // your `return_url`. For some payment methods like iDEAL, your customer will
+      // be redirected to an intermediate site first to authorize the payment, then
+      // redirected to the `return_url`.
+      if (error.type === "card_error" || error.type === "validation_error") {
+        setMessage(error.message || "An unexpected error occurred.");
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
 
-    setIsLoading(false);
-  };
+      setIsLoading(false);
+    },
+    [stripe, elements, profile, isOrderCreated, amount, email, firstName, lastName, user?.id, cartItems, paymentId],
+  );
 
   const paymentElementOptions = {
     layout: "accordion" as const,

@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { getConfig } from "@src/config";
 import { MyCamelCasePlugin } from "../Database";
 import bcrypt from "bcryptjs";
+import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";
 
 export async function seedDatabase() {
   const db = new Kysely<DB>({
@@ -44,6 +45,11 @@ export async function seedDatabase() {
       accountId: account!.id,
       isOwner: true,
     })
+    .executeTakeFirst();
+
+  await db
+    .insertInto("profileConfigurations")
+    .values({ profileId: profile!.id, paymentProviderName: PaymentProviderName.Stripe })
     .executeTakeFirst();
 
   await db

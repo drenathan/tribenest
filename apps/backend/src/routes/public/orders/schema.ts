@@ -1,8 +1,11 @@
+import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";
 import { z } from "zod";
 
-export const startPaymentSchema = z.object({
+export const createOrderSchema = z.object({
   body: z
     .object({
+      paymentId: z.string(),
+      paymentProviderName: z.nativeEnum(PaymentProviderName),
       profileId: z.string().uuid("Invalid profile ID"),
       accountId: z.string().uuid("Invalid account ID").optional(),
       amount: z.number(),
@@ -22,6 +25,8 @@ export const startPaymentSchema = z.object({
               recipientEmail: z.string().email("Invalid email").optional(),
               recipientMessage: z.string().optional(),
               payWhatYouWant: z.boolean().optional(),
+              title: z.string(),
+              coverImage: z.string().optional(),
             })
             .refine(
               (data) => {
@@ -50,14 +55,13 @@ export const startPaymentSchema = z.object({
     ),
 });
 
-export const finalizePaymentSchema = z.object({
+export const finalizeOrderSchema = z.object({
   body: z.object({
-    paymentId: z.string().uuid("Invalid payment ID"),
-    paymentProviderName: z.string().uuid("Invalid payment provider name"),
+    paymentId: z.string(),
+    paymentProviderName: z.nativeEnum(PaymentProviderName),
     profileId: z.string().uuid("Invalid profile ID"),
-    accountId: z.string().uuid("Invalid account ID"),
   }),
 });
 
-export type StartPaymentInput = z.infer<typeof startPaymentSchema>["body"];
-export type FinalizePaymentInput = z.infer<typeof finalizePaymentSchema>["body"];
+export type CreateOrderInput = z.infer<typeof createOrderSchema>["body"];
+export type FinalizeOrderInput = z.infer<typeof finalizeOrderSchema>["body"];

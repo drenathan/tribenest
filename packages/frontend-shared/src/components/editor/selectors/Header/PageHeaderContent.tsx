@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../ui/popover";
 import { useCart } from "../../../../contexts/CartContext";
 import { EditorButtonWithoutEditor } from "../Button";
+import { useAudioPlayer } from "../../../../contexts/AudioPlayerContext";
 
 function PageHeaderContent({
   logo,
@@ -22,6 +23,7 @@ function PageHeaderContent({
   const { cartItems, removeFromCart } = useCart();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isCartOpen, setCartOpen] = useState(false);
+  const { currentTrack } = useAudioPlayer();
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -246,7 +248,7 @@ function PageHeaderContent({
         <>
           <div className="fixed inset-0 z-50 bg-black/30" onClick={toggleCart} aria-label="Close cart sidebar" />
           <aside
-            className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-lg flex flex-col animate-slide-in overflow-hidden"
+            className="fixed top-0 right-0 h-full w-full max-w-md  z-50 shadow-lg flex flex-col animate-slide-in overflow-hidden"
             style={{
               background: themeSettings.colors.background,
               color: themeSettings.colors.text,
@@ -311,10 +313,11 @@ function PageHeaderContent({
             {/* Cart Total */}
             {cartItems.length > 0 && (
               <div
-                className="flex-shrink-0 p-4 border-t"
+                className="absolute left-0 right-0 p-4 border-t"
                 style={{
                   borderColor: themeSettings.colors.primary,
                   background: themeSettings.colors.background,
+                  bottom: currentTrack ? "80px" : "0",
                 }}
               >
                 <div className="flex justify-between items-center mb-4">

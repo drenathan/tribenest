@@ -1,6 +1,6 @@
 import { useGetWebsiteVersion } from "@/hooks/queries/useWebsite";
 import { useAuth } from "@/hooks/useAuth";
-import { publicHttpClient, setPublicHttpClientToken } from "@/services/httpClient";
+import httpClient, { publicHttpClient, setPublicHttpClientToken } from "@/services/httpClient";
 import type { WebsiteVersionPage } from "@/types/website";
 import { Editor, Frame } from "@craftjs/core";
 import {
@@ -45,12 +45,12 @@ function RouteComponent() {
   }
 
   return (
-    <div className="h-screen" key={currentPage?.pathname}>
+    <div className="h-screen">
       <EditorContextProvider
         pages={websiteVersion.pages as unknown as ThemePage[]}
         profile={currentProfileAuthorization.profile}
         isAdminView={false}
-        httpClient={publicHttpClient}
+        httpClient={httpClient}
         themeSettings={websiteVersion.themeSettings}
         navigate={() => {}}
       >
@@ -59,6 +59,7 @@ function RouteComponent() {
             <CartProvider>
               <AudioPlayerProvider>
                 <Editor
+                  key={currentPage?.pathname}
                   enabled={true}
                   resolver={{ ...editorResolver, page: themePage.Component, ...theme?.editorResolver }}
                   onRender={RenderNode}

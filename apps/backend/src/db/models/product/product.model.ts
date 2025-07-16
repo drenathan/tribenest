@@ -3,8 +3,16 @@ import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { GetProductInput, type GetProductsInput } from "@src/routes/product/schema";
 import { type GetProductsInput as GetPublicProductsInput } from "@src/routes/public/products/schema";
+import { IProductVariant } from "./productVariant.model";
+import { IProductVariantTrack } from "./productVariantTrack.model";
+import { IMedia } from "../media/media.model";
 
 export type IProduct = DB["products"];
+export type GetManyProductResult = (Selectable<IProduct> & {
+  variants: (Selectable<IProductVariant> & {
+    tracks: (Selectable<IProductVariantTrack> & { media: Selectable<IMedia>[] })[];
+  })[];
+})[];
 
 export class ProductModel extends BaseModel<"products", "id"> {
   constructor(client: Kysely<DB>) {
@@ -119,7 +127,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
       .execute();
 
     return {
-      data: products,
+      data: products as unknown as GetManyProductResult,
       total: total.total,
     };
   }

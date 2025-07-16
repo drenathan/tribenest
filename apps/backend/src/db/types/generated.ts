@@ -59,6 +59,7 @@ export interface Likes {
 
 export interface Media {
   createdAt: Generated<Timestamp>;
+  filename: string | null;
   id: Generated<string>;
   name: string | null;
   parent: string;
@@ -122,6 +123,39 @@ export interface MembershipTiersBenefits {
   membershipBenefitId: string;
   membershipTierId: string;
   order: number;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface OrderItems {
+  coverImage: string | null;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  isGift: Generated<boolean>;
+  orderId: string;
+  payWhatYouWant: Generated<boolean>;
+  price: Numeric;
+  productId: string;
+  productVariantId: string;
+  quantity: number;
+  recipientEmail: string | null;
+  recipientMessage: string | null;
+  recipientName: string | null;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface Orders {
+  accountId: string | null;
+  createdAt: Generated<Timestamp>;
+  email: string | null;
+  firstName: string | null;
+  id: Generated<string>;
+  lastName: string | null;
+  paymentId: string | null;
+  paymentProviderName: string;
+  profileId: string;
+  status: string;
+  totalAmount: Numeric;
   updatedAt: Generated<Timestamp>;
 }
 
@@ -250,6 +284,17 @@ export interface ProfileConfigurations {
   paymentProviderPrivateKey: string | null;
   paymentProviderPublicKey: string | null;
   profileId: string;
+  r2AccessKeyId: string | null;
+  r2BucketName: string | null;
+  r2BucketUrl: string | null;
+  r2Endpoint: string | null;
+  r2Region: string | null;
+  r2SecretAccessKey: string | null;
+  smtpFrom: string | null;
+  smtpHost: string | null;
+  smtpPassword: string | null;
+  smtpPort: string | null;
+  smtpUsername: string | null;
 }
 
 export interface Profiles {
@@ -303,6 +348,8 @@ export interface DB {
   memberships: Memberships;
   membershipTiers: MembershipTiers;
   membershipTiersBenefits: MembershipTiersBenefits;
+  orderItems: OrderItems;
+  orders: Orders;
   postCollectionPosts: PostCollectionPosts;
   postCollections: PostCollections;
   posts: Posts;

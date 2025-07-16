@@ -14,7 +14,7 @@ export function InternalPageRenderer({ children }: Props) {
   }
 
   return (
-    <div className="w-full h-full min-h-screen" style={{ backgroundColor: themeSettings.colors.background }}>
+    <div className="w-full min-h-screen h-auto" style={{ backgroundColor: themeSettings.colors.background }}>
       <PageHeaderWithoutEditor hasBorder={true} />
       {children}
     </div>

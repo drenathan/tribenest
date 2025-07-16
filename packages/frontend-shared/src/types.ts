@@ -226,3 +226,40 @@ export type ActionMap<M extends { [index: string]: unknown }> = {
         payload: M[Key];
       };
 };
+
+export enum PaymentProviderName {
+  Stripe = "stripe",
+}
+export enum OrderStatus {
+  InitiatedPayment = "initiated_payment",
+  PaymentFailed = "payment_failed",
+  Paid = "paid",
+  Processing = "processing",
+  Shipped = "shipped",
+  Delivered = "delivered",
+  Cancelled = "cancelled",
+}
+
+export type IPublicOrder = {
+  id: string;
+  items: IPublicOrderItem[];
+  totalAmount: number;
+  status: OrderStatus;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type IPublicOrderItem = {
+  productId: string;
+  productVariantId: string;
+  title: string;
+  price: number;
+  coverImage?: string;
+  isGift: boolean;
+  recipientName?: string;
+  recipientEmail?: string;
+  canIncreaseQuantity: boolean;
+  quantity: number;
+  recipientMessage?: string;
+  payWhatYouWant: boolean;
+};

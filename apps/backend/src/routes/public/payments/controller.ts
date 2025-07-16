@@ -30,11 +30,13 @@ export class PublicPayments extends BaseController {
       },
     );
 
-    return paymentProvider.startCharge({
+    const result = await paymentProvider.startCharge({
       amount: body!.amount,
       currency: "usd",
       email: body!.email,
       returnUrl: "http://drenathan1.localhost:3001/checkout",
     });
+
+    return result;
   }
 }

@@ -20,7 +20,7 @@ show_urls() {
 validate_app() {
     local app=$1
     case "$app" in
-        "postgres"|"redis"|"")
+        "postgres"|"redis"|"mailcatcher"|"")
             return 0
             ;;
         *)

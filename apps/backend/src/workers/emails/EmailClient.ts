@@ -3,7 +3,6 @@ import nodemailer from "nodemailer";
 import { IAttachment } from "./types";
 import { emailValidator } from "@src/utils/validators";
 import { logger } from "@src/utils/logger";
-import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 
 type SendEmailArgs = {
   to: string | string[];
@@ -45,10 +44,19 @@ export class EmailClient {
 
     try {
       const result = await this.transporter.sendMail(content);
-      logger.info(`Email sent to ${content.to} with result ${result}`);
+      logger.info({
+        msg: `Email sent successfully`,
+        to: content.to,
+        messageId: result.messageId,
+        accepted: result.accepted,
+        rejected: result.rejected,
+      });
     } catch (err) {
-      logger.error(`Error sending email to ${content.to}`);
-      logger.error(err);
+      logger.error({
+        msg: `Error sending email`,
+        to: content.to,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   }
 }

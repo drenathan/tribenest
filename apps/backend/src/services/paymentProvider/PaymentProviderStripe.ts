@@ -5,6 +5,7 @@ import {
   PaymentProvider,
   PaymentProviderArgs,
   PaymentProviderName,
+  PaymentStatus,
 } from "./PaymentProvider";
 import Stripe from "stripe";
 
@@ -14,7 +15,7 @@ export class PaymentProviderStripe extends PaymentProvider {
 
   constructor(args: PaymentProviderArgs) {
     super(args);
-    this.client = new Stripe(STRIPE_SECRET_KEY);
+    this.client = new Stripe(args.apiKeys.privateKey || STRIPE_SECRET_KEY);
   }
 
   public async startCharge(input: ChargeInput): Promise<ChargeResponse> {
@@ -34,5 +35,18 @@ export class PaymentProviderStripe extends PaymentProvider {
       currency: input.currency,
       paymentSecret: intent.client_secret ?? "",
     };
+  }
+
+  public async getPaymentStatus(paymentId: string): Promise<PaymentStatus> {
+    const intent = await this.client.paymentIntents.retrieve(paymentId);
+
+    switch (intent.status) {
+      case "succeeded":
+        return PaymentStatus.Succeeded;
+      case "processing":
+        return PaymentStatus.Pending;
+      default:
+        return PaymentStatus.Failed;
+    }
   }
 }

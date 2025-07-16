@@ -33,6 +33,15 @@ services:
       - tribenest_redis_dev_data:/data
     networks:
       - tribenest-dev-network
+  mailcatcher:
+    image: dockage/mailcatcher:latest
+    container_name: tribenest-mailcatcher-dev
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+    networks:
+      - tribenest-dev-network
 
 volumes:
   tribenest_postgres_dev_data:

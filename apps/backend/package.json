@@ -63,6 +63,8 @@
     "@aws-sdk/client-sesv2": "^3.806.0",
     "@aws-sdk/s3-request-presigner": "^3.824.0",
     "@react-email/components": "^0.0.39",
+    "@types/archiver": "^6.0.3",
+    "archiver": "^7.0.1",
     "bcryptjs": "^3.0.2",
     "bullmq": "^5.52.1",
     "chalk": "^4.1.2",

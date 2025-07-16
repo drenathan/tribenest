@@ -7,7 +7,8 @@ import cronParser from "cron-parser";
 import BaseJob from "./baseJob";
 import { isNil } from "lodash";
 import { bootstrapEmails } from "./emails";
-import { IS_TEST } from "@src/config/secrets";
+import { IS_DEVELOPMENT, IS_TEST } from "@src/config/secrets";
+import BaseEmailTemplate from "./emails/BaseEmailTemplate";
 const QUEUE_NAME = "tribeNestMainQueue";
 const SCHEDULER_ID = "tribeNestScheduler";
 
@@ -64,7 +65,10 @@ export class Workers {
         }
 
         logger.info({ tags: handler.tags }, `Running job ${job.name}`);
+        const start = Date.now();
         await handler.handle(job.data);
+        const end = Date.now();
+        logger.info({ tags: handler.tags }, `Job ${job.name} completed in ${(end - start) / 1000} seconds`);
       },
       { connection: { url: process.env.REDIS_URL }, autorun: false },
     );
@@ -72,7 +76,22 @@ export class Workers {
     worker.on("completed", (job) => {
       logger.info({ tags: ["worker", job?.name] }, `Job ${job?.name} completed`);
     });
-    worker.on("failed", (job, err) => {
+
+    worker.on("failed", async (job, err) => {
+      if (IS_DEVELOPMENT) {
+        console.log(err);
+      }
+      if (!job) return;
+      const handler = jobs.find((j) => j.name === job.name);
+
+      if (handler) {
+        try {
+          await handler.onFailure(job.data);
+        } catch (error) {
+          logger.error({ tags: ["worker", job?.name] }, `Error calling onFailure for job ${job?.name}: ${error}`);
+        }
+      }
+
       logger.error({ tags: ["worker", job?.name] }, `Job ${job?.name} failed: ${err}`);
     });
     worker.on("error", (err) => {
@@ -99,11 +118,11 @@ export class Workers {
 
     return jobs;
   }
-  getAllEmails(next?: Object, previous?: BaseJob[]): BaseJob[] {
-    const jobs: BaseJob[] = previous || []; // start with an empty array
+  getAllEmails(next?: Object, previous?: BaseEmailTemplate<any>[]): BaseEmailTemplate<any>[] {
+    const jobs: BaseEmailTemplate<any>[] = previous || []; // start with an empty array
     if (!next) next = this.emails; // start with the jobs object
 
-    if (next instanceof BaseJob) {
+    if (next instanceof BaseEmailTemplate) {
       jobs.push(next);
       return jobs;
     }
@@ -117,5 +136,9 @@ export class Workers {
 
   getAllScheduledJobs(): BaseJob[] {
     return this.getAllJobs().filter((job) => !isNil(job.interval));
+  }
+
+  setWorkersInstanceOnJobs() {
+    this.getAllJobs().forEach((job) => job.setWorkers(this));
   }
 }

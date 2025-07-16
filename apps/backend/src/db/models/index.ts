@@ -24,6 +24,9 @@ import { ProductVariantOptionModel } from "./product/productVariantOption.model"
 import { ProductVariantOptionValueModel } from "./product/productVariantOptionValue.model";
 import { ProductVariantConfigurationModel } from "./product/productVariantConfiguration.model";
 import { ProductVariantTrackModel } from "./product/productVariantTrack.model";
+import { OrderModel } from "./order/order.model";
+import { OrderItemModel } from "./order/orderItem.model";
+import { ProfileConfigurationModel } from "./profile/profileConfiguration.model";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
@@ -35,12 +38,15 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     MembershipBenefit: new MembershipBenefitModel(client),
     MembershipTier: new MembershipTierModel(client),
     MembershipTierBenefit: new MembershipTierBenefitModel(client),
+    Order: new OrderModel(client),
+    OrderItem: new OrderItemModel(client),
     Post: new PostModel(client),
     MediaMapping: new MediaMappingModel(client),
     PostCollection: new PostCollectionModel(client),
     PostCollectionPost: new PostCollectionPostModel(client),
     Profile: new ProfileModel(client),
     ProfileAuthorization: new ProfileAuthorizationModel(client),
+    ProfileConfiguration: new ProfileConfigurationModel(client),
     ProductCategory: new ProductCategoryModel(client),
     Product: new ProductModel(client),
     ProductVariant: new ProductVariantModel(client),

@@ -15,7 +15,8 @@ export type CartItem = {
   recipientEmail?: string;
   canIncreaseQuantity: boolean;
   quantity: number;
-  message?: string;
+  recipientMessage?: string;
+  payWhatYouWant: boolean;
 };
 
 interface CartContextType {

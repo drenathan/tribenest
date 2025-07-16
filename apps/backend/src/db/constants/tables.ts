@@ -10,6 +10,8 @@ export const tables = {
   membership_tiers: "membership_tiers",
   membership_tiers_benefits: "membership_tiers_benefits",
   membership_benefits: "membership_benefits",
+  orders: "orders",
+  order_items: "order_items",
   posts: "posts",
   post_collections: "post_collections",
   post_collection_posts: "post_collection_posts",

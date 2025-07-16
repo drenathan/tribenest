@@ -1,19 +1,12 @@
-import nodemailer from "nodemailer";
-import fs from "fs";
-
-import path from "path";
 import { IAttachment, IGlobalVariables } from "./types";
-import { IConfig } from "@src/config/types";
 import { Services } from "@src/services";
-import { t } from "@src/i18n";
-import { getRequestProperty } from "@src/utils/store";
 import { Locale } from "@src/types";
 import { Queue } from "bullmq";
 import BaseJob from "@src/workers/baseJob";
-import { EmailClient } from "./EmailClient";
 
 export interface BaseTemplateArgs {
   to: string | string[];
+  profileId: string;
   attachments?: IAttachment[];
   bcc?: string | string[];
   cc?: string | string[];
@@ -23,15 +16,9 @@ export interface BaseTemplateArgs {
 
 export default abstract class BaseEmailTemplate<T extends BaseTemplateArgs> extends BaseJob<T> {
   public abstract name: string;
-  private globalVariables: IGlobalVariables;
-  private client: EmailClient;
 
-  constructor(queue: Queue, services: Services, client: EmailClient) {
+  constructor(queue: Queue, services: Services) {
     super(queue, services);
-    this.client = client;
-    this.globalVariables = {
-      images: { logo: "helloworld", favicon: "helloworld" },
-    };
   }
 
   public abstract getSubject(variables: T): string;
@@ -53,7 +40,8 @@ export default abstract class BaseEmailTemplate<T extends BaseTemplateArgs> exte
   }
 
   public async handle(variables: T) {
-    await this.client.sendEmail({
+    const client = await this.services.profile.getEmailClient(variables.profileId);
+    await client.sendEmail({
       to: variables.to,
       from: variables.from,
       cc: variables.cc,

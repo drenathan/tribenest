@@ -1,4 +1,4 @@
-import { Button, useEditorContext } from "@tribe-nest/frontend-shared";
+import { Button, ProductCategory, useEditorContext } from "@tribe-nest/frontend-shared";
 import { Tooltip2 } from "@tribe-nest/frontend-shared";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, ChevronDown, Monitor, Smartphone, Rocket, Save, Undo, Redo } from "lucide-react";
@@ -10,6 +10,8 @@ import { useSaveWebsiteVersion } from "@/hooks/mutations/useWebsite";
 import { useEditor } from "@craftjs/core";
 import { toast } from "sonner";
 import { UpdateStylesDialog } from "../../themes/-component/update-styles-dialog";
+import { SelectEditorProduct } from "../SelectEditorProduct";
+import { useState } from "react";
 
 export const WebsiteEditorHeader = ({
   currentPage,
@@ -25,12 +27,14 @@ export const WebsiteEditorHeader = ({
   setIsMobile: (isMobile: boolean) => void;
 }) => {
   const navigate = useNavigate();
-  const { themeSettings, setThemeSettings } = useEditorContext();
+  const { themeSettings, setThemeSettings, setCurrentProductId } = useEditorContext();
   const { query, canUndo, canRedo, actions } = useEditor((state, query) => ({
     enabled: state.options.enabled,
     canUndo: query.history.canUndo(),
     canRedo: query.history.canRedo(),
   }));
+  const [isSelectProductModalOpen, setIsSelectProductModalOpen] = useState(false);
+  const [intendedPage, setIntendedPage] = useState<WebsiteVersionPage | null>(null);
 
   const { currentProfileAuthorization } = useAuth();
   const { mutateAsync: saveWebsiteVersion } = useSaveWebsiteVersion();
@@ -38,7 +42,18 @@ export const WebsiteEditorHeader = ({
   if (!currentProfileAuthorization) {
     return null;
   }
-
+  const getSelectProductDetails = () => {
+    if (intendedPage?.pathname === "/music/:id") {
+      return {
+        title: "Select Music",
+        description: "This music will be used to render the page",
+      };
+    }
+    return {
+      title: "Select item",
+      description: "Choose an item to feature",
+    };
+  };
   const handleActivateClick = async () => {};
 
   const handleSaveClick = async () => {
@@ -65,6 +80,11 @@ export const WebsiteEditorHeader = ({
   };
 
   const handlePageChange = (page: WebsiteVersionPage) => {
+    if (page.pathname === "/music/:id") {
+      setIntendedPage(page);
+      setIsSelectProductModalOpen(true);
+      return;
+    }
     setCurrentPage(page);
   };
 
@@ -146,6 +166,22 @@ export const WebsiteEditorHeader = ({
           </div>
         )}
       </div>
+      <SelectEditorProduct
+        category={ProductCategory.Music}
+        onProductSelect={(product) => {
+          if (!intendedPage) {
+            return;
+          }
+          setCurrentProductId!(product.id);
+          setCurrentPage(intendedPage);
+          setIntendedPage(null);
+          setTimeout(() => (document.body.style.pointerEvents = ""), 100);
+        }}
+        title={getSelectProductDetails().title}
+        description={getSelectProductDetails().description}
+        isOpen={isSelectProductModalOpen}
+        setIsOpen={setIsSelectProductModalOpen}
+      />
     </header>
   );
 };

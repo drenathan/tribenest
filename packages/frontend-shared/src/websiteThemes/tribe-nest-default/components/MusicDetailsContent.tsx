@@ -210,6 +210,7 @@ export function MusicDetailsContent() {
                         isGift: false,
                         quantity: 1,
                         canIncreaseQuantity: false,
+                        payWhatYouWant: false,
                       });
                     }
                   }}
@@ -330,6 +331,7 @@ export function MusicDetailsContent() {
                 isGift: false,
                 quantity: 1,
                 canIncreaseQuantity: false,
+                payWhatYouWant: defaultVariant.payWhatYouWant || false,
               });
             }}
             onClose={() => setIsBuyNowModalOpen(false)}
@@ -356,7 +358,8 @@ export function MusicDetailsContent() {
                 recipientEmail,
                 quantity: 1,
                 canIncreaseQuantity: false,
-                message,
+                recipientMessage: message,
+                payWhatYouWant: defaultVariant.payWhatYouWant || false,
               });
             }}
             onClose={() => setIsSendAsGiftModalOpen(false)}

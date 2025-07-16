@@ -2,7 +2,8 @@ import * as GeneratedTypes from "./generated";
 import { MediaType, MediaParent } from "./media";
 import { ColumnType } from "kysely";
 import { PostType } from "./post";
-import { MembershipPaymentCircle, MembershipStatus } from "./membership";
+import { MembershipStatus } from "./membership";
+import { OrderStatus } from "./product";
 
 type Media = Omit<GeneratedTypes.Media, "type" | "parent"> & {
   type: MediaType;
@@ -22,9 +23,14 @@ type Membership = Omit<GeneratedTypes.Memberships, "status"> & {
   status: MembershipStatus;
 };
 
+type Order = Omit<GeneratedTypes.Orders, "status"> & {
+  status: OrderStatus;
+};
+
 export interface DB extends GeneratedTypes.DB {
   media: Media;
   posts: Post;
   mediaMappings: MediaMapping;
   memberships: Membership;
+  orders: Order;
 }

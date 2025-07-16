@@ -5,6 +5,7 @@ import { EditorInputWithoutEditor, EditorButtonWithoutEditor } from "@tribe-nest
 import { useForm, Controller } from "react-hook-form";
 import { alphaToHexCode } from "@tribe-nest/frontend-shared";
 import { StripeCheckout } from "./stripe-checkout";
+import { round } from "lodash";
 
 type GuestUserData = {
   firstName: string;
@@ -28,9 +29,10 @@ export function CheckoutPageContent() {
   }, [user]);
 
   // Calculate totals
-  const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-  const tax = subtotal * 0.1; // 10% tax
-  const total = subtotal + tax;
+  const total = round(
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+    2,
+  );
 
   // Guest user form
   const guestForm = useForm<GuestUserData>({
@@ -258,7 +260,12 @@ export function CheckoutPageContent() {
               <h2 className="text-2xl font-bold mb-6" style={{ color: themeSettings.colors.text }}>
                 Payment Information
               </h2>
-              <StripeCheckout amount={total} email={guestUserData?.email || user?.email || ""} />
+              <StripeCheckout
+                amount={total}
+                email={guestUserData?.email || user?.email || ""}
+                firstName={guestUserData?.firstName}
+                lastName={guestUserData?.lastName}
+              />
             </div>
           )}
         </div>
@@ -343,14 +350,14 @@ export function CheckoutPageContent() {
 
             {/* Totals */}
             <div className="space-y-2">
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span style={{ color: themeSettings.colors.text }}>Subtotal</span>
                 <span style={{ color: themeSettings.colors.text }}>${subtotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
+              </div> */}
+              {/* <div className="flex justify-between">
                 <span style={{ color: themeSettings.colors.text }}>Tax (10%)</span>
                 <span style={{ color: themeSettings.colors.text }}>${tax.toFixed(2)}</span>
-              </div>
+              </div> */}
               <div
                 className="flex justify-between font-bold text-lg pt-2"
                 style={{

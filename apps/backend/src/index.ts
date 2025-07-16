@@ -2,7 +2,6 @@ import "reflect-metadata";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.join(__dirname, "../.env") });
-import crypto from "crypto";
 
 import http from "http";
 import { initApp } from "@src/app";
@@ -19,6 +18,7 @@ const startApp = async () => {
   const database = new Database();
   const services = new Services(database);
   const workers = new Workers(services);
+  workers.setWorkersInstanceOnJobs();
 
   if (IS_DEVELOPMENT || !DEPLOYMENT) {
     logger.info("starting workers in development");

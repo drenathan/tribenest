@@ -63,7 +63,13 @@ export default function SubdomainLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div ref={ref} className="h-screen w-full @container">
+    <div
+      ref={ref}
+      className="h-screen w-full @container"
+      style={{
+        color: theme.themeSettings.colors.text,
+      }}
+    >
       <ContainerQueryProvider ref={ref}>
         <EditorContextProvider
           profile={webPage.profile}

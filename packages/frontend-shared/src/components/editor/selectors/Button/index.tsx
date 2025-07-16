@@ -40,6 +40,10 @@ const buttonStyles = (themeSettings: EditorTheme, fullWidth?: boolean) =>
     "&:hover": {
       backgroundColor: themeSettings.colors.primary + alphaToHexCode(0.8),
     },
+    "&:disabled": {
+      backgroundColor: themeSettings.colors.primary + alphaToHexCode(0.5),
+      cursor: "not-allowed",
+    },
   });
 
 export const EditorButton: UserComponent<ButtonProps> = ({

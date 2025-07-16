@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useEditorContext } from "../editor/context";
+import { useContainerQueryContext, useEditorContext } from "../editor/context";
 import { useAudioPlayer } from "../../contexts/AudioPlayerContext";
 import { alphaToHexCode } from "../../lib/utils";
 import { css } from "@emotion/css";
@@ -92,7 +92,7 @@ export function ThemeAudioPlayer() {
         className={css({
           position: "fixed",
           bottom: "16px",
-          right: "16px",
+          left: "16px",
           backgroundColor: themeSettings.colors.background,
           border: `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
           borderRadius: `${themeSettings.cornerRadius}px`,
