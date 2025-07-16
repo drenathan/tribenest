@@ -1,6 +1,6 @@
 export { default as Database } from "./Database";
 
-import { REDIS_URL } from "@src/config/secrets";
+import { REDIS_URL } from "@src/configuration/secrets";
 import { logger } from "@src/utils/logger";
 import { createClient } from "redis";
 

@@ -1,4 +1,4 @@
-import { IS_DEVELOPMENT } from "@src/config/secrets";
+import { IS_DEVELOPMENT } from "@src/configuration/secrets";
 import { logger } from "@src/utils/logger";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";

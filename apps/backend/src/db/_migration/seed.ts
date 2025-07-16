@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from "kysely";
 import { DB } from "../types";
 import { Pool } from "pg";
-import { getConfig } from "@src/config";
+import { getConfig } from "@src/configuration";
 import { MyCamelCasePlugin } from "../Database";
 import bcrypt from "bcryptjs";
 import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";

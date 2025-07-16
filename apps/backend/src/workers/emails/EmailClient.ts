@@ -1,4 +1,4 @@
-import { getConfig } from "@src/config";
+import { getConfig } from "@src/configuration";
 import nodemailer from "nodemailer";
 import { IAttachment } from "./types";
 import { emailValidator } from "@src/utils/validators";

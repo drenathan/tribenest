@@ -30,22 +30,28 @@ export const createMembershipTierSchema = z
     },
     { path: ["priceMonthly"], message: "Price Monthly is required" },
   )
-  .refine((data) => data.priceMonthly && Number(data.priceMonthly) > 0, {
+  .refine((data) => (data.payWhatYouWant ? true : data.priceMonthly && Number(data.priceMonthly) > 0), {
     path: ["priceMonthly"],
     message: "Price Monthly must be greater than 0",
   })
-  .refine((data) => data.priceYearly && Number(data.priceYearly) > 0, {
+  .refine((data) => (data.payWhatYouWant || !data.priceYearly ? true : Number(data.priceYearly) > 0), {
     path: ["priceYearly"],
     message: "Price Yearly must be greater than 0",
   })
-  .refine((data) => data.payWhatYouWantMinimum && Number(data.payWhatYouWantMinimum) > 0, {
-    path: ["payWhatYouWantMinimum"],
-    message: "Pay What You Want Minimum must be greater than 0",
-  })
-  .refine((data) => data.payWhatYouWantMaximum && Number(data.payWhatYouWantMaximum) > 0, {
-    path: ["payWhatYouWantMaximum"],
-    message: "Pay What You Want Maximum must be greater than 0",
-  });
+  .refine(
+    (data) => (data.payWhatYouWant ? data.payWhatYouWantMinimum && Number(data.payWhatYouWantMinimum) > 0 : true),
+    {
+      path: ["payWhatYouWantMinimum"],
+      message: "Pay What You Want Minimum must be greater than 0",
+    },
+  )
+  .refine(
+    (data) => (data.payWhatYouWant && data.payWhatYouWantMaximum ? Number(data.payWhatYouWantMaximum) > 0 : true),
+    {
+      path: ["payWhatYouWantMaximum"],
+      message: "Pay What You Want Maximum must be greater than 0",
+    },
+  );
 
 export const createMembershipBenefitSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters").max(100, "Title must be less than 100 characters"),

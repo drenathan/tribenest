@@ -7,7 +7,7 @@ import http from "http";
 import { initApp } from "@src/app";
 import { Services } from "./services";
 import { Database } from "./db";
-import { DEPLOYMENT, IS_DEVELOPMENT, PORT } from "./config/secrets";
+import { DEPLOYMENT, IS_DEVELOPMENT, PORT } from "./configuration/secrets";
 import { logger } from "./utils/logger";
 import handleProcessEvents from "./utils/process_events";
 import { Workers } from "./workers";

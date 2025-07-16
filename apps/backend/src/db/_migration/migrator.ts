@@ -2,7 +2,7 @@ import * as path from "path";
 import { Pool } from "pg";
 import { copyFileSync, promises as fs } from "fs";
 import { Kysely, Migrator, PostgresDialect, FileMigrationProvider } from "kysely";
-import { getConfig } from "@src/config";
+import { getConfig } from "@src/configuration";
 import CliTable3 from "cli-table3";
 import chalk from "chalk";
 

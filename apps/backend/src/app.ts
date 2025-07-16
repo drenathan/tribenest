@@ -7,7 +7,7 @@ import path from "path";
 import next from "next";
 import fs from "fs";
 import { Deployment, InitRouteArgs } from "./types";
-import { DEPLOYMENT, IS_DEVELOPMENT, IS_E2E, IS_PRODUCTION, IS_TEST, MULTI_TENANT } from "./config/secrets";
+import { DEPLOYMENT, IS_DEVELOPMENT, IS_E2E, IS_PRODUCTION, IS_TEST, MULTI_TENANT } from "./configuration/secrets";
 import { initRoutes } from "./routes";
 import i18nInit from "./i18n";
 import { logger } from "./utils/logger";

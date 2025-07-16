@@ -7,7 +7,7 @@ import cronParser from "cron-parser";
 import BaseJob from "./baseJob";
 import { isNil } from "lodash";
 import { bootstrapEmails } from "./emails";
-import { IS_DEVELOPMENT, IS_TEST } from "@src/config/secrets";
+import { IS_DEVELOPMENT, IS_TEST } from "@src/configuration/secrets";
 import BaseEmailTemplate from "./emails/BaseEmailTemplate";
 const QUEUE_NAME = "tribeNestMainQueue";
 const SCHEDULER_ID = "tribeNestScheduler";

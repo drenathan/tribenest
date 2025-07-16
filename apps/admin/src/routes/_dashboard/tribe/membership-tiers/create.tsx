@@ -40,6 +40,8 @@ function RouteComponent() {
     },
   });
 
+  console.log(methods.formState.errors);
+
   const onSubmit = async (data: CreateMembershipTierInput) => {
     try {
       await createMembershipTier({ ...data, profileId: currentProfileAuthorization?.profileId });

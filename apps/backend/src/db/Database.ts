@@ -9,7 +9,7 @@ import {
   CamelCasePlugin,
 } from "kysely";
 import { Pool } from "pg";
-import { getConfig } from "@src/config";
+import { getConfig } from "@src/configuration";
 import { bootstrapModels } from "./models";
 import { DB } from "./types";
 import isPlainObject from "lodash/isPlainObject";

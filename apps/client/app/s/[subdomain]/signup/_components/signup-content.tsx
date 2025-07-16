@@ -3,7 +3,6 @@
 import {
   alphaToHexCode,
   ApiError,
-  CreateAccountInput,
   createAccountResolver,
   EditorButtonWithoutEditor,
   EditorInputWithoutEditor,

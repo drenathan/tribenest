@@ -12,6 +12,18 @@ services:
       - "api.localhost:127.0.0.1"
     environment:
       - NODE_ENV=production
+      - PORT=8000
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=tribe
+      - DATABASE_PASSWORD=tribe
+      - DATABASE_NAME=tribe
+
+      - REDIS_URL=redis://redis:6379
+
+      # JWT configuration
+      - JWT_SECRET=verylongandverysafejwtsecret
+      - ACCESSTOKENTTL=${ACCESSTOKENTTL:-1h}
     ports:
       - "8000:8000"
     depends_on:
@@ -35,7 +47,7 @@ services:
     volumes:
       - tribenest_postgres_test_prod_data:/var/lib/postgresql/data
     ports:
-      - "5433:5432" # Different port to avoid conflicts with dev
+      - "5432:5432" # Different port to avoid conflicts with dev
     networks:
       - tribenest-test-prod-network
 
@@ -45,7 +57,7 @@ services:
     container_name: tribenest-redis-test-prod
     restart: unless-stopped
     ports:
-      - "6380:6379" # Different port to avoid conflicts with dev
+      - "6379:6379" # Different port to avoid conflicts with dev
     volumes:
       - tribenest_redis_test_prod_data:/data
     networks:

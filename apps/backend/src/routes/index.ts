@@ -1,4 +1,4 @@
-import { IS_DEVELOPMENT, IS_E2E, IS_PRODUCTION, IS_TEST } from "@src/config/secrets";
+import { IS_DEVELOPMENT, IS_E2E, IS_PRODUCTION, IS_TEST } from "@src/configuration/secrets";
 import { InitRouteArgs, InitRouteFunction } from "@src/types";
 import { logger } from "@src/utils/logger";
 import { Router } from "express";

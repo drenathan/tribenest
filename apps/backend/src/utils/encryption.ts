@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { JWT_SECRET } from "@src/config/secrets";
+import { JWT_SECRET } from "@src/configuration/secrets";
 
 export class EncryptionService {
   private static readonly ALGORITHM = "aes-256-gcm";

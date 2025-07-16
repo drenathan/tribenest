@@ -10,7 +10,7 @@
     "jsx": "react",
     "paths": {
       "@src/*": ["src/*"],
-      "@config/*": ["src/config/*"]
+      "@config/*": ["src/configuration/*"]
     },
     "typeRoots": [
       "src/types",

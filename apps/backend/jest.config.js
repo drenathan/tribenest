@@ -4,7 +4,7 @@ module.exports = {
   testEnvironment: "node",
   moduleNameMapper: {
     "@src/(.*)": "<rootDir>/src/$1",
-    "@config/(.*)": "<rootDir>/src/config/$1",
+    "@config/(.*)": "<rootDir>/src/configuration/$1",
   },
-  modulePathIgnorePatterns: ["<rootDir>/src/config", "<rootDir>/build"],
+  modulePathIgnorePatterns: ["<rootDir>/src/configuration", "<rootDir>/build"],
 };

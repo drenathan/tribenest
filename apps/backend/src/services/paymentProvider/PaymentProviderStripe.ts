@@ -1,4 +1,4 @@
-import { STRIPE_SECRET_KEY } from "@src/config/secrets";
+import { STRIPE_SECRET_KEY } from "@src/configuration/secrets";
 import {
   ChargeInput,
   ChargeResponse,
