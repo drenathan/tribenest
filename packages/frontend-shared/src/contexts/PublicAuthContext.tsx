@@ -10,6 +10,7 @@ import {
 } from "../types";
 import { type AxiosInstance } from "axios";
 import type { LoginInput, PublicCreateAccountInput } from "../schema/auth";
+import { useEditorContext } from "../components/editor/context";
 
 enum Types {
   Initial = "INITIALIZE",
@@ -104,13 +105,18 @@ type AuthProviderProps = {
 
 function PublicAuthProvider({ children, httpClient, setHttpClientToken }: AuthProviderProps) {
   const [state, dispatch] = useReducer(AuthReducer, initialState);
+  const { profile } = useEditorContext();
 
   const initialize = useCallback(async () => {
     try {
       const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
       if (accessToken) {
         setHttpClientToken(accessToken);
-        const response = await httpClient.get("/accounts/me");
+        const response = await httpClient.get("/public/accounts/me", {
+          params: {
+            profileId: profile?.id,
+          },
+        });
 
         dispatch({
           type: Types.Initial,
@@ -132,7 +138,7 @@ function PublicAuthProvider({ children, httpClient, setHttpClientToken }: AuthPr
       });
       return false;
     }
-  }, [httpClient, setHttpClientToken]);
+  }, [httpClient, setHttpClientToken, profile]);
 
   useEffect(() => {
     initialize();
@@ -156,7 +162,11 @@ function PublicAuthProvider({ children, httpClient, setHttpClientToken }: AuthPr
 
   const refetchUser = async () => {
     try {
-      const response = await httpClient.get("/accounts/me");
+      const response = await httpClient.get("/accounts/me", {
+        params: {
+          profileId: profile?.id,
+        },
+      });
       dispatch({
         type: Types.Initial,
         payload: { isAuthenticated: true, user: response.data },

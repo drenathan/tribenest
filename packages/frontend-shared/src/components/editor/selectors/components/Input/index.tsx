@@ -13,6 +13,8 @@ type InputProps = {
   widthMobile?: string;
   type?: HTMLInputTypeAttribute;
   value?: string;
+  min?: number;
+  max?: number;
 };
 
 export const EditorInput: UserComponent<InputProps> = ({
@@ -56,9 +58,13 @@ export const EditorInputWithoutEditor = ({
   widthMobile,
   type,
   value,
+  min,
+  max,
 }: InputProps) => {
   return (
     <Input
+      min={min}
+      max={max}
       placeholder={placeholder}
       onChange={onChange}
       shouldConnect={shouldConnect}
@@ -78,6 +84,8 @@ const Input = ({
   ref,
   type,
   value,
+  min,
+  max,
 }: InputProps & { ref?: React.RefObject<HTMLInputElement> }) => {
   const { themeSettings } = useEditorContext();
   const {
@@ -91,6 +99,8 @@ const Input = ({
       onChange={(e) => onChange?.(e.target.value)}
       type={type}
       value={value}
+      min={min}
+      max={max}
       className={css`
         background-color: ${themeSettings.colors.background};
         color: ${themeSettings.colors.text};

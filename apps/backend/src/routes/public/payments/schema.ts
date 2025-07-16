@@ -59,5 +59,16 @@ export const finalizePaymentSchema = z.object({
   }),
 });
 
+export const createSubscriptionSchema = z.object({
+  body: z.object({
+    amount: z.number(),
+    billingCycle: z.enum(["month", "year"]),
+    profileId: z.string().uuid("Invalid profile ID"),
+    membershipTierId: z.string().uuid("Invalid membership tier ID"),
+    isChange: z.boolean().optional(),
+  }),
+});
+
 export type StartPaymentInput = z.infer<typeof startPaymentSchema>["body"];
 export type FinalizePaymentInput = z.infer<typeof finalizePaymentSchema>["body"];
+export type CreateSubscriptionInput = z.infer<typeof createSubscriptionSchema>["body"];

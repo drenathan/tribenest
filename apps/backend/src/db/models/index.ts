@@ -27,6 +27,9 @@ import { ProductVariantTrackModel } from "./product/productVariantTrack.model";
 import { OrderModel } from "./order/order.model";
 import { OrderItemModel } from "./order/orderItem.model";
 import { ProfileConfigurationModel } from "./profile/profileConfiguration.model";
+import { ProfilePaymentCustomerModel } from "./profile/profilePaymentCustomer.model";
+import { ProfilePaymentPriceModel } from "./profile/profilePaymentPrice.model";
+import { ProfilePaymentSubscriptionModel } from "./profile/profilePaymentSubscription.model";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
@@ -47,6 +50,9 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     Profile: new ProfileModel(client),
     ProfileAuthorization: new ProfileAuthorizationModel(client),
     ProfileConfiguration: new ProfileConfigurationModel(client),
+    ProfilePaymentCustomer: new ProfilePaymentCustomerModel(client),
+    ProfilePaymentPrice: new ProfilePaymentPriceModel(client),
+    ProfilePaymentSubscription: new ProfilePaymentSubscriptionModel(client),
     ProductCategory: new ProductCategoryModel(client),
     Product: new ProductModel(client),
     ProductVariant: new ProductVariantModel(client),

@@ -19,12 +19,13 @@ type ButtonProps = {
   shouldConnect?: boolean;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  variant?: "primary" | "secondary";
 };
 
-const buttonStyles = (themeSettings: EditorTheme, fullWidth?: boolean) =>
+const buttonStyles = (themeSettings: EditorTheme, fullWidth?: boolean, variant: "primary" | "secondary" = "primary") =>
   css({
-    backgroundColor: themeSettings.colors.primary,
-    color: themeSettings.colors.textPrimary,
+    backgroundColor: variant === "primary" ? themeSettings.colors.primary : themeSettings.colors.background,
+    color: variant === "primary" ? themeSettings.colors.textPrimary : themeSettings.colors.primary,
     paddingRight: "20px",
     paddingLeft: "20px",
     paddingTop: "10px",
@@ -36,12 +37,20 @@ const buttonStyles = (themeSettings: EditorTheme, fullWidth?: boolean) =>
     cursor: "pointer",
     width: fullWidth ? "100%" : "auto",
     transition: "background-color 0.3s ease",
+    border: `1px solid ${themeSettings.colors.primary + alphaToHexCode(0.3)}`,
 
     "&:hover": {
-      backgroundColor: themeSettings.colors.primary + alphaToHexCode(0.8),
+      ...(variant === "primary"
+        ? { backgroundColor: themeSettings.colors.primary + alphaToHexCode(0.8) }
+        : {
+            border: `1px solid ${themeSettings.colors.primary}`,
+            color: themeSettings.colors.primary,
+            transition: "all 0.3s ease",
+          }),
     },
     "&:disabled": {
-      backgroundColor: themeSettings.colors.primary + alphaToHexCode(0.5),
+      backgroundColor:
+        variant === "primary" ? themeSettings.colors.primary + alphaToHexCode(0.5) : themeSettings.colors.background,
       cursor: "not-allowed",
     },
   });
@@ -53,6 +62,7 @@ export const EditorButton: UserComponent<ButtonProps> = ({
   shouldConnect = true,
   type = "button",
   disabled = false,
+  variant = "primary",
 }: ButtonProps) => {
   const { themeSettings } = useEditorContext();
   const {
@@ -78,7 +88,7 @@ export const EditorButton: UserComponent<ButtonProps> = ({
         }
       }}
       onClick={onClick}
-      className={buttonStyles(themeSettings, fullWidth)}
+      className={buttonStyles(themeSettings, fullWidth, variant)}
       type={type}
       disabled={disabled}
     >
@@ -97,11 +107,16 @@ EditorButton.craft = {
   },
 };
 
-export const EditorButtonWithoutEditor = ({ text, onClick, fullWidth, type, disabled }: ButtonProps) => {
+export const EditorButtonWithoutEditor = ({ text, onClick, fullWidth, type, disabled, variant }: ButtonProps) => {
   const { themeSettings } = useEditorContext();
 
   return (
-    <button onClick={onClick} className={buttonStyles(themeSettings, fullWidth)} type={type} disabled={disabled}>
+    <button
+      onClick={onClick}
+      className={buttonStyles(themeSettings, fullWidth, variant)}
+      type={type}
+      disabled={disabled}
+    >
       {text}
     </button>
   );

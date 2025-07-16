@@ -1,11 +1,8 @@
-import { Body, Query, RouteHandler, ValidateSchema } from "@src/decorators";
+import { Body, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
-import { startPaymentSchema, StartPaymentInput } from "./schema";
-import { PaymentProviderFactory } from "@src/services/paymentProvider/PaymentProviderFactory";
-import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";
+import { startPaymentSchema, StartPaymentInput, createSubscriptionSchema, CreateSubscriptionInput } from "./schema";
 import { NotFoundError } from "@src/utils/app_error";
-import { EncryptionService } from "@src/utils/encryption";
 
 export class PublicPayments extends BaseController {
   @RouteHandler()
@@ -31,5 +28,29 @@ export class PublicPayments extends BaseController {
     });
 
     return result;
+  }
+
+  @RouteHandler()
+  @ValidateSchema(createSubscriptionSchema)
+  public async createSubscription(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: CreateSubscriptionInput,
+  ): Promise<any> {
+    if (body!.isChange) {
+      return this.services.profile.payment.changeSubscription({
+        ...body!,
+        accountId: req.account!.id,
+        email: req.account!.email,
+        name: `${req.account!.firstName} ${req.account!.lastName}`,
+      });
+    }
+    return this.services.profile.payment.createSubscription({
+      ...body!,
+      accountId: req.account!.id,
+      email: req.account!.email,
+      name: `${req.account!.firstName} ${req.account!.lastName}`,
+    });
   }
 }

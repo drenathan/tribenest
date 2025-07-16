@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, FormError, PaymentProviderName } from "@tribe-nest/frontend-shared";
+import { Button, FormError, PaymentProviderName, type ApiError } from "@tribe-nest/frontend-shared";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@tribe-nest/frontend-shared";
 import { Input } from "@tribe-nest/frontend-shared";
 import { Label } from "@tribe-nest/frontend-shared";
@@ -13,19 +13,13 @@ import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
 import { capitalize } from "lodash";
 
-// Utility function to check if a value is masked (contains asterisks)
-const isMaskedValue = (value: string | null | undefined): boolean => {
-  if (!value) return false;
-  return value.includes("*");
-};
-
 // Validation schemas
 const emailConfigSchema = z.object({
   smtpHost: z.string().min(1, "SMTP host is required"),
   smtpPort: z.string().min(1, "SMTP port is required"),
   smtpUsername: z.string().min(1, "SMTP username is required"),
   smtpPassword: z.string().min(1, "SMTP password is required"),
-  smtpFrom: z.string(),
+  smtpFrom: z.string().min(1, "From email is required"),
 });
 
 const r2ConfigSchema = z.object({
@@ -41,6 +35,7 @@ const paymentConfigSchema = z.object({
   paymentProviderName: z.enum(["stripe", "paypal"]),
   paymentProviderPublicKey: z.string().min(1, "Payment provider public key is required"),
   paymentProviderPrivateKey: z.string().min(1, "Payment provider private key is required"),
+  paymentProviderWebhookSecret: z.string().min(1, "Payment provider webhook secret is required"),
 });
 
 const settingsSchema = z.object({
@@ -59,7 +54,6 @@ function RouteComponent() {
   const { currentProfileAuthorization } = useAuth();
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState<string | null>(null);
-  const [currentConfig, setCurrentConfig] = useState<any>(null);
 
   const {
     register,
@@ -67,44 +61,42 @@ function RouteComponent() {
     getValues,
     formState: { errors },
     trigger,
+    reset,
   } = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
   });
 
   const loadConfiguration = useCallback(async () => {
+    if (!currentProfileAuthorization?.profileId) return;
     try {
-      const response = await httpClient.get(`/profiles/${currentProfileAuthorization?.profileId}/configuration`);
-      setCurrentConfig(response.data);
-
-      // Populate form with current values
-      if (response.data) {
-        if (response.data.smtpHost) {
-          setValue("email.smtpHost", response.data.smtpHost);
-          setValue("email.smtpPort", response.data.smtpPort);
-          setValue("email.smtpUsername", response.data.smtpUsername);
-          setValue("email.smtpPassword", response.data.smtpPassword);
-          setValue("email.smtpFrom", response.data.smtpFrom);
-        }
-
-        if (response.data.r2BucketName) {
-          setValue("r2.r2BucketName", response.data.r2BucketName);
-          setValue("r2.r2AccessKeyId", response.data.r2AccessKeyId);
-          setValue("r2.r2SecretAccessKey", response.data.r2SecretAccessKey);
-          setValue("r2.r2Endpoint", response.data.r2Endpoint);
-          setValue("r2.r2Region", response.data.r2Region);
-          setValue("r2.r2BucketUrl", response.data.r2BucketUrl);
-        }
-
-        if (response.data.paymentProviderName) {
-          setValue("payment.paymentProviderName", response.data.paymentProviderName);
-          setValue("payment.paymentProviderPublicKey", response.data.paymentProviderPublicKey);
-          setValue("payment.paymentProviderPrivateKey", response.data.paymentProviderPrivateKey);
-        }
-      }
+      const { data } = await httpClient.get(`/profiles/${currentProfileAuthorization?.profileId}/configuration`);
+      reset({
+        email: {
+          smtpHost: data.smtpHost ?? "",
+          smtpPort: data.smtpPort ?? "",
+          smtpUsername: data.smtpUsername ?? "",
+          smtpPassword: data.smtpPassword ?? "",
+          smtpFrom: data.smtpFrom ?? "",
+        },
+        r2: {
+          r2BucketName: data.r2BucketName ?? "",
+          r2AccessKeyId: data.r2AccessKeyId ?? "",
+          r2SecretAccessKey: data.r2SecretAccessKey ?? "",
+          r2Endpoint: data.r2Endpoint ?? "",
+          r2Region: data.r2Region ?? "",
+          r2BucketUrl: data.r2BucketUrl ?? "",
+        },
+        payment: {
+          paymentProviderName: data.paymentProviderName ?? "",
+          paymentProviderPublicKey: data.paymentProviderPublicKey ?? "",
+          paymentProviderPrivateKey: data.paymentProviderPrivateKey ?? "",
+          paymentProviderWebhookSecret: data.paymentProviderWebhookSecret ?? "",
+        },
+      });
     } catch (error) {
       console.error("Failed to load configuration:", error);
     }
-  }, [currentProfileAuthorization?.profileId, setValue]);
+  }, [currentProfileAuthorization?.profileId, reset]);
 
   // Load current configuration
   useEffect(() => {
@@ -119,67 +111,16 @@ function RouteComponent() {
     // Validate the specific section
     const isValid = await trigger(section);
     if (!isValid) {
-      toast.error(`Please fix the errors in the ${section} configuration`);
       return;
     }
 
     setIsLoading(section);
     try {
-      const formData: any = {};
-      const sectionData: any = {};
-
-      // Get current form values using React Hook Form
-      if (section === "email") {
-        const emailValues = getValues("email");
-        if (emailValues) {
-          sectionData.smtpHost = emailValues.smtpHost;
-          sectionData.smtpPort = emailValues.smtpPort;
-          sectionData.smtpUsername = emailValues.smtpUsername;
-          sectionData.smtpPassword = emailValues.smtpPassword;
-          sectionData.smtpFrom = emailValues.smtpFrom;
-        }
-      } else if (section === "r2") {
-        const r2Values = getValues("r2");
-        if (r2Values) {
-          sectionData.r2BucketName = r2Values.r2BucketName;
-          sectionData.r2AccessKeyId = r2Values.r2AccessKeyId;
-          sectionData.r2SecretAccessKey = r2Values.r2SecretAccessKey;
-          sectionData.r2Endpoint = r2Values.r2Endpoint;
-          sectionData.r2Region = r2Values.r2Region;
-          sectionData.r2BucketUrl = r2Values.r2BucketUrl;
-        }
-      } else if (section === "payment") {
-        const paymentValues = getValues("payment");
-        if (paymentValues) {
-          sectionData.paymentProviderName = paymentValues.paymentProviderName;
-          sectionData.paymentProviderPublicKey = paymentValues.paymentProviderPublicKey;
-          sectionData.paymentProviderPrivateKey = paymentValues.paymentProviderPrivateKey;
-        }
-      }
-
-      // Filter out unchanged masked values and empty values
-      Object.keys(sectionData).forEach((key) => {
-        const newValue = sectionData[key];
-        const currentValue = currentConfig?.[key];
-
-        // Only include if:
-        // 1. Value is not empty
-        // 2. Value has changed from current value
-        // 3. Value is not a masked value (unless it's actually been changed)
-        if (newValue && newValue !== currentValue && !isMaskedValue(newValue)) {
-          formData[section] = formData[section] || {};
-          formData[section][key] = newValue;
-        }
+      await httpClient.put(`/profiles/${currentProfileAuthorization.profileId}/configuration`, {
+        [section]: getValues(section),
       });
 
-      // If no changes, show a message
-      if (!formData[section] || Object.keys(formData[section]).length === 0) {
-        toast.info("No changes detected. Configuration remains unchanged.");
-        return;
-      }
-
-      await httpClient.put(`/profiles/${currentProfileAuthorization.profileId}/configuration`, formData);
-      toast.success(`${section.charAt(0).toUpperCase() + section.slice(1)} settings saved successfully!`);
+      toast.success(`${capitalize(section)} settings saved successfully!`);
       await loadConfiguration();
     } catch (error) {
       console.error(`Failed to save ${section} settings:`, error);
@@ -229,14 +170,16 @@ function RouteComponent() {
       }
     } catch (error) {
       console.error(`Failed to test ${type} configuration:`, error);
-      toast.error(`Failed to test ${type} configuration`);
+      toast.error(
+        `Failed to test ${type} configuration: ${(error as ApiError).response?.data?.message ?? "Unknown error"}`,
+      );
     } finally {
       setIsTesting(null);
     }
   };
 
   if (!currentProfileAuthorization?.profileId) {
-    return <div>Please select a profile first.</div>;
+    return null;
   }
 
   return (
@@ -440,6 +383,19 @@ function RouteComponent() {
                 />
                 {errors.payment?.paymentProviderPrivateKey && (
                   <FormError message={errors.payment.paymentProviderPrivateKey.message ?? ""} />
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="paymentProviderPrivateKey">Webhook Secret</Label>
+                <Input
+                  id="paymentProviderWebhookSecret"
+                  type="password"
+                  {...register("payment.paymentProviderWebhookSecret")}
+                  placeholder="whsec_..."
+                />
+                {errors.payment?.paymentProviderWebhookSecret && (
+                  <FormError message={errors.payment.paymentProviderWebhookSecret.message ?? ""} />
                 )}
               </div>
 

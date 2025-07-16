@@ -2,6 +2,7 @@ import { IS_DEVELOPMENT, IS_E2E, IS_PRODUCTION, IS_TEST } from "@src/configurati
 import { InitRouteArgs, InitRouteFunction } from "@src/types";
 import { logger } from "@src/utils/logger";
 import { Router } from "express";
+import express from "express";
 import fs from "fs";
 import path from "path";
 
@@ -46,7 +47,11 @@ export const initRoutes = (args: InitRouteArgs) => {
   const routeFiles = files.filter((file) => file.endsWith(IS_PRODUCTION ? "routes.js" : "routes.ts"));
 
   for (const file of routeFiles) {
-    const routeHandler = require(`./${file}`).default as { path: string; init: InitRouteFunction };
+    const routeHandler = require(`./${file}`).default as {
+      path: string;
+      init: InitRouteFunction;
+      disableBodyParser?: boolean;
+    };
 
     if (!routeHandler?.path) throw new Error(`Missing path for ${file}`);
     if (!routeHandler?.init) throw new Error(`Missing init function for ${file}`);
@@ -58,6 +63,12 @@ export const initRoutes = (args: InitRouteArgs) => {
     }
 
     if (routeHandler.path === "/e2e" && !IS_E2E) continue;
+
+    if (routeHandler.disableBodyParser) {
+      router.use(`${routeHandler.path}`, handler);
+    } else {
+      router.use(`${routeHandler.path}`, express.json(), handler);
+    }
 
     router.use(`${routeHandler.path}`, handler);
 

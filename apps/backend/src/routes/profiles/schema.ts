@@ -40,22 +40,22 @@ const getMediaSchema = z.object({
 // Profile Configuration Schemas
 const emailConfigurationSchema = z.object({
   body: z.object({
-    smtpHost: z.string().min(1, "SMTP host is required"),
-    smtpPort: z.string().min(1, "SMTP port is required"),
-    smtpUsername: z.string().min(1, "SMTP username is required"),
-    smtpPassword: z.string().min(1, "SMTP password is required"),
-    smtpFrom: z.string(),
+    smtpHost: z.string().min(1, "SMTP host is required").optional(),
+    smtpPort: z.string().min(1, "SMTP port is required").optional(),
+    smtpUsername: z.string().min(1, "SMTP username is required").optional(),
+    smtpPassword: z.string().min(1, "SMTP password is required").optional(),
+    smtpFrom: z.string().optional(),
   }),
 });
 
 const r2ConfigurationSchema = z.object({
   body: z.object({
-    r2BucketName: z.string().min(1, "R2 bucket name is required"),
-    r2AccessKeyId: z.string().min(1, "R2 access key ID is required"),
-    r2SecretAccessKey: z.string().min(1, "R2 secret access key is required"),
-    r2Endpoint: z.string().min(1, "R2 endpoint is required"),
-    r2Region: z.string().min(1, "R2 region is required"),
-    r2BucketUrl: z.string().url("R2 bucket URL must be valid"),
+    r2BucketName: z.string().min(1, "R2 bucket name is required").optional(),
+    r2AccessKeyId: z.string().min(1, "R2 access key ID is required").optional(),
+    r2SecretAccessKey: z.string().min(1, "R2 secret access key is required").optional(),
+    r2Endpoint: z.string().min(1, "R2 endpoint is required").optional(),
+    r2Region: z.string().min(1, "R2 region is required").optional(),
+    r2BucketUrl: z.string().url("R2 bucket URL must be valid").optional(),
   }),
 });
 
@@ -64,6 +64,7 @@ const paymentConfigurationSchema = z.object({
     paymentProviderName: z.enum(["stripe", "paypal"]),
     paymentProviderPublicKey: z.string().min(1, "Payment provider public key is required"),
     paymentProviderPrivateKey: z.string().min(1, "Payment provider private key is required"),
+    paymentProviderWebhookSecret: z.string().min(1, "Payment provider webhook secret is required"),
   }),
 });
 

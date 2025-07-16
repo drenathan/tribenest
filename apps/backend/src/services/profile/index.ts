@@ -1,16 +1,17 @@
 import { BadRequestError } from "@src/utils/app_error";
-import { BaseService } from "../baseService";
+import { BaseService, BaseServiceArgs } from "../baseService";
 import { FORBIDDEN_SUBDOMAINS } from "./contants";
 import { CreateProfileInput, GetMediaInput, UploadMediaInput } from "@src/routes/profiles/schema";
 import { safeStringify } from "@src/utils/json";
 import { MediaParent } from "@src/db/types/media";
-import { EmailClient } from "@src/workers/emails/EmailClient";
-import { EncryptionService } from "@src/utils/encryption";
-import S3Service from "../_apis/s3";
-import { PaymentProviderFactory } from "../paymentProvider/PaymentProviderFactory";
-import { PaymentProviderName } from "../paymentProvider/PaymentProvider";
+import { ProfilePaymentService } from "./profilePaymentService";
 
 export class ProfileService extends BaseService {
+  public payment: ProfilePaymentService;
+  constructor(args: BaseServiceArgs) {
+    super(args);
+    this.payment = new ProfilePaymentService(args);
+  }
   public async validateSubdomain(name: string) {
     if (FORBIDDEN_SUBDOMAINS.includes(name)) {
       return false;

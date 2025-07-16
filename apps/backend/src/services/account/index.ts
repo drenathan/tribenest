@@ -7,7 +7,12 @@ import { signToken } from "@src/utils/jwt";
 
 export class AccountService extends BaseService {
   public async findById(id: string) {
-    return this.database.models.Account.findById(id);
+    const account = await this.database.models.Account.findById(id);
+
+    if (account) {
+      account.password = "";
+    }
+    return account;
   }
 
   public async createAccount(input: CreateAccountInput, userAgent?: Details) {

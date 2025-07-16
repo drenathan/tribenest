@@ -15,7 +15,7 @@ type MembershipSectionProps = {
 export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title }: MembershipSectionProps) => {
   const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([]);
   const { httpClient, profile, themeSettings, navigate } = useEditorContext();
-  const { isAuthenticated } = usePublicAuth();
+  const { isAuthenticated, user } = usePublicAuth();
 
   const {
     connectors: { connect },
@@ -87,7 +87,14 @@ export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title
                 ))}
               </ul>
 
-              <EditorButton shouldConnect={false} text="Join" fullWidth onClick={() => handleJoinClick(tier)} />
+              <EditorButton
+                disabled={user?.membership?.membershipTierId === tier.id}
+                shouldConnect={false}
+                variant={user?.membership?.membershipTierId === tier.id ? "secondary" : "primary"}
+                text={user?.membership?.membershipTierId === tier.id ? "My Current Tier" : "Join"}
+                fullWidth
+                onClick={() => handleJoinClick(tier)}
+              />
             </div>
           );
         })}

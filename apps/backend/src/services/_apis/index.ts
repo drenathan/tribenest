@@ -4,6 +4,7 @@ import { EmailClient } from "@src/workers/emails/EmailClient";
 import S3Service from "./s3";
 import { PaymentProviderFactory } from "../paymentProvider/PaymentProviderFactory";
 import { PaymentProviderName } from "../paymentProvider/PaymentProvider";
+import { BadRequestError } from "@src/utils/app_error";
 
 export default class ApiServices {
   constructor(private database: Database) {}
@@ -18,7 +19,7 @@ export default class ApiServices {
       !config.smtpPort ||
       !config.smtpFrom
     ) {
-      throw new Error("Cannot create email client as profile configuration is not complete");
+      throw new BadRequestError("Cannot create email client as profile configuration is not complete");
     }
 
     return new EmailClient({
@@ -43,7 +44,7 @@ export default class ApiServices {
       !config.r2Region ||
       !config.r2BucketUrl
     ) {
-      throw new Error("Cannot create s3 client as profile configuration is not complete");
+      throw new BadRequestError("Cannot create s3 client as profile configuration is not complete");
     }
 
     return new S3Service({
@@ -62,15 +63,17 @@ export default class ApiServices {
       !config ||
       !config.paymentProviderName ||
       !config.paymentProviderPrivateKey ||
-      !config.paymentProviderPublicKey
+      !config.paymentProviderPublicKey ||
+      !config.paymentProviderWebhookSecret
     ) {
-      throw new Error("Payment configuration not found");
+      throw new BadRequestError("Payment configuration not found");
     }
 
     return PaymentProviderFactory.create(config.paymentProviderName as PaymentProviderName, {
       apiKeys: {
         privateKey: config.paymentProviderPrivateKey,
         publicKey: config.paymentProviderPublicKey,
+        webhookSecret: config.paymentProviderWebhookSecret,
       },
     });
   }

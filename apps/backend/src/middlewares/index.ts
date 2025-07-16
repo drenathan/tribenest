@@ -134,7 +134,6 @@ const loadMiddlewares = (app: Application) => {
 
   app.use(helmet(helmetConfig));
   app.use(compression());
-  app.use(express.json());
   if (!IS_TEST) app.use(morgan("common"));
   app.use(userAgent.express());
   // app.set("trust proxy", 1);
@@ -171,6 +170,7 @@ export const requireAuthentication = async (req: Request, next: NextFunction, se
     return next(new AppError(401, "User no longer exists"));
   }
 
+  account.password = "";
   req.account = account;
   req.session = session;
   setRequestProperty("currentAccountId", account.id);
@@ -186,19 +186,6 @@ export const publicAuthentication = async (
 ) => {
   const authorizationHeader = req.headers["authorization"] as string;
   const accessToken = authorizationHeader?.split(" ")[1];
-
-  req.membership = {
-    membershipTierId: "38747e14-4751-42aa-85ef-99e2ba6e20c4",
-    accountId: "38747e14-4751-42aa-85ef-99e2ba6e20c4",
-    profileId: req.query.profileId as string,
-    id: "38747e14-4751-42aa-85ef-99e2ba6e20c4",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    endDate: new Date(),
-    changedToMembershipId: null,
-    status: "active",
-    startDate: new Date(),
-  };
 
   if (!accessToken) return throwOnUnauthenticated ? next(new AppError(401, "You are not logged in")) : next();
 
@@ -219,6 +206,8 @@ export const publicAuthentication = async (
 
   req.account = account;
   req.session = session;
+  const membership = await services.membership.getAccountMembership(account.id, req.query.profileId as string);
+  req.membership = membership;
   // TODO: get the current profile id from the request query and get the user's membership details
   setRequestProperty("currentAccountId", account.id);
 

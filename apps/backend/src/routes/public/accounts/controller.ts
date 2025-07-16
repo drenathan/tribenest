@@ -20,4 +20,12 @@ export class PublicAccountsController extends BaseController {
     });
     return { account, token };
   }
+
+  @RouteHandler({ statusCode: 200 })
+  public async getMe(req: Request, _: Response, __: NextFunction): Promise<any> {
+    return {
+      ...req.account,
+      membership: req.membership,
+    };
+  }
 }

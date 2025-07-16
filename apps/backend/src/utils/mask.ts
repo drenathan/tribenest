@@ -59,6 +59,11 @@ export function maskConfiguration(config: any): any {
   if (masked.paymentProviderPrivateKey) {
     masked.paymentProviderPrivateKey = maskSensitiveValue(masked.paymentProviderPrivateKey);
   }
+
+  if (masked.paymentProviderWebhookSecret) {
+    masked.paymentProviderWebhookSecret = maskSensitiveValue(masked.paymentProviderWebhookSecret);
+  }
+
   if (masked.r2AccessKeyId) {
     masked.r2AccessKeyId = maskSensitiveValue(masked.r2AccessKeyId);
   }

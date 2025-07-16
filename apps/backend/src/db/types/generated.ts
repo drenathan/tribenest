@@ -97,6 +97,7 @@ export interface Memberships {
   id: Generated<string>;
   membershipTierId: string;
   profileId: string;
+  profilePaymentSubscriptionsId: string | null;
   startDate: Timestamp;
   status: string;
   updatedAt: Generated<Timestamp>;
@@ -283,6 +284,7 @@ export interface ProfileConfigurations {
   paymentProviderName: string | null;
   paymentProviderPrivateKey: string | null;
   paymentProviderPublicKey: string | null;
+  paymentProviderWebhookSecret: string | null;
   profileId: string;
   r2AccessKeyId: string | null;
   r2BucketName: string | null;
@@ -295,6 +297,42 @@ export interface ProfileConfigurations {
   smtpPassword: string | null;
   smtpPort: string | null;
   smtpUsername: string | null;
+}
+
+export interface ProfilePaymentCustomers {
+  accountId: string;
+  createdAt: Generated<Timestamp>;
+  customerId: string;
+  id: Generated<string>;
+  paymentProviderName: string;
+  profileId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface ProfilePaymentPrices {
+  amount: number;
+  billingCycle: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  paymentProviderName: string;
+  priceId: string;
+  profileId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface ProfilePaymentSubscriptions {
+  accountId: string;
+  createdAt: Generated<Timestamp>;
+  currentPeriodEnd: Timestamp;
+  currentPeriodStart: Timestamp;
+  customerId: string;
+  id: Generated<string>;
+  paymentProfilePriceId: string;
+  paymentProviderName: string;
+  paymentProviderSubscriptionId: string;
+  profileId: string;
+  status: string;
+  updatedAt: Generated<Timestamp>;
 }
 
 export interface Profiles {
@@ -362,6 +400,9 @@ export interface DB {
   productVariantTracks: ProductVariantTracks;
   profileAuthorizations: ProfileAuthorizations;
   profileConfigurations: ProfileConfigurations;
+  profilePaymentCustomers: ProfilePaymentCustomers;
+  profilePaymentPrices: ProfilePaymentPrices;
+  profilePaymentSubscriptions: ProfilePaymentSubscriptions;
   profiles: Profiles;
   sessions: Sessions;
   websiteVersionPages: WebsiteVersionPages;

@@ -2,25 +2,30 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { usePublicAuth, useEditorContext, alphaToHexCode } from "@tribe-nest/frontend-shared";
+import { useEditorContext, alphaToHexCode, EditorInputWithoutEditor, usePublicAuth } from "@tribe-nest/frontend-shared";
 import { EditorButtonWithoutEditor } from "@tribe-nest/frontend-shared";
 import type { MembershipTier } from "@tribe-nest/frontend-shared";
+import { MembershipPaymentStage } from "./membership-payment-stage";
+import { usePublicAuthGuard } from "@/app/s/[subdomain]/_hooks/usePublicAuthGuard";
 
 type Stage = "selection" | "details" | "payment";
-type PaymentCycle = "monthly" | "yearly";
+type PaymentCycle = "month" | "year";
 
 export function MembershipCheckoutContent() {
-  const { user, isAuthenticated } = usePublicAuth();
+  usePublicAuthGuard();
   const { themeSettings, navigate, httpClient, profile } = useEditorContext();
   const searchParams = useSearchParams();
   const membershipTierId = searchParams.get("membershipTierId");
+  const { user } = usePublicAuth();
 
   const [currentStage, setCurrentStage] = useState<Stage>("selection");
   const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([]);
   const [selectedTier, setSelectedTier] = useState<MembershipTier | null>(null);
-  const [paymentCycle, setPaymentCycle] = useState<PaymentCycle>("monthly");
+  const [paymentCycle, setPaymentCycle] = useState<PaymentCycle>("month");
   const [customAmount, setCustomAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  const hasPaymentSetup = !!user?.membership?.profilePaymentSubscriptionsId;
 
   // Fetch membership tiers
   useEffect(() => {
@@ -56,6 +61,8 @@ export function MembershipCheckoutContent() {
     setSelectedTier(tier);
     if (tier.payWhatYouWant && tier.payWhatYouWantMinimum) {
       setCustomAmount(tier.payWhatYouWantMinimum);
+    } else {
+      setCustomAmount(0);
     }
     setCurrentStage("details");
   };
@@ -74,11 +81,32 @@ export function MembershipCheckoutContent() {
       return `Pay What You Want from $${tier.payWhatYouWantMinimum}/Mo`;
     }
 
-    if (paymentCycle === "monthly") {
+    if (paymentCycle === "month") {
       return tier.priceMonthly ? `$${tier.priceMonthly}/Mo` : "Free";
     } else {
       return tier.priceYearly ? `$${tier.priceYearly}/Yr` : "Free";
     }
+  };
+
+  const handleChangeSubscription = () => {
+    if (!httpClient || !profile || !selectedTier) return;
+
+    const amount = selectedTier.payWhatYouWant
+      ? customAmount
+      : paymentCycle === "month"
+        ? selectedTier.priceMonthly
+        : selectedTier.priceYearly;
+    httpClient
+      .post("/public/payments/subscriptions", {
+        amount,
+        billingCycle: paymentCycle,
+        profileId: profile!.id,
+        membershipTierId: selectedTier.id,
+        isChange: true,
+      })
+      .then((res) => console.log(res.data))
+      .catch((err) => console.error(err))
+      .finally(() => setIsLoading(false));
   };
 
   if (isLoading) {
@@ -144,55 +172,87 @@ export function MembershipCheckoutContent() {
         <div>
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-center mb-2">Choose Your Membership</h1>
-            <p className="text-center text-lg opacity-75">Select the membership tier that's right for you</p>
+            <p className="text-center text-lg opacity-75">Select the membership tier that&apos;s right for you</p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {membershipTiers.map((tier) => (
-              <div
-                key={tier.id}
-                className="p-6 rounded-lg cursor-pointer transition-all hover:scale-105"
-                style={{
-                  border: `2px solid ${themeSettings.colors.primary}${alphaToHexCode(0.3)}`,
-                  backgroundColor: `${themeSettings.colors.background}`,
-                }}
-                onClick={() => handleTierSelect(tier)}
-              >
-                <h3 className="text-xl font-bold text-center mb-4">{tier.name}</h3>
+            {membershipTiers.map((tier) => {
+              const isCurrentTier = user?.membership?.membershipTierId === tier.id;
 
-                <div className="text-center mb-4">
-                  {tier.payWhatYouWant ? (
-                    <p className="text-lg font-semibold">Pay What You Want from ${tier.payWhatYouWantMinimum}/Mo</p>
-                  ) : (
-                    <p className="text-lg font-semibold">
-                      {tier.priceMonthly ? `$${tier.priceMonthly}/Mo` : "Free"}
-                      {tier.priceYearly ? ` or $${tier.priceYearly}/Yr` : ""}
-                    </p>
-                  )}
-                </div>
-
-                {tier.benefits && tier.benefits.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-semibold mb-2">Benefits:</h4>
-                    <ul className="space-y-1">
-                      {tier.benefits.slice(0, 3).map((benefit) => (
-                        <li key={benefit.id} className="flex items-center gap-2 text-sm">
-                          <span className="text-green-500">✓</span>
-                          {benefit.title}
-                        </li>
-                      ))}
-                      {tier.benefits.length > 3 && (
-                        <li className="text-xs opacity-75">+{tier.benefits.length - 3} more benefits</li>
-                      )}
-                    </ul>
+              return (
+                <div
+                  key={tier.id}
+                  className={`p-6 rounded-lg transition-all flex flex-col h-full ${
+                    isCurrentTier ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:scale-105"
+                  }`}
+                  style={{
+                    border: `2px solid ${
+                      isCurrentTier
+                        ? `${themeSettings.colors.primary}${alphaToHexCode(0.6)}`
+                        : `${themeSettings.colors.primary}${alphaToHexCode(0.3)}`
+                    }`,
+                    backgroundColor: `${themeSettings.colors.background}`,
+                  }}
+                  onClick={isCurrentTier ? undefined : () => handleTierSelect(tier)}
+                >
+                  <div className="text-center mb-2">
+                    {isCurrentTier && (
+                      <span
+                        className="inline-block px-2 py-1 text-xs font-semibold rounded-full mb-2"
+                        style={{
+                          backgroundColor: themeSettings.colors.primary,
+                          color: themeSettings.colors.background,
+                        }}
+                      >
+                        Current Plan
+                      </span>
+                    )}
                   </div>
-                )}
 
-                <div className="text-center">
-                  <EditorButtonWithoutEditor text="Select This Tier" onClick={() => handleTierSelect(tier)} fullWidth />
+                  <h3 className="text-xl font-bold text-center mb-4">{tier.name}</h3>
+
+                  <div className="text-center mb-4">
+                    {tier.payWhatYouWant ? (
+                      <p className="text-lg font-semibold">Pay What You Want from ${tier.payWhatYouWantMinimum}/Mo</p>
+                    ) : (
+                      <p className="text-lg font-semibold">
+                        {tier.priceMonthly ? `$${tier.priceMonthly}/Mo` : "Free"}
+                        {tier.priceYearly ? ` or $${tier.priceYearly}/Yr` : ""}
+                      </p>
+                    )}
+                  </div>
+
+                  {tier.benefits && tier.benefits.length > 0 && (
+                    <div className="mb-4 flex-grow">
+                      <h4 className="font-semibold mb-2">Benefits:</h4>
+                      <ul className="space-y-1">
+                        {tier.benefits.slice(0, 3).map((benefit) => (
+                          <li key={benefit.id} className="flex items-center gap-2 text-sm">
+                            <span className="text-green-500">✓</span>
+                            {benefit.title}
+                          </li>
+                        ))}
+                        {tier.benefits.length > 3 && (
+                          <li className="text-xs opacity-75">+{tier.benefits.length - 3} more benefits</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="text-center mt-auto">
+                    {isCurrentTier ? (
+                      <div className="text-sm opacity-75">You're currently on this plan</div>
+                    ) : (
+                      <EditorButtonWithoutEditor
+                        text="Select This Tier"
+                        onClick={() => handleTierSelect(tier)}
+                        fullWidth
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -217,7 +277,7 @@ export function MembershipCheckoutContent() {
               {/* Benefits */}
               {selectedTier.benefits && selectedTier.benefits.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-3">What you'll get:</h3>
+                  <h3 className="text-lg font-semibold mb-3">What you&apos;ll get:</h3>
                   <ul className="space-y-2">
                     {selectedTier.benefits.map((benefit) => (
                       <li key={benefit.id} className="flex items-center gap-3">
@@ -245,17 +305,15 @@ export function MembershipCheckoutContent() {
                   <label className="block text-sm font-medium mb-2">
                     How much would you like to pay? (Min: ${selectedTier.payWhatYouWantMinimum})
                   </label>
-                  <input
+                  <EditorInputWithoutEditor
                     type="number"
                     min={selectedTier.payWhatYouWantMinimum}
-                    max={selectedTier.payWhatYouWantMaximum}
-                    value={customAmount}
-                    onChange={(e) => setCustomAmount(Number(e.target.value))}
-                    className="w-full p-3 rounded border"
-                    style={{
-                      borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.4)}`,
-                      backgroundColor: themeSettings.colors.background,
-                      color: themeSettings.colors.text,
+                    value={String(customAmount)}
+                    onChange={(e) => {
+                      const value = Number(e);
+                      if (value >= selectedTier.payWhatYouWantMinimum!) {
+                        setCustomAmount(value);
+                      }
                     }}
                   />
                 </div>
@@ -271,9 +329,9 @@ export function MembershipCheckoutContent() {
                         <input
                           type="radio"
                           name="paymentCycle"
-                          value="monthly"
-                          checked={paymentCycle === "monthly"}
-                          onChange={() => setPaymentCycle("monthly")}
+                          value="month"
+                          checked={paymentCycle === "month"}
+                          onChange={() => setPaymentCycle("month")}
                           className="w-4 h-4"
                           style={{ accentColor: themeSettings.colors.primary }}
                         />
@@ -285,9 +343,9 @@ export function MembershipCheckoutContent() {
                         <input
                           type="radio"
                           name="paymentCycle"
-                          value="yearly"
-                          checked={paymentCycle === "yearly"}
-                          onChange={() => setPaymentCycle("yearly")}
+                          value="year"
+                          checked={paymentCycle === "year"}
+                          onChange={() => setPaymentCycle("year")}
                           className="w-4 h-4"
                           style={{ accentColor: themeSettings.colors.primary }}
                         />
@@ -308,15 +366,24 @@ export function MembershipCheckoutContent() {
                   {selectedTier.payWhatYouWant ? `$${customAmount}` : getTierPrice(selectedTier)}
                 </p>
                 <p className="text-sm opacity-75">
-                  {selectedTier.payWhatYouWant ? "per month" : paymentCycle === "monthly" ? "per month" : "per year"}
+                  {selectedTier.payWhatYouWant ? "per month" : paymentCycle === "month" ? "per month" : "per year"}
                 </p>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 justify-center">
-              <EditorButtonWithoutEditor text="Back to Selection" onClick={handleBackToSelection} />
-              <EditorButtonWithoutEditor text="Proceed to Payment" onClick={handleProceedToPayment} />
+            <div className="flex gap-4 justify-between">
+              <EditorButtonWithoutEditor
+                text="Back"
+                onClick={handleBackToSelection}
+                variant="secondary"
+                type="button"
+              />
+              <EditorButtonWithoutEditor
+                text={hasPaymentSetup ? "Confirm Change" : "Proceed to Payment"}
+                onClick={hasPaymentSetup ? handleChangeSubscription : handleProceedToPayment}
+                type="submit"
+              />
             </div>
           </div>
         </div>
@@ -324,29 +391,12 @@ export function MembershipCheckoutContent() {
 
       {/* Stage 3: Payment (Empty for now) */}
       {currentStage === "payment" && selectedTier && (
-        <div>
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-center mb-2">Payment</h1>
-            <p className="text-center text-lg opacity-75">Payment stage - to be implemented</p>
-          </div>
-
-          <div className="max-w-2xl mx-auto text-center">
-            <div
-              className="p-8 rounded-lg"
-              style={{ border: `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.3)}` }}
-            >
-              <p className="text-lg mb-4">Payment integration will be implemented here.</p>
-              <p className="mb-6 opacity-75">
-                Selected: {selectedTier.name} - {getTierPrice(selectedTier)}
-              </p>
-
-              <div className="flex gap-4 justify-center">
-                <EditorButtonWithoutEditor text="Back to Details" onClick={() => setCurrentStage("details")} />
-                <EditorButtonWithoutEditor text="Back to Selection" onClick={handleBackToSelection} />
-              </div>
-            </div>
-          </div>
-        </div>
+        <MembershipPaymentStage
+          selectedTier={selectedTier}
+          customAmount={customAmount}
+          paymentCycle={paymentCycle}
+          onBackToDetails={() => setCurrentStage("details")}
+        />
       )}
     </div>
   );
