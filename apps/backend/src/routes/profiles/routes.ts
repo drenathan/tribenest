@@ -13,6 +13,13 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.post("/:id/media", (...args) => controller.uploadMedia(...args));
   router.get("/:id/media", (...args) => controller.getMedia(...args));
 
+  // Profile Configuration Routes
+  router.get("/:id/configuration", (...args) => controller.getProfileConfiguration(...args));
+  router.put("/:id/configuration", (...args) => controller.updateProfileConfiguration(...args));
+  router.post("/:id/configuration/test-email", (...args) => controller.testEmailConfiguration(...args));
+  router.post("/:id/configuration/test-r2", (...args) => controller.testR2Configuration(...args));
+  router.post("/:id/configuration/test-payment", (...args) => controller.testPaymentConfiguration(...args));
+
   return router;
 };
 

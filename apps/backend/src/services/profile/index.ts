@@ -103,4 +103,103 @@ export class ProfileService extends BaseService {
       },
     });
   }
+
+  /**
+   * Get profile configuration with decrypted sensitive fields
+   */
+  public async getProfileConfiguration(profileId: string) {
+    return this.database.models.ProfileConfiguration.getProfileConfiguration(profileId);
+  }
+
+  /**
+   * Update profile configuration with encrypted sensitive fields
+   */
+  public async updateProfileConfiguration(profileId: string, data: any) {
+    return this.database.models.ProfileConfiguration.updateProfileConfiguration(profileId, data);
+  }
+
+  /**
+   * Test email configuration
+   */
+  public async testEmailConfiguration(profileId: string, testEmail: string) {
+    const config = await this.getProfileConfiguration(profileId);
+    if (!config || !config.smtpHost || !config.smtpUsername || !config.smtpPassword) {
+      throw new Error("Email configuration not found or incomplete");
+    }
+
+    const emailClient = new EmailClient({
+      host: config.smtpHost,
+      port: parseInt(config.smtpPort || "587"),
+      from: config.smtpFrom || "test@example.com",
+      auth: {
+        user: config.smtpUsername,
+        pass: config.smtpPassword,
+      },
+    });
+
+    await emailClient.sendEmail({
+      to: testEmail,
+      subject: "Test Email from TribeNest",
+      html: "<h1>Test Email</h1><p>This is a test email to verify your SMTP configuration.</p>",
+    });
+
+    return { success: true, message: "Test email sent successfully" };
+  }
+
+  /**
+   * Test R2 configuration
+   */
+  public async testR2Configuration(profileId: string) {
+    const config = await this.getProfileConfiguration(profileId);
+    if (
+      !config ||
+      !config.r2BucketName ||
+      !config.r2AccessKeyId ||
+      !config.r2SecretAccessKey ||
+      !config.r2Endpoint ||
+      !config.r2Region
+    ) {
+      throw new Error("R2 configuration not found or incomplete");
+    }
+
+    // Test R2 connection by trying to list objects
+    const { S3Client, ListObjectsV2Command } = await import("@aws-sdk/client-s3");
+
+    const client = new S3Client({
+      credentials: {
+        accessKeyId: config.r2AccessKeyId,
+        secretAccessKey: config.r2SecretAccessKey,
+      },
+      endpoint: config.r2Endpoint,
+      region: config.r2Region,
+      forcePathStyle: true,
+    });
+
+    const command = new ListObjectsV2Command({
+      Bucket: config.r2BucketName,
+      MaxKeys: 1,
+    });
+
+    await client.send(command);
+
+    return { success: true, message: "R2 configuration is valid" };
+  }
+
+  /**
+   * Test payment configuration
+   */
+  public async testPaymentConfiguration(profileId: string) {
+    const config = await this.getProfileConfiguration(profileId);
+    if (!config || !config.paymentProviderName) {
+      throw new Error("Payment configuration not found");
+    }
+
+    // Test payment provider configuration
+    if (config.paymentProviderName === "stripe") {
+      const stripe = require("stripe")(config.paymentProviderPrivateKey);
+      await stripe.paymentMethods.list({ limit: 1 });
+    }
+
+    return { success: true, message: "Payment configuration is valid" };
+  }
 }

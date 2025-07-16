@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Globe, House, Link2Icon, Mails, ShoppingBag, Users } from "lucide-react";
+import { ChevronRight, Globe, House, Link2Icon, Mails, Settings, ShoppingBag, Users } from "lucide-react";
 
 type NavItem = {
   title: string;
@@ -170,6 +170,14 @@ export function NavMain() {
             </SidebarMenuItem>
           </Collapsible>
         ))}
+        <SidebarMenuItem className={cn(isActive("/settings") && "bg-primary rounded")}>
+          <Link className="flex items-center" to="/settings">
+            <SidebarMenuButton tooltip={"Settings"}>
+              <Settings />
+              <span>Settings</span>
+            </SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
   );

@@ -1,6 +1,7 @@
 import { Kysely } from "kysely";
 import BaseModel from "../baseModel";
 import { DB } from "../../types";
+import { EncryptionService } from "@src/utils/encryption";
 
 export class ProfileAuthorizationModel extends BaseModel<"profileAuthorizations", "id"> {
   constructor(client: Kysely<DB>) {
@@ -14,10 +15,18 @@ export class ProfileAuthorizationModel extends BaseModel<"profileAuthorizations"
       .selectAll()
       .select((eb) => [
         this.jsonObjectFrom(
-          eb.selectFrom("profiles as p").select(["p.name", "p.id"]).whereRef("p.id", "=", "pa.profileId"),
+          eb
+            .selectFrom("profiles as p")
+            .fullJoin("profileConfigurations as pc", "pc.profileId", "p.id")
+            .select(["p.name", "p.id", "pc.paymentProviderPublicKey"])
+            .whereRef("p.id", "=", "pa.profileId"),
         ).as("profile"),
       ])
       .execute();
-    return authorizations;
+
+    return authorizations.map((authorization) => ({
+      ...authorization,
+      profile: EncryptionService.decryptObject(authorization.profile!, ["paymentProviderPublicKey"]),
+    }));
   }
 }

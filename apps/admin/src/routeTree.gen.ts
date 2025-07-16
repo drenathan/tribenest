@@ -16,6 +16,7 @@ import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as DashboardTribeIndexRouteImport } from './routes/_dashboard/tribe/index'
+import { Route as DashboardSettingsIndexRouteImport } from './routes/_dashboard/settings/index'
 import { Route as DashboardTribeMembersRouteImport } from './routes/_dashboard/tribe/members'
 import { Route as DashboardTribeCollectionsRouteImport } from './routes/_dashboard/tribe/collections'
 import { Route as DashboardWebsiteThemesIndexRouteImport } from './routes/_dashboard/website/themes/index'
@@ -66,6 +67,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
 const DashboardTribeIndexRoute = DashboardTribeIndexRouteImport.update({
   id: '/tribe/',
   path: '/tribe/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardSettingsIndexRoute = DashboardSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardTribeMembersRoute = DashboardTribeMembersRouteImport.update({
@@ -183,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/tribe/members': typeof DashboardTribeMembersRoute
+  '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
@@ -208,6 +215,7 @@ export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/tribe/members': typeof DashboardTribeMembersRoute
+  '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
@@ -236,6 +244,7 @@ export interface FileRoutesById {
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/_dashboard/tribe/members': typeof DashboardTribeMembersRoute
+  '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_dashboard/tribe/': typeof DashboardTribeIndexRoute
   '/_dashboard/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/_dashboard/store/products/ceate': typeof DashboardStoreProductsCeateRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/'
     | '/tribe/collections'
     | '/tribe/members'
+    | '/settings'
     | '/tribe'
     | '/store/music/create'
     | '/store/products/ceate'
@@ -288,6 +298,7 @@ export interface FileRouteTypes {
     | '/'
     | '/tribe/collections'
     | '/tribe/members'
+    | '/settings'
     | '/tribe'
     | '/store/music/create'
     | '/store/products/ceate'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/_dashboard/'
     | '/_dashboard/tribe/collections'
     | '/_dashboard/tribe/members'
+    | '/_dashboard/settings/'
     | '/_dashboard/tribe/'
     | '/_dashboard/store/music/create'
     | '/_dashboard/store/products/ceate'
@@ -388,6 +400,13 @@ declare module '@tanstack/react-router' {
       path: '/tribe'
       fullPath: '/tribe'
       preLoaderRoute: typeof DashboardTribeIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/settings/': {
+      id: '/_dashboard/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof DashboardSettingsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/tribe/members': {
@@ -539,6 +558,7 @@ interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardTribeCollectionsRoute: typeof DashboardTribeCollectionsRoute
   DashboardTribeMembersRoute: typeof DashboardTribeMembersRoute
+  DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardTribeIndexRoute: typeof DashboardTribeIndexRoute
   DashboardStoreMusicCreateRoute: typeof DashboardStoreMusicCreateRoute
   DashboardStoreProductsCeateRoute: typeof DashboardStoreProductsCeateRoute
@@ -562,6 +582,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardTribeCollectionsRoute: DashboardTribeCollectionsRoute,
   DashboardTribeMembersRoute: DashboardTribeMembersRoute,
+  DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardTribeIndexRoute: DashboardTribeIndexRoute,
   DashboardStoreMusicCreateRoute: DashboardStoreMusicCreateRoute,
   DashboardStoreProductsCeateRoute: DashboardStoreProductsCeateRoute,
