@@ -56,21 +56,6 @@ function RouteComponent() {
 
   // Debounced search query
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(search.search);
-
-  const debouncedSetSearch = useMemo(
-    () =>
-      debounce((value: string) => {
-        setDebouncedSearchQuery(value);
-        updateURLParams({ search: value, page: 1 });
-      }, 500),
-    [],
-  );
-
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-    debouncedSetSearch(value);
-  };
-
   // Update URL search params when filters change
   const updateURLParams = useCallback(
     (updates: Partial<typeof search>) => {
@@ -82,6 +67,20 @@ function RouteComponent() {
     },
     [search, navigate],
   );
+
+  const debouncedSetSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setDebouncedSearchQuery(value);
+        updateURLParams({ search: value, page: 1 });
+      }, 500),
+    [updateURLParams],
+  );
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    debouncedSetSearch(value);
+  };
 
   const handlePostTypeChange = (type: string) => {
     updateURLParams({ type, page: 1 });

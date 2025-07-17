@@ -57,7 +57,6 @@ function RouteComponent() {
 
   const {
     register,
-    setValue,
     getValues,
     formState: { errors },
     trigger,

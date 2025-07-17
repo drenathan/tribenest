@@ -201,6 +201,7 @@ export interface ProductCategories {
 }
 
 export interface Products {
+  archivedAt: Timestamp | null;
   artist: string | null;
   categoryId: string;
   createdAt: Generated<Timestamp>;

@@ -2,16 +2,29 @@ import type { IPublicProduct, PaginatedData, ProductCategory } from "../../../ty
 import { useEditorContext } from "../../../components/editor/context";
 import { useQuery } from "@tanstack/react-query";
 
-export function useGetProducts(category: ProductCategory) {
+export interface GetProductsParams {
+  query?: string;
+  category?: ProductCategory;
+  page?: number;
+  releaseType?: "album" | "single" | "all";
+}
+
+export function useGetProducts(params?: GetProductsParams) {
   const { profile, httpClient } = useEditorContext();
 
   return useQuery<PaginatedData<IPublicProduct>>({
-    queryKey: ["products", profile?.id, category],
+    queryKey: ["products", profile?.id, params],
     queryFn: async () => {
       const res = await httpClient!.get("/public/products", {
         params: {
           profileId: profile?.id,
-          category,
+          category: params?.category,
+          page: params?.page || 1,
+          limit: 10,
+          filter: {
+            query: params?.query,
+            releaseType: params?.releaseType,
+          },
         },
       });
       return res.data;

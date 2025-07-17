@@ -3,12 +3,30 @@ import { useQuery } from "@tanstack/react-query";
 import type { IProduct, ProductCategory } from "@/types/product";
 import type { PaginatedData } from "@tribe-nest/frontend-shared";
 
-export const useGetProducts = (profileId?: string, category?: ProductCategory) => {
+export type GetProductsFilter = {
+  query?: string;
+  archived?: boolean;
+  futureRelease?: boolean;
+  releaseType?: "album" | "single" | "all";
+};
+
+export const useGetProducts = (
+  profileId?: string,
+  category?: ProductCategory,
+  page = 1,
+  filter?: GetProductsFilter,
+) => {
   return useQuery<PaginatedData<IProduct>>({
-    queryKey: ["products", profileId, category],
+    queryKey: ["products", profileId, category, page, filter],
     queryFn: async () => {
       const response = await httpClient.get("/products", {
-        params: { profileId, category },
+        params: {
+          profileId,
+          category,
+          page,
+          limit: 10,
+          filter,
+        },
       });
       return response.data;
     },
