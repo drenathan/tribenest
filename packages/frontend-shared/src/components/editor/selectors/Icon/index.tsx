@@ -11,6 +11,7 @@ type IconProps = {
   shouldConnect?: boolean;
   color?: string;
   size?: number;
+  fill?: string;
 };
 
 export const EditorIcon: UserComponent<IconProps> = ({
@@ -20,6 +21,7 @@ export const EditorIcon: UserComponent<IconProps> = ({
   shouldConnect = true,
   color,
   size,
+  fill,
 }) => {
   const {
     connectors: { connect },
@@ -36,7 +38,13 @@ export const EditorIcon: UserComponent<IconProps> = ({
       }}
       className={cn("", containerClassName)}
     >
-      <DynamicIcon color={color || themeSettings.colors.text} name={icon} className={iconClassName} size={size} />
+      <DynamicIcon
+        color={color || themeSettings.colors.text}
+        name={icon}
+        className={iconClassName}
+        size={size}
+        fill={fill}
+      />
     </div>
   );
 };

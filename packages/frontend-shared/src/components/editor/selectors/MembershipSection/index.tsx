@@ -62,7 +62,7 @@ export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title
                 border: `1px solid ${themeSettings.colors.primary}`,
                 borderRadius: themeSettings.cornerRadius + "px",
               }}
-              className="w-full @md:w-[350px] p-4"
+              className="w-full @md:w-[350px] p-4 flex flex-col"
               key={tier.id}
             >
               <h2 className="text-2xl font-bold text-center">{tier.name}</h2>
@@ -78,7 +78,7 @@ export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title
                   </div>
                 )}
               </div>
-              <ul className="flex flex-col gap-2 mb-4">
+              <ul className="flex flex-col gap-2 mb-4 flex-grow">
                 {tier?.benefits?.map((benefit) => (
                   <li key={benefit.id} className="flex items-center gap-2 text-sm">
                     <EditorIcon icon="check" iconClassName="w-4 h-4" shouldConnect={false} />
@@ -87,14 +87,24 @@ export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title
                 ))}
               </ul>
 
-              <EditorButton
-                disabled={user?.membership?.membershipTierId === tier.id}
-                shouldConnect={false}
-                variant={user?.membership?.membershipTierId === tier.id ? "secondary" : "primary"}
-                text={user?.membership?.membershipTierId === tier.id ? "My Current Tier" : "Join"}
-                fullWidth
-                onClick={() => handleJoinClick(tier)}
-              />
+              {user?.membership?.membershipTierId === tier.id ? (
+                <div
+                  className="text-sm text-center py-4"
+                  style={{
+                    color: themeSettings.colors.primary,
+                  }}
+                >
+                  <span>You are currently on this tier</span>
+                </div>
+              ) : (
+                <EditorButton
+                  disabled={user?.membership?.membershipTierId === tier.id}
+                  shouldConnect={false}
+                  text={"Join"}
+                  fullWidth
+                  onClick={() => handleJoinClick(tier)}
+                />
+              )}
             </div>
           );
         })}

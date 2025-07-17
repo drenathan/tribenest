@@ -1,12 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { type UserComponent } from "@craftjs/core";
 import { useContainerQueryContext, useEditorContext } from "../../../components/editor/context";
 import { alphaToHexCode } from "../../../lib/utils";
 import { css } from "@emotion/css";
-import type { IPublicPost, IMedia } from "../../../types";
+import type { IPublicPost, IMedia, IPublicComment } from "../../../types";
 import { useAudioPlayer } from "../../../contexts/AudioPlayerContext";
-import { EditorButton, EditorIcon } from "../../../components/editor/selectors";
+import { EditorButton, EditorIcon, EditorInputWithoutEditor, EditorModal } from "../../../components/editor/selectors";
+import { usePublicAuth } from "../../../contexts/PublicAuthContext";
 import ReactPlayer from "react-player";
 
 interface PostItemProps {
@@ -14,7 +15,16 @@ interface PostItemProps {
 }
 
 export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
-  const { themeSettings, profile } = useEditorContext();
+  const { themeSettings, profile, httpClient, navigate } = useEditorContext();
+  const { user, isAuthenticated } = usePublicAuth();
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [likeCount, setLikeCount] = useState(post.likes || 0);
+  const [commentCount, setCommentCount] = useState(post.comments || 0);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<IPublicComment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Add rotation animation style
   useEffect(() => {
@@ -32,6 +42,148 @@ export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
       }
     };
   }, []);
+
+  const loadLikeStatus = useCallback(async () => {
+    if (!httpClient) return;
+    try {
+      const response = await httpClient.get("/public/likes/status", {
+        params: { entityId: post.id, entityType: "post" },
+      });
+      setIsLiked(response.data.liked);
+    } catch (error) {
+      console.error("Error loading like status:", error);
+    }
+  }, [httpClient, post.id]);
+
+  const loadSaveStatus = useCallback(async () => {
+    if (!httpClient) return;
+    try {
+      const response = await httpClient.get("/public/saves/status", {
+        params: { entityId: post.id, entityType: "post" },
+      });
+      setIsSaved(response.data.saved);
+    } catch (error) {
+      console.error("Error loading save status:", error);
+    }
+  }, [httpClient, post.id]);
+
+  const loadCounts = useCallback(async () => {
+    if (!httpClient) return;
+    try {
+      const [likeResponse, commentResponse] = await Promise.all([
+        httpClient.get("/public/likes/count", { params: { entityId: post.id, entityType: "post" } }),
+        httpClient.get("/public/comments/count", { params: { entityId: post.id, entityType: "post" } }),
+      ]);
+      setLikeCount(likeResponse.data.count);
+      setCommentCount(commentResponse.data.count);
+      console.log(likeResponse.data.count, commentResponse.data.count);
+    } catch (error) {
+      console.error("Error loading counts:", error);
+    }
+  }, [httpClient, post.id]);
+
+  // Load initial state
+  useEffect(() => {
+    if (isAuthenticated && httpClient) {
+      loadLikeStatus();
+      loadSaveStatus();
+      loadCounts();
+    }
+  }, [isAuthenticated, httpClient, loadLikeStatus, loadSaveStatus, loadCounts, post.id, post.type]);
+
+  const handleLike = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    if (!httpClient) return;
+
+    try {
+      if (isLiked) {
+        await httpClient.delete("/public/likes", {
+          data: { entityId: post.id, entityType: "post" },
+        });
+        setIsLiked(false);
+        setLikeCount((prev) => Number(prev) - 1);
+      } else {
+        await httpClient.post("/public/likes", {
+          entityId: post.id,
+          entityType: "post",
+        });
+        setIsLiked(true);
+        setLikeCount((prev) => Number(prev) + 1);
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    if (!httpClient) return;
+
+    try {
+      if (isSaved) {
+        await httpClient.delete("/public/saves", {
+          data: { entityId: post.id, entityType: "post" },
+        });
+        setIsSaved(false);
+      } else {
+        await httpClient.post("/public/saves", {
+          entityId: post.id,
+          entityType: "post",
+        });
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error("Error toggling save:", error);
+    }
+  };
+
+  const handleCommentClick = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    setShowComments(true);
+    loadComments();
+  };
+
+  const loadComments = useCallback(async () => {
+    if (!httpClient) return;
+    try {
+      const response = await httpClient.get("/public/comments", {
+        params: { entityId: post.id, entityType: "post" },
+      });
+      setComments(response.data.comments);
+    } catch (error) {
+      console.error("Error loading comments:", error);
+    }
+  }, [httpClient, post.id]);
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+    if (!httpClient) return;
+
+    setIsLoading(true);
+    try {
+      await httpClient.post("/public/comments", {
+        entityId: post.id,
+        entityType: "post",
+        content: newComment,
+      });
+      setNewComment("");
+      await loadComments();
+      setCommentCount((prev) => Number(prev) + 1);
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div
@@ -150,19 +302,82 @@ export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
           padding: "16px",
         })}
       >
-        <ActionButton icon={<EditorIcon icon="heart" />} count={20} />
-        <ActionButton icon={<EditorIcon icon="message-circle" />} count={10} />
-        <ActionButton icon={<EditorIcon icon="share" />} />
+        <ActionButton
+          icon={<EditorIcon icon="heart" fill={isLiked ? themeSettings.colors.text : "none"} />}
+          count={likeCount}
+          onClick={handleLike}
+        />
+        <ActionButton icon={<EditorIcon icon="message-circle" />} count={commentCount} onClick={handleCommentClick} />
+        <ActionButton
+          icon={<EditorIcon icon="bookmark" fill={isSaved ? themeSettings.colors.text : "none"} />}
+          onClick={handleSave}
+        />
       </div>
+
+      {/* Comments Modal */}
+      <EditorModal
+        isOpen={showComments}
+        onClose={() => setShowComments(false)}
+        title="Comments"
+        content={
+          <div className="space-y-4">
+            <div className="max-h-96 overflow-y-auto space-y-3">
+              {comments.map((comment) => (
+                <div key={comment.id} className="p-3 rounded-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold text-sm">{comment.fullName || "User"}</span>
+                    <span
+                      style={{
+                        color: `${themeSettings.colors.text}${alphaToHexCode(0.5)}`,
+                      }}
+                      className="text-xs"
+                    >
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-sm">{comment.content}</p>
+                </div>
+              ))}
+            </div>
+            <div
+              className={css({
+                paddingTop: "16px",
+                borderTop: `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.4)}`,
+              })}
+            >
+              <div className="flex gap-2">
+                <EditorInputWithoutEditor
+                  value={newComment}
+                  onChange={(e) => setNewComment(e)}
+                  placeholder="Add a comment..."
+                  width="100%"
+                />
+
+                <EditorButton text="Post" onClick={handleAddComment} disabled={isLoading || !newComment.trim()} />
+              </div>
+            </div>
+          </div>
+        }
+        size="lg"
+      />
     </div>
   );
 };
 
-export const ActionButton = ({ icon, count }: { icon: React.ReactNode; count?: number }) => {
+export const ActionButton = ({
+  icon,
+  count,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  count?: number;
+  onClick?: () => void;
+}) => {
   const { themeSettings } = useEditorContext();
 
   return (
     <button
+      onClick={onClick}
       className={css({
         display: "flex",
         alignItems: "center",

@@ -33,6 +33,10 @@ export default class BaseModel<
   private whereEB(eb: any, fields?: any) {
     const ands: Expression<SqlBool>[] = [];
     for (const [column, value] of Object.entries(fields || {})) {
+      if (value === null) {
+        ands.push(eb(`${this.table}.${column}`, "is", null));
+        continue;
+      }
       const isArray = Array.isArray(value);
       // @ts-ignore
       ands.push(eb(`${this.table}.${column}`, isArray ? "in" : "=", value));
@@ -184,6 +188,34 @@ export default class BaseModel<
         .where(({ eb }) => this.whereEB(eb, filter))
         .execute()
     );
+  }
+
+  async count(
+    fields?: Fields,
+    func?: (qb: SelectQueryBuilder<DB, TableName, {}>) => SelectQueryBuilder<DB, TableName, {}>,
+  ) {
+    const count = await this.client
+      .selectFrom(`${this.table}`)
+      // @ts-ignore
+      .select((eb) => eb.fn("count", eb.ref(this.idColumnName)))
+      // @ts-ignore
+      .where(({ eb }) => this.whereEB(eb, fields))
+      .$if(
+        !!func,
+        // @ts-ignore
+        (qb) => func?.(qb as unknown as SelectQueryBuilder<DB, TableName, {}>) as unknown as typeof qb,
+      )
+      .executeTakeFirst();
+
+    return (count?.["count"] ?? 0) as number;
+  }
+
+  async exists(
+    fields: Fields,
+    func?: (qb: SelectQueryBuilder<DB, TableName, {}>) => SelectQueryBuilder<DB, TableName, {}>,
+  ) {
+    const count = await this.count(fields, func);
+    return count > 0;
   }
 
   public jsonArrayFrom = jsonArrayFrom;

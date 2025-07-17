@@ -30,12 +30,14 @@ import { ProfileConfigurationModel } from "./profile/profileConfiguration.model"
 import { ProfilePaymentCustomerModel } from "./profile/profilePaymentCustomer.model";
 import { ProfilePaymentPriceModel } from "./profile/profilePaymentPrice.model";
 import { ProfilePaymentSubscriptionModel } from "./profile/profilePaymentSubscription.model";
+import { SavedModel } from "./saved/saved.mode";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
     Account: new AccountModel(client),
     Comment: new CommentModel(client),
     Like: new LikeModel(client),
+    Saved: new SavedModel(client),
     Media: new MediaModel(client),
     Membership: new MembershipModel(client),
     MembershipBenefit: new MembershipBenefitModel(client),

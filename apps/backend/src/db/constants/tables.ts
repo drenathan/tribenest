@@ -27,6 +27,7 @@ export const tables = {
   product_variant_tracks: "product_variant_tracks",
   comments: "comments",
   likes: "likes",
+  saves: "saves",
   website_themes: "website_themes",
   website_theme_pages: "website_theme_pages",
   website_versions: "website_versions",

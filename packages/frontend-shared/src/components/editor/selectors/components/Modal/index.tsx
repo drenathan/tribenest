@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { X } from "lucide-react";
 import { useEditorContext } from "../../../context";
 import { alphaToHexCode, cn } from "../../../../../lib/utils";
@@ -31,6 +31,14 @@ export const EditorModal: UserComponent<ModalProps> = ({
       onClose();
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

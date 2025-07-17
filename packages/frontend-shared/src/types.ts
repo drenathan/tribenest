@@ -134,6 +134,13 @@ export type IPublicPost = {
   type: PostType;
   profileId: string;
 };
+export type IPublicComment = {
+  id: string;
+  content: string;
+  createdAt: string;
+  fullName: string;
+  accountId: string;
+};
 
 export type IPublicProduct = {
   id: string;

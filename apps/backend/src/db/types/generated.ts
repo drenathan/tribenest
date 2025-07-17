@@ -343,6 +343,16 @@ export interface Profiles {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface Saves {
+  accountId: string;
+  archivedAt: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  entityId: string;
+  entityType: string;
+  id: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface Sessions {
   accountId: string;
   createdAt: Generated<Timestamp>;
@@ -404,6 +414,7 @@ export interface DB {
   profilePaymentPrices: ProfilePaymentPrices;
   profilePaymentSubscriptions: ProfilePaymentSubscriptions;
   profiles: Profiles;
+  saves: Saves;
   sessions: Sessions;
   websiteVersionPages: WebsiteVersionPages;
   websiteVersions: WebsiteVersions;
