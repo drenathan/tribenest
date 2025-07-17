@@ -2,6 +2,7 @@ import { IS_DEVELOPMENT } from "@src/configuration/secrets";
 import { logger } from "@src/utils/logger";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
+import qs from "qs";
 
 export const formatZodError = (errors: any[]) => {
   return errors.map((err) => `${err.path.join(".")}: ${err.message}`);

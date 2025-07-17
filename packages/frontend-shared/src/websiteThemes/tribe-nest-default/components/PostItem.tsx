@@ -16,7 +16,7 @@ interface PostItemProps {
 
 export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
   const { themeSettings, profile, httpClient, navigate } = useEditorContext();
-  const { user, isAuthenticated } = usePublicAuth();
+  const { isAuthenticated } = usePublicAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [likeCount, setLikeCount] = useState(post.likes || 0);
@@ -76,7 +76,6 @@ export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
       ]);
       setLikeCount(likeResponse.data.count);
       setCommentCount(commentResponse.data.count);
-      console.log(likeResponse.data.count, commentResponse.data.count);
     } catch (error) {
       console.error("Error loading counts:", error);
     }

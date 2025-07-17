@@ -4,8 +4,8 @@ export const paginationSchema = z.object({
   page: z.coerce.number().default(1),
   limit: z.coerce.number().default(10),
   sortBy: z.string().optional(),
-  sortOrder: z.enum(["ASC", "DESC"]).optional(),
-  filter: z.object({}).passthrough().optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
+  filter: z.record(z.string(), z.any()).optional(),
 });
 
 export const paginationQuerySchema = z.object({

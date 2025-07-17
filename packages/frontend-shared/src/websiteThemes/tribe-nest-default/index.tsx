@@ -9,6 +9,7 @@ import MusicPage from "./music.page";
 import { MusicItem } from "./components/MusicItem";
 import MusicDetailsPage from "./music-details.page";
 import { MusicDetailsContent } from "./components/MusicDetailsContent";
+import { Pagination } from "./components/Pagination";
 
 export default {
   name: "TribeNest Default",
@@ -75,5 +76,6 @@ export default {
     MusicPageContent,
     MusicItem,
     MusicDetailsContent,
+    Pagination,
   },
 } as ThemeConfig;

@@ -3,7 +3,16 @@ import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { GetPostsInput } from "@src/routes/posts/schema";
 import { GetPostsInput as GetPublicPostsInput } from "@src/routes/public/posts/schema";
+import { filter } from "lodash";
+import { PostType } from "@src/db/types/post";
 export type IPost = DB["posts"];
+
+type PostFilter = {
+  membershipTierId?: string;
+  query?: string;
+  type?: PostType | "all";
+  archived?: string;
+};
 
 export class PostModel extends BaseModel<"posts", "id"> {
   constructor(client: Kysely<DB>) {
@@ -13,15 +22,12 @@ export class PostModel extends BaseModel<"posts", "id"> {
   public async getMany(input: GetPostsInput & { postId?: string }) {
     const skip = (input.page - 1) * input.limit;
     const limit = input.limit || 10;
+    const { membershipTierId, query, type, archived } = (input.filter ?? {}) as PostFilter;
+    const isArchived = archived === "true";
 
-    const total = await this.client
+    const filterQuery = this.client
       .selectFrom("posts")
       .where("profileId", "=", input.profileId)
-      .select((eb) => [eb.fn.countAll().as("total")])
-      .executeTakeFirstOrThrow();
-
-    const data = await this.client
-      .selectFrom("posts")
       .where(({ eb }) => {
         const conditions: Expression<SqlBool>[] = [];
         if (input.postId) {
@@ -29,8 +35,29 @@ export class PostModel extends BaseModel<"posts", "id"> {
         }
         conditions.push(eb("posts.profileId", "=", input.profileId));
         conditions.push(eb("posts.archivedAt", "is", null));
+
+        if (query) {
+          conditions.push(eb("posts.caption", "ilike", `%${query}%`));
+        }
+        if (type && type !== "all") {
+          conditions.push(eb("posts.type", "=", type));
+        }
+        if (membershipTierId) {
+          conditions.push(eb("posts.membershipTiers", "@>", JSON.stringify([membershipTierId]) as unknown as string[]));
+        }
+
+        if (isArchived) {
+          conditions.push(eb("posts.archivedAt", "is not", null));
+        } else {
+          conditions.push(eb("posts.archivedAt", "is", null));
+        }
+
         return eb.and(conditions);
-      })
+      });
+
+    const total = await filterQuery.select((eb) => [eb.fn.countAll().as("total")]).executeTakeFirstOrThrow();
+
+    const data = await filterQuery
       .selectAll()
       .select((eb) => [
         this.jsonArrayFrom(
@@ -56,15 +83,29 @@ export class PostModel extends BaseModel<"posts", "id"> {
   public async getManyForPublic(input: GetPublicPostsInput, membership?: Selectable<DB["memberships"]>) {
     const skip = (input.page - 1) * input.limit;
     const limit = input.limit || 10;
-    const total = await this.client
-      .selectFrom("posts")
-      .where("profileId", "=", input.profileId)
-      .select((eb) => [eb.fn.countAll().as("total")])
-      .executeTakeFirstOrThrow();
+    const filter = (input.filter ?? {}) as PostFilter;
 
-    const data = await this.client
-      .selectFrom("posts")
-      .where("profileId", "=", input.profileId)
+    const filterQuery = this.client.selectFrom("posts").where(({ eb }) => {
+      const conditions: Expression<SqlBool>[] = [];
+      if (filter.membershipTierId) {
+        conditions.push(
+          eb("posts.membershipTiers", "@>", JSON.stringify([filter.membershipTierId]) as unknown as string[]),
+        );
+      }
+      if (filter.type && filter.type !== "all") {
+        conditions.push(eb("posts.type", "=", filter.type));
+      }
+      if (filter.query) {
+        conditions.push(eb("posts.caption", "ilike", `%${filter.query}%`));
+      }
+      conditions.push(eb("posts.profileId", "=", input.profileId));
+      conditions.push(eb("posts.archivedAt", "is", null));
+      return eb.and(conditions);
+    });
+
+    const total = await filterQuery.select((eb) => [eb.fn.countAll().as("total")]).executeTakeFirstOrThrow();
+
+    const data = await filterQuery
       .select((eb) => {
         const hasAccess = eb.or([
           eb("posts.membershipTiers", "=", "[]" as unknown as string[]),

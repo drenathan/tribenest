@@ -29,6 +29,7 @@ export * from "./components/ui/text-effect";
 export * from "./components/ui/animated-group";
 export * from "./components/ui/progress";
 export * from "./components/ui/accordion";
+export * from "./components/ui/pagination";
 export * from "./types";
 export * from "./websiteThemes";
 export * from "./contexts/AudioPlayerContext";

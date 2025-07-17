@@ -16,6 +16,7 @@ import { formatDate } from "@src/utils/date";
 import { add, endOfDay, startOfDay, sub } from "date-fns";
 import { logger } from "@src/utils/logger";
 import { Services } from "@src/services";
+import qs from "qs";
 
 const limiter = rateLimit({
   windowMs: 1000 * 60,
@@ -25,6 +26,7 @@ const limiter = rateLimit({
 });
 
 const loadMiddlewares = (app: Application) => {
+  app.set("query parser", (str: string) => qs.parse(str));
   app.use((req, res, next) => {
     createRequestStore();
     const timezoneOffset = req.headers[TIMEZONE_HEADER_KEY];
@@ -170,7 +172,6 @@ export const requireAuthentication = async (req: Request, next: NextFunction, se
     return next(new AppError(401, "User no longer exists"));
   }
 
-  account.password = "";
   req.account = account;
   req.session = session;
   setRequestProperty("currentAccountId", account.id);
