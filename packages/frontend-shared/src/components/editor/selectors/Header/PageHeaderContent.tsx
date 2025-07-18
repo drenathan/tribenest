@@ -139,13 +139,13 @@ function PageHeaderContent({
                       className="pt-2 flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
                       style={{ color: themeSettings.colors.text }}
                     >
-                      <LogIn size={16} color={themeSettings.colors.primary} className="" />
                       <button
                         onClick={() => navigate("/login")}
-                        className="text-sm cursor-pointer focus:outline-none"
+                        className="text-sm cursor-pointer focus:outline-none flex items-center gap-2"
                         style={{ color: themeSettings.colors.primary }}
                         tabIndex={-1}
                       >
+                        <LogIn size={16} color={themeSettings.colors.primary} className="" />
                         Log in
                       </button>
                     </div>

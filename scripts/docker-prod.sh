@@ -4,7 +4,7 @@
 
 set -e
 
-COMPOSE_FILE="docker-compose.prod.yml"
+COMPOSE_FILE="docker-compose.test-prod.yml"
 IMAGE_NAME="tribenest"
 
 case "$1" in

@@ -16,4 +16,4 @@ cd /app/apps/client && PORT=3000 npm start &
 CLIENT_PID=$!
 
 # Wait for all processes
-wait $NGINX_PID $BACKEND_PID $CLIENT_PID 
+wait $NGINX_PID $BACKEND_PID $CLIENT_PID

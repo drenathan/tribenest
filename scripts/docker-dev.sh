@@ -9,11 +9,9 @@ COMPOSE_FILE="docker-compose.dev.yml"
 # Function to show service URLs
 show_urls() {
     echo "Development environment started!"
-    echo "Backend API: http://api.localhost:8000"
-    echo "Client: http://localhost:3001"
-    echo "Admin: http://localhost:5173"
     echo "PostgreSQL: localhost:5432"
     echo "Redis: localhost:6379"
+    echo "Mailcatcher: localhost:1080"
 }
 
 # Function to validate app name

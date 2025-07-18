@@ -21,7 +21,7 @@ export async function seedDatabase() {
   const account = await db
     .insertInto("accounts")
     .values({
-      email: "dev@tribenest.com",
+      email: "dev@tribenest.co",
       password: await bcrypt.hash("tribenest", 10),
       firstName: "Dev",
       lastName: "Tribe",

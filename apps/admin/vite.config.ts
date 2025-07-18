@@ -17,4 +17,8 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
   },
+  define: {
+    // Make environment variables available to the client
+    "import.meta.env.VITE_API_URL": JSON.stringify(process.env.VITE_API_URL || "http://localhost:8000"),
+  },
 });

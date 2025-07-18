@@ -95,3 +95,23 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.com/docs/reference/configuration)
 - [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+
+scp scripts/setup-nginx.sh root@your-server-ip:/root/
+
+# SSH to server
+
+ssh user@your-server
+cd /tmp
+chmod +x setup-nginx.sh
+
+# Basic setup first
+
+./setup-nginx.sh
+
+# Later, add SSL
+
+./setup-nginx.sh -d tribenest.co -e admin@tribenest.co -a
+
+# Or do everything at once
+
+./setup-nginx.sh -d tribenest.co -e admin@tribenest.co -s

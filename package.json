@@ -9,8 +9,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "docker:prod": "./scripts/docker-prod.sh",
-    "docker:dev": "./scripts/docker-dev.sh",
-    "docker:test-prod": "./scripts/docker-test-prod.sh"
+    "docker": "./scripts/docker-dev.sh"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
