@@ -78,32 +78,13 @@ const loadMiddlewares = (app: Application) => {
   // - Client runs on port 3000 (localhost:3000 or client.localhost:3000)
   // - Admin runs on port 3001 (localhost:3001 or admin.localhost:3001)
   const dockerEndpoints = [
-    // API endpoints (from host perspective)
-    "http://api.localhost:8000",
-    "https://api.localhost:8000",
-    "http://localhost:8000",
-    "https://localhost:8000",
     // API endpoints (from container perspective)
-    "http://tribenest-app:8000",
-    "https://tribenest-app:8000",
-    // Client endpoints (if served separately)
-    "http://localhost:3000",
-    "https://localhost:3000",
-    "http://client.localhost:3000",
-    "https://client.localhost:3000",
-    // Admin endpoints (if served separately)
-    "http://localhost:3001",
-    "https://localhost:3001",
-    "http://admin.localhost:3001",
-    "https://admin.localhost:3001",
-    // Development endpoints
+    "http://api.localhost:*",
+    "http://admin.localhost:*",
     "http://localhost:*",
-    "https://localhost:*",
     // WebSocket support
     "ws://localhost:*",
-    "wss://localhost:*",
     "ws://api.localhost:*",
-    "wss://api.localhost:*",
   ];
 
   // Add Docker endpoints to connectSrc

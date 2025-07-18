@@ -9,13 +9,6 @@ IMAGE_NAME="tribenest"
 
 case "$1" in
   "build")
-    # Check if --skip-build flag is provided
-    if [ "$2" = "--skip-build" ]; then
-      echo "⏭️  Skipping local build step..."
-    else
-      echo "🔨 Building applications locally first..."
-      ./scripts/build.sh
-    fi
     echo "🐳 Building test production Docker image..."
     docker-compose -f $COMPOSE_FILE build
     echo "✅ Test production image built successfully!"

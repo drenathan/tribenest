@@ -4,12 +4,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Exclude source files to reduce build context
-apps/*/src
-
 # Production builds
-
-apps/*/.turbo
+apps/*/dist
+apps/*/build
+apps/*/.next
+apps/*/out
 
 # Environment files
 .env
@@ -17,25 +16,6 @@ apps/*/.turbo
 .env.development.local
 .env.test.local
 .env.production.local
-
-# IDE files
-.vscode
-.idea
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Git
-.git
-.gitignore
-
-# Docker
-Dockerfile*
-docker-compose*
-.dockerignore
 
 # Logs
 logs
@@ -49,6 +29,7 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage
+*.lcov
 
 # nyc test coverage
 .nyc_output
@@ -59,6 +40,15 @@ jspm_packages/
 # Optional npm cache directory
 .npm
 
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
 # Optional REPL history
 .node_repl_history
 
@@ -68,15 +58,70 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
 
-# Turbo
-.turbo
+# Next.js build output
+.next
 
-# Testing
-coverage
-.nyc_output
+# Nuxt.js build / generate output
+.nuxt
+dist
 
-# Misc
-*.tsbuildinfo
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Documentation
+README.md
+*.md
+
+# Test files
+**/*.test.js
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.js
+**/*.spec.ts
+**/*.spec.tsx
+**/__tests__/
+**/__mocks__/
+
+# Development tools
+.eslintrc*
+.prettierrc*
+jest.config.*
+tsconfig.json

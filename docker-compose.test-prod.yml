@@ -1,8 +1,9 @@
 version: "3.8"
 
 services:
-  # Main application (built locally)
+  # Main application (build if not available, otherwise use existing image)
   tribenest-app:
+    image: tribenest:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,6 +11,7 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "api.localhost:127.0.0.1"
+      - "admin.localhost:127.0.0.1"
     environment:
       - NODE_ENV=production
       - PORT=8000
@@ -25,7 +27,7 @@ services:
       - JWT_SECRET=verylongandverysafejwtsecret
       - ACCESSTOKENTTL=${ACCESSTOKENTTL:-1h}
     ports:
-      - "8000:8000"
+      - "80:80"
     depends_on:
       - postgres
       - redis

@@ -25,25 +25,8 @@ jobs:
           node-version: "23"
           cache: "npm"
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build applications locally
-        run: |
-          # Build backend
-          cd apps/backend
-          npm run build
-          cd ../..
-
-          # Build client
-          cd apps/client
-          npm run build
-          cd ../..
-
-          # Build admin
-          cd apps/admin
-          npm run build
-          cd ../..
+      # - name: Install dependencies
+      #   run: npm ci
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

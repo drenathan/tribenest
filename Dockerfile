@@ -1,66 +1,80 @@
-# Production Dockerfile - Copy pre-built applications
+# Use Node.js 23 as base image
 FROM node:23-alpine AS base
+
+# Install nginx for reverse proxy
+RUN apk add --no-cache nginx
 
 # Install dependencies only when needed
 FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy package files for backend only
+# Copy package files
 COPY package.json package-lock.json* ./
-COPY apps/backend/package.json ./apps/backend/package.json
+COPY apps/backend/package.json ./apps/backend/
+COPY apps/client/package.json ./apps/client/
+COPY apps/admin/package.json ./apps/admin/
+COPY packages/frontend-shared/package.json ./packages/frontend-shared/
+COPY packages/eslint-config/package.json ./packages/eslint-config/
+COPY packages/typescript-config/package.json ./packages/typescript-config/
 
-# Install only backend production dependencies
-RUN npm ci --only=production
-RUN cd apps/backend && npm ci --only=production
+# Install dependencies
+RUN npm ci
 
-# Production image
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build the admin SPA
+RUN npm run build
+
+# Production image, copy all the files and run the app
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV PORT=8000
 
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy package files first
+# Copy built applications
+COPY --from=builder --chown=nextjs:nodejs /app/apps/backend/build ./apps/backend/build
+COPY --from=builder --chown=nextjs:nodejs /app/apps/backend/package.json ./apps/backend/
+COPY --from=builder --chown=nextjs:nodejs /app/apps/admin/dist ./apps/admin/dist
+COPY --from=builder --chown=nextjs:nodejs /app/apps/client/.next ./apps/client/.next
+COPY --from=builder --chown=nextjs:nodejs /app/apps/client/public ./apps/client/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/client/package.json ./apps/client/
+
+# Copy necessary files for the backend
+COPY --from=builder --chown=nextjs:nodejs /app/apps/backend/src/db/_migration ./apps/backend/src/db/_migration
+COPY --from=builder --chown=nextjs:nodejs /app/apps/backend/src/configuration ./apps/backend/src/configuration
+
+# Copy shared packages
+COPY --from=builder --chown=nextjs:nodejs /app/packages ./packages
+
+# Install only production dependencies
 COPY package.json package-lock.json* ./
+COPY apps/backend/package.json ./apps/backend/
+COPY apps/client/package.json ./apps/client/
+COPY apps/admin/package.json ./apps/admin/
+COPY packages/frontend-shared/package.json ./packages/frontend-shared/
 
-# Copy pre-built applications from local build
-COPY apps/backend/build ./backend/build
-COPY apps/backend/package.json ./backend/package.json
-COPY apps/client/.next ./client/.next
-COPY apps/client/public ./client/public
-COPY apps/admin/dist ./admin/dist
-COPY packages ./packages
+RUN npm ci --only=production --ignore-scripts
 
-# Copy shared dependencies
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/backend/node_modules ./backend/node_modules
+# Copy startup script
+COPY scripts/start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
-# Copy Next.js runtime files from client build to client directory
-RUN mkdir -p ./client/node_modules/next/dist
-COPY apps/client/.next/standalone/node_modules/next/dist ./client/node_modules/next/dist
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Set the correct permission for prerender cache
-RUN mkdir -p .next
-RUN chown nextjs:nodejs .next
+# Expose only the proxy port
+EXPOSE 80
 
-# Install dependencies in the final image
-RUN npm install --production
-RUN cd backend && npm install --production
-
-# Switch to non-root user
-USER nextjs
-
-EXPOSE 8000
-
-ENV PORT=8000
-ENV HOSTNAME="0.0.0.0"
-
-# Set the working directory to backend
-WORKDIR /app/backend
-
-# Start the application using the run script
-CMD ["npm", "run", "run"]
+# Start all applications
+CMD ["/app/start.sh"]
