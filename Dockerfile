@@ -28,8 +28,25 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Build applications individually to handle failures better
+# Set build environment variables
+ENV NODE_ENV=production
+ENV SKIP_ENV_VALIDATION=true
+
+# Build the backend first
+RUN echo "Building backend..." && \
+    cd apps/backend && \
+    npm run build
+
 # Build the admin SPA
-RUN npm run build
+RUN echo "Building admin SPA..." && \
+    cd apps/admin && \
+    npm run build
+
+# Build the Next.js client
+RUN echo "Building Next.js client..." && \
+    cd apps/client && \
+    npm run build
 
 # Production image, copy all the files and run the app
 FROM base AS runner

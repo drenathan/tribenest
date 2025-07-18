@@ -25,8 +25,8 @@ jobs:
           node-version: "23"
           cache: "npm"
 
-      # - name: Install dependencies
-      #   run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
