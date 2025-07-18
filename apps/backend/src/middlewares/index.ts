@@ -103,15 +103,7 @@ const loadMiddlewares = (app: Application) => {
 
   // Configure Helmet based on environment
   const helmetConfig = {
-    contentSecurityPolicy: IS_DEVELOPMENT
-      ? false // Disable CSP in development for easier development
-      : {
-          directives: cspDirectives,
-        },
-    // Additional security headers for Docker deployment
-    crossOriginEmbedderPolicy: false, // Allow cross-origin resources
-    crossOriginResourcePolicy: { policy: "cross-origin" as const }, // Allow cross-origin resources
-    // Trust proxy for Docker reverse proxy setups
+    contentSecurityPolicy: false,
     trustProxy: true,
   };
 
@@ -119,7 +111,7 @@ const loadMiddlewares = (app: Application) => {
   app.use(compression());
   if (!IS_TEST) app.use(morgan("common"));
   app.use(userAgent.express());
-  // app.set("trust proxy", 1);
+  app.set("trust proxy", 1);
   app.use(limiter);
   logger.info("loaded middlewares");
 };

@@ -25,7 +25,13 @@ services:
 
       # JWT configuration
       - JWT_SECRET=verylongandverysafejwtsecret
-      - ACCESSTOKENTTL=${ACCESSTOKENTTL:-1h}
+      - ACCESSTOKENTTL=1y
+      - NEXT_PUBLIC_ROOT_DOMAIN=tribenest.local
+      - NEXT_PUBLIC_API_URL=http://api.tribenest.local
+      # Runtime environment variables (available at runtime)
+      - ROOT_DOMAIN=tribenest.local
+      - API_URL=http://api.tribenest.local
+      - ADMIN_URL=http://admin.tribenest.local
     ports:
       - "80:80"
     depends_on:

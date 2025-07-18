@@ -33,20 +33,21 @@ COPY . .
 ENV NODE_ENV=production
 ENV SKIP_ENV_VALIDATION=true
 
-# Build the backend first
-RUN echo "Building backend..." && \
-    cd apps/backend && \
-    npm run build
+# # Build the backend first
+# RUN echo "Building backend..." && \
+#     cd apps/backend && \
+#     npm run build
 
-# Build the admin SPA
-RUN echo "Building admin SPA..." && \
-    cd apps/admin && \
-    npm run build
+# # Build the admin SPA
+# RUN echo "Building admin SPA..." && \
+#     cd apps/admin && \
+#     npm run build
 
-# Build the Next.js client
-RUN echo "Building Next.js client..." && \
-    cd apps/client && \
-    npm run build
+# # Build the Next.js client
+# RUN echo "Building Next.js client..." && \
+#     cd apps/client && \
+#     npm run build
+RUN npm run build
 
 # Production image, copy all the files and run the app
 FROM base AS runner
@@ -66,7 +67,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/admin/dist ./apps/admin/dist
 COPY --from=builder --chown=nextjs:nodejs /app/apps/client/.next ./apps/client/.next
 COPY --from=builder --chown=nextjs:nodejs /app/apps/client/public ./apps/client/public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/client/package.json ./apps/client/
-
 # Copy necessary files for the backend
 COPY --from=builder --chown=nextjs:nodejs /app/apps/backend/src/db/_migration ./apps/backend/src/db/_migration
 COPY --from=builder --chown=nextjs:nodejs /app/apps/backend/src/configuration ./apps/backend/src/configuration

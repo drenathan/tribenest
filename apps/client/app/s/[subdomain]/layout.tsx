@@ -10,10 +10,10 @@ import {
   websiteThemes,
 } from "@tribe-nest/frontend-shared";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getWebPage, WebPage } from "./_api";
-import httpClient, { setHttpClientToken } from "@/services/httpClient";
+import { WebPage } from "./_api";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { ConfigProvider, useConfig } from "./_contexts/config";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,17 +25,30 @@ const queryClient = new QueryClient({
 });
 
 export default function SubdomainLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ConfigProvider>
+      <Content>{children}</Content>
+    </ConfigProvider>
+  );
+}
+
+const Content = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [webPage, setWebPage] = useState<WebPage | null>(null);
   const params = useParams<{ subdomain: string; path: string }>();
   const ref = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+  const { httpClient, setHttpClientToken } = useConfig();
 
   useEffect(() => {
     const fetchWebPage = async () => {
       try {
         const { subdomain, path } = params;
-        const webPage = await getWebPage({ subdomain, pathname: path ? `/${path}` : "/" });
+        const response = await httpClient!.get(
+          `/public/websites?subdomain=${subdomain}&pathname=${path ? `/${path}` : "/"}`,
+        );
+
+        const webPage = response.data as WebPage;
         if (webPage) {
           setWebPage(webPage);
         }
@@ -46,8 +59,11 @@ export default function SubdomainLayout({ children }: { children: React.ReactNod
       }
     };
     fetchWebPage();
-  }, [params]);
+  }, [params, httpClient]);
 
+  if (!httpClient) {
+    return null;
+  }
   if (isLoading) {
     return null;
   }
@@ -107,4 +123,4 @@ export default function SubdomainLayout({ children }: { children: React.ReactNod
       </ContainerQueryProvider>
     </div>
   );
-}
+};
