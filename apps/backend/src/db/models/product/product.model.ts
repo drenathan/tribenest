@@ -9,7 +9,9 @@ import { IMedia } from "../media/media.model";
 
 export type IProduct = DB["products"];
 export type GetManyProductResult = (Selectable<IProduct> & {
+  media: Selectable<IMedia>[];
   variants: (Selectable<IProductVariant> & {
+    media: Selectable<IMedia>[];
     tracks: (Selectable<IProductVariantTrack> & { media: Selectable<IMedia>[] })[];
   })[];
 })[];
@@ -99,6 +101,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
         eb.ref("p.artist").as("artist"),
         eb.ref("p.credits").as("credits"),
         eb.ref("p.archivedAt").as("archivedAt"),
+        eb.ref("p.profileId").as("profileId"),
       ])
       .select((eb) => [
         this.jsonArrayFrom(

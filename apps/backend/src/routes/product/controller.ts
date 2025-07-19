@@ -47,7 +47,8 @@ export class ProductsController extends BaseController {
     next: NextFunction,
     @Query query?: GetProductInput,
   ): Promise<any> {
-    return true;
+    const id = req.params.id as string;
+    return this.services.admin.products.getOne({ ...query!, productId: id });
   }
 
   @RouteHandler()
@@ -59,7 +60,8 @@ export class ProductsController extends BaseController {
     next: NextFunction,
     @Body body?: UpdateProductInput,
   ): Promise<any> {
-    return true;
+    const id = req.params.id as string;
+    return this.services.admin.products.update({ ...body!, productId: id });
   }
 
   @RouteHandler()

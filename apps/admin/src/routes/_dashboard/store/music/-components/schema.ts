@@ -56,3 +56,47 @@ export const createProductSchema = z
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 export const createProductResolver = zodResolver(createProductSchema);
+
+export const editProductSchema = z.object({
+  title: z.string().min(5, "Title must be at least 5 characters").max(100, "Title must be less than 100 characters"),
+  description: z
+    .string()
+    .min(5, "Description must be at least 5 characters")
+    .max(1000, "Description must be less than 1000 characters"),
+  price: z.coerce.number().min(0, "Price must be at least 0"),
+  artist: z.string().optional(),
+  credits: z.string().optional(),
+  publishedAt: z.string().optional(),
+  profileId: z.string().uuid(),
+  payWhatYouWant: z.boolean().default(false).optional(),
+  upcCode: z.string().optional(),
+  coverImage: z
+    .object({
+      file: z
+        .union([
+          z.instanceof(File, { message: "Cover image is required and must be a file" }).optional(),
+          z.string().optional(),
+        ])
+        .optional(),
+      fileSize: z.number().optional(),
+      fileName: z.string().optional(),
+    })
+    .optional(),
+  tracks: z
+    .array(
+      z.object({
+        title: z.string().optional(),
+        description: z.string().optional(),
+        isFeatured: z.boolean().default(false).optional(),
+        hasExplicitContent: z.boolean().default(false).optional(),
+        id: z.string().uuid(),
+        artist: z.string().optional(),
+        credits: z.string().optional(),
+        isrcCode: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
+export type EditProductInput = z.infer<typeof editProductSchema>;
+export const editProductResolver = zodResolver(editProductSchema);

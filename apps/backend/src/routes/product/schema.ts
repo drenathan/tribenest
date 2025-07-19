@@ -74,12 +74,39 @@ export const createProductSchema = z.object({
 
 export const updateProductSchema = z.object({
   body: z.object({
-    caption: z
+    title: z.string().min(5, "Title must be at least 5 characters").max(100, "Title must be less than 100 characters"),
+    description: z
       .string()
-      .min(5, "Caption must be at least 5 characters")
-      .max(1000, "Caption must be less than 1000 characters"),
-    membershipTiers: z.array(z.string().uuid()).optional().default([]),
-    profileId: z.string().min(1),
+      .min(5, "Description must be at least 5 characters")
+      .max(1000, "Description must be less than 1000 characters"),
+    price: z.number().min(0, "Price must be at least 0"),
+    publishedAt: z.string().optional(),
+    payWhatYouWant: z.boolean().optional(),
+    artist: z.string().optional(),
+    credits: z.string().optional(),
+    upcCode: z.string().optional(),
+    coverImage: z
+      .object({
+        file: z.string().url("Cover image is required").optional(),
+        fileSize: z.number().optional(),
+        fileName: z.string().optional(),
+      })
+      .optional(),
+    profileId: z.string().uuid(),
+    tracks: z
+      .array(
+        z.object({
+          title: z.string().optional(),
+          id: z.string().uuid(),
+          description: z.string().optional(),
+          isFeatured: z.boolean().default(false),
+          hasExplicitContent: z.boolean().default(false),
+          artist: z.string().optional(),
+          credits: z.string().optional(),
+          isrcCode: z.string().optional(),
+        }),
+      )
+      .optional(),
   }),
 });
 

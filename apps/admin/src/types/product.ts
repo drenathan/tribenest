@@ -15,6 +15,7 @@ export type IProduct = {
   title: string;
   description: string;
   category: ProductCategory;
+  profileId: string;
   media: IMedia[];
   variants: IProductVariant[];
   artist: string;

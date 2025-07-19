@@ -1,4 +1,5 @@
-import type { CreateProductInput } from "@/routes/_dashboard/store/music/-components/schema";
+import type { CreateProductInput, EditProductInput } from "@/routes/_dashboard/store/music/-components/schema";
+
 import httpClient from "@/services/httpClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -11,6 +12,20 @@ export const useCreateProduct = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+};
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ productId, data }: { productId: string; data: EditProductInput }) => {
+      const result = await httpClient.put(`/products/${productId}`, data);
+      return result.data;
+    },
+    onSuccess: (_, { productId }) => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product", productId] });
     },
   });
 };
