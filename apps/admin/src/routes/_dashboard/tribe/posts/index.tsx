@@ -267,6 +267,7 @@ function RouteComponent() {
       {isEmpty && (
         <EmptyState
           title="No posts found"
+          className="mt-6"
           description={
             hasActiveFilters ? "No posts found matching your filters" : "Create your first post to get started"
           }

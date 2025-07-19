@@ -10,6 +10,7 @@ export type IPost = {
   membershipTiers: string[];
   type: PostType;
   profileId: string;
+  archivedAt: string | null;
 };
 
 export type IMedia = {

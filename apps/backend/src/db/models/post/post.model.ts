@@ -34,7 +34,6 @@ export class PostModel extends BaseModel<"posts", "id"> {
           conditions.push(eb("posts.id", "=", input.postId));
         }
         conditions.push(eb("posts.profileId", "=", input.profileId));
-        conditions.push(eb("posts.archivedAt", "is", null));
 
         if (query) {
           conditions.push(eb("posts.caption", "ilike", `%${query}%`));

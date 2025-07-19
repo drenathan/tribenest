@@ -211,7 +211,7 @@ $SUDO_CMD tee /etc/nginx/sites-available/tribenest << EOF
 server {
     listen 80;
     server_name ${DOMAIN_NAME} *.${DOMAIN_NAME};
-    
+
     # Redirect all HTTP traffic to HTTPS
     return 301 https://\$host\$request_uri;
 }

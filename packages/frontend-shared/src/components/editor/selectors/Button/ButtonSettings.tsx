@@ -1,6 +1,7 @@
 import React from "react";
 import { ToolbarItem, ToolbarSection } from "../../Toolbar";
 import { ToolbarRadio } from "../../Toolbar/ToolbarRadio";
+import type { ButtonProps } from ".";
 
 export const ButtonSettings = () => {
   return (
@@ -8,7 +9,7 @@ export const ButtonSettings = () => {
       <ToolbarSection
         title="Colors"
         props={["background", "color"]}
-        summary={({ background, color }: any) => {
+        summary={({ background, color }: ButtonProps) => {
           return (
             <div className="flex flex-row-reverse">
               <div
@@ -29,7 +30,7 @@ export const ButtonSettings = () => {
       <ToolbarSection
         title="Margin"
         props={["marginHorizontal", "marginVertical"]}
-        summary={({ marginHorizontal, marginVertical }: any) => {
+        summary={({ marginHorizontal, marginVertical }: ButtonProps) => {
           return `${marginHorizontal || 0}px ${marginVertical || 0}px`;
         }}
       >

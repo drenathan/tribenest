@@ -91,4 +91,14 @@ export class PostService extends BaseService {
 
     return true;
   }
+
+  public async archivePost(postId: string) {
+    await this.database.models.Post.updateOne({ id: postId }, { archivedAt: new Date() });
+    return true;
+  }
+
+  public async unarchivePost(postId: string) {
+    await this.database.models.Post.updateOne({ id: postId }, { archivedAt: null });
+    return true;
+  }
 }

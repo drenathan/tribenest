@@ -14,10 +14,13 @@ import {
   DropdownMenuTrigger,
   useAudioPlayer,
 } from "@tribe-nest/frontend-shared";
-import { Ellipsis, Heart, MessageCircle, Share, Pause, Play, Edit } from "lucide-react";
+import { Ellipsis, Heart, MessageCircle, Share, Pause, Play, Edit, Trash } from "lucide-react";
 import ReactPlayer from "react-player";
 import { useNavigate } from "@tanstack/react-router";
 import { css } from "@emotion/css";
+import { ConfirmationModal } from "../../../-components/confirmation-modal";
+import { useState } from "react";
+import { useArchivePost, useUnarchivePost } from "@/hooks/mutations/usePost";
 
 type Props = {
   post: IPost;
@@ -26,13 +29,28 @@ type Props = {
 export function PostItem({ post }: Props) {
   const { currentProfileAuthorization } = useAuth();
   const navigate = useNavigate();
+  const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+  const { mutate: archivePost } = useArchivePost();
+  const { mutate: unarchivePost } = useUnarchivePost();
 
   const handleEdit = () => {
     navigate({ to: `/tribe/posts/${post.id}/edit` });
   };
 
+  const handleArchive = () => {
+    if (!currentProfileAuthorization?.profile.id) {
+      return;
+    }
+
+    if (post.archivedAt) {
+      unarchivePost({ postId: post.id, profileId: currentProfileAuthorization?.profile.id });
+    } else {
+      archivePost({ postId: post.id, profileId: currentProfileAuthorization?.profile.id });
+    }
+  };
+
   return (
-    <>
+    <div>
       <Card className="p-0 w-full md:w-[600px]">
         <CardContent className="p-0">
           <div className="flex flex-row items-center justify-between p-2">
@@ -53,6 +71,10 @@ export function PostItem({ post }: Props) {
                 <DropdownMenuItem onClick={handleEdit}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit post
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsArchiveModalOpen(true)}>
+                  <Trash className="mr-2 h-4 w-4" />
+                  {post.archivedAt ? "Unarchive post" : "Archive post"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -76,7 +98,19 @@ export function PostItem({ post }: Props) {
           </div>
         </CardContent>
       </Card>
-    </>
+
+      <ConfirmationModal
+        title={post.archivedAt ? "Unarchive post" : "Archive post"}
+        text={
+          post.archivedAt
+            ? "Are you sure you want to unarchive this post?"
+            : "Are you sure you want to archive this post?"
+        }
+        onConfirm={handleArchive}
+        isOpen={isArchiveModalOpen}
+        setIsOpen={setIsArchiveModalOpen}
+      />
+    </div>
   );
 }
 

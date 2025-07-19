@@ -47,4 +47,16 @@ export class PostsController extends BaseController {
       postId: req.params.id as string,
     });
   }
+
+  @RouteHandler()
+  @isAuthorized(policy.create)
+  public async archivePost(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.services.admin.posts.archivePost(req.params.id as string);
+  }
+
+  @RouteHandler()
+  @isAuthorized(policy.create)
+  public async unarchivePost(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.services.admin.posts.unarchivePost(req.params.id as string);
+  }
 }

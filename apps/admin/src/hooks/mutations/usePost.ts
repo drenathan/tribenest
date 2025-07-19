@@ -27,3 +27,41 @@ export const useUpdatePost = () => {
     },
   });
 };
+
+export const useArchivePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ postId, profileId }: { postId: string; profileId: string }) => {
+      const result = await httpClient.delete(`/posts/${postId}`, {
+        params: {
+          profileId,
+        },
+      });
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};
+
+export const useUnarchivePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ postId, profileId }: { postId: string; profileId: string }) => {
+      const result = await httpClient.post(
+        `/posts/${postId}/unarchive`,
+        { profileId },
+        {
+          params: {
+            profileId,
+          },
+        },
+      );
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+};

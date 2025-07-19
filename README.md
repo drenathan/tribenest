@@ -106,12 +106,4 @@ chmod +x setup-nginx.sh
 
 # Basic setup first
 
-./setup-nginx.sh
-
-# Later, add SSL
-
-./setup-nginx.sh -d tribenest.co -e admin@tribenest.co -a
-
-# Or do everything at once
-
-./setup-nginx.sh -d tribenest.co -e admin@tribenest.co -s
+./setup-nginx.sh tribenest.co admin@tribenest.co

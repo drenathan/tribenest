@@ -7,7 +7,7 @@ import { css } from "@emotion/css";
 import type { EditorTheme } from "../../../../types";
 import { alphaToHexCode } from "../../../../lib/utils";
 
-type ButtonProps = {
+export type ButtonProps = {
   background?: string;
   color?: string;
   buttonStyle?: string;
