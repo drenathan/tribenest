@@ -35,6 +35,7 @@ import { Route as DashboardStoreMusicCreateRouteImport } from './routes/_dashboa
 import { Route as DashboardWebsiteThemesSlugPreviewRouteImport } from './routes/_dashboard/website/themes/$slug.preview'
 import { Route as DashboardWebsiteHomeVersionIdEditRouteImport } from './routes/_dashboard/website/home/$versionId.edit'
 import { Route as DashboardTribePostsPostIdEditRouteImport } from './routes/_dashboard/tribe/posts/$postId.edit'
+import { Route as DashboardStoreMusicProductIdEditRouteImport } from './routes/_dashboard/store/music/$productId.edit'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/_dashboard',
@@ -181,6 +182,12 @@ const DashboardTribePostsPostIdEditRoute =
     path: '/tribe/posts/$postId/edit',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardStoreMusicProductIdEditRoute =
+  DashboardStoreMusicProductIdEditRouteImport.update({
+    id: '/store/music/$productId/edit',
+    path: '/store/music/$productId/edit',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/tribe/posts': typeof DashboardTribePostsIndexRoute
   '/website/home': typeof DashboardWebsiteHomeIndexRoute
   '/website/themes': typeof DashboardWebsiteThemesIndexRoute
+  '/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
   '/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -230,6 +238,7 @@ export interface FileRoutesByTo {
   '/tribe/posts': typeof DashboardTribePostsIndexRoute
   '/website/home': typeof DashboardWebsiteHomeIndexRoute
   '/website/themes': typeof DashboardWebsiteThemesIndexRoute
+  '/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
   '/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -259,6 +268,7 @@ export interface FileRoutesById {
   '/_dashboard/tribe/posts/': typeof DashboardTribePostsIndexRoute
   '/_dashboard/website/home/': typeof DashboardWebsiteHomeIndexRoute
   '/_dashboard/website/themes/': typeof DashboardWebsiteThemesIndexRoute
+  '/_dashboard/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
   '/_dashboard/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/_dashboard/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/_dashboard/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/tribe/posts'
     | '/website/home'
     | '/website/themes'
+    | '/store/music/$productId/edit'
     | '/tribe/posts/$postId/edit'
     | '/website/home/$versionId/edit'
     | '/website/themes/$slug/preview'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/tribe/posts'
     | '/website/home'
     | '/website/themes'
+    | '/store/music/$productId/edit'
     | '/tribe/posts/$postId/edit'
     | '/website/home/$versionId/edit'
     | '/website/themes/$slug/preview'
@@ -341,6 +353,7 @@ export interface FileRouteTypes {
     | '/_dashboard/tribe/posts/'
     | '/_dashboard/website/home/'
     | '/_dashboard/website/themes/'
+    | '/_dashboard/store/music/$productId/edit'
     | '/_dashboard/tribe/posts/$postId/edit'
     | '/_dashboard/website/home/$versionId/edit'
     | '/_dashboard/website/themes/$slug/preview'
@@ -535,6 +548,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardTribePostsPostIdEditRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/store/music/$productId/edit': {
+      id: '/_dashboard/store/music/$productId/edit'
+      path: '/store/music/$productId/edit'
+      fullPath: '/store/music/$productId/edit'
+      preLoaderRoute: typeof DashboardStoreMusicProductIdEditRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
@@ -573,6 +593,7 @@ interface DashboardRouteRouteChildren {
   DashboardTribePostsIndexRoute: typeof DashboardTribePostsIndexRoute
   DashboardWebsiteHomeIndexRoute: typeof DashboardWebsiteHomeIndexRoute
   DashboardWebsiteThemesIndexRoute: typeof DashboardWebsiteThemesIndexRoute
+  DashboardStoreMusicProductIdEditRoute: typeof DashboardStoreMusicProductIdEditRoute
   DashboardTribePostsPostIdEditRoute: typeof DashboardTribePostsPostIdEditRoute
   DashboardWebsiteHomeVersionIdEditRoute: typeof DashboardWebsiteHomeVersionIdEditRoute
   DashboardWebsiteThemesSlugPreviewRoute: typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -599,6 +620,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardTribePostsIndexRoute: DashboardTribePostsIndexRoute,
   DashboardWebsiteHomeIndexRoute: DashboardWebsiteHomeIndexRoute,
   DashboardWebsiteThemesIndexRoute: DashboardWebsiteThemesIndexRoute,
+  DashboardStoreMusicProductIdEditRoute: DashboardStoreMusicProductIdEditRoute,
   DashboardTribePostsPostIdEditRoute: DashboardTribePostsPostIdEditRoute,
   DashboardWebsiteHomeVersionIdEditRoute:
     DashboardWebsiteHomeVersionIdEditRoute,

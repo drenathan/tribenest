@@ -14,3 +14,29 @@ export const useCreateProduct = () => {
     },
   });
 };
+
+export const useArchiveProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ productId, profileId }: { productId: string; profileId: string }) => {
+      const result = await httpClient.delete(`/products/${productId}`, { params: { profileId } });
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+};
+
+export const useUnarchiveProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ productId, profileId }: { productId: string; profileId: string }) => {
+      const result = await httpClient.post(`/products/${productId}/unarchive`, { profileId });
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+};

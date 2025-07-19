@@ -23,4 +23,22 @@ export class ProductService extends BaseService {
       pageSize: input.limit,
     };
   }
+
+  public async archiveProduct(productId: string): Promise<void> {
+    await this.database.models.Product.updateOne(
+      { id: productId },
+      {
+        archivedAt: new Date(),
+      },
+    );
+  }
+
+  public async unarchiveProduct(productId: string): Promise<void> {
+    await this.database.models.Product.updateOne(
+      { id: productId },
+      {
+        archivedAt: null,
+      },
+    );
+  }
 }

@@ -20,6 +20,7 @@ export type IProduct = {
   artist: string;
   credits: string;
   publishedAt: string;
+  archivedAt: string | null;
 };
 
 export type IProductVariant = {

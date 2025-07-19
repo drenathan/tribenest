@@ -98,6 +98,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
         eb.ref("p.isSingle").as("isSingle"),
         eb.ref("p.artist").as("artist"),
         eb.ref("p.credits").as("credits"),
+        eb.ref("p.archivedAt").as("archivedAt"),
       ])
       .select((eb) => [
         this.jsonArrayFrom(

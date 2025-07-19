@@ -1,7 +1,22 @@
 import { useAuth } from "@/hooks/useAuth";
 import type { IProduct } from "@/types/product";
-import { Badge, Card, CardContent, CardHeader, useAudioPlayer } from "@tribe-nest/frontend-shared";
-import { Play, Pause, Music, Star } from "lucide-react";
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardHeader,
+  DropdownMenuItem,
+  DropdownMenu,
+  useAudioPlayer,
+  DropdownMenuTrigger,
+  Button,
+  DropdownMenuContent,
+} from "@tribe-nest/frontend-shared";
+import { Play, Pause, Music, Star, Ellipsis, Trash, Edit } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { ConfirmationModal } from "@/routes/_dashboard/-components/confirmation-modal";
+import { useArchiveProduct, useUnarchiveProduct } from "@/hooks/mutations/useProduct";
 
 type Props = {
   product: IProduct;
@@ -9,9 +24,13 @@ type Props = {
 
 export function MusicItem({ product }: Props) {
   const { currentProfileAuthorization } = useAuth();
+  const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+  const navigate = useNavigate();
   const defaultVariant = product.variants.find((v) => v.isDefault) || product.variants[0];
   const isSingle = defaultVariant?.tracks?.length === 1;
   const { pause, loadAndPlay, currentTrack, play, isPlaying } = useAudioPlayer();
+  const { mutate: archiveProduct } = useArchiveProduct();
+  const { mutate: unarchiveProduct } = useUnarchiveProduct();
   const coverImage =
     product.media.find((m) => m.type === "image")?.url || defaultVariant?.media.find((m) => m.type === "image")?.url;
 
@@ -30,6 +49,23 @@ export function MusicItem({ product }: Props) {
     );
   };
 
+  const handleEdit = () => {
+    navigate({ to: `/store/music/${product.id}/edit` });
+  };
+
+  const handleArchive = () => {
+    if (!currentProfileAuthorization?.profile.id) {
+      return;
+    }
+
+    if (product.archivedAt) {
+      unarchiveProduct({ productId: product.id, profileId: currentProfileAuthorization?.profile.id });
+    } else {
+      archiveProduct({ productId: product.id, profileId: currentProfileAuthorization?.profile.id });
+    }
+  };
+
+  const modalTitle = isSingle ? "Single" : "Album";
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader className="pb-4">
@@ -87,6 +123,23 @@ export function MusicItem({ product }: Props) {
               </p>
             </div>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Ellipsis />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleEdit}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit {modalTitle}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsArchiveModalOpen(true)}>
+                <Trash className="mr-2 h-4 w-4" />
+                {product.archivedAt ? `Unarchive ${modalTitle}` : `Archive ${modalTitle}`}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
 
@@ -140,6 +193,18 @@ export function MusicItem({ product }: Props) {
           </div>
         )}
       </CardContent>
+
+      <ConfirmationModal
+        title={product.archivedAt ? `Unarchive ${modalTitle}` : `Archive ${modalTitle}`}
+        text={
+          product.archivedAt
+            ? `Are you sure you want to unarchive this ${modalTitle}?`
+            : `Are you sure you want to archive this ${modalTitle}?`
+        }
+        onConfirm={handleArchive}
+        isOpen={isArchiveModalOpen}
+        setIsOpen={setIsArchiveModalOpen}
+      />
     </Card>
   );
 }

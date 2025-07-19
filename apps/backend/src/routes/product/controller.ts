@@ -61,4 +61,16 @@ export class ProductsController extends BaseController {
   ): Promise<any> {
     return true;
   }
+
+  @RouteHandler()
+  @isAuthorized(policy.create)
+  public async archiveProduct(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.services.admin.products.archiveProduct(req.params.id as string);
+  }
+
+  @RouteHandler()
+  @isAuthorized(policy.create)
+  public async unarchiveProduct(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.services.admin.products.unarchiveProduct(req.params.id as string);
+  }
 }
