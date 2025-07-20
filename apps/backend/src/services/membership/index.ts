@@ -2,6 +2,7 @@ import { CreateMembershipTierInput } from "@src/routes/membershipTiers/schema";
 import { BaseService } from "../baseService";
 import { CreateMembershipBenefitInput } from "@src/routes/membershipBenefits/schema";
 import { BadRequestError } from "@src/utils/app_error";
+import { GetMembershipsInput } from "@src/routes/memberships/schema";
 export type CreateMembershipInput = {
   profileId: string;
   membershipTierId?: string;
@@ -12,6 +13,10 @@ export class MembershipService extends BaseService {
   public async getMembershipTiers(profileId: string) {
     const data = await this.models.MembershipTier.getManyWithBenefits(profileId);
     return data;
+  }
+
+  public async getProfileMemberships(input: GetMembershipsInput) {
+    return this.models.Membership.getProfileMemberships(input);
   }
 
   public async createMembership(input: CreateMembershipInput) {

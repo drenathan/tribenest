@@ -17,13 +17,13 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as DashboardTribeIndexRouteImport } from './routes/_dashboard/tribe/index'
 import { Route as DashboardSettingsIndexRouteImport } from './routes/_dashboard/settings/index'
-import { Route as DashboardTribeMembersRouteImport } from './routes/_dashboard/tribe/members'
 import { Route as DashboardTribeCollectionsRouteImport } from './routes/_dashboard/tribe/collections'
 import { Route as DashboardWebsiteThemesIndexRouteImport } from './routes/_dashboard/website/themes/index'
 import { Route as DashboardWebsiteHomeIndexRouteImport } from './routes/_dashboard/website/home/index'
 import { Route as DashboardTribePostsIndexRouteImport } from './routes/_dashboard/tribe/posts/index'
 import { Route as DashboardTribeMessagesIndexRouteImport } from './routes/_dashboard/tribe/messages/index'
 import { Route as DashboardTribeMembershipTiersIndexRouteImport } from './routes/_dashboard/tribe/membership-tiers/index'
+import { Route as DashboardTribeMembersIndexRouteImport } from './routes/_dashboard/tribe/members/index'
 import { Route as DashboardStoreSettingsIndexRouteImport } from './routes/_dashboard/store/settings/index'
 import { Route as DashboardStoreProductsIndexRouteImport } from './routes/_dashboard/store/products/index'
 import { Route as DashboardStoreOrdersIndexRouteImport } from './routes/_dashboard/store/orders/index'
@@ -75,11 +75,6 @@ const DashboardSettingsIndexRoute = DashboardSettingsIndexRouteImport.update({
   path: '/settings/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-const DashboardTribeMembersRoute = DashboardTribeMembersRouteImport.update({
-  id: '/tribe/members',
-  path: '/tribe/members',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
 const DashboardTribeCollectionsRoute =
   DashboardTribeCollectionsRouteImport.update({
     id: '/tribe/collections',
@@ -114,6 +109,12 @@ const DashboardTribeMembershipTiersIndexRoute =
   DashboardTribeMembershipTiersIndexRouteImport.update({
     id: '/tribe/membership-tiers/',
     path: '/tribe/membership-tiers/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardTribeMembersIndexRoute =
+  DashboardTribeMembersIndexRouteImport.update({
+    id: '/tribe/members/',
+    path: '/tribe/members/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardStoreSettingsIndexRoute =
@@ -195,7 +196,6 @@ export interface FileRoutesByFullPath {
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
-  '/tribe/members': typeof DashboardTribeMembersRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
@@ -206,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/store/orders': typeof DashboardStoreOrdersIndexRoute
   '/store/products': typeof DashboardStoreProductsIndexRoute
   '/store/settings': typeof DashboardStoreSettingsIndexRoute
+  '/tribe/members': typeof DashboardTribeMembersIndexRoute
   '/tribe/membership-tiers': typeof DashboardTribeMembershipTiersIndexRoute
   '/tribe/messages': typeof DashboardTribeMessagesIndexRoute
   '/tribe/posts': typeof DashboardTribePostsIndexRoute
@@ -222,7 +223,6 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
-  '/tribe/members': typeof DashboardTribeMembersRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
@@ -233,6 +233,7 @@ export interface FileRoutesByTo {
   '/store/orders': typeof DashboardStoreOrdersIndexRoute
   '/store/products': typeof DashboardStoreProductsIndexRoute
   '/store/settings': typeof DashboardStoreSettingsIndexRoute
+  '/tribe/members': typeof DashboardTribeMembersIndexRoute
   '/tribe/membership-tiers': typeof DashboardTribeMembershipTiersIndexRoute
   '/tribe/messages': typeof DashboardTribeMessagesIndexRoute
   '/tribe/posts': typeof DashboardTribePostsIndexRoute
@@ -252,7 +253,6 @@ export interface FileRoutesById {
   '/_auth/signup': typeof AuthSignupRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/tribe/collections': typeof DashboardTribeCollectionsRoute
-  '/_dashboard/tribe/members': typeof DashboardTribeMembersRoute
   '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_dashboard/tribe/': typeof DashboardTribeIndexRoute
   '/_dashboard/store/music/create': typeof DashboardStoreMusicCreateRoute
@@ -263,6 +263,7 @@ export interface FileRoutesById {
   '/_dashboard/store/orders/': typeof DashboardStoreOrdersIndexRoute
   '/_dashboard/store/products/': typeof DashboardStoreProductsIndexRoute
   '/_dashboard/store/settings/': typeof DashboardStoreSettingsIndexRoute
+  '/_dashboard/tribe/members/': typeof DashboardTribeMembersIndexRoute
   '/_dashboard/tribe/membership-tiers/': typeof DashboardTribeMembershipTiersIndexRoute
   '/_dashboard/tribe/messages/': typeof DashboardTribeMessagesIndexRoute
   '/_dashboard/tribe/posts/': typeof DashboardTribePostsIndexRoute
@@ -281,7 +282,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/tribe/collections'
-    | '/tribe/members'
     | '/settings'
     | '/tribe'
     | '/store/music/create'
@@ -292,6 +292,7 @@ export interface FileRouteTypes {
     | '/store/orders'
     | '/store/products'
     | '/store/settings'
+    | '/tribe/members'
     | '/tribe/membership-tiers'
     | '/tribe/messages'
     | '/tribe/posts'
@@ -308,7 +309,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/tribe/collections'
-    | '/tribe/members'
     | '/settings'
     | '/tribe'
     | '/store/music/create'
@@ -319,6 +319,7 @@ export interface FileRouteTypes {
     | '/store/orders'
     | '/store/products'
     | '/store/settings'
+    | '/tribe/members'
     | '/tribe/membership-tiers'
     | '/tribe/messages'
     | '/tribe/posts'
@@ -337,7 +338,6 @@ export interface FileRouteTypes {
     | '/_auth/signup'
     | '/_dashboard/'
     | '/_dashboard/tribe/collections'
-    | '/_dashboard/tribe/members'
     | '/_dashboard/settings/'
     | '/_dashboard/tribe/'
     | '/_dashboard/store/music/create'
@@ -348,6 +348,7 @@ export interface FileRouteTypes {
     | '/_dashboard/store/orders/'
     | '/_dashboard/store/products/'
     | '/_dashboard/store/settings/'
+    | '/_dashboard/tribe/members/'
     | '/_dashboard/tribe/membership-tiers/'
     | '/_dashboard/tribe/messages/'
     | '/_dashboard/tribe/posts/'
@@ -422,13 +423,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSettingsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/_dashboard/tribe/members': {
-      id: '/_dashboard/tribe/members'
-      path: '/tribe/members'
-      fullPath: '/tribe/members'
-      preLoaderRoute: typeof DashboardTribeMembersRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
     '/_dashboard/tribe/collections': {
       id: '/_dashboard/tribe/collections'
       path: '/tribe/collections'
@@ -469,6 +463,13 @@ declare module '@tanstack/react-router' {
       path: '/tribe/membership-tiers'
       fullPath: '/tribe/membership-tiers'
       preLoaderRoute: typeof DashboardTribeMembershipTiersIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/tribe/members/': {
+      id: '/_dashboard/tribe/members/'
+      path: '/tribe/members'
+      fullPath: '/tribe/members'
+      preLoaderRoute: typeof DashboardTribeMembersIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/store/settings/': {
@@ -577,7 +578,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardTribeCollectionsRoute: typeof DashboardTribeCollectionsRoute
-  DashboardTribeMembersRoute: typeof DashboardTribeMembersRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardTribeIndexRoute: typeof DashboardTribeIndexRoute
   DashboardStoreMusicCreateRoute: typeof DashboardStoreMusicCreateRoute
@@ -588,6 +588,7 @@ interface DashboardRouteRouteChildren {
   DashboardStoreOrdersIndexRoute: typeof DashboardStoreOrdersIndexRoute
   DashboardStoreProductsIndexRoute: typeof DashboardStoreProductsIndexRoute
   DashboardStoreSettingsIndexRoute: typeof DashboardStoreSettingsIndexRoute
+  DashboardTribeMembersIndexRoute: typeof DashboardTribeMembersIndexRoute
   DashboardTribeMembershipTiersIndexRoute: typeof DashboardTribeMembershipTiersIndexRoute
   DashboardTribeMessagesIndexRoute: typeof DashboardTribeMessagesIndexRoute
   DashboardTribePostsIndexRoute: typeof DashboardTribePostsIndexRoute
@@ -602,7 +603,6 @@ interface DashboardRouteRouteChildren {
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardTribeCollectionsRoute: DashboardTribeCollectionsRoute,
-  DashboardTribeMembersRoute: DashboardTribeMembersRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardTribeIndexRoute: DashboardTribeIndexRoute,
   DashboardStoreMusicCreateRoute: DashboardStoreMusicCreateRoute,
@@ -614,6 +614,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardStoreOrdersIndexRoute: DashboardStoreOrdersIndexRoute,
   DashboardStoreProductsIndexRoute: DashboardStoreProductsIndexRoute,
   DashboardStoreSettingsIndexRoute: DashboardStoreSettingsIndexRoute,
+  DashboardTribeMembersIndexRoute: DashboardTribeMembersIndexRoute,
   DashboardTribeMembershipTiersIndexRoute:
     DashboardTribeMembershipTiersIndexRoute,
   DashboardTribeMessagesIndexRoute: DashboardTribeMessagesIndexRoute,

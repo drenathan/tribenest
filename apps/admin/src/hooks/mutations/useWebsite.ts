@@ -21,6 +21,11 @@ export type UpdateWebsiteVersionPayload = {
   themeSettings: EditorTheme;
 };
 
+export type PublishWebsiteVersionPayload = {
+  profileId: string;
+  websiteVersionId: string;
+};
+
 export const useActivateTheme = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -46,6 +51,25 @@ export const useSaveWebsiteVersion = () => {
     onSuccess: (_, payload) => {
       queryClient.invalidateQueries({
         queryKey: ["websites", payload.websiteVersionId, payload.profileId],
+      });
+    },
+  });
+};
+
+export const usePublishWebsiteVersion = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: PublishWebsiteVersionPayload) => {
+      const { data } = await httpClient.post(`/websites/${payload.websiteVersionId}/publish`, payload, {
+        params: {
+          profileId: payload.profileId,
+        },
+      });
+      return data as WebsiteVersion;
+    },
+    onSuccess: (_, payload) => {
+      queryClient.invalidateQueries({
+        queryKey: ["websites", payload.profileId],
       });
     },
   });

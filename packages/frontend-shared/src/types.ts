@@ -187,6 +187,7 @@ export interface Membership {
   endDate: string;
   status: string;
   membershipTier: MembershipTier;
+  startDate: string;
 }
 export interface PublicAuthUser {
   email: string;

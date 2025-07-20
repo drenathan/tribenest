@@ -72,6 +72,7 @@ export const PageHeaderWithoutEditor = ({ logo, background, hasBorder = false }:
       className="w-full @md:px-8 px-4 py-4 relative"
       style={{
         borderBottom: hasBorder ? `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.45)}` : "none",
+        color: themeSettings.colors.text,
       }}
     >
       <PageHeaderContent logo={logo} background={background} />

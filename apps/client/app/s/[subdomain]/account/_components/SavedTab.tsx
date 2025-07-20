@@ -39,13 +39,11 @@ export function SavedTab() {
       style={{
         borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
         backgroundColor: themeSettings.colors.background,
+        color: themeSettings.colors.text,
       }}
     >
       <div className="mb-4">
-        <h3
-          className="flex items-center gap-2 text-lg font-semibold"
-          style={{ color: themeSettings.colors.textPrimary }}
-        >
+        <h3 className="flex items-center gap-2 text-lg font-semibold">
           <Bookmark className="w-5 h-5" style={{ color: themeSettings.colors.primary }} />
           Saved Posts
         </h3>
@@ -70,9 +68,7 @@ export function SavedTab() {
         ) : (
           <div className="text-center py-8">
             <Bookmark className="w-12 h-12 mx-auto mb-4" style={{ color: themeSettings.colors.text }} />
-            <h3 className="font-semibold mb-2" style={{ color: themeSettings.colors.textPrimary }}>
-              No Saved Posts
-            </h3>
+            <h3 className="font-semibold mb-2">No Saved Posts</h3>
             <p style={{ color: themeSettings.colors.text }}>
               You haven&apos;t saved any posts yet. Click the bookmark icon on posts from the member&apos;s page
             </p>

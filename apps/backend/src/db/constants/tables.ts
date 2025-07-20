@@ -6,6 +6,7 @@ export const tables = {
   profile_authorizations: "profile_authorizations",
   profile_payment_customers: "profile_payment_customers",
   profile_payment_prices: "profile_payment_prices",
+  profile_payment_products: "profile_payment_products",
   profile_payment_subscriptions: "profile_payment_subscriptions",
   media: "media",
   media_mappings: "media_mappings",

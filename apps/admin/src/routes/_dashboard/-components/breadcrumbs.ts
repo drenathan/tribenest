@@ -34,6 +34,10 @@ export const breadcrumbs: Record<
     ],
     currentPage: "Edit Post",
   },
+  "/tribe/members": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Members",
+  },
   "/store/music": {
     links: [{ label: "Home", href: "/" }],
     currentPage: "Music",

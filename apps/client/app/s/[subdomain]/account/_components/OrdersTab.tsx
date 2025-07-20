@@ -76,13 +76,11 @@ export function OrdersTab() {
       style={{
         borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
         backgroundColor: themeSettings.colors.background,
+        color: themeSettings.colors.text,
       }}
     >
       <div className="mb-4">
-        <h3
-          className="flex items-center gap-2 text-lg font-semibold"
-          style={{ color: themeSettings.colors.textPrimary }}
-        >
+        <h3 className="flex items-center gap-2 text-lg font-semibold">
           <CreditCard className="w-5 h-5" style={{ color: themeSettings.colors.primary }} />
           My Orders
         </h3>
@@ -108,9 +106,7 @@ export function OrdersTab() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="font-semibold" style={{ color: themeSettings.colors.textPrimary }}>
-                      Order #{order.id}
-                    </h3>
+                    <h3 className="font-semibold">Order #{order.id}</h3>
                     <p className="text-sm" style={{ color: themeSettings.colors.text }}>
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
@@ -133,9 +129,7 @@ export function OrdersTab() {
                         height={64}
                       />
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold truncate" style={{ color: themeSettings.colors.textPrimary }}>
-                          {item.title}
-                        </div>
+                        <div className="font-semibold truncate">{item.title}</div>
                         <div
                           className="text-sm"
                           style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.8)}` }}
@@ -169,9 +163,7 @@ export function OrdersTab() {
                 />
 
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold" style={{ color: themeSettings.colors.textPrimary }}>
-                    Total:
-                  </span>
+                  <span className="font-semibold">Total:</span>
                   <span className="font-bold" style={{ color: themeSettings.colors.primary }}>
                     ${order.totalAmount}
                   </span>
@@ -182,9 +174,7 @@ export function OrdersTab() {
         ) : (
           <div className="text-center py-8">
             <ShoppingBag className="w-12 h-12 mx-auto mb-4" style={{ color: themeSettings.colors.text }} />
-            <h3 className="font-semibold mb-2" style={{ color: themeSettings.colors.textPrimary }}>
-              No Orders Yet
-            </h3>
+            <h3 className="font-semibold mb-2">No Orders Yet</h3>
             <p style={{ color: themeSettings.colors.text }}>
               You haven&apos;t placed any orders yet. Start shopping to see your order history here.
             </p>

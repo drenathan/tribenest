@@ -104,7 +104,7 @@ export function AccountTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={{ color: themeSettings.colors.text }}>
       {/* Profile Information */}
       <div
         className="border rounded-lg p-6"
@@ -114,10 +114,7 @@ export function AccountTab() {
         }}
       >
         <div className="mb-4">
-          <h3
-            className="flex items-center gap-2 text-lg font-semibold"
-            style={{ color: themeSettings.colors.textPrimary }}
-          >
+          <h3 className="flex items-center gap-2 text-lg font-semibold">
             <UserIcon className="w-5 h-5" style={{ color: themeSettings.colors.primary }} />
             Profile Information
           </h3>
@@ -126,7 +123,7 @@ export function AccountTab() {
           <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label style={{ color: themeSettings.colors.textPrimary }}>First Name</Label>
+                <Label style={{ color: themeSettings.colors.text }}>First Name</Label>
                 <EditorInputWithoutEditor
                   placeholder="First Name"
                   value={profileForm.watch("firstName")}
@@ -139,7 +136,7 @@ export function AccountTab() {
               </div>
 
               <div className="space-y-2">
-                <Label style={{ color: themeSettings.colors.textPrimary }}>Last Name</Label>
+                <Label style={{ color: themeSettings.colors.text }}>Last Name</Label>
                 <EditorInputWithoutEditor
                   placeholder="Last Name"
                   value={profileForm.watch("lastName")}
@@ -177,10 +174,7 @@ export function AccountTab() {
         }}
       >
         <div className="mb-4">
-          <h3
-            className="flex items-center gap-2 text-lg font-semibold"
-            style={{ color: themeSettings.colors.textPrimary }}
-          >
+          <h3 className="flex items-center gap-2 text-lg font-semibold" style={{ color: themeSettings.colors.text }}>
             <Lock className="w-5 h-5" style={{ color: themeSettings.colors.primary }} />
             Change Password
           </h3>
@@ -206,7 +200,7 @@ export function AccountTab() {
 
           <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label style={{ color: themeSettings.colors.textPrimary }}>Current Password</Label>
+              <Label style={{ color: themeSettings.colors.text }}>Current Password</Label>
               <EditorInputWithoutEditor
                 placeholder="Current Password"
                 value={passwordForm.watch("currentPassword")}
@@ -221,7 +215,7 @@ export function AccountTab() {
 
             <div className="grid grid-cols-1 @md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label style={{ color: themeSettings.colors.textPrimary }}>New Password</Label>
+                <Label style={{ color: themeSettings.colors.text }}>New Password</Label>
                 <EditorInputWithoutEditor
                   placeholder="New Password"
                   value={passwordForm.watch("newPassword")}
@@ -235,7 +229,7 @@ export function AccountTab() {
               </div>
 
               <div className="space-y-2">
-                <Label style={{ color: themeSettings.colors.textPrimary }}>Confirm New Password</Label>
+                <Label style={{ color: themeSettings.colors.text }}>Confirm New Password</Label>
                 <EditorInputWithoutEditor
                   placeholder="Confirm New Password"
                   value={passwordForm.watch("confirmPassword")}

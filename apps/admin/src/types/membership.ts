@@ -16,3 +16,20 @@ export type MembershipBenefit = {
   description: string;
   profileId: string;
 };
+
+export type IMembership = {
+  id: string;
+  profileId: string;
+  membershipTierId: string;
+  startDate: Date;
+  endDate: Date;
+  status: string;
+  membershipTierName: string;
+  subscriptionAmount: number;
+  fullName: string;
+  email: string;
+  country?: string;
+  firstMembership: {
+    startDate: string;
+  };
+};

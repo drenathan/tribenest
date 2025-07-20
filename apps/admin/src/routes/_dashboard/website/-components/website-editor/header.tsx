@@ -1,4 +1,4 @@
-import { Button, ProductCategory, useEditorContext } from "@tribe-nest/frontend-shared";
+import { Button, ProductCategory, useEditorContext, type ApiError } from "@tribe-nest/frontend-shared";
 import { Tooltip2 } from "@tribe-nest/frontend-shared";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, ChevronDown, Monitor, Smartphone, Rocket, Save, Undo, Redo } from "lucide-react";
@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from "@tribe-nest/frontend-shared";
 import { useAuth } from "@/hooks/useAuth";
 import type { WebsiteVersion, WebsiteVersionPage } from "@/types/website";
-import { useSaveWebsiteVersion } from "@/hooks/mutations/useWebsite";
+import { usePublishWebsiteVersion, useSaveWebsiteVersion } from "@/hooks/mutations/useWebsite";
 import { useEditor } from "@craftjs/core";
 import { toast } from "sonner";
 import { UpdateStylesDialog } from "../../themes/-component/update-styles-dialog";
@@ -38,6 +38,7 @@ export const WebsiteEditorHeader = ({
 
   const { currentProfileAuthorization } = useAuth();
   const { mutateAsync: saveWebsiteVersion } = useSaveWebsiteVersion();
+  const { mutateAsync: publishWebsiteVersion, isPending: isPublishWebsiteVersionPending } = usePublishWebsiteVersion();
 
   if (!currentProfileAuthorization) {
     return null;
@@ -54,7 +55,19 @@ export const WebsiteEditorHeader = ({
       description: "Choose an item to feature",
     };
   };
-  const handleActivateClick = async () => {};
+  const handleActivateClick = async () => {
+    try {
+      await publishWebsiteVersion({
+        websiteVersionId: websiteVersion.id,
+        profileId: currentProfileAuthorization.profile.id,
+      });
+      toast.success("Website version published");
+      navigate({ to: "/website/home" });
+    } catch (error) {
+      const message = (error as ApiError).response?.data?.message || "Failed to publish website version";
+      toast.error(message);
+    }
+  };
 
   const handleSaveClick = async () => {
     const serializedNodes = query.getSerializedNodes();
@@ -159,7 +172,7 @@ export const WebsiteEditorHeader = ({
         {!websiteVersion.isActive && (
           <div className="flex items-center gap-2">
             <Tooltip2 text="Publish the website version">
-              <Button onClick={handleActivateClick}>
+              <Button onClick={handleActivateClick} disabled={isPublishWebsiteVersionPending}>
                 <Rocket /> Publish
               </Button>
             </Tooltip2>

@@ -40,10 +40,11 @@ export const EditorText = ({
     enabled: state.options.enabled,
   }));
   const { matches } = useContainerQueryContext();
+  console.log(text, themeSettings.colors.text, color);
 
   useEffect(() => {
     setProp((prop: TextProps) => {
-      prop.color = color ?? themeSettings.colors.text;
+      prop.color = themeSettings.colors.text;
     });
   }, [themeSettings, setProp, color]);
 
@@ -60,7 +61,7 @@ export const EditorText = ({
       style={{
         width: "auto",
         margin: `${marginVertical}px ${marginHorizontal}px`,
-        color: color ?? themeSettings.colors.text,
+        color: themeSettings.colors.text,
         textShadow: `0px 0px 2px rgba(0,0,0,${(shadow || 0) / 100})`,
         fontWeight,
         textAlign,

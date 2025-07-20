@@ -106,7 +106,7 @@ function PageHeaderContent({
                 {user ? (
                   <div className="space-y-3">
                     <div className="space-y-1">
-                      <p className="font-medium text-sm" style={{ color: themeSettings.colors.textPrimary }}>
+                      <p className="font-medium text-sm" style={{ color: themeSettings.colors.text }}>
                         {user.firstName} {user.lastName}
                       </p>
                       <p className="text-xs" style={{ color: themeSettings.colors.text }}>
@@ -189,7 +189,7 @@ function PageHeaderContent({
               {user ? (
                 <div className="space-y-3">
                   <div className="space-y-1">
-                    <p className="font-medium text-sm" style={{ color: themeSettings.colors.textPrimary }}>
+                    <p className="font-medium text-sm" style={{ color: themeSettings.colors.text }}>
                       {user.firstName} {user.lastName}
                     </p>
                     <p className="text-xs" style={{ color: themeSettings.colors.text }}>

@@ -30,7 +30,7 @@ export function AccountPageContent() {
           <div className="mb-8">
             <h1
               className="text-2xl @md:text-3xl @lg:text-4xl font-bold mb-2"
-              style={{ color: themeSettings.colors.textPrimary }}
+              style={{ color: themeSettings.colors.text }}
             >
               My Account
             </h1>
