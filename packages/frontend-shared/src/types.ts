@@ -186,6 +186,7 @@ export interface Membership {
   profilePaymentSubscriptionsId: string;
   endDate: string;
   status: string;
+  membershipTier: MembershipTier;
 }
 export interface PublicAuthUser {
   email: string;

@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useEditorContext, alphaToHexCode, EditorInputWithoutEditor, usePublicAuth } from "@tribe-nest/frontend-shared";
 import { EditorButtonWithoutEditor } from "@tribe-nest/frontend-shared";
-import type { MembershipTier } from "@tribe-nest/frontend-shared";
+import type { ApiError, MembershipTier } from "@tribe-nest/frontend-shared";
 import { MembershipPaymentStage } from "./membership-payment-stage";
 import { usePublicAuthGuard } from "@/app/s/[subdomain]/_hooks/usePublicAuthGuard";
+import { toast } from "sonner";
 
 type Stage = "selection" | "details" | "payment";
 type PaymentCycle = "month" | "year";
@@ -16,7 +17,7 @@ export function MembershipCheckoutContent() {
   const { themeSettings, navigate, httpClient, profile } = useEditorContext();
   const searchParams = useSearchParams();
   const membershipTierId = searchParams.get("membershipTierId");
-  const { user } = usePublicAuth();
+  const { user, refetchUser } = usePublicAuth();
 
   const [currentStage, setCurrentStage] = useState<Stage>("selection");
   const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([]);
@@ -24,6 +25,7 @@ export function MembershipCheckoutContent() {
   const [paymentCycle, setPaymentCycle] = useState<PaymentCycle>("month");
   const [customAmount, setCustomAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChangeMembershipLoading, setIsChangeMembershipLoading] = useState(false);
 
   const hasPaymentSetup = !!user?.membership?.profilePaymentSubscriptionsId;
 
@@ -90,6 +92,7 @@ export function MembershipCheckoutContent() {
 
   const handleChangeSubscription = () => {
     if (!httpClient || !profile || !selectedTier) return;
+    setIsChangeMembershipLoading(true);
 
     const amount = selectedTier.payWhatYouWant
       ? customAmount
@@ -104,9 +107,17 @@ export function MembershipCheckoutContent() {
         membershipTierId: selectedTier.id,
         isChange: true,
       })
-      .then((res) => console.log(res.data))
-      .catch((err) => console.error(err))
-      .finally(() => setIsLoading(false));
+      .then(() => {
+        refetchUser();
+        toast.success("Membership changed successfully");
+        navigate("/account?tab=membership");
+      })
+      .catch((err) => {
+        const message = (err as ApiError).response?.data?.message || "Failed to change membership";
+        toast.error(message);
+        console.error(err);
+      })
+      .finally(() => setIsChangeMembershipLoading(false));
   };
 
   if (isLoading) {
@@ -378,11 +389,13 @@ export function MembershipCheckoutContent() {
                 onClick={handleBackToSelection}
                 variant="secondary"
                 type="button"
+                disabled={isChangeMembershipLoading}
               />
               <EditorButtonWithoutEditor
                 text={hasPaymentSetup ? "Confirm Change" : "Proceed to Payment"}
                 onClick={hasPaymentSetup ? handleChangeSubscription : handleProceedToPayment}
                 type="submit"
+                disabled={isChangeMembershipLoading}
               />
             </div>
           </div>

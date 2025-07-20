@@ -99,7 +99,7 @@ export class MembershipService extends BaseService {
   }
 
   public async getAccountMembership(accountId: string, profileId: string) {
-    const membership = await this.models.Membership.findOne({ accountId, profileId, status: "active" });
+    const membership = await this.models.Membership.getActiveMembership({ accountId, profileId });
     return membership;
   }
 }

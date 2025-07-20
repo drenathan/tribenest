@@ -9,21 +9,7 @@ import {
   IPublicPost,
   websiteThemes,
 } from "@tribe-nest/frontend-shared";
-import { Bookmark, Save, Eye, FileText, Music } from "lucide-react";
-import Image from "next/image";
-
-// Types for saved posts
-interface SavedPost {
-  id: string;
-  caption: string;
-  media: Array<{
-    url: string;
-    type: string;
-    id: string;
-  }>;
-  createdAt: string;
-  savedAt: string;
-}
+import { Bookmark } from "lucide-react";
 
 export function SavedTab() {
   const { user } = usePublicAuth();
