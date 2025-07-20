@@ -215,7 +215,6 @@ export class ProfilePaymentService extends BaseService {
   public async finalizeSubscription(input: FinalizeSubscriptionInput) {
     const paymentProvider = await this.apis.getPaymentProvider(input.profileId);
     const subscription = await paymentProvider.getSubscription(input.subscriptionId);
-    console.log(subscription, "subscription");
 
     if (!subscription || subscription.status !== SubscriptionStatus.Active) {
       // TODO: we need some error handling here

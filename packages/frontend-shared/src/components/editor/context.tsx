@@ -43,7 +43,7 @@ export const EditorContextProvider = ({
   isAdminView: boolean;
   httpClient?: AxiosInstance;
   themeSettings: EditorTheme;
-  navigate: (href: string) => void;
+  navigate: (href: string, options?: { replace?: boolean }) => void;
   themeName?: string;
   pages: ThemePage[];
 }) => {

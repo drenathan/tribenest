@@ -9,7 +9,6 @@ import {
   usePublicAuth,
 } from "@tribe-nest/frontend-shared";
 import { usePublicAuthGuard } from "../../../_hooks/usePublicAuthGuard";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { CardElement, Elements, useElements, useStripe } from "@stripe/react-stripe-js";
@@ -85,6 +84,7 @@ const Content = ({ clientSecret, onBackToDetails }: { clientSecret: string; onBa
   const { user } = usePublicAuth();
   const { themeSettings } = useEditorContext();
   const [isLoading, setIsLoading] = useState(false);
+  const { navigate } = useEditorContext();
 
   if (!stripe || !elements) {
     // Stripe.js has not loaded yet. Make sure to disable
@@ -124,8 +124,7 @@ const Content = ({ clientSecret, onBackToDetails }: { clientSecret: string; onBa
 
     setIsLoading(false);
 
-    // TODO: handle payment intent
-    console.log(paymentIntent);
+    navigate("/account", { replace: true });
   };
 
   const style = {

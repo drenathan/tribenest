@@ -3,10 +3,7 @@ import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
 import { CreateOrderInput, createOrderSchema, finalizeOrderSchema, FinalizeOrderInput } from "./schema";
 import { OrderStatus } from "@src/db/types/product";
-import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";
-import { PaymentProviderFactory } from "@src/services/paymentProvider/PaymentProviderFactory";
 import { NotFoundError } from "@src/utils/app_error";
-import { EncryptionService } from "@src/utils/encryption";
 
 export class PublicOrders extends BaseController {
   @RouteHandler()
@@ -17,46 +14,21 @@ export class PublicOrders extends BaseController {
     next: NextFunction,
     @Body body?: CreateOrderInput,
   ): Promise<any> {
-    const result = await this.services.public.order.create({
-      ...body!,
-      status: OrderStatus.InitiatedPayment,
-    });
-    return result;
+    return this.services.public.order.create(body!);
   }
 
   @RouteHandler()
   @ValidateSchema(finalizeOrderSchema)
   public async finalizeOrder(
-    req: Request,
-    res: Response,
-    next: NextFunction,
+    ___: Request,
+    __: Response,
+    _: NextFunction,
     @Body body?: FinalizeOrderInput,
   ): Promise<any> {
-    const { paymentId, paymentProviderName, profileId } = body!;
-    const profile = await this.services.profile.getProfile(profileId);
-    if (!profile) {
-      throw new NotFoundError("Profile not found");
-    }
-
-    const paymentProvider = PaymentProviderFactory.create(paymentProviderName as PaymentProviderName, {
-      apiKeys: EncryptionService.decryptObject(
-        {
-          publicKey: profile.paymentProviderPublicKey!,
-          privateKey: profile.paymentProviderPrivateKey!,
-        },
-        ["publicKey", "privateKey"],
-      ),
-    });
-    const paymentStatus = await paymentProvider.getPaymentStatus(paymentId);
-
-    const order = await this.services.public.order.finalizePayment({
-      paymentId,
-      paymentStatus,
-      profileId,
-    });
+    const order = await this.services.public.order.finalizePayment(body!);
 
     if (order.status === OrderStatus.Paid) {
-      await this.workers.jobs.order.processOrder.now({ orderId: order.id, profileId });
+      await this.workers.jobs.order.processOrder.now({ orderId: order.id, profileId: body!.profileId });
     }
 
     return order;

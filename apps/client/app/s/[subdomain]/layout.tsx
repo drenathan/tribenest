@@ -94,8 +94,12 @@ const Content = ({ children }: { children: React.ReactNode }) => {
           themeSettings={webPage.themeSettings}
           themeName={webPage.themeName}
           pages={theme.pages}
-          navigate={(path) => {
-            router.push(`${path}`);
+          navigate={(path, options) => {
+            if (options?.replace) {
+              router.replace(path);
+            } else {
+              router.push(path);
+            }
           }}
         >
           <QueryClientProvider client={queryClient}>

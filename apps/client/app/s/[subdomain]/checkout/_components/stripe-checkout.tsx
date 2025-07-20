@@ -2,6 +2,7 @@ import {
   alphaToHexCode,
   ApiError,
   EditorButtonWithoutEditor,
+  IPublicOrder,
   PaymentProviderName,
   useCart,
   useEditorContext,
@@ -143,7 +144,7 @@ export default function CheckoutForm({
 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isOrderCreated, setIsOrderCreated] = useState(false);
+  const [order, setOrder] = useState<IPublicOrder | null>(null);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -156,10 +157,11 @@ export default function CheckoutForm({
       }
 
       setIsLoading(true);
+      let localOrder = order;
       // This function is called even if the form is invalid, we only want to create the order once no matter how many times the user clicks the button
-      if (!isOrderCreated) {
+      if (!localOrder) {
         try {
-          await httpClient.post("/public/orders", {
+          const res = await httpClient.post("/public/orders", {
             amount,
             profileId: profile.id,
             email,
@@ -170,7 +172,8 @@ export default function CheckoutForm({
             paymentId,
             paymentProviderName: PaymentProviderName.Stripe,
           });
-          setIsOrderCreated(true);
+          setOrder(res.data);
+          localOrder = res.data;
         } catch (error) {
           toast.error((error as ApiError).response?.data?.message);
           console.error(error);
@@ -183,7 +186,7 @@ export default function CheckoutForm({
         elements,
         confirmParams: {
           // Make sure to change this to your payment completion page
-          return_url: `http://drenathan1.localhost:3001/checkout/finalise?paymentId=${paymentId}&paymentProviderName=${PaymentProviderName.Stripe}`,
+          return_url: `${window.location.origin}/checkout/finalise?orderId=${localOrder?.id}`,
         },
       });
 
@@ -200,7 +203,7 @@ export default function CheckoutForm({
 
       setIsLoading(false);
     },
-    [stripe, elements, profile, isOrderCreated, amount, email, firstName, lastName, user?.id, cartItems, paymentId],
+    [stripe, elements, profile, order, amount, email, firstName, lastName, user?.id, cartItems, paymentId],
   );
 
   const paymentElementOptions = {

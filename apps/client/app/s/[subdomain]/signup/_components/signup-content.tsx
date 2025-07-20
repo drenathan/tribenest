@@ -60,10 +60,11 @@ export function SignupContent() {
     try {
       await register({ ...data, profileId: profile!.id });
 
-      // Check if there's a membership tier ID in the URL
-      const membershipTierId = searchParams.get("membershipTierId");
-      if (membershipTierId) {
-        navigate(`/membership/checkout?tierId=${membershipTierId}`);
+      if (membershipTier && !membershipTier.priceMonthly && !membershipTier.payWhatYouWantMinimum) {
+        // If the membership tier is free, redirect to the home page or members page
+        navigate("/");
+      } else if (membershipTier) {
+        navigate(`/membership/checkout?tierId=${membershipTier.id}`);
       } else {
         navigate(redirect || "/");
       }
@@ -74,6 +75,7 @@ export function SignupContent() {
       }
     }
   };
+
   return (
     <div className="w-full h-full flex justify-center items-start px-4 md:px-8 ">
       <form
@@ -98,7 +100,7 @@ export function SignupContent() {
               ) : (
                 <p>
                   {membershipTier.priceMonthly ? `$${membershipTier.priceMonthly}/Mo` : "Free"}
-                  {membershipTier.priceYearly && ` or $${membershipTier.priceYearly}/Yr`}
+                  {membershipTier.priceYearly ? ` or $${membershipTier.priceYearly}/Yr` : ""}
                 </p>
               )}
             </div>

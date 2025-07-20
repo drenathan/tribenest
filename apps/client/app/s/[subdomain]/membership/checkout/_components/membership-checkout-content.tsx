@@ -241,7 +241,7 @@ export function MembershipCheckoutContent() {
 
                   <div className="text-center mt-auto">
                     {isCurrentTier ? (
-                      <div className="text-sm opacity-75">You're currently on this plan</div>
+                      <div className="text-sm opacity-75">You&apos;re currently on this plan</div>
                     ) : (
                       <EditorButtonWithoutEditor
                         text="Select This Tier"

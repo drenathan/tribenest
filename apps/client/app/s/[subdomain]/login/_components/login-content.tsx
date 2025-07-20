@@ -90,7 +90,7 @@ export function LoginContent() {
               ) : (
                 <p>
                   {membershipTier.priceMonthly ? `$${membershipTier.priceMonthly}/Mo` : "Free"}
-                  {membershipTier.priceYearly && ` or $${membershipTier.priceYearly}/Yr`}
+                  {membershipTier.priceYearly ? ` or $${membershipTier.priceYearly}/Yr` : ""}
                 </p>
               )}
             </div>

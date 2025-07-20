@@ -76,7 +76,7 @@ export type EditorContextType = {
   isAdminView: boolean;
   httpClient?: AxiosInstance;
   themeSettings: EditorTheme;
-  navigate: (href: string) => void;
+  navigate: (href: string, options?: { replace?: boolean }) => void;
   setThemeSettings: React.Dispatch<React.SetStateAction<EditorTheme>>;
   pages: ThemePage[];
   themeName?: string;

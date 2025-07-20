@@ -2,7 +2,7 @@ import { OrderStatus } from "@src/db/types/product";
 import { CreateOrderInput } from "@src/routes/public/orders/schema";
 import { BaseService } from "@src/services/baseService";
 import { PaymentStatus } from "@src/services/paymentProvider/PaymentProvider";
-import { NotFoundError } from "@src/utils/app_error";
+import { BadRequestError, NotFoundError } from "@src/utils/app_error";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
@@ -13,9 +13,8 @@ import { IOrderItem } from "@src/db/models/order/orderItem.model";
 import { Selectable } from "kysely";
 
 type FinalizeOrderInput = {
-  paymentId: string;
-  paymentStatus: PaymentStatus;
   profileId: string;
+  orderId: string;
 };
 
 type GetOrderInput = {
@@ -44,13 +43,16 @@ export class OrderService extends BaseService {
     await this.models.Order.updateOne({ id: orderId }, { status });
   }
 
-  public async create(input: CreateOrderInput & { status: OrderStatus }) {
-    await this.database.client.transaction().execute(async (trx) => {
+  public async create(input: CreateOrderInput) {
+    const isPaidOrder = input.amount > 0;
+    const status = isPaidOrder ? OrderStatus.InitiatedPayment : OrderStatus.Paid;
+
+    return this.database.client.transaction().execute(async (trx) => {
       const order = await this.models.Order.insertOne(
         {
           totalAmount: input.amount,
           profileId: input.profileId,
-          status: input.status,
+          status,
           paymentProviderName: input.paymentProviderName,
           paymentId: input.paymentId,
           firstName: input.firstName,
@@ -77,11 +79,16 @@ export class OrderService extends BaseService {
         })),
         trx,
       );
+
+      return order;
     });
   }
 
   public async finalizePayment(input: FinalizeOrderInput) {
-    const order = await this.models.Order.getUserOrder({ paymentId: input.paymentId });
+    const order = await this.models.Order.getUserOrder({
+      orderId: input.orderId,
+    });
+
     if (!order) {
       throw new NotFoundError("Order not found");
     }
@@ -90,13 +97,21 @@ export class OrderService extends BaseService {
       return order;
     }
 
-    const status = this.getOrderStatus(input.paymentStatus);
+    if (!order.paymentId) {
+      throw new BadRequestError("Invalid order");
+    }
+
+    const paymentProvider = await this.apis.getPaymentProvider(input.profileId);
+    const paymentStatus = await paymentProvider.getPaymentStatus(order.paymentId);
+
+    const status = this.getOrderStatus(paymentStatus);
+
     await this.database.client.transaction().execute(async (trx) => {
-      await this.models.Order.updateOne({ paymentId: input.paymentId, profileId: input.profileId }, { status }, trx);
+      await this.models.Order.updateOne({ id: order.id, profileId: input.profileId }, { status }, trx);
     });
 
     return this.models.Order.getUserOrder({
-      paymentId: input.paymentId,
+      orderId: order.id,
     });
   }
 

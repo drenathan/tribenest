@@ -15,16 +15,18 @@ export default function Page() {
   const searchParams = useSearchParams();
   const paymentProviderName = searchParams.get("paymentProviderName") as string;
   const paymentId = searchParams.get("paymentId") as string;
+  const orderId = searchParams.get("orderId") as string;
   const { profile, themeSettings, navigate } = useEditorContext();
   const { clearCart, cartItems } = useCart();
 
   const { data, isLoading } = useQuery<IPublicOrder>({
-    queryKey: ["paymentStatus", paymentId, paymentProviderName, profile?.id],
+    queryKey: ["paymentStatus", paymentId, paymentProviderName, profile?.id, orderId],
     queryFn: async () => {
       const res = await httpClient.post("/public/orders/finalize", {
         paymentId,
         paymentProviderName,
         profileId: profile?.id,
+        orderId,
       });
       return res.data;
     },
@@ -33,7 +35,7 @@ export default function Page() {
 
   // Clear cart when order status is paid
   useEffect(() => {
-    if (data?.status === OrderStatus.Paid && cartItems.length > 0) {
+    if ([OrderStatus.Paid, OrderStatus.Delivered].includes(data?.status as OrderStatus) && cartItems.length > 0) {
       clearCart();
     }
   }, [data?.status, clearCart, cartItems]);

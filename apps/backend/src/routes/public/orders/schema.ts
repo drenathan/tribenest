@@ -57,9 +57,8 @@ export const createOrderSchema = z.object({
 
 export const finalizeOrderSchema = z.object({
   body: z.object({
-    paymentId: z.string(),
-    paymentProviderName: z.nativeEnum(PaymentProviderName),
     profileId: z.string().uuid("Invalid profile ID"),
+    orderId: z.string().uuid("Invalid order ID"),
   }),
 });
 

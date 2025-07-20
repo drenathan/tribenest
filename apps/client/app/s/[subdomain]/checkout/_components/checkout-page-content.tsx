@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { usePublicAuth, useCart, useEditorContext } from "@tribe-nest/frontend-shared";
+import { usePublicAuth, useCart, useEditorContext, PaymentProviderName, ApiError } from "@tribe-nest/frontend-shared";
 import { EditorInputWithoutEditor, EditorButtonWithoutEditor } from "@tribe-nest/frontend-shared";
 import { useForm, Controller } from "react-hook-form";
 import { alphaToHexCode } from "@tribe-nest/frontend-shared";
 import { StripeCheckout } from "./stripe-checkout";
 import { round } from "lodash";
+import httpClient from "@/services/httpClient";
+import { toast } from "sonner";
 
 type GuestUserData = {
   firstName: string;
@@ -16,9 +18,10 @@ type GuestUserData = {
 export function CheckoutPageContent() {
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
-  const { themeSettings, navigate } = useEditorContext();
+  const { themeSettings, navigate, profile } = useEditorContext();
   const [currentStage, setCurrentStage] = useState<1 | 2>(1);
   const [guestUserData, setGuestUserData] = useState<GuestUserData | null>(null);
+  const [isFreeCheckoutLoading, setIsFreeCheckoutLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -51,6 +54,33 @@ export function CheckoutPageContent() {
 
   const handleLogin = () => {
     navigate("/login?redirect=/checkout");
+  };
+
+  const handleFreeCheckout = async () => {
+    try {
+      setIsFreeCheckoutLoading(true);
+      const { data } = await httpClient.post("/public/orders", {
+        amount: total,
+        profileId: profile?.id,
+        email: guestUserData?.email || user?.email || "",
+        firstName: guestUserData?.firstName || user?.firstName || "",
+        lastName: guestUserData?.lastName || user?.lastName || "",
+        accountId: user?.id,
+        cartItems,
+        paymentId: "",
+        paymentProviderName: PaymentProviderName.Stripe,
+      });
+
+      navigate(`/checkout/finalise?orderId=${data.id}`);
+    } catch (error) {
+      const message = (error as ApiError).response?.data?.message;
+      if (message) {
+        toast.error(message);
+      }
+      console.error(error);
+    } finally {
+      setIsFreeCheckoutLoading(false);
+    }
   };
 
   if (cartItems.length === 0) {
@@ -284,7 +314,12 @@ export function CheckoutPageContent() {
               <p className="text-sm text-muted-foreground mb-8">
                 This is a free checkout. You will not be charged anything.
               </p>
-              <EditorButtonWithoutEditor text="Complete Checkout" onClick={() => {}} fullWidth />
+              <EditorButtonWithoutEditor
+                text="Complete Checkout"
+                onClick={handleFreeCheckout}
+                fullWidth
+                disabled={isFreeCheckoutLoading}
+              />
             </div>
           )}
         </div>
