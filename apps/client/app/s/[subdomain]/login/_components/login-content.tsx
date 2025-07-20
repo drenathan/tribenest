@@ -15,8 +15,16 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import type { MembershipTier } from "@tribe-nest/frontend-shared";
+import InternalPageRenderer from "../../_components/internal-page-renderer";
 
 export function LoginContent() {
+  return (
+    <InternalPageRenderer>
+      <Content />
+    </InternalPageRenderer>
+  );
+}
+export function Content() {
   const { themeSettings, navigate, profile, httpClient } = useEditorContext();
   const { login, isLoading } = usePublicAuth();
   const [errorMessage, setErrorMessage] = useState("");
@@ -67,7 +75,12 @@ export function LoginContent() {
   };
 
   return (
-    <div className="w-full h-full flex justify-center items-start px-4 md:px-8 ">
+    <div
+      style={{
+        color: themeSettings.colors.text,
+      }}
+      className="w-full h-full flex justify-center items-start px-4 md:px-8 "
+    >
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
         className="w-full max-w-md mt-20 p-4 h-auto"

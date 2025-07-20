@@ -57,9 +57,25 @@ export const MusicItem: UserComponent<PostItemProps> = ({ product }) => {
 
         <div className="flex items-center gap-2 mt-2">
           {isSingle ? (
-            <Badge variant="outline">Single</Badge>
+            <Badge
+              style={{
+                backgroundColor: addAlphaToHexCode(themeSettings.colors.text, 0.1),
+                color: themeSettings.colors.text,
+              }}
+              variant="outline"
+            >
+              Single
+            </Badge>
           ) : (
-            <Badge variant="outline">Album: {defaultVariant?.tracks?.length || 0} tracks</Badge>
+            <Badge
+              style={{
+                backgroundColor: addAlphaToHexCode(themeSettings.colors.text, 0.1),
+                color: themeSettings.colors.text,
+              }}
+              variant="outline"
+            >
+              Album: {defaultVariant?.tracks?.length || 0} tracks
+            </Badge>
           )}
         </div>
       </div>

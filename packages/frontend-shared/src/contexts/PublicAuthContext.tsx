@@ -205,7 +205,7 @@ function PublicAuthProvider({ children, httpClient, setHttpClientToken }: AuthPr
       dispatch({ type: Types.Logout });
       if (persist) await httpClient.delete("/sessions");
     } catch (error) {
-      console.error(error);
+      console.error();
     }
   };
 
