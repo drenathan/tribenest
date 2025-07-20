@@ -1,10 +1,13 @@
-import { Expression, Kysely, SqlBool } from "kysely";
+import { Expression, Kysely, sql, SqlBool } from "kysely";
 import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { BadRequestError } from "@src/utils/app_error";
+import { OrderStatus } from "@src/db/types/product";
+import { GetOrdersInput } from "@src/routes/orders/schema";
+import { PaginatedData } from "@src/types";
 export type IOrder = DB["orders"];
 
-type GetOrdersInput = {
+type GetUserOrdersInput = {
   paymentId?: string;
   orderId?: string;
   accountId?: string;
@@ -16,12 +19,17 @@ type GetOrderInput = {
   orderId?: string;
 };
 
+type OrderFilters = {
+  status?: string;
+  query?: string;
+};
+
 export class OrderModel extends BaseModel<"orders", "id"> {
   constructor(client: Kysely<DB>) {
     super(client, "orders", "id");
   }
 
-  public async getUserOrders(input: GetOrdersInput) {
+  public async getUserOrders(input: GetUserOrdersInput) {
     const { paymentId, orderId, accountId } = input;
     if (!accountId && !orderId && !paymentId) {
       throw new BadRequestError("Either accountId, orderId or paymentId is required");
@@ -57,6 +65,71 @@ export class OrderModel extends BaseModel<"orders", "id"> {
       .execute();
 
     return result;
+  }
+
+  public async getProfileOrders(input: GetOrdersInput): Promise<PaginatedData<{}>> {
+    const { profileId, page, limit } = input;
+    const offset = (page - 1) * limit;
+
+    const { status, query } = (input.filter ?? {}) as OrderFilters;
+
+    const filterQuery = this.client
+      .selectFrom("orders")
+      .leftJoin("accounts as a", "orders.accountId", "a.id")
+      .where((eb) => {
+        const conditions: Expression<SqlBool>[] = [];
+
+        conditions.push(eb("orders.profileId", "=", profileId));
+        conditions.push(eb("orders.status", "!=", OrderStatus.InitiatedPayment));
+
+        if (status && status !== "all") {
+          conditions.push(eb("orders.status", "=", status as OrderStatus));
+        }
+
+        if (query?.length) {
+          conditions.push(
+            eb.or([
+              eb("a.firstName", "ilike", `%${query}%`),
+              eb("orders.lastName", "ilike", `%${query}%`),
+              eb("a.lastName", "ilike", `%${query}%`),
+              eb("orders.firstName", "ilike", `%${query}%`),
+            ]),
+          );
+        }
+
+        return eb.and(conditions);
+      });
+
+    const total = await filterQuery.select((eb) => eb.fn.countAll().as("total")).executeTakeFirstOrThrow();
+
+    const data = await filterQuery
+      .orderBy("orders.createdAt", "desc")
+      .selectAll()
+      .select((eb) => [
+        sql`a.first_name || ' ' || a.last_name`.as("customerName"),
+        eb.ref("orders.email").as("customerEmail"),
+        this.jsonArrayFrom(
+          eb
+            .selectFrom("orderItems")
+            .selectAll()
+            .whereRef("orderId", "=", "orders.id")
+            .orderBy("orderItems.createdAt", "asc"),
+        ).as("items"),
+      ])
+      .limit(input.limit)
+      .offset(offset)
+      .execute();
+
+    const hasNextPage = data.length === limit;
+
+    return {
+      data,
+      total: Number(total.total),
+      hasNextPage,
+      page,
+      pageSize: limit,
+      nextPage: hasNextPage ? page + 1 : null,
+    };
   }
 
   public async getUserOrder(input: GetOrderInput) {

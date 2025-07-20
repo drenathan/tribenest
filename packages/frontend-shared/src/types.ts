@@ -265,6 +265,8 @@ export type IPublicOrder = {
   status: OrderStatus;
   createdAt: string;
   updatedAt: string;
+  customerName: string;
+  customerEmail: string;
 };
 
 export type IPublicOrderItem = {
