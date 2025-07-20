@@ -40,7 +40,6 @@ export const EditorText = ({
     enabled: state.options.enabled,
   }));
   const { matches } = useContainerQueryContext();
-  console.log(text, themeSettings.colors.text, color);
 
   useEffect(() => {
     setProp((prop: TextProps) => {

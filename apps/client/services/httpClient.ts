@@ -11,8 +11,6 @@ export const createHttpClient = (baseURL: string) => {
   return client;
 };
 
-console.log(process.env.API_URL);
-
 const httpClient = axios.create({
   baseURL: process.env.API_URL || "http://localhost:8000",
 });

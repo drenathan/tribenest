@@ -1,27 +1,29 @@
 // import { Metadata } from "next";
 
+import { Metadata } from "next";
 import { getWebPage } from "./_api";
 import { PageRenderer } from "./_components/page-renderer";
 
-// export async function generateMetadata({
-//     params
-//   }: {
-//     params: Promise<{ subdomain: string }>;
-//   }): Promise<Metadata> {
-//     const { subdomain } = await params;
-//     const subdomainData = await getSubdomainData(subdomain);
+export async function generateMetadata({ params }: { params: Promise<{ subdomain: string }> }): Promise<Metadata> {
+  const { subdomain } = await params;
+  const webPage = await getWebPage({ subdomain, pathname: "/" });
 
-//     if (!subdomainData) {
-//       return {
-//         title: rootDomain
-//       };
-//     }
+  if (!webPage) {
+    return {
+      title: "Tribe Nest",
+      description: "The all in one platform for artists",
+    };
+  }
 
-//     return {
-//       title: `${subdomain}.${rootDomain}`,
-//       description: `Subdomain page for ${subdomain}.${rootDomain}`
-//     };
-//   }
+  return {
+    title: webPage.profile.name + " | " + webPage.page.title,
+    description: webPage.page.description,
+    openGraph: {
+      title: webPage.page.title,
+      description: webPage.page.description,
+    },
+  };
+}
 
 export default async function SubdomainPage({ params }: { params: Promise<{ subdomain: string }> }) {
   const { subdomain } = await params;

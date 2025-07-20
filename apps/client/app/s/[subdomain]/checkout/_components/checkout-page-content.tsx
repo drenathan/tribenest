@@ -8,6 +8,7 @@ import { StripeCheckout } from "./stripe-checkout";
 import { round } from "lodash";
 import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
+import InternalPageRenderer from "../../_components/internal-page-renderer";
 
 type GuestUserData = {
   firstName: string;
@@ -16,6 +17,14 @@ type GuestUserData = {
 };
 
 export function CheckoutPageContent() {
+  return (
+    <InternalPageRenderer>
+      <Content />
+    </InternalPageRenderer>
+  );
+}
+
+export function Content() {
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
   const { themeSettings, navigate, profile } = useEditorContext();

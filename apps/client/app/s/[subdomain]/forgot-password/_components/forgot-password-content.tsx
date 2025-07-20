@@ -12,7 +12,12 @@ export function ForgotPasswordContent() {
   const { themeSettings } = useEditorContext();
 
   return (
-    <div className="w-full h-full flex justify-center items-start px-4 md:px-8 ">
+    <div
+      style={{
+        color: themeSettings.colors.text,
+      }}
+      className="w-full h-full flex justify-center items-start px-4 md:px-8 "
+    >
       <div
         className="w-full max-w-md mt-20 p-4 h-auto"
         style={{
