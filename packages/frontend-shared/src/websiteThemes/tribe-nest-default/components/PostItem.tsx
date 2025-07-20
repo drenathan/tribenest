@@ -6,7 +6,12 @@ import { alphaToHexCode } from "../../../lib/utils";
 import { css } from "@emotion/css";
 import type { IPublicPost, IMedia, IPublicComment } from "../../../types";
 import { useAudioPlayer } from "../../../contexts/AudioPlayerContext";
-import { EditorButton, EditorIcon, EditorInputWithoutEditor, EditorModal } from "../../../components/editor/selectors";
+import {
+  EditorButtonWithoutEditor,
+  EditorIcon,
+  EditorInputWithoutEditor,
+  EditorModal,
+} from "../../../components/editor/selectors";
 import { usePublicAuth } from "../../../contexts/PublicAuthContext";
 import ReactPlayer from "react-player";
 
@@ -352,7 +357,11 @@ export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
                   width="100%"
                 />
 
-                <EditorButton text="Post" onClick={handleAddComment} disabled={isLoading || !newComment.trim()} />
+                <EditorButtonWithoutEditor
+                  text="Post"
+                  onClick={handleAddComment}
+                  disabled={isLoading || !newComment.trim()}
+                />
               </div>
             </div>
           </div>
@@ -763,7 +772,7 @@ const NoAccessContent = ({ post }: { post: IPublicPost }) => {
           Subscribe to access this content
         </div>
         <div className="mt-4">
-          <EditorButton text="Subscribe" onClick={() => {}} />
+          <EditorButtonWithoutEditor text="Subscribe" onClick={() => {}} />
         </div>
       </div>
     </div>

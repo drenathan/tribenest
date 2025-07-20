@@ -6,9 +6,17 @@ import { publicAuthentication } from "@src/middlewares";
 const init: InitRouteFunction = ({ services, workers }) => {
   const router = Router();
   const controller = new PublicPosts(services, workers);
-
-  router.use((req, _, next) => publicAuthentication(req, next, services));
-  router.get("/", (...args) => controller.getPosts(...args));
+  const throwOnUnauthenticated = true;
+  router.get(
+    "/",
+    (req, _, next) => publicAuthentication(req, next, services),
+    (...args) => controller.getPosts(...args),
+  );
+  router.get(
+    "/saved",
+    (req, _, next) => publicAuthentication(req, next, services, throwOnUnauthenticated),
+    (...args) => controller.getSavedPosts(...args),
+  );
   return router;
 };
 

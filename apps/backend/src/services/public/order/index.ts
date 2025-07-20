@@ -308,6 +308,11 @@ export class OrderService extends BaseService {
     }
   }
 
+  public async getOrders(accountId: string) {
+    const orders = await this.models.Order.getUserOrders({ accountId });
+    return orders;
+  }
+
   private getOrderStatus(paymentStatus: PaymentStatus) {
     switch (paymentStatus) {
       case PaymentStatus.Succeeded:

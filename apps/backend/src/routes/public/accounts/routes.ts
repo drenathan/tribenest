@@ -13,6 +13,16 @@ const init: InitRouteFunction = ({ services, workers }) => {
     (req, _, next) => publicAuthentication(req, next, services, throwOnError),
     (...args) => controller.getMe(...args),
   );
+  router.put(
+    "/me",
+    (req, _, next) => publicAuthentication(req, next, services, throwOnError),
+    (...args) => controller.updateMe(...args),
+  );
+  router.put(
+    "/password",
+    (req, _, next) => publicAuthentication(req, next, services, throwOnError),
+    (...args) => controller.updatePassword(...args),
+  );
   return router;
 };
 

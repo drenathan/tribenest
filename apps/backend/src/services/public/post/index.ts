@@ -1,3 +1,4 @@
+import { IMembership } from "@src/db/models/membership/membership.model";
 import { DB } from "@src/db/types";
 import { GetPostsInput } from "@src/routes/public/posts/schema";
 import { BaseService } from "@src/services/baseService";
@@ -28,5 +29,10 @@ export class PostService extends BaseService {
       pageSize: input.limit,
       nextPage: hasNextPage ? input.page + 1 : null,
     };
+  }
+
+  public async getSavedPosts(input: { accountId: string; membership: Selectable<DB["memberships"]> }) {
+    const savedPosts = await this.models.Post.getSavedPosts(input);
+    return savedPosts;
   }
 }

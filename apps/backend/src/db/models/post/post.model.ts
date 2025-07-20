@@ -12,6 +12,7 @@ type PostFilter = {
   query?: string;
   type?: PostType | "all";
   archived?: string;
+  postIds?: string[];
 };
 
 export class PostModel extends BaseModel<"posts", "id"> {
@@ -22,7 +23,7 @@ export class PostModel extends BaseModel<"posts", "id"> {
   public async getMany(input: GetPostsInput & { postId?: string }) {
     const skip = (input.page - 1) * input.limit;
     const limit = input.limit || 10;
-    const { membershipTierId, query, type, archived } = (input.filter ?? {}) as PostFilter;
+    const { membershipTierId, query, type, archived, postIds } = (input.filter ?? {}) as PostFilter;
     const isArchived = archived === "true";
 
     const filterQuery = this.client
@@ -49,6 +50,10 @@ export class PostModel extends BaseModel<"posts", "id"> {
           conditions.push(eb("posts.archivedAt", "is not", null));
         } else {
           conditions.push(eb("posts.archivedAt", "is", null));
+        }
+
+        if (postIds && postIds.length > 0) {
+          conditions.push(eb("posts.id", "in", postIds));
         }
 
         return eb.and(conditions);
@@ -141,5 +146,36 @@ export class PostModel extends BaseModel<"posts", "id"> {
       data,
       total: total.total,
     };
+  }
+
+  public async getSavedPosts({
+    accountId,
+    membership,
+  }: {
+    accountId: string;
+    membership: Selectable<DB["memberships"]>;
+  }) {
+    const savedPosts = await this.client
+      .selectFrom("saves")
+      .where("accountId", "=", accountId)
+      .where("entityType", "=", "post")
+      .select("accountId")
+      .execute();
+
+    if (!savedPosts.length) {
+      return {
+        data: [],
+        total: 0,
+      };
+    }
+
+    return this.getManyForPublic({
+      profileId: membership.profileId,
+      limit: 50,
+      page: 1,
+      filter: {
+        postIds: savedPosts.map((save) => save.accountId),
+      },
+    });
   }
 }

@@ -33,4 +33,10 @@ export class PublicOrders extends BaseController {
 
     return order;
   }
+
+  @RouteHandler()
+  public async getOrders(req: Request, res: Response, next: NextFunction): Promise<any> {
+    const orders = await this.services.public.order.getOrders(req.account!.id);
+    return orders;
+  }
 }

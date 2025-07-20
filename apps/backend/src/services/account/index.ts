@@ -2,8 +2,9 @@ import { CreateAccountInput } from "@src/routes/accounts/schema";
 import { BaseService } from "../baseService";
 import bcrypt from "bcryptjs";
 import { Details, UserAgent } from "express-useragent";
-import { UnauthenticatedError } from "@src/utils/app_error";
+import { NotFoundError, UnauthenticatedError } from "@src/utils/app_error";
 import { signToken } from "@src/utils/jwt";
+import { UpdatePublicAccountInput, UpdatePublicAccountPasswordInput } from "@src/routes/public/accounts/schema";
 
 export class AccountService extends BaseService {
   public async findById(id: string) {
@@ -81,5 +82,30 @@ export class AccountService extends BaseService {
   public async getProfileAuthorizations(accountId: string) {
     const authorizations = await this.database.models.ProfileAuthorization.getProfileAuthorizations(accountId);
     return authorizations;
+  }
+
+  public async updateAccount(accountId: string, input: UpdatePublicAccountInput) {
+    await this.database.models.Account.updateOne(
+      { id: accountId },
+      { firstName: input.firstName, lastName: input.lastName },
+    );
+    return true;
+  }
+
+  public async updateAccountPassword(accountId: string, input: UpdatePublicAccountPasswordInput) {
+    const account = await this.database.models.Account.findOne({ id: accountId });
+    if (!account) {
+      throw new NotFoundError("Account not found");
+    }
+
+    const isPasswordValid = await bcrypt.compare(input.currentPassword, account.password);
+    if (!isPasswordValid) {
+      throw new UnauthenticatedError("Your current password is incorrect");
+    }
+
+    const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+    await this.database.models.Account.updateOne({ id: accountId }, { password: hashedPassword });
+
+    return true;
   }
 }

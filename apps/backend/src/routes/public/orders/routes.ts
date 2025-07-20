@@ -6,10 +6,23 @@ import { publicAuthentication } from "@src/middlewares";
 const init: InitRouteFunction = ({ services, workers }) => {
   const router = Router();
   const controller = new PublicOrders(services, workers);
+  const throwOnUnauthenticated = true;
 
-  router.use((req, _, next) => publicAuthentication(req, next, services));
-  router.post("/", (...args) => controller.createOrder(...args));
-  router.post("/finalize", (...args) => controller.finalizeOrder(...args));
+  router.get(
+    "/",
+    (req, _, next) => publicAuthentication(req, next, services, throwOnUnauthenticated),
+    (...args) => controller.getOrders(...args),
+  );
+  router.post(
+    "/",
+    (req, _, next) => publicAuthentication(req, next, services),
+    (...args) => controller.createOrder(...args),
+  );
+  router.post(
+    "/finalize",
+    (req, _, next) => publicAuthentication(req, next, services),
+    (...args) => controller.finalizeOrder(...args),
+  );
   return router;
 };
 

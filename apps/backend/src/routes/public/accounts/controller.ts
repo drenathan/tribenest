@@ -1,7 +1,14 @@
 import { Body, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
-import { CreatePublicAccountInput, createPublicAccountSchema } from "./schema";
+import {
+  CreatePublicAccountInput,
+  createPublicAccountSchema,
+  UpdatePublicAccountInput,
+  updatePublicAccountSchema,
+  UpdatePublicAccountPasswordInput,
+  updatePublicAccountPasswordSchema,
+} from "./schema";
 
 export class PublicAccountsController extends BaseController {
   @RouteHandler({ statusCode: 201 })
@@ -27,5 +34,27 @@ export class PublicAccountsController extends BaseController {
       ...req.account,
       membership: req.membership,
     };
+  }
+
+  @RouteHandler({ statusCode: 200 })
+  @ValidateSchema(updatePublicAccountSchema)
+  public async updateMe(
+    req: Request,
+    _: Response,
+    __: NextFunction,
+    @Body body?: UpdatePublicAccountInput,
+  ): Promise<any> {
+    return this.services.account.updateAccount(req.account!.id, body!);
+  }
+
+  @RouteHandler({ statusCode: 200 })
+  @ValidateSchema(updatePublicAccountPasswordSchema)
+  public async updatePassword(
+    req: Request,
+    _: Response,
+    __: NextFunction,
+    @Body body?: UpdatePublicAccountPasswordInput,
+  ): Promise<any> {
+    return this.services.account.updateAccountPassword(req.account!.id, body!);
   }
 }

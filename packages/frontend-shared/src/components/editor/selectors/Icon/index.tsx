@@ -1,5 +1,5 @@
 "use client";
-import { useNode, type UserComponent } from "@craftjs/core";
+import { type UserComponent } from "@craftjs/core";
 import { cn } from "../../../../lib/utils";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 import { useEditorContext } from "../../context";
@@ -23,9 +23,9 @@ export const EditorIcon: UserComponent<IconProps> = ({
   size,
   fill,
 }) => {
-  const {
-    connectors: { connect },
-  } = useNode();
+  // const {
+  //   connectors: { connect },
+  // } = useNode();
 
   const { themeSettings } = useEditorContext();
 
@@ -33,7 +33,7 @@ export const EditorIcon: UserComponent<IconProps> = ({
     <div
       ref={(ref) => {
         if (ref && shouldConnect) {
-          connect(ref);
+          // connect(ref);
         }
       }}
       className={cn("", containerClassName)}

@@ -9,4 +9,9 @@ export class PublicPosts extends BaseController {
   public async getPosts(req: Request, res: Response, next: NextFunction, @Query query?: GetPostsInput): Promise<any> {
     return this.services.public.post.getPosts(query!, req.membership);
   }
+
+  @RouteHandler()
+  public async getSavedPosts(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.services.public.post.getSavedPosts({ accountId: req.account!.id, membership: req.membership! });
+  }
 }
