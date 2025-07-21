@@ -81,23 +81,27 @@ const items: NavItem[] = [
     icon: Mails,
     items: [
       {
-        title: "Home",
-        url: "#",
+        title: "Lists",
+        url: "/email-lists/lists",
       },
       {
         title: "Templates",
-        url: "#",
+        url: "/email-lists/templates",
       },
     ],
   },
   {
-    title: "One Page Links",
+    title: "Smart Links",
     url: "#",
     icon: Link2Icon,
     items: [
       {
-        title: "Home",
-        url: "#",
+        title: "Links",
+        url: "/smart-links/links",
+      },
+      {
+        title: "Templates",
+        url: "/smart-links/templates",
       },
     ],
   },

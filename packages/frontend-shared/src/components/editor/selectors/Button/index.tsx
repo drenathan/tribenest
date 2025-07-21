@@ -20,6 +20,8 @@ export type ButtonProps = {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   variant?: "primary" | "secondary";
+  link?: string;
+  buttonId?: string;
 };
 
 const buttonStyles = (themeSettings: EditorTheme, fullWidth?: boolean, variant: "primary" | "secondary" = "primary") =>
@@ -63,6 +65,10 @@ export const EditorButton: UserComponent<ButtonProps> = ({
   type = "button",
   disabled = false,
   variant = "primary",
+  marginVertical = "0",
+  marginHorizontal = "0",
+  link,
+  buttonId,
 }: ButtonProps) => {
   const { themeSettings } = useEditorContext();
   const {
@@ -76,8 +82,9 @@ export const EditorButton: UserComponent<ButtonProps> = ({
     setProp((prop: ButtonProps) => {
       prop.color = themeSettings.colors.textPrimary;
       prop.background = themeSettings.colors.primary;
+      prop.text = text ?? "Button";
     });
-  }, [themeSettings, setProp]);
+  }, [themeSettings, setProp, text]);
 
   return (
     <button
@@ -90,6 +97,9 @@ export const EditorButton: UserComponent<ButtonProps> = ({
       onClick={onClick}
       className={buttonStyles(themeSettings, fullWidth, variant)}
       type={type}
+      style={{
+        margin: `${marginVertical}px ${marginHorizontal}px`,
+      }}
       disabled={disabled}
     >
       {text}

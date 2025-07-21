@@ -8,6 +8,8 @@ import { EditorIcon } from "./Icon";
 import { EditorInput } from "./components/Input";
 import { EditorModal } from "./components/Modal";
 import { LoadingState } from "./Loading";
+import { EditorImage } from "./Image";
+import { EmailList } from "./EmailList";
 
 export * from "./Container";
 export * from "./Text";
@@ -19,6 +21,8 @@ export * from "./Icon";
 export * from "./components/Input";
 export * from "./components/Modal";
 export * from "./Loading";
+export * from "./Image";
+export * from "./EmailList";
 
 export const editorResolver = {
   Container,
@@ -31,4 +35,6 @@ export const editorResolver = {
   EditorInput,
   EditorModal,
   LoadingState,
+  EditorImage,
+  EmailList,
 };

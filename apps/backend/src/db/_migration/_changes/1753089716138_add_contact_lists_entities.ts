@@ -8,7 +8,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
     .addColumn("profile_id", "uuid", (col) => col.notNull().references(`${tables.profiles}.id`))
     .addColumn("title", "text", (col) => col.notNull())
-    .addColumn("isDefault", "boolean")
+    .addColumn("is_default", "boolean")
     .$call(addDefaultColumns)
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.email_lists);
@@ -33,6 +33,18 @@ export async function up(db: Kysely<any>): Promise<void> {
     .$call(addDefaultColumns)
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.email_templates);
+
+  const profiles = await db.selectFrom(tables.profiles).select("id").execute();
+  for (const profile of profiles) {
+    await db
+      .insertInto(tables.email_lists)
+      .values({
+        profile_id: profile.id,
+        title: "Default Email List",
+        is_default: true,
+      })
+      .execute();
+  }
 }
 
 export async function down(db: Kysely<any>): Promise<void> {

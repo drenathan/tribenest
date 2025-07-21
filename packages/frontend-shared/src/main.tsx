@@ -33,6 +33,7 @@ export * from "./components/ui/pagination";
 export * from "./components/ui/table";
 export * from "./types";
 export * from "./websiteThemes";
+export * from "./smartLinkTemplates";
 export * from "./contexts/AudioPlayerContext";
 export * from "./contexts/PublicAuthContext";
 export * from "./contexts/CartContext";

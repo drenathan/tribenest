@@ -15,6 +15,7 @@ type InputProps = {
   value?: string;
   min?: number;
   max?: number;
+  className?: string;
 };
 
 export const EditorInput: UserComponent<InputProps> = ({

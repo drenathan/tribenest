@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { ToolbarDropdown } from "./ToolbarDropdown";
 import { ToolbarTextInput } from "./ToolbarTextInput";
-import { Label, RadioGroup, Slider } from "@tribe-nest/frontend-shared";
+import { Checkbox, Label, RadioGroup, Slider } from "@tribe-nest/frontend-shared";
 import { SelectImageDialog } from "./SelectMediaDialog";
 
 export type ToolbarItemProps = {
@@ -15,7 +15,7 @@ export type ToolbarItemProps = {
   propKey: string;
   index?: number;
   children?: React.ReactNode;
-  type: "text" | "color" | "bg" | "number" | "slider" | "radio" | "select" | "image";
+  type: "text" | "color" | "bg" | "number" | "slider" | "radio" | "select" | "image" | "checkbox";
   onChange?: (value: unknown) => unknown;
 };
 export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }: ToolbarItemProps) => {
@@ -68,6 +68,16 @@ export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }:
             >
               {props.children}
             </RadioGroup>
+          </div>
+        )}
+        {type === "checkbox" && (
+          <div className="flex flex-col gap-2">
+            <Checkbox
+              checked={value}
+              onCheckedChange={(value) =>
+                setProp((props: any) => (props[propKey] = onChange ? onChange(value) : value))
+              }
+            />
           </div>
         )}
         {type === "select" && (

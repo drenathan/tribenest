@@ -1,6 +1,6 @@
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
-import { Body, isAuthorized, RouteHandler, ValidateSchema } from "@src/decorators";
+import { Body, isAuthorized, Query, RouteHandler, ValidateSchema } from "@src/decorators";
 import {
   createProfileSchema,
   CreateProfileInput,
@@ -40,14 +40,14 @@ export class ProfilesController extends BaseController {
   @ValidateSchema(uploadMediaSchema)
   @RouteHandler()
   async uploadMedia(req: Request, res: Response, _: NextFunction, @Body body?: UploadMediaInput): Promise<any> {
-    const result = await this.services.profile.uploadMedia(body!, req.account!.id);
+    const result = await this.services.profile.uploadMedia(body!, req.params.id);
     return result;
   }
 
   @ValidateSchema(getMediaSchema)
   @RouteHandler()
-  async getMedia(req: Request, res: Response, _: NextFunction, @Body body?: GetMediaInput): Promise<any> {
-    const result = await this.services.profile.getMedia(body!, req.account!.id);
+  async getMedia(req: Request, res: Response, _: NextFunction, @Query query?: GetMediaInput): Promise<any> {
+    const result = await this.services.profile.getMedia(query!, req.params.id);
     return result;
   }
 

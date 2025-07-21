@@ -79,7 +79,6 @@ export class ProfileService extends BaseService {
     const media = await this.database.models.Media.find({ profileId, parent: parent as MediaParent, type }, (qb) =>
       qb.orderBy("createdAt", "desc"),
     );
-    console.log(safeStringify(media));
     return media;
   }
 

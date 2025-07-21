@@ -21,6 +21,8 @@ export type ContainerProps = {
   children: React.ReactNode;
   radius: number;
   backgroundImage: string;
+  style: React.CSSProperties;
+  className: string;
 };
 
 const defaultProps: Partial<ContainerProps> = {
@@ -36,6 +38,7 @@ const defaultProps: Partial<ContainerProps> = {
   alignItems: "flex-start",
   justifyContent: "flex-start",
   fillSpace: "no",
+  className: "",
 };
 
 export const Container = (props: Partial<ContainerProps>) => {
@@ -73,6 +76,8 @@ export const Container = (props: Partial<ContainerProps>) => {
     children,
     height,
     backgroundImage,
+    style,
+    className,
   } = props;
   return (
     <div
@@ -81,7 +86,9 @@ export const Container = (props: Partial<ContainerProps>) => {
           connect(ref);
         }
       }}
+      className={className}
       style={{
+        display: "flex",
         flexDirection,
         alignItems,
         position: "relative",
@@ -94,6 +101,7 @@ export const Container = (props: Partial<ContainerProps>) => {
         borderRadius: `${radius}px`,
         flex: fillSpace === "yes" ? 1 : "unset",
         height,
+        ...(style ? style : {}),
       }}
     >
       {backgroundImage && (

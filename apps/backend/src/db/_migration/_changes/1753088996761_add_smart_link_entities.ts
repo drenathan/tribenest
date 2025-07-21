@@ -7,7 +7,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .createTable(tables.smart_links)
     .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
     .addColumn("profile_id", "uuid", (col) => col.notNull().references(`${tables.profiles}.id`))
-    .addColumn("path", "text", (col) => col.notNull())
+    .addColumn("path", "text", (col) => col.notNull().unique())
     .addColumn("title", "text", (col) => col.notNull())
     .addColumn("description", "text", (col) => col.notNull())
     .addColumn("content", "jsonb", (col) => col.notNull())

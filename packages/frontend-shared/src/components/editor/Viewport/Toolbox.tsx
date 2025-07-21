@@ -1,11 +1,12 @@
 import { Element, useEditor } from "@craftjs/core";
 import { Tooltip } from "@mui/material";
-import { Square as SquareSvg, Type as TypeSvg, Circle as ButtonSvg, Atom, Users, Contact } from "lucide-react";
+import { Square as SquareSvg, Type as TypeSvg, Circle as ButtonSvg, Atom, Users, Contact, Mail } from "lucide-react";
 import { EditorButton } from "../selectors/Button";
 import { Container } from "../selectors/Container";
 import { MembershipSection } from "../selectors/MembershipSection";
 import { EditorText } from "../selectors/Text";
 import { EditorSocialIcons } from "../selectors/SocialIcons";
+import { EmailList } from "../selectors";
 
 const Label = ({ children }: { children: React.ReactNode }) => {
   return <h2 className="text-xs uppercase">{children}</h2>;
@@ -88,6 +89,20 @@ export const Toolbox = () => {
             <Item>
               <Users />
               <Label>Membership Section</Label>
+            </Item>
+          </Tooltip>
+        </div>
+        <div
+          ref={(ref) => {
+            if (ref) {
+              create(ref, <EmailList />);
+            }
+          }}
+        >
+          <Tooltip title="Email List Subscription" placement="right">
+            <Item>
+              <Mail />
+              <Label>Email List</Label>
             </Item>
           </Tooltip>
         </div>

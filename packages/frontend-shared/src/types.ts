@@ -283,3 +283,34 @@ export type IPublicOrderItem = {
   recipientMessage?: string;
   payWhatYouWant: boolean;
 };
+
+export type SmartLinkConfig = {
+  colors: {
+    text: string;
+    background: string;
+  };
+  cornerRadius: string;
+  fontFamily: string;
+};
+
+export type SmartLinkTemplate = {
+  title: string;
+  slug: string;
+  description?: string;
+  version: string;
+  thumbnail: string;
+  preview?: string;
+  themeSettings: EditorTheme;
+  editorResolver: Record<string, UserComponent>;
+  Component: React.ComponentType<{ profile: Profile }>;
+};
+
+export type SmartLink = {
+  id: string;
+  profileId: string;
+  path: string;
+  title: string;
+  description: string;
+  content: Record<string, unknown>;
+  config: SmartLinkConfig;
+};

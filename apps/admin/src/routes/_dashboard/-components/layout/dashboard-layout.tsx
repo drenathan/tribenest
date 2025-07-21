@@ -1,6 +1,12 @@
 import { useEffect } from "react";
 import { AppSidebar } from "./sidebar";
-import { SidebarInset, SidebarProvider, SidebarTrigger, Separator, AudioPlayerProvider } from "@tribe-nest/frontend-shared";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+  Separator,
+  AudioPlayerProvider,
+} from "@tribe-nest/frontend-shared";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useGetProfileAuthorizations } from "@/hooks/queries/useGetProfileAuthorizations";
@@ -19,7 +25,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const breadcrumb = breadcrumbs[fullPath.endsWith("/") ? fullPath.slice(0, -1) : fullPath];
 
   const isEditingTheme = !!routerState.matches.find((match) =>
-    ["/website/themes/$slug/preview", "/website/home/$versionId/edit"].includes(match.fullPath),
+    ["/website/themes/$slug/preview", "/website/home/$versionId/edit", "/smart-links/templates/$slug/preview"].includes(
+      match.fullPath,
+    ),
   );
 
   useEffect(() => {

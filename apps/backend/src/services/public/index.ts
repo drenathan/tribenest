@@ -1,5 +1,6 @@
 import { BaseService, BaseServiceArgs } from "../baseService";
 import { CommentsService } from "./comments";
+import { EmailListService } from "./emailList";
 import { LikesService } from "./likes";
 import { OrderService } from "./order";
 import { PostService } from "./post";
@@ -13,9 +14,11 @@ export class PublicService extends BaseService {
   public readonly comment: CommentsService;
   public readonly like: LikesService;
   public readonly saved: SavesService;
+  public readonly emailList: EmailListService;
 
   constructor(args: BaseServiceArgs) {
     super(args);
+    this.emailList = new EmailListService(args);
     this.post = new PostService(args);
     this.product = new ProductService(args);
     this.order = new OrderService(args);

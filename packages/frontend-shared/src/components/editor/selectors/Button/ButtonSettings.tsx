@@ -27,6 +27,9 @@ export const ButtonSettings = () => {
         <ToolbarItem full={true} propKey="background" type="bg" label="Background" />
         <ToolbarItem full={true} propKey="color" type="color" label="Text" />
       </ToolbarSection>
+      <ToolbarSection title="Content" props={["text"]}>
+        <ToolbarItem full={true} propKey="text" type="text" label="Text" />
+      </ToolbarSection>
       <ToolbarSection
         title="Margin"
         props={["marginHorizontal", "marginVertical"]}
@@ -42,6 +45,12 @@ export const ButtonSettings = () => {
           <ToolbarRadio value="full" label="Full" />
           <ToolbarRadio value="outline" label="Outline" />
         </ToolbarItem>
+      </ToolbarSection>
+      <ToolbarSection title="Link" props={["link"]}>
+        <ToolbarItem full={true} propKey="link" type="text" label="Link" />
+      </ToolbarSection>
+      <ToolbarSection title="Full Width" props={["fullWidth"]}>
+        <ToolbarItem propKey="fullWidth" type="checkbox" label="Full Width" />
       </ToolbarSection>
     </React.Fragment>
   );

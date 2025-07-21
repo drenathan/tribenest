@@ -137,7 +137,7 @@ export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
               className="flex items-center gap-4 cursor-pointer hover:scale-95 transition-all col-span-1"
               onClick={() => handleImageSelect(m.url)}
             >
-              <img src={m.url} alt={m.url} className="object-cover w-[100%] h-[150px]" />
+              <img src={m.url} alt={m.url} className="object-cover w-[100%] aspect-square" />
             </div>
           ))}
         </div>
@@ -152,7 +152,7 @@ const useUploadFiles = () => {
   const [filesUploaded, setFilesUploaded] = useState(0);
   const [totalFiles, setTotalFiles] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-  const { httpClient } = useEditorContext();
+  const { httpClient, profile } = useEditorContext();
   // const { handleError } = useHandleError();
   if (!httpClient) {
     throw new Error("httpClient is not initialized");
@@ -173,6 +173,7 @@ const useUploadFiles = () => {
       try {
         const { data } = await httpClient.post<{ presignedUrl: string; remoteUrl: string }>("/uploads/presigned-url", {
           fileName: file.name,
+          profileId: profile?.id,
         });
 
         await axios.put(data.presignedUrl, file, {
