@@ -1,3 +1,7 @@
+import { IProfileOnboardingStep } from "@src/db/models/profile/profileOnboardingStep.model";
+import { ProfileOnboardingStepId } from "@src/db/types/profile";
+import { Insertable } from "kysely";
+
 export const FORBIDDEN_SUBDOMAINS = [
   "admin",
   "root",
@@ -15,4 +19,91 @@ export const FORBIDDEN_SUBDOMAINS = [
   "super-user",
   "super-admin",
   "porn",
+  "links",
+  "link",
+];
+
+export const getDefaultProfileOnboardingSteps = (profileId: string): Insertable<IProfileOnboardingStep>[] => [
+  {
+    id: ProfileOnboardingStepId.FileStorage,
+    step: 1,
+    title: "File Storage Configuration",
+    description: "To store your files, you need to add a s3 compatible file storage provider. We recommend using R2.",
+    actionText: "Configure",
+    actionPath: "/settings?tab=file",
+    profileId,
+    helpLink: "https://docs.webpage.com/file-storage-configuration",
+  },
+  {
+    id: ProfileOnboardingStepId.EmailConfiguration,
+    step: 2,
+    title: "Email Configuration",
+    description:
+      "To send emails, you need to add an email provider. Sign up for any free email provider of your choice, set up your domain and get your SMTP credentials.",
+    actionText: "Configure",
+    actionPath: "/settings?tab=email",
+    profileId,
+    helpLink: "https://docs.webpage.com/email-configuration",
+  },
+  {
+    id: ProfileOnboardingStepId.PaymentConfiguration,
+    step: 3,
+    title: "Payment Configuration",
+    description:
+      "To accept payments, you need to add a payment provider. We only support Stripe for now. Create a Stripe account and get your API keys.",
+    actionText: "Configure",
+    actionPath: "/settings?tab=payment",
+    profileId,
+    helpLink: "https://docs.webpage.com/payment-configuration",
+  },
+  {
+    id: ProfileOnboardingStepId.ProfileAddress,
+    step: 4,
+    title: "Profile Address",
+    description: "Configure your profile address",
+    actionText: "Configure",
+    actionPath: "/settings?tab=address",
+    profileId,
+    helpLink: "https://docs.webpage.com/profile-address",
+  },
+  {
+    id: ProfileOnboardingStepId.MembershipTier,
+    step: 5,
+    title: "Membership Tier",
+    description: "Set up the membership tiers that your fans can choose from and the benefits they will receive.",
+    actionText: "Create Membership Tier",
+    actionPath: "/tribe/membership-tiers",
+    profileId,
+    helpLink: "https://docs.webpage.com/membership-tier",
+  },
+  {
+    id: ProfileOnboardingStepId.WebsiteConfiguration,
+    step: 6,
+    title: "Website Configuration",
+    description: "Select a theme for your website, activate the theme and configure your website to your liking.",
+    actionText: "Select Theme",
+    actionPath: "/website/themes",
+    profileId,
+    helpLink: "https://docs.webpage.com/website-configuration",
+  },
+  {
+    id: ProfileOnboardingStepId.CreateFirstPost,
+    step: 7,
+    title: "Create First Post",
+    description: "Add your first premium content to your website.",
+    actionText: "Create Post",
+    actionPath: "/tribe/posts",
+    profileId,
+    helpLink: "https://docs.webpage.com/create-first-post",
+  },
+  {
+    id: ProfileOnboardingStepId.UploadFirstMusic,
+    step: 8,
+    title: "Upload First Music",
+    description: "Start selling your music directly to your fans right on your website.",
+    actionText: "Upload Music",
+    actionPath: "/store/music",
+    profileId,
+    helpLink: "https://docs.webpage.com/upload-first-music",
+  },
 ];

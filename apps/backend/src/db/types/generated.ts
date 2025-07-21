@@ -48,6 +48,34 @@ export interface Comments {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface EmailLists {
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  isDefault: boolean | null;
+  profileId: string;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface EmailListSubscribers {
+  createdAt: Generated<Timestamp>;
+  email: string;
+  emailListId: string;
+  firstName: string | null;
+  id: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface EmailTemplates {
+  config: Json;
+  content: Json;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  profileId: string;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface Likes {
   accountId: string;
   createdAt: Generated<Timestamp>;
@@ -300,6 +328,20 @@ export interface ProfileConfigurations {
   smtpUsername: string | null;
 }
 
+export interface ProfileOnboardingSteps {
+  actionPath: string;
+  actionText: string;
+  completedAt: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  description: string;
+  helpLink: string | null;
+  id: string;
+  profileId: string;
+  step: number;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface ProfilePaymentCustomers {
   accountId: string;
   createdAt: Generated<Timestamp>;
@@ -317,6 +359,16 @@ export interface ProfilePaymentPrices {
   id: Generated<string>;
   paymentProviderName: string;
   priceId: string;
+  profileId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface ProfilePaymentProducts {
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  paymentProviderName: string;
+  productId: string;
+  productType: string;
   profileId: string;
   updatedAt: Generated<Timestamp>;
 }
@@ -363,6 +415,37 @@ export interface Sessions {
   userAgent: Json | null;
 }
 
+export interface SmartLinkClicks {
+  buttonId: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  smartLinkId: string;
+  uniqueId: string;
+  updatedAt: Generated<Timestamp>;
+  userAgent: Json;
+}
+
+export interface SmartLinks {
+  config: Json;
+  content: Json;
+  createdAt: Generated<Timestamp>;
+  description: string;
+  id: Generated<string>;
+  path: string;
+  profileId: string;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface SmartLinkViews {
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  smartLinkId: string;
+  uniqueId: string;
+  updatedAt: Generated<Timestamp>;
+  userAgent: Json;
+}
+
 export interface WebsiteVersionPages {
   content: Generated<Json>;
   createdAt: Generated<Timestamp>;
@@ -390,6 +473,9 @@ export interface WebsiteVersions {
 export interface DB {
   accounts: Accounts;
   comments: Comments;
+  emailLists: EmailLists;
+  emailListSubscribers: EmailListSubscribers;
+  emailTemplates: EmailTemplates;
   likes: Likes;
   media: Media;
   mediaMappings: MediaMappings;
@@ -411,12 +497,17 @@ export interface DB {
   productVariantTracks: ProductVariantTracks;
   profileAuthorizations: ProfileAuthorizations;
   profileConfigurations: ProfileConfigurations;
+  profileOnboardingSteps: ProfileOnboardingSteps;
   profilePaymentCustomers: ProfilePaymentCustomers;
   profilePaymentPrices: ProfilePaymentPrices;
+  profilePaymentProducts: ProfilePaymentProducts;
   profilePaymentSubscriptions: ProfilePaymentSubscriptions;
   profiles: Profiles;
   saves: Saves;
   sessions: Sessions;
+  smartLinkClicks: SmartLinkClicks;
+  smartLinks: SmartLinks;
+  smartLinkViews: SmartLinkViews;
   websiteVersionPages: WebsiteVersionPages;
   websiteVersions: WebsiteVersions;
 }

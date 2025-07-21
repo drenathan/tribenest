@@ -31,10 +31,20 @@ import { ProfilePaymentCustomerModel } from "./profile/profilePaymentCustomer.mo
 import { ProfilePaymentPriceModel } from "./profile/profilePaymentPrice.model";
 import { ProfilePaymentSubscriptionModel } from "./profile/profilePaymentSubscription.model";
 import { SavedModel } from "./saved/saved.mode";
+import { ProfileOnboardingStepModel } from "./profile/profileOnboardingStep.model";
+import { EmailListModel } from "./emailList/emailList.model";
+import { EmailListSubscriberModel } from "./emailList/emailListSubscriber.model";
+import { EmailTemplateModel } from "./emailList/emailTemplate.model";
+import { SmartLinkModel } from "./smartLink/smartLink";
+import { SmartLinkViewModel } from "./smartLink/smartLinkView.model";
+import { SmartLinkClickModel } from "./smartLink/smartLinkClickModel";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
     Account: new AccountModel(client),
+    EmailList: new EmailListModel(client),
+    EmailListSubscriber: new EmailListSubscriberModel(client),
+    EmailTemplate: new EmailTemplateModel(client),
     Comment: new CommentModel(client),
     Like: new LikeModel(client),
     Saved: new SavedModel(client),
@@ -52,6 +62,7 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     Profile: new ProfileModel(client),
     ProfileAuthorization: new ProfileAuthorizationModel(client),
     ProfileConfiguration: new ProfileConfigurationModel(client),
+    ProfileOnboardingStep: new ProfileOnboardingStepModel(client),
     ProfilePaymentCustomer: new ProfilePaymentCustomerModel(client),
     ProfilePaymentPrice: new ProfilePaymentPriceModel(client),
     ProfilePaymentSubscription: new ProfilePaymentSubscriptionModel(client),
@@ -63,6 +74,9 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     ProductVariantConfiguration: new ProductVariantConfigurationModel(client),
     ProductVariantTrack: new ProductVariantTrackModel(client),
     Session: new SessionModel(client),
+    SmartLink: new SmartLinkModel(client),
+    SmartLinkView: new SmartLinkViewModel(client),
+    SmartLinkClick: new SmartLinkClickModel(client),
     WebsiteVersion: new WebsiteVersionModel(client),
     WebsiteVersionPage: new WebsiteVersionPageModel(client),
   };

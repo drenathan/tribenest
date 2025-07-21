@@ -1,10 +1,11 @@
 import { BadRequestError } from "@src/utils/app_error";
 import { BaseService, BaseServiceArgs } from "../baseService";
-import { FORBIDDEN_SUBDOMAINS } from "./contants";
+import { FORBIDDEN_SUBDOMAINS, getDefaultProfileOnboardingSteps } from "./contants";
 import { CreateProfileInput, GetMediaInput, UploadMediaInput } from "@src/routes/profiles/schema";
 import { safeStringify } from "@src/utils/json";
 import { MediaParent } from "@src/db/types/media";
 import { ProfilePaymentService } from "./profilePaymentService";
+import { ProfileOnboardingStepId } from "@src/db/types/profile";
 
 export class ProfileService extends BaseService {
   public payment: ProfilePaymentService;
@@ -48,6 +49,8 @@ export class ProfileService extends BaseService {
         },
         trx,
       );
+
+      await this.database.models.ProfileOnboardingStep.insertMany(getDefaultProfileOnboardingSteps(profile.id), trx);
 
       await trx.commit().execute();
 
@@ -140,5 +143,15 @@ export class ProfileService extends BaseService {
     await paymentProvider.testConnection();
 
     return { success: true, message: "Payment configuration is valid" };
+  }
+
+  /**
+   * Get profile onboarding steps
+   */
+  public async getProfileOnboarding(profileId: string) {
+    const onboardingSteps = await this.database.models.ProfileOnboardingStep.find({ profileId }, (qb) =>
+      qb.orderBy("step", "asc"),
+    );
+    return onboardingSteps;
   }
 }

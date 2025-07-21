@@ -16,6 +16,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   // Profile Configuration Routes
   router.get("/:id/configuration", (...args) => controller.getProfileConfiguration(...args));
   router.put("/:id/configuration", (...args) => controller.updateProfileConfiguration(...args));
+  router.get("/:id/onboarding", (...args) => controller.getProfileOnboarding(...args));
   router.post("/:id/configuration/test-email", (...args) => controller.testEmailConfiguration(...args));
   router.post("/:id/configuration/test-r2", (...args) => controller.testR2Configuration(...args));
   router.post("/:id/configuration/test-payment", (...args) => controller.testPaymentConfiguration(...args));

@@ -1,6 +1,6 @@
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
-import { Body, RouteHandler, ValidateSchema } from "@src/decorators";
+import { Body, isAuthorized, RouteHandler, ValidateSchema } from "@src/decorators";
 import {
   createProfileSchema,
   CreateProfileInput,
@@ -13,6 +13,7 @@ import {
   updateProfileConfigurationSchema,
   UpdateProfileConfigurationInput,
 } from "./schema";
+import * as policy from "./policy";
 
 export class ProfilesController extends BaseController {
   @ValidateSchema(createProfileSchema)
@@ -51,14 +52,16 @@ export class ProfilesController extends BaseController {
   }
 
   @RouteHandler()
+  @isAuthorized(policy.update)
   async getProfileConfiguration(req: Request, res: Response, _: NextFunction): Promise<any> {
     const { id } = req.params;
     const config = await this.services.profile.getProfileConfigurationMasked(id);
     return config;
   }
 
-  @ValidateSchema(updateProfileConfigurationSchema)
   @RouteHandler()
+  @ValidateSchema(updateProfileConfigurationSchema)
+  @isAuthorized(policy.update)
   async updateProfileConfiguration(
     req: Request,
     res: Response,
@@ -78,6 +81,7 @@ export class ProfilesController extends BaseController {
   }
 
   @RouteHandler()
+  @isAuthorized(policy.update)
   async testEmailConfiguration(req: Request, res: Response, _: NextFunction): Promise<any> {
     const { profileId, testEmail } = req.body;
     const result = await this.services.profile.testEmailConfiguration(profileId, testEmail);
@@ -85,6 +89,7 @@ export class ProfilesController extends BaseController {
   }
 
   @RouteHandler()
+  @isAuthorized(policy.update)
   async testR2Configuration(req: Request, res: Response, _: NextFunction): Promise<any> {
     const { profileId } = req.body;
     const result = await this.services.profile.testR2Configuration(profileId);
@@ -92,9 +97,18 @@ export class ProfilesController extends BaseController {
   }
 
   @RouteHandler()
+  @isAuthorized(policy.update)
   async testPaymentConfiguration(req: Request, res: Response, _: NextFunction): Promise<any> {
     const { profileId } = req.body;
     const result = await this.services.profile.testPaymentConfiguration(profileId);
+    return result;
+  }
+
+  @RouteHandler()
+  @isAuthorized(policy.update)
+  async getProfileOnboarding(req: Request, res: Response, _: NextFunction): Promise<any> {
+    const { id } = req.params;
+    const result = await this.services.profile.getProfileOnboarding(id);
     return result;
   }
 }

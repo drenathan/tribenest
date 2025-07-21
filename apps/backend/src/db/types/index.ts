@@ -4,6 +4,7 @@ import { ColumnType } from "kysely";
 import { PostType } from "./post";
 import { MembershipStatus } from "./membership";
 import { OrderStatus } from "./product";
+import { ProfileOnboardingStepId } from "./profile";
 
 type Media = Omit<GeneratedTypes.Media, "type" | "parent"> & {
   type: MediaType;
@@ -27,10 +28,15 @@ type Order = Omit<GeneratedTypes.Orders, "status"> & {
   status: OrderStatus;
 };
 
+type ProfileOnboardingStep = Omit<GeneratedTypes.ProfileOnboardingSteps, "id"> & {
+  id: ProfileOnboardingStepId;
+};
+
 export interface DB extends GeneratedTypes.DB {
   media: Media;
   posts: Post;
   mediaMappings: MediaMapping;
   memberships: Membership;
   orders: Order;
+  profileOnboardingSteps: ProfileOnboardingStep;
 }
