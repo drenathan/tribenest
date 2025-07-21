@@ -426,13 +426,16 @@ export interface SmartLinkClicks {
 }
 
 export interface SmartLinks {
-  config: Json;
+  archivedAt: Timestamp | null;
   content: Json;
   createdAt: Generated<Timestamp>;
-  description: string;
+  description: string | null;
   id: Generated<string>;
   path: string;
   profileId: string;
+  template: string | null;
+  themeSettings: Json;
+  thumbnail: string | null;
   title: string;
   updatedAt: Generated<Timestamp>;
 }

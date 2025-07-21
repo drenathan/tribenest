@@ -284,15 +284,6 @@ export type IPublicOrderItem = {
   payWhatYouWant: boolean;
 };
 
-export type SmartLinkConfig = {
-  colors: {
-    text: string;
-    background: string;
-  };
-  cornerRadius: string;
-  fontFamily: string;
-};
-
 export type SmartLinkTemplate = {
   title: string;
   slug: string;
@@ -307,10 +298,11 @@ export type SmartLinkTemplate = {
 
 export type SmartLink = {
   id: string;
-  profileId: string;
   path: string;
   title: string;
-  description: string;
-  content: Record<string, unknown>;
-  config: SmartLinkConfig;
+  description?: string;
+  content: string;
+  themeSettings: EditorTheme;
+  template?: string;
+  thumbnail?: string;
 };

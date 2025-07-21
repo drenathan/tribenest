@@ -8,7 +8,6 @@ import {
   EditorText,
 } from "../../components/editor/selectors";
 import { useEditorContext } from "../../components/editor/context";
-import { addAlphaToHexCode } from "../../lib/utils";
 
 export default function LinkTreeComponent() {
   const { themeSettings, profile } = useEditorContext();
@@ -35,10 +34,6 @@ export default function LinkTreeComponent() {
         custom={{ displayName: "Page", preventDelete: true }}
         className="w-full @md:w-[500px] min-h-full"
         alignItems="center"
-        style={{
-          border: `1px solid ${addAlphaToHexCode(themeSettings.colors.primary, 0.2)}`,
-          borderRadius: `${themeSettings.cornerRadius}px`,
-        }}
       >
         <EditorImage
           src="https://cdn.coumo.com/geo-chierchia-o-9-fSSiCT0-unsplash.jpg"

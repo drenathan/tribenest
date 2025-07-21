@@ -35,7 +35,7 @@ import { ProfileOnboardingStepModel } from "./profile/profileOnboardingStep.mode
 import { EmailListModel } from "./emailList/emailList.model";
 import { EmailListSubscriberModel } from "./emailList/emailListSubscriber.model";
 import { EmailTemplateModel } from "./emailList/emailTemplate.model";
-import { SmartLinkModel } from "./smartLink/smartLink";
+import { SmartLinkModel } from "./smartLink/smartLink.model";
 import { SmartLinkViewModel } from "./smartLink/smartLinkView.model";
 import { SmartLinkClickModel } from "./smartLink/smartLinkClickModel";
 

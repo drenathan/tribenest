@@ -9,9 +9,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("profile_id", "uuid", (col) => col.notNull().references(`${tables.profiles}.id`))
     .addColumn("path", "text", (col) => col.notNull().unique())
     .addColumn("title", "text", (col) => col.notNull())
-    .addColumn("description", "text", (col) => col.notNull())
+    .addColumn("description", "text")
     .addColumn("content", "jsonb", (col) => col.notNull())
-    .addColumn("config", "jsonb", (col) => col.notNull())
+    .addColumn("theme_settings", "jsonb", (col) => col.notNull())
+    .addColumn("template", "text")
+    .addColumn("thumbnail", "text")
+    .addColumn("archived_at", "timestamptz")
     .$call(addDefaultColumns)
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.smart_links);
