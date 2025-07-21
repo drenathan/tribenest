@@ -52,4 +52,8 @@ export class SmartLinkService extends BaseService {
   public async getManySmartLinks(input: GetManySmartLinksInput) {
     return this.models.SmartLink.getMany(input);
   }
+
+  public async getSmartLink(input: { smartLinkId?: string; path?: string }) {
+    return this.models.SmartLink.getOneById(input);
+  }
 }

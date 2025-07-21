@@ -25,13 +25,14 @@ export const useGetSmartLinks = (profileId?: string, page = 1, filter?: GetSmart
   });
 };
 
-export const useGetSmartLink = (profileId?: string, smartLinkId?: string) => {
+export const useGetSmartLink = (smartLinkId?: string, profileId?: string) => {
   return useQuery<SmartLink>({
     queryKey: ["smart-links", profileId, smartLinkId],
     queryFn: async () => {
-      const response = await httpClient.get(`/public/smart-links/${smartLinkId}`, {
+      const response = await httpClient.get(`/public/smart-links`, {
         params: {
           profileId,
+          id: smartLinkId,
         },
       });
       return response.data;

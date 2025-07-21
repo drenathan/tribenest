@@ -44,6 +44,11 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const subdomain = extractSubdomain(request);
   const isMultiTenant = process.env.MULTI_TENANT === "true";
+
+  if (subdomain === "links") {
+    return NextResponse.rewrite(new URL(`/s/links${pathname}`, request.url));
+  }
+
   if (subdomain && isMultiTenant) {
     // Block access to admin page from subdomains
     if (pathname.startsWith("/admin")) {

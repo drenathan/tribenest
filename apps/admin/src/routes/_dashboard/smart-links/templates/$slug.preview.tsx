@@ -52,7 +52,7 @@ function RouteComponent() {
                   resolver={{ ...editorResolver, page: template.Component, ...template.editorResolver }}
                   onRender={RenderNode}
                 >
-                  <PreviewHeader isMobile={isMobile} setIsMobile={setIsMobile} />
+                  <PreviewHeader isMobile={isMobile} setIsMobile={setIsMobile} template={template.slug} />
                   <Viewport isMobile={isMobile}>
                     <Frame>
                       <template.Component profile={currentProfileAuthorization.profile} />

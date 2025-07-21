@@ -25,9 +25,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const breadcrumb = breadcrumbs[fullPath.endsWith("/") ? fullPath.slice(0, -1) : fullPath];
 
   const isEditingTheme = !!routerState.matches.find((match) =>
-    ["/website/themes/$slug/preview", "/website/home/$versionId/edit", "/smart-links/templates/$slug/preview"].includes(
-      match.fullPath,
-    ),
+    [
+      "/website/themes/$slug/preview",
+      "/website/home/$versionId/edit",
+      "/smart-links/templates/$slug/preview",
+      "/smart-links/links/$smartLinkId/edit",
+    ].includes(match.fullPath),
   );
 
   useEffect(() => {

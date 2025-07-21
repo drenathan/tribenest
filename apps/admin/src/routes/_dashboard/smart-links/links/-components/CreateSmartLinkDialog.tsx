@@ -8,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
   FormInput,
-  useEditorContext,
   type EditorTheme,
 } from "@tribe-nest/frontend-shared";
 import { useCreateSmartLink } from "@/hooks/mutations/useSmartLink";
@@ -32,15 +31,21 @@ interface CreateSmartLinkDialogProps {
   onOpenChange: (open: boolean) => void;
   content?: string;
   themeSettings: EditorTheme;
+  template?: string;
 }
 
-export const CreateSmartLinkDialog = ({ open, onOpenChange, content, themeSettings }: CreateSmartLinkDialogProps) => {
+export const CreateSmartLinkDialog = ({
+  open,
+  onOpenChange,
+  content,
+  themeSettings,
+  template,
+}: CreateSmartLinkDialogProps) => {
   const { currentProfileAuthorization } = useAuth();
-  const { profile } = useEditorContext();
   const createSmartLink = useCreateSmartLink();
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset, watch, setValue } = useForm<CreateSmartLinkFormData>({
+  const { control, handleSubmit, reset, watch, setValue, formState } = useForm<CreateSmartLinkFormData>({
     resolver: zodResolver(createSmartLinkSchema),
     defaultValues: {
       title: "",
@@ -52,7 +57,7 @@ export const CreateSmartLinkDialog = ({ open, onOpenChange, content, themeSettin
   const description = watch("description") || "";
 
   const onSubmit = async (data: CreateSmartLinkFormData) => {
-    if (!currentProfileAuthorization || !profile) {
+    if (!currentProfileAuthorization) {
       return;
     }
 
@@ -63,7 +68,8 @@ export const CreateSmartLinkDialog = ({ open, onOpenChange, content, themeSettin
         path: data.path,
         content,
         themeSettings,
-        profileId: profile.id,
+        profileId: currentProfileAuthorization.profileId,
+        template,
       });
 
       // Reset form

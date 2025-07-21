@@ -11,7 +11,7 @@ export const createSmartLinkSchema = z.object({
     thumbnail: z.string().optional(),
     title: z.string(),
     description: z.string().optional(),
-    content: z.string(),
+    content: z.string().default("{}"),
     profileId: z.string().uuid("Invalid profile ID"),
   }),
 });
@@ -21,7 +21,7 @@ export const updateSmartLinkSchema = z.object({
     themeSettings: themeSettingsSchema,
     title: z.string(),
     description: z.string().optional(),
-    content: z.string(),
+    content: z.string().default("{}"),
     path: z.string(),
     thumbnail: z.string().optional(),
   }),

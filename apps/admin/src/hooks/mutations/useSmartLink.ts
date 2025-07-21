@@ -52,3 +52,33 @@ export const useUpdateSmartLink = () => {
     },
   });
 };
+
+export const useArchiveSmartLink = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (smartLinkId: string) => {
+      const { data } = await httpClient.post(`/smart-links/${smartLinkId}/archive`);
+      return data as SmartLink;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["smart-links"],
+      });
+    },
+  });
+};
+
+export const useUnarchiveSmartLink = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (smartLinkId: string) => {
+      const { data } = await httpClient.post(`/smart-links/${smartLinkId}/unarchive`);
+      return data as SmartLink;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["smart-links"],
+      });
+    },
+  });
+};

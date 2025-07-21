@@ -1,5 +1,5 @@
 import httpClient from "@/services/httpClient";
-import { Profile } from "@tribe-nest/frontend-shared";
+import { Profile, SmartLink } from "@tribe-nest/frontend-shared";
 export type WebPage = {
   themeName: string;
   themeVersion: string;
@@ -42,4 +42,15 @@ const getWebPage = async ({ subdomain, pathname }: { subdomain: string; pathname
   }
 };
 
-export { getWebPage };
+const getSmartLink = async ({ path }: { path: string }) => {
+  try {
+    const response = await httpClient.get(`/public/smart-links?path=${path}`);
+
+    return response.data as SmartLink;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export { getWebPage, getSmartLink };

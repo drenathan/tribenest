@@ -10,9 +10,11 @@ import { CreateSmartLinkDialog } from "../../links/-components/CreateSmartLinkDi
 export const PreviewHeader = ({
   isMobile,
   setIsMobile,
+  template,
 }: {
   isMobile: boolean;
   setIsMobile: (isMobile: boolean) => void;
+  template: string;
 }) => {
   const navigate = useNavigate();
   const { query } = useEditor();
@@ -70,6 +72,7 @@ export const PreviewHeader = ({
         onOpenChange={setIsDialogOpen}
         content={content}
         themeSettings={themeSettings}
+        template={template}
       />
     </>
   );

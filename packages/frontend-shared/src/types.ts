@@ -76,7 +76,7 @@ export type EditorContextType = {
   isAdminView: boolean;
   httpClient?: AxiosInstance;
   themeSettings: EditorTheme;
-  navigate: (href: string, options?: { replace?: boolean }) => void;
+  navigate: (href: string, options?: { replace?: boolean; buttonId?: string }) => void;
   setThemeSettings: React.Dispatch<React.SetStateAction<EditorTheme>>;
   pages: ThemePage[];
   themeName?: string;
@@ -305,4 +305,8 @@ export type SmartLink = {
   themeSettings: EditorTheme;
   template?: string;
   thumbnail?: string;
+  archivedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  profile: Profile;
 };

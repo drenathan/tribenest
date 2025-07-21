@@ -3,6 +3,7 @@ import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { GetManySmartLinksInput } from "@src/routes/smartLinks/schema";
 import { PaginatedData } from "@src/types";
+import { BadRequestError } from "@src/utils/app_error";
 
 export type ISmartLink = DB["smartLinks"];
 
@@ -14,6 +15,35 @@ type SmartLinkFilter = {
 export class SmartLinkModel extends BaseModel<"smartLinks", "id"> {
   constructor(client: Kysely<DB>) {
     super(client, "smartLinks", "id");
+  }
+
+  public async getOneById(input: { smartLinkId?: string; path?: string }) {
+    if (!input.smartLinkId && !input.path) {
+      throw new BadRequestError("Invalid input");
+    }
+
+    return this.client
+      .selectFrom("smartLinks")
+      .where((eb) => {
+        const conditions: Expression<SqlBool>[] = [];
+        if (input.smartLinkId) {
+          conditions.push(eb("smartLinks.id", "=", input.smartLinkId));
+        }
+        if (input.path) {
+          conditions.push(eb("smartLinks.path", "=", input.path));
+        }
+        return eb.and(conditions);
+      })
+      .selectAll("smartLinks")
+      .select((eb) => [
+        this.jsonObjectFrom(
+          eb
+            .selectFrom("profiles")
+            .whereRef("profiles.id", "=", "smartLinks.profileId")
+            .select(["profiles.name", "profiles.id"]),
+        ).as("profile"),
+      ])
+      .executeTakeFirst();
   }
 
   public async getMany(input: GetManySmartLinksInput): Promise<PaginatedData<{}>> {

@@ -70,7 +70,7 @@ export const EditorButton: UserComponent<ButtonProps> = ({
   link,
   buttonId,
 }: ButtonProps) => {
-  const { themeSettings } = useEditorContext();
+  const { themeSettings, navigate } = useEditorContext();
   const {
     connectors: { connect },
     actions: { setProp },
@@ -86,6 +86,14 @@ export const EditorButton: UserComponent<ButtonProps> = ({
     });
   }, [themeSettings, setProp, text]);
 
+  const handleClick = () => {
+    if (link) {
+      navigate(link, { buttonId });
+    } else {
+      onClick?.();
+    }
+  };
+
   return (
     <button
       ref={(dom) => {
@@ -94,7 +102,7 @@ export const EditorButton: UserComponent<ButtonProps> = ({
           connect(dom);
         }
       }}
-      onClick={onClick}
+      onClick={handleClick}
       className={buttonStyles(themeSettings, fullWidth, variant)}
       type={type}
       style={{
