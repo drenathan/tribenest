@@ -161,3 +161,11 @@ body {
   content: " ";
   @apply border-primary border border-dashed w-full h-full absolute left-0 top-0 pointer-events-none block;
 }
+
+.component-rendered {
+  @apply relative;
+}
+.component-rendered::after {
+  content: " ";
+  @apply border-muted-foreground border border-dashed w-full h-full absolute left-0 top-0 pointer-events-none block;
+}

@@ -1,5 +1,7 @@
 import { InitRouteFunction } from "@src/types";
-import { Router } from "express";
+import { json, Router } from "express";
+import { render } from "@react-email/components";
+import { EmailRenderer, renderHtml } from "./EmailRenderer";
 // import { requireAuthentication } from "@src/middlewares";
 
 const init: InitRouteFunction = ({ services, workers }) => {
@@ -10,9 +12,10 @@ const init: InitRouteFunction = ({ services, workers }) => {
     res.status(200).json(jobs);
   });
 
-  router.get("/emails", (req, res) => {
+  router.get("/emails", async (req, res) => {
     const emails = workers.getAllEmails();
-    res.status(200).json(emails.map((e) => ({ name: e.name })));
+    const html = await renderHtml();
+    res.send(html);
   });
   router.get("/emails/:name", async (req, res) => {
     const email = workers.getAllEmails().find((e) => e.name === req.params.name);

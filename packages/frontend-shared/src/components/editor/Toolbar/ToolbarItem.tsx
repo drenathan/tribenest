@@ -17,6 +17,8 @@ export type ToolbarItemProps = {
   children?: React.ReactNode;
   type: "text" | "color" | "bg" | "number" | "slider" | "radio" | "select" | "image" | "checkbox";
   onChange?: (value: unknown) => unknown;
+  min?: number;
+  max?: number;
 };
 export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }: ToolbarItemProps) => {
   const {
@@ -46,6 +48,8 @@ export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }:
           <div className="flex flex-col gap-2">
             {props.label ? <Label>{props.label}</Label> : null}
             <Slider
+              max={props.max || 100}
+              min={props.min || 0}
               defaultValue={[parseInt(value) || 0]}
               onValueChange={([value]) => {
                 setProp((props: any) => {

@@ -2,7 +2,7 @@
 import { useNode } from "@craftjs/core";
 import { Accordion, AccordionDetails, AccordionSummary, Grid } from "@mui/material";
 
-export const ToolbarSection = ({ title, props, summary, children }: any) => {
+export const ToolbarSection = ({ title, props, summary, children, defaultExpanded = false }: any) => {
   const { nodeProps } = useNode((node) => ({
     nodeProps:
       props &&
@@ -14,6 +14,7 @@ export const ToolbarSection = ({ title, props, summary, children }: any) => {
 
   return (
     <Accordion
+      defaultExpanded={defaultExpanded}
       sx={{
         background: "transparent",
         boxShadow: "none",

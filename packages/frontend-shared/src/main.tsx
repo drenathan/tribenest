@@ -39,3 +39,5 @@ export * from "./contexts/AudioPlayerContext";
 export * from "./contexts/PublicAuthContext";
 export * from "./contexts/CartContext";
 export * from "./schema/auth";
+export * from "./email/editor";
+export * from "./components/blocks/editor-x/editor";

@@ -18,6 +18,15 @@ export class EmailListService extends BaseService {
       throw new NotFoundError("Email list not found");
     }
 
+    const existingSubscriber = await this.models.EmailListSubscriber.findOne({
+      emailListId: emailList.id,
+      email,
+    });
+
+    if (existingSubscriber) {
+      return;
+    }
+
     await this.models.EmailListSubscriber.insertOne({
       emailListId: emailList.id,
       email,

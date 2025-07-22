@@ -17,6 +17,7 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as DashboardTribeIndexRouteImport } from './routes/_dashboard/tribe/index'
 import { Route as DashboardSettingsIndexRouteImport } from './routes/_dashboard/settings/index'
+import { Route as DashboardEmailIndexRouteImport } from './routes/_dashboard/email/index'
 import { Route as DashboardTribeCollectionsRouteImport } from './routes/_dashboard/tribe/collections'
 import { Route as DashboardWebsiteThemesIndexRouteImport } from './routes/_dashboard/website/themes/index'
 import { Route as DashboardWebsiteHomeIndexRouteImport } from './routes/_dashboard/website/home/index'
@@ -78,6 +79,11 @@ const DashboardTribeIndexRoute = DashboardTribeIndexRouteImport.update({
 const DashboardSettingsIndexRoute = DashboardSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardEmailIndexRoute = DashboardEmailIndexRouteImport.update({
+  id: '/email/',
+  path: '/email/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardTribeCollectionsRoute =
@@ -231,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
+  '/email': typeof DashboardEmailIndexRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
@@ -263,6 +270,7 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
+  '/email': typeof DashboardEmailIndexRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
@@ -298,6 +306,7 @@ export interface FileRoutesById {
   '/_auth/signup': typeof AuthSignupRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/tribe/collections': typeof DashboardTribeCollectionsRoute
+  '/_dashboard/email/': typeof DashboardEmailIndexRoute
   '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_dashboard/tribe/': typeof DashboardTribeIndexRoute
   '/_dashboard/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/tribe/collections'
+    | '/email'
     | '/settings'
     | '/tribe'
     | '/smart-links/links/create'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/tribe/collections'
+    | '/email'
     | '/settings'
     | '/tribe'
     | '/smart-links/links/create'
@@ -398,6 +409,7 @@ export interface FileRouteTypes {
     | '/_auth/signup'
     | '/_dashboard/'
     | '/_dashboard/tribe/collections'
+    | '/_dashboard/email/'
     | '/_dashboard/settings/'
     | '/_dashboard/tribe/'
     | '/_dashboard/smart-links/links/create'
@@ -486,6 +498,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof DashboardSettingsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/email/': {
+      id: '/_dashboard/email/'
+      path: '/email'
+      fullPath: '/email'
+      preLoaderRoute: typeof DashboardEmailIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/tribe/collections': {
@@ -678,6 +697,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardTribeCollectionsRoute: typeof DashboardTribeCollectionsRoute
+  DashboardEmailIndexRoute: typeof DashboardEmailIndexRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardTribeIndexRoute: typeof DashboardTribeIndexRoute
   DashboardSmartLinksLinksCreateRoute: typeof DashboardSmartLinksLinksCreateRoute
@@ -708,6 +728,7 @@ interface DashboardRouteRouteChildren {
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardTribeCollectionsRoute: DashboardTribeCollectionsRoute,
+  DashboardEmailIndexRoute: DashboardEmailIndexRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardTribeIndexRoute: DashboardTribeIndexRoute,
   DashboardSmartLinksLinksCreateRoute: DashboardSmartLinksLinksCreateRoute,

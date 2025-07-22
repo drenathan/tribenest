@@ -30,6 +30,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       "/website/home/$versionId/edit",
       "/smart-links/templates/$slug/preview",
       "/smart-links/links/$smartLinkId/edit",
+      "/email/",
     ].includes(match.fullPath),
   );
 
