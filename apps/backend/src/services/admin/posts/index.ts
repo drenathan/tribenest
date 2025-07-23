@@ -38,6 +38,7 @@ export class PostService extends BaseService {
       profileId: input.profileId,
       page: 1,
       limit: 1,
+      filter: {},
     });
     return post;
   }

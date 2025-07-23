@@ -31,7 +31,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
   public async getOne(input: GetProductInput & { productId: string }) {
     const {
       data: [product],
-    } = await this.getMany({ ...input, page: 1, limit: 1 });
+    } = await this.getMany({ ...input, page: 1, limit: 1, filter: {} });
     return product;
   }
 

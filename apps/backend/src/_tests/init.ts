@@ -9,7 +9,7 @@ import TestAgent from "supertest/lib/agent";
 export type TestApp = TestAgent<Test>;
 export const testDatabase = new Database();
 export const testServices = new Services(testDatabase);
-export const testWorkers = new Workers(testServices);
+export const testWorkers = new Workers(testServices, testDatabase);
 const args = { services: testServices, workers: testWorkers };
 
 // Helper function to create test app

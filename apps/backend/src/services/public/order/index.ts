@@ -245,7 +245,13 @@ export class OrderService extends BaseService {
     // Get product variant and its tracks
     const {
       data: [product],
-    } = await this.models.Product.getMany({ productId: item.productId, limit: 1, profileId, page: 1 });
+    } = await this.models.Product.getMany({
+      productId: item.productId,
+      limit: 1,
+      profileId,
+      page: 1,
+      filter: {},
+    });
     const productVariant = product?.variants.find((v) => v.id === item.productVariantId);
     if (!productVariant) {
       console.warn(`Product variant not found: ${item.productVariantId}`);

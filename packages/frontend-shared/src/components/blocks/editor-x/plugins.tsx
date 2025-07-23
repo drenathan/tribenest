@@ -197,7 +197,7 @@ export function Plugins({}) {
               <div className="" ref={onRef}>
                 <ContentEditable
                   placeholder={placeholder}
-                  className="ContentEditable__root relative block h-[830px] min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none"
+                  className="ContentEditable__root relative block h-[500px] overflow-auto px-8 py-4 focus:outline-none"
                 />
               </div>
             </div>
@@ -221,7 +221,7 @@ export function Plugins({}) {
         <EmojisPlugin />
         <ImagesPlugin />
         <InlineImagePlugin />
-        <ExcalidrawPlugin />
+        {/* <ExcalidrawPlugin /> */}
         <TableCellResizerPlugin />
         <TableHoverActionsPlugin anchorElem={floatingAnchorElem} />
         <TableActionMenuPlugin anchorElem={floatingAnchorElem} cellMerge={true} />
@@ -310,9 +310,9 @@ export function Plugins({}) {
           </div> */}
           <div className="flex flex-1 justify-end">
             <SpeechToTextPlugin />
-            <ShareContentPlugin />
-            <ImportExportPlugin />
-            <MarkdownTogglePlugin
+            {/* <ShareContentPlugin />
+            <ImportExportPlugin /> */}
+            {/* <MarkdownTogglePlugin
               shouldPreserveNewLinesInMarkdown={true}
               transformers={[
                 TABLE,
@@ -327,13 +327,13 @@ export function Plugins({}) {
                 ...TEXT_FORMAT_TRANSFORMERS,
                 ...TEXT_MATCH_TRANSFORMERS,
               ]}
-            />
-            <EditModeTogglePlugin />
+            /> */}
+            {/* <EditModeTogglePlugin /> */}
             <>
               <ClearEditorActionPlugin />
               <ClearEditorPlugin />
             </>
-            <TreeViewPlugin />
+            {/* <TreeViewPlugin /> */}
           </div>
         </div>
       </ActionsPlugin>

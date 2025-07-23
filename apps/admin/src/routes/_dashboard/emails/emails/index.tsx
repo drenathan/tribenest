@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@tribe-nest/frontend-shared";
-import { Plus, Filter, X, MoreHorizontal, Edit, Mail, Copy, Eye, Clock, Archive } from "lucide-react";
+import { Plus, Filter, X, MoreHorizontal, Mail, Archive } from "lucide-react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import PageHeader from "../../-components/layout/page-header";
 import Loading from "@/components/loading";
@@ -29,8 +29,7 @@ import { AdminPagination } from "@/components/pagination";
 import { z } from "zod";
 import { debounce } from "lodash";
 import { useState, useMemo, useCallback } from "react";
-import type { ApiError, IEmail, EmailStatus } from "@tribe-nest/frontend-shared";
-import { toast } from "sonner";
+import type { IEmail, EmailStatus } from "@tribe-nest/frontend-shared";
 import { formatDistanceToNow } from "date-fns";
 
 const routeParams = z.object({

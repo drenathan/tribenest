@@ -3,6 +3,7 @@ import { Services } from "@src/services";
 import { Locale } from "@src/types";
 import { Queue } from "bullmq";
 import BaseJob from "@src/workers/baseJob";
+import { Database } from "@src/db";
 
 export interface BaseTemplateArgs {
   to: string | string[];
@@ -17,8 +18,8 @@ export interface BaseTemplateArgs {
 export default abstract class BaseEmailTemplate<T extends BaseTemplateArgs> extends BaseJob<T> {
   public abstract name: string;
 
-  constructor(queue: Queue, services: Services) {
-    super(queue, services);
+  constructor(queue: Queue, services: Services, database: Database) {
+    super(queue, services, database);
   }
 
   public abstract getSubject(variables: T): string;

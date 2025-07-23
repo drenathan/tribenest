@@ -200,7 +200,7 @@ export function ExcalidrawModal({
                 }}
               />
               <div className="flex h-full items-center justify-center">Loading...</div>
-              <div className="absolute right-1/2 bottom-0 bottom-5 z-10 flex translate-x-1/2 gap-2">
+              <div className="absolute right-1/2 bottom-5 z-10 flex translate-x-1/2 gap-2">
                 <Button variant="outline" onClick={onClose}>
                   Discard
                 </Button>

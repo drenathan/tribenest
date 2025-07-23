@@ -24,7 +24,7 @@ export class Workers {
     if (IS_TEST) {
       this.queue = {} as Queue;
       this.jobs = bootstrapJobs(this.queue, services, database);
-      this.emails = bootstrapEmails(this.queue, services);
+      this.emails = bootstrapEmails(this.queue, services, database);
       return;
     }
 
@@ -33,7 +33,7 @@ export class Workers {
     });
 
     this.jobs = bootstrapJobs(this.queue, services, database);
-    this.emails = bootstrapEmails(this.queue, services);
+    this.emails = bootstrapEmails(this.queue, services, database);
 
     this.scheduleJobs();
   }

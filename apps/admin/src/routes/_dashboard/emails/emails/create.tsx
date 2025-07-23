@@ -16,9 +16,8 @@ import {
   SelectValue,
   RadioGroup,
   RadioGroupItem,
-  Checkbox,
 } from "@tribe-nest/frontend-shared";
-import { ArrowLeft, Calendar, Clock, Mail } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 import PageHeader from "../../-components/layout/page-header";
 import Loading from "@/components/loading";
 import { toast } from "sonner";
