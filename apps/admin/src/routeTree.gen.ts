@@ -28,8 +28,10 @@ import { Route as DashboardStoreSettingsIndexRouteImport } from './routes/_dashb
 import { Route as DashboardStoreProductsIndexRouteImport } from './routes/_dashboard/store/products/index'
 import { Route as DashboardStoreOrdersIndexRouteImport } from './routes/_dashboard/store/orders/index'
 import { Route as DashboardStoreMusicIndexRouteImport } from './routes/_dashboard/store/music/index'
+import { Route as DashboardSocialMediaConnectionsIndexRouteImport } from './routes/_dashboard/social-media/connections/index'
 import { Route as DashboardSmartLinksTemplatesIndexRouteImport } from './routes/_dashboard/smart-links/templates/index'
 import { Route as DashboardSmartLinksLinksIndexRouteImport } from './routes/_dashboard/smart-links/links/index'
+import { Route as DashboardEventsListIndexRouteImport } from './routes/_dashboard/events/list/index'
 import { Route as DashboardEmailsTemplatesIndexRouteImport } from './routes/_dashboard/emails/templates/index'
 import { Route as DashboardEmailsListsIndexRouteImport } from './routes/_dashboard/emails/lists/index'
 import { Route as DashboardEmailsEmailsIndexRouteImport } from './routes/_dashboard/emails/emails/index'
@@ -152,6 +154,12 @@ const DashboardStoreMusicIndexRoute =
     path: '/store/music/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardSocialMediaConnectionsIndexRoute =
+  DashboardSocialMediaConnectionsIndexRouteImport.update({
+    id: '/social-media/connections/',
+    path: '/social-media/connections/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardSmartLinksTemplatesIndexRoute =
   DashboardSmartLinksTemplatesIndexRouteImport.update({
     id: '/smart-links/templates/',
@@ -162,6 +170,12 @@ const DashboardSmartLinksLinksIndexRoute =
   DashboardSmartLinksLinksIndexRouteImport.update({
     id: '/smart-links/links/',
     path: '/smart-links/links/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardEventsListIndexRoute =
+  DashboardEventsListIndexRouteImport.update({
+    id: '/events/list/',
+    path: '/events/list/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardEmailsTemplatesIndexRoute =
@@ -284,8 +298,10 @@ export interface FileRoutesByFullPath {
   '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
+  '/events/list': typeof DashboardEventsListIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
   '/smart-links/templates': typeof DashboardSmartLinksTemplatesIndexRoute
+  '/social-media/connections': typeof DashboardSocialMediaConnectionsIndexRoute
   '/store/music': typeof DashboardStoreMusicIndexRoute
   '/store/orders': typeof DashboardStoreOrdersIndexRoute
   '/store/products': typeof DashboardStoreProductsIndexRoute
@@ -322,8 +338,10 @@ export interface FileRoutesByTo {
   '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
+  '/events/list': typeof DashboardEventsListIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
   '/smart-links/templates': typeof DashboardSmartLinksTemplatesIndexRoute
+  '/social-media/connections': typeof DashboardSocialMediaConnectionsIndexRoute
   '/store/music': typeof DashboardStoreMusicIndexRoute
   '/store/orders': typeof DashboardStoreOrdersIndexRoute
   '/store/products': typeof DashboardStoreProductsIndexRoute
@@ -363,8 +381,10 @@ export interface FileRoutesById {
   '/_dashboard/emails/emails/': typeof DashboardEmailsEmailsIndexRoute
   '/_dashboard/emails/lists/': typeof DashboardEmailsListsIndexRoute
   '/_dashboard/emails/templates/': typeof DashboardEmailsTemplatesIndexRoute
+  '/_dashboard/events/list/': typeof DashboardEventsListIndexRoute
   '/_dashboard/smart-links/links/': typeof DashboardSmartLinksLinksIndexRoute
   '/_dashboard/smart-links/templates/': typeof DashboardSmartLinksTemplatesIndexRoute
+  '/_dashboard/social-media/connections/': typeof DashboardSocialMediaConnectionsIndexRoute
   '/_dashboard/store/music/': typeof DashboardStoreMusicIndexRoute
   '/_dashboard/store/orders/': typeof DashboardStoreOrdersIndexRoute
   '/_dashboard/store/products/': typeof DashboardStoreProductsIndexRoute
@@ -403,8 +423,10 @@ export interface FileRouteTypes {
     | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
+    | '/events/list'
     | '/smart-links/links'
     | '/smart-links/templates'
+    | '/social-media/connections'
     | '/store/music'
     | '/store/orders'
     | '/store/products'
@@ -441,8 +463,10 @@ export interface FileRouteTypes {
     | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
+    | '/events/list'
     | '/smart-links/links'
     | '/smart-links/templates'
+    | '/social-media/connections'
     | '/store/music'
     | '/store/orders'
     | '/store/products'
@@ -481,8 +505,10 @@ export interface FileRouteTypes {
     | '/_dashboard/emails/emails/'
     | '/_dashboard/emails/lists/'
     | '/_dashboard/emails/templates/'
+    | '/_dashboard/events/list/'
     | '/_dashboard/smart-links/links/'
     | '/_dashboard/smart-links/templates/'
+    | '/_dashboard/social-media/connections/'
     | '/_dashboard/store/music/'
     | '/_dashboard/store/orders/'
     | '/_dashboard/store/products/'
@@ -643,6 +669,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardStoreMusicIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/social-media/connections/': {
+      id: '/_dashboard/social-media/connections/'
+      path: '/social-media/connections'
+      fullPath: '/social-media/connections'
+      preLoaderRoute: typeof DashboardSocialMediaConnectionsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/smart-links/templates/': {
       id: '/_dashboard/smart-links/templates/'
       path: '/smart-links/templates'
@@ -655,6 +688,13 @@ declare module '@tanstack/react-router' {
       path: '/smart-links/links'
       fullPath: '/smart-links/links'
       preLoaderRoute: typeof DashboardSmartLinksLinksIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/events/list/': {
+      id: '/_dashboard/events/list/'
+      path: '/events/list'
+      fullPath: '/events/list'
+      preLoaderRoute: typeof DashboardEventsListIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/emails/templates/': {
@@ -809,8 +849,10 @@ interface DashboardRouteRouteChildren {
   DashboardEmailsEmailsIndexRoute: typeof DashboardEmailsEmailsIndexRoute
   DashboardEmailsListsIndexRoute: typeof DashboardEmailsListsIndexRoute
   DashboardEmailsTemplatesIndexRoute: typeof DashboardEmailsTemplatesIndexRoute
+  DashboardEventsListIndexRoute: typeof DashboardEventsListIndexRoute
   DashboardSmartLinksLinksIndexRoute: typeof DashboardSmartLinksLinksIndexRoute
   DashboardSmartLinksTemplatesIndexRoute: typeof DashboardSmartLinksTemplatesIndexRoute
+  DashboardSocialMediaConnectionsIndexRoute: typeof DashboardSocialMediaConnectionsIndexRoute
   DashboardStoreMusicIndexRoute: typeof DashboardStoreMusicIndexRoute
   DashboardStoreOrdersIndexRoute: typeof DashboardStoreOrdersIndexRoute
   DashboardStoreProductsIndexRoute: typeof DashboardStoreProductsIndexRoute
@@ -846,9 +888,12 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardEmailsEmailsIndexRoute: DashboardEmailsEmailsIndexRoute,
   DashboardEmailsListsIndexRoute: DashboardEmailsListsIndexRoute,
   DashboardEmailsTemplatesIndexRoute: DashboardEmailsTemplatesIndexRoute,
+  DashboardEventsListIndexRoute: DashboardEventsListIndexRoute,
   DashboardSmartLinksLinksIndexRoute: DashboardSmartLinksLinksIndexRoute,
   DashboardSmartLinksTemplatesIndexRoute:
     DashboardSmartLinksTemplatesIndexRoute,
+  DashboardSocialMediaConnectionsIndexRoute:
+    DashboardSocialMediaConnectionsIndexRoute,
   DashboardStoreMusicIndexRoute: DashboardStoreMusicIndexRoute,
   DashboardStoreOrdersIndexRoute: DashboardStoreOrdersIndexRoute,
   DashboardStoreProductsIndexRoute: DashboardStoreProductsIndexRoute,

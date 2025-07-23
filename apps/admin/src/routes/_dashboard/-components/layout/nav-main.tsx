@@ -80,10 +80,6 @@ const items: NavItem[] = [
         title: "Orders",
         url: "/store/orders",
       },
-      {
-        title: "Settings",
-        url: "/store/settings",
-      },
     ],
   },
   {

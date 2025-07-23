@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { DashboardLayout } from "./-components/layout/dashboard-layout";
 import { useGetProfileAuthorizations } from "@/hooks/queries/useGetProfileAuthorizations";
 import CreateProfile from "./-components/create-profile";
+import Loading from "@/components/loading";
 
 export const Route = createFileRoute("/_dashboard")({
   beforeLoad: async ({ context }) => {
@@ -17,7 +18,11 @@ function RouteComponent() {
   const { data: profileAuthorizations, isLoading } = useGetProfileAuthorizations();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loading />
+      </div>
+    );
   }
 
   if (!profileAuthorizations || profileAuthorizations.length === 0) {

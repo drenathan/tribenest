@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import ComingSoon from "../-components/coming-soon";
 
-export const Route = createFileRoute('/_dashboard/tribe/collections')({
+export const Route = createFileRoute("/_dashboard/tribe/collections")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return <div>Hello "/_dashboard/tribe/collections"!</div>
+  return <ComingSoon />;
 }
