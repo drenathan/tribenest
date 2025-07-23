@@ -1,44 +1,44 @@
+import { IS_DEVELOPMENT } from "@src/configuration/secrets";
 import { InitRouteFunction } from "@src/types";
-import { json, Router } from "express";
-import { render } from "@react-email/components";
-import { EmailRenderer, renderHtml } from "./EmailRenderer";
+import { Router } from "express";
 // import { requireAuthentication } from "@src/middlewares";
 
 const init: InitRouteFunction = ({ services, workers }) => {
   const router = Router();
   //   router.use((req, _, next) => requireAuthentication(req, next, services));
-  router.get("/", (req, res) => {
-    const jobs = workers.getAllJobs().map((j) => ({ name: j.name }));
-    res.status(200).json(jobs);
-  });
+  if (IS_DEVELOPMENT) {
+    router.get("/", (req, res) => {
+      const jobs = workers.getAllJobs().map((j) => ({ name: j.name }));
+      res.status(200).json(jobs);
+    });
 
-  router.get("/emails", async (req, res) => {
-    const emails = workers.getAllEmails();
-    const html = await renderHtml();
-    res.send(html);
-  });
-  router.get("/emails/:name", async (req, res) => {
-    const email = workers.getAllEmails().find((e) => e.name === req.params.name);
-    if (!email) {
-      return res.status(404).json({ message: "Email not found" });
-    }
+    router.get("/emails", async (req, res) => {
+      const emails = workers.getAllEmails();
+      res.status(200).json(emails.map((e) => ({ name: e.name })));
+    });
 
-    const html = await email.getPreviewHtml();
+    router.get("/emails/:name", async (req, res) => {
+      const email = workers.getAllEmails().find((e) => e.name === req.params.name);
+      if (!email) {
+        return res.status(404).json({ message: "Email not found" });
+      }
 
-    res.send(html);
-  });
+      const html = await email.getPreviewHtml();
 
-  router.post("/:name", async (req, res) => {
-    const job = workers.getAllJobs().find((j) => j.name === req.params.name);
-    if (!job) {
-      return res.status(404).json({ message: "Job not found" });
-    }
+      res.send(html);
+    });
 
-    await job.now(req.body);
+    router.post("/:name", async (req, res) => {
+      const job = workers.getAllJobs().find((j) => j.name === req.params.name);
+      if (!job) {
+        return res.status(404).json({ message: "Job not found" });
+      }
 
-    res.status(200).json({ message: "Job triggered" });
-  });
+      await job.now(req.body);
 
+      res.status(200).json({ message: "Job triggered" });
+    });
+  }
   return router;
 };
 

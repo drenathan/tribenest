@@ -117,7 +117,7 @@ export class ProfileService extends BaseService {
     await emailClient.sendEmail({
       to: testEmail,
       subject: "Test Email from TribeNest",
-      html: "<h1>Test Email</h1><p>This is a test email to verify your SMTP configuration.</p>",
+      html: `<p>Test Email from TribeNest</p>`,
     });
 
     return { success: true, message: "Test email sent successfully" };

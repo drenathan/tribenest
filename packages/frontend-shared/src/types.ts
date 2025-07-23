@@ -310,3 +310,20 @@ export type SmartLink = {
   updatedAt: string;
   profile: Profile;
 };
+
+export type IEmailList = {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  isDefault: boolean;
+  subscriberCount: number;
+};
+
+export type IEmailTemplate = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};

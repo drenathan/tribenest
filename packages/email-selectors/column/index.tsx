@@ -12,13 +12,9 @@ export type EmailColumnProps = {
 export const EmailColumn: UserComponent<EmailColumnProps> = ({ children, width, height }) => {
   const {
     connectors: { connect },
-    actions: { setProp },
-    id,
     nodes,
   } = useNode((node) => ({
     selected: node.events.selected,
-    id: node.id,
-    parentId: node.data.parent,
     nodes: node.data.nodes,
   }));
 

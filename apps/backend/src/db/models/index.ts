@@ -34,17 +34,23 @@ import { SavedModel } from "./saved/saved.mode";
 import { ProfileOnboardingStepModel } from "./profile/profileOnboardingStep.model";
 import { EmailListModel } from "./emailList/emailList.model";
 import { EmailListSubscriberModel } from "./emailList/emailListSubscriber.model";
-import { EmailTemplateModel } from "./emailList/emailTemplate.model";
+import { EmailTemplateModel } from "./email/emailTemplate.model";
 import { SmartLinkModel } from "./smartLink/smartLink.model";
 import { SmartLinkViewModel } from "./smartLink/smartLinkView.model";
 import { SmartLinkClickModel } from "./smartLink/smartLinkClickModel";
+import { EmailModel } from "./email/email.model";
+import { EmailRecipientModel } from "./email/emailRecipient.model";
+import { EmailVariableModel } from "./email/emailVariable.model";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
     Account: new AccountModel(client),
+    Email: new EmailModel(client),
+    EmailRecipient: new EmailRecipientModel(client),
     EmailList: new EmailListModel(client),
     EmailListSubscriber: new EmailListSubscriberModel(client),
     EmailTemplate: new EmailTemplateModel(client),
+    EmailVariable: new EmailVariableModel(client),
     Comment: new CommentModel(client),
     Like: new LikeModel(client),
     Saved: new SavedModel(client),

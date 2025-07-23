@@ -60,4 +60,20 @@ export const breadcrumbs: Record<
     ],
     currentPage: "Create Theme",
   },
+  "/email-lists/lists": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Email Lists",
+  },
+  "/email-lists/templates": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Email Templates",
+  },
+  "/smart-links/links": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Smart Links",
+  },
+  "/smart-links/templates": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Smart Link Templates",
+  },
 };

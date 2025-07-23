@@ -5,8 +5,12 @@ import * as React from "react";
 
 import { ToolbarDropdown } from "./ToolbarDropdown";
 import { ToolbarTextInput } from "./ToolbarTextInput";
-import { Checkbox, Label, RadioGroup, Slider } from "@tribe-nest/frontend-shared";
+
 import { SelectImageDialog } from "./SelectMediaDialog";
+import { RadioGroup } from "../../ui/radio-group";
+import { Label } from "../../ui/label";
+import { Slider } from "../../ui/slider";
+import { Checkbox } from "../../ui/checkbox";
 
 export type ToolbarItemProps = {
   prefix?: string;

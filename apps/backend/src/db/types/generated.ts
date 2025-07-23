@@ -66,6 +66,30 @@ export interface EmailListSubscribers {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface EmailRecipients {
+  createdAt: Generated<Timestamp>;
+  emailId: string;
+  firstName: string | null;
+  id: Generated<string>;
+  recipientEmail: string;
+  sentAt: Timestamp | null;
+  status: string | null;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface Emails {
+  createdAt: Generated<Timestamp>;
+  emailListId: string | null;
+  emailTemplateId: string;
+  id: Generated<string>;
+  profileId: string;
+  recipient: string | null;
+  sendDate: Timestamp | null;
+  status: string | null;
+  subject: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface EmailTemplates {
   config: Json;
   content: Json;
@@ -74,6 +98,15 @@ export interface EmailTemplates {
   profileId: string;
   title: string;
   updatedAt: Generated<Timestamp>;
+}
+
+export interface EmailVariables {
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  name: string;
+  profileId: string;
+  updatedAt: Generated<Timestamp>;
+  value: string;
 }
 
 export interface Likes {
@@ -478,7 +511,10 @@ export interface DB {
   comments: Comments;
   emailLists: EmailLists;
   emailListSubscribers: EmailListSubscribers;
+  emailRecipients: EmailRecipients;
+  emails: Emails;
   emailTemplates: EmailTemplates;
+  emailVariables: EmailVariables;
   likes: Likes;
   media: Media;
   mediaMappings: MediaMappings;

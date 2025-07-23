@@ -1,6 +1,17 @@
 "use client";
 
-import { ChevronRight, Globe, House, Link2Icon, Mails, Settings, ShoppingBag, Users } from "lucide-react";
+import {
+  Calendar,
+  ChevronRight,
+  Globe,
+  House,
+  Link2Icon,
+  Mails,
+  Settings,
+  Share2,
+  ShoppingBag,
+  Users,
+} from "lucide-react";
 
 type NavItem = {
   title: string;
@@ -76,17 +87,17 @@ const items: NavItem[] = [
     ],
   },
   {
-    title: "Email Lists",
+    title: "Emails",
     url: "#",
     icon: Mails,
     items: [
       {
         title: "Lists",
-        url: "/email-lists/lists",
+        url: "/emails/lists",
       },
       {
         title: "Templates",
-        url: "/email-lists/templates",
+        url: "/emails/templates",
       },
     ],
   },
@@ -102,6 +113,28 @@ const items: NavItem[] = [
       {
         title: "Templates",
         url: "/smart-links/templates",
+      },
+    ],
+  },
+  {
+    title: "Events",
+    url: "#",
+    icon: Calendar,
+    items: [
+      {
+        title: "My Events",
+        url: "/events/list",
+      },
+    ],
+  },
+  {
+    title: "Social Media",
+    url: "#",
+    icon: Share2,
+    items: [
+      {
+        title: "Connections",
+        url: "/social-media/connections",
       },
     ],
   },

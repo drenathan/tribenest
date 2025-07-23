@@ -4,21 +4,23 @@ import { Body, Head, Html, render } from "@react-email/components";
 import { nodes } from "./contants";
 import selectors from "@tribe-nest/email-selectors";
 
-export const EmailRenderer = ({ json }: { json: string }) => {
+export const EmailRenderer = ({ json, subject }: { json: string; subject: string }) => {
   return (
     <Html lang="en" className="dark">
       <Head>
-        <title>Your Music is Ready!</title>
+        <title>{subject}</title>
       </Head>
-      <Body>
-        <Editor enabled={true} resolver={selectors}>
-          <Frame data={JSON.parse(json)}></Frame>
-        </Editor>
+      <Body style={{ backgroundColor: "#f9fafc", width: "100%", height: "100%" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto", backgroundColor: "white", padding: "20px" }}>
+          <Editor enabled={false} resolver={selectors}>
+            <Frame data={json}></Frame>
+          </Editor>
+        </div>
       </Body>
     </Html>
   );
 };
 
 export const renderHtml = () => {
-  return render(<EmailRenderer json={JSON.stringify(nodes)} />);
+  return render(<EmailRenderer json={JSON.stringify(nodes)} subject="Your Music is Ready!" />);
 };

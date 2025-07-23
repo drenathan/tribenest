@@ -27,7 +27,7 @@ import {
   getTableObserverFromTableElement,
   type HTMLTableElementWithWithTableSelectionState,
   TableCellHeaderStates,
-  type TableCellNode,
+  TableCellNode,
   type TableRowNode,
   type TableSelection,
 } from "@lexical/table";
@@ -225,7 +225,7 @@ function TableActionMenu({
 
         const tableObserver = getTableObserverFromTableElement(tableElement);
         if (tableObserver !== null) {
-          tableObserver.clearHighlight();
+          tableObserver.$clearHighlight();
         }
 
         tableNode.markDirty();

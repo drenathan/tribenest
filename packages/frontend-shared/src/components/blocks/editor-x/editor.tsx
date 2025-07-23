@@ -1,27 +1,16 @@
-import { type InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { TextNode, type EditorState, type SerializedEditorState } from "lexical";
+import { type EditorState, type SerializedEditorState } from "lexical";
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { CLEAR_HISTORY_COMMAND, $getRoot } from "lexical";
 import { useLayoutEffect } from "react";
 import { FloatingLinkContext } from "../../editor/context/floating-link-context";
 import { SharedAutocompleteContext } from "../../editor/context/shared-autocomplete-context";
-import { editorTheme } from "../../editor/themes/editor-theme";
 import { TooltipProvider } from "../../ui/tooltip";
 
 import { nodes } from "./nodes";
 import { Plugins } from "./plugins";
-import { ExtendedTextNode } from "../../editor/nodes/extended-text-node";
-
-const editorConfig: InitialConfigType = {
-  namespace: "Editor",
-  theme: editorTheme,
-  nodes,
-  onError: (error: Error) => {
-    console.error(error);
-  },
-};
 
 const theme = {};
 function onError(error: Error) {
@@ -36,8 +25,6 @@ const initialConfig = {
 };
 
 export function Editor({
-  editorState,
-  editorSerializedState,
   onChange,
   onSerializedChange,
   initHtml,
@@ -61,7 +48,6 @@ export function Editor({
               <OnChangePlugin
                 ignoreSelectionChange={true}
                 onChange={(editorState) => {
-                  console.log("editorConfig.html", editorState);
                   onChange?.(editorState);
                   onSerializedChange?.(editorState.toJSON());
                 }}
@@ -86,9 +72,7 @@ export const SetInitialValuePlugin: React.FC<{ initHtml: string }> = ({ initHtml
         if (!!initHtml && content !== initHtml) {
           const parser = new DOMParser();
           const dom = parser.parseFromString(initHtml, "text/html");
-          console.log("dom", dom);
           const nodes = $generateNodesFromDOM(editor, dom);
-          console.log("nodes", nodes);
 
           const root = $getRoot();
           root.clear();

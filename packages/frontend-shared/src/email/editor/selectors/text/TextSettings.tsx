@@ -1,21 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { ToolbarItem, ToolbarSection } from "../../../../components/editor";
-import type { SerializedEditorState } from "lexical";
+import { ToolbarSection } from "../../../../components/editor";
 import { Editor } from "../../../../components/blocks/editor-x/editor";
 
-import { useNode } from "@craftjs/core";
+import { useEditor, useNode } from "@craftjs/core";
 
 export const TextSettings = () => {
-  const [editorState, setEditorState] = useState<SerializedEditorState>();
   const {
     value,
     actions: { setProp },
+    nodeId,
   } = useNode((node) => ({
     value: node.data.props.text,
+    nodeId: node.id,
   }));
-
-  console.log("value", value);
+  const { query } = useEditor();
 
   return (
     <React.Fragment>
@@ -24,8 +23,11 @@ export const TextSettings = () => {
           <Editor
             initHtml={value}
             onHtmlChange={(html) => {
-              console.log("html", html);
-              setProp((props: any) => {
+              const nodes = query.getSerializedNodes();
+              if (!nodes[nodeId]) {
+                return;
+              }
+              setProp((props: { text: string }) => {
                 props.text = html;
               });
             }}

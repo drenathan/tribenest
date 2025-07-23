@@ -45,7 +45,7 @@ export const EditEmailHeader = ({
               if (router.history.canGoBack()) {
                 router.history.back();
               } else {
-                navigate({ to: "/smart-links/links" });
+                navigate({ to: "/email-lists/templates" });
               }
             }}
           >

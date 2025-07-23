@@ -23,7 +23,6 @@ import {
   TableHeader,
   TableRow,
   defaultSmartLinkThemeSettings,
-  Editor,
 } from "@tribe-nest/frontend-shared";
 import { Plus, Filter, X, MoreHorizontal, Edit, Archive, ArchiveRestore, BarChart3 } from "lucide-react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
@@ -38,7 +37,6 @@ import { CreateSmartLinkDialog } from "./-components/CreateSmartLinkDialog";
 import { useArchiveSmartLink, useUnarchiveSmartLink } from "@/hooks/mutations/useSmartLink";
 import { formatDistanceToNow } from "date-fns";
 import type { SmartLink } from "@tribe-nest/frontend-shared";
-import type { SerializedEditorState } from "lexical";
 
 const routeParams = z.object({
   page: z.number().default(1),
@@ -52,8 +50,6 @@ export const Route = createFileRoute("/_dashboard/smart-links/links/")({
 });
 
 function RouteComponent() {
-  const [editorState, setEditorState] = useState<SerializedEditorState>();
-
   const { currentProfileAuthorization } = useAuth();
   const navigate = useNavigate();
   const search = useSearch({ from: "/_dashboard/smart-links/links/" });
@@ -263,8 +259,6 @@ function RouteComponent() {
         content={JSON.stringify({})}
         themeSettings={defaultSmartLinkThemeSettings}
       />
-
-      <Editor onSerializedChange={(value) => setEditorState(value)} />
     </div>
   );
 }

@@ -13,7 +13,7 @@ import selectors from "@tribe-nest/email-selectors";
 import { useAuth } from "@/hooks/useAuth";
 import httpClient from "@/services/httpClient";
 
-export const Route = createFileRoute("/_dashboard/email/")({
+export const Route = createFileRoute("/_dashboard/emails/templates/$templateId/edit")({
   component: RouteComponent,
 });
 

@@ -8,8 +8,7 @@ export type ImageProps = {
 export const EmailImage: UserComponent<ImageProps> = ({ src }: ImageProps) => {
   const {
     connectors: { connect },
-    actions: { setProp },
-  } = useNode((node) => ({}));
+  } = useNode();
 
   return (
     <div

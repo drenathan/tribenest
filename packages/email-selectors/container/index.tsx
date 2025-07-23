@@ -1,7 +1,6 @@
 import React from "react";
 
 import { useNode, type UserComponent } from "@craftjs/core";
-import { Container } from "@react-email/components";
 
 export type EmailContainerProps = {
   children?: React.ReactNode;
@@ -12,7 +11,6 @@ export type EmailContainerProps = {
 export const EmailContainer: UserComponent<EmailContainerProps> = ({ children, width }) => {
   const {
     connectors: { connect },
-    actions: { setProp },
   } = useNode((node) => ({
     selected: node.events.selected,
   }));

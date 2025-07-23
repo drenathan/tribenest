@@ -9,7 +9,7 @@ export type EmailSectionProps = {
   height?: string;
 };
 
-export const SingleSection: UserComponent<EmailSectionProps> = ({ children, height }) => {
+export const SingleSection: UserComponent<EmailSectionProps> = ({ children }) => {
   return (
     <Section style={{ padding: "16px", width: "100%" }}>
       <Row style={{ width: "100%" }}>{children}</Row>
