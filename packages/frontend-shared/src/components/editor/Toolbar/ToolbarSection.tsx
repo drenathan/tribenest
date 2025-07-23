@@ -2,7 +2,15 @@
 import { useNode } from "@craftjs/core";
 import { Accordion, AccordionDetails, AccordionSummary, Grid } from "@mui/material";
 
-export const ToolbarSection = ({ title, props, summary, children, defaultExpanded = false }: any) => {
+type ToolbarSectionProps = {
+  title?: string;
+  props?: string[];
+  summary?: (props: any) => React.ReactNode;
+  children: React.ReactNode;
+  defaultExpanded?: boolean;
+};
+
+export const ToolbarSection = ({ title, props, summary, children, defaultExpanded = false }: ToolbarSectionProps) => {
   const { nodeProps } = useNode((node) => ({
     nodeProps:
       props &&

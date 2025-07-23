@@ -38,9 +38,9 @@ export const EmailViewport: React.FC<{ children?: React.ReactNode; isMobile: boo
                 "h-[calc(100vh-120px)]": !isMobile,
                 "h-[800px]": isMobile,
                 "w-[375px]": isMobile,
-                "w-[600px]": !isMobile,
+                "w-[632px]": !isMobile,
               })}
-              style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "white", padding: "16px" }}
             >
               {children}
             </div>

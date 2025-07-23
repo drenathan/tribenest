@@ -20,6 +20,9 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.post("/templates", (...args) => controller.createEmailTemplate(...args));
   router.put("/templates/:id", (...args) => controller.updateEmailTemplate(...args));
 
+  // Send Test Email
+  router.post("/test", (...args) => controller.sendTestEmail(...args));
+
   // Emails
   router.get("/", (...args) => controller.getEmails(...args));
   router.get("/:id", (...args) => controller.getEmail(...args));

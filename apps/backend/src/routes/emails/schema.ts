@@ -27,6 +27,15 @@ export const getEmailListsSchema = z.object({
   }),
 });
 
+export const sendTestEmailSchema = z.object({
+  body: z.object({
+    templateId: z.string().uuid(),
+    recipientEmail: z.string().email(),
+    subject: z.string().min(1),
+    profileId: z.string(),
+  }),
+});
+
 export const getEmailTemplatesSchema = z.object({
   query: z.object({
     profileId: z.string(),
@@ -64,3 +73,4 @@ export type CreateEmailInput = z.infer<typeof createEmailSchema>["body"];
 export type GetEmailListInput = z.infer<typeof getEmailListSchema>["query"];
 export type GetEmailTemplateInput = z.infer<typeof getEmailTemplateSchema>["query"];
 export type GetEmailInput = z.infer<typeof getEmailSchema>["query"];
+export type SendTestEmailInput = z.infer<typeof sendTestEmailSchema>["body"];

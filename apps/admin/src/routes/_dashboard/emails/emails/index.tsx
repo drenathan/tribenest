@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@tribe-nest/frontend-shared";
-import { Plus, Filter, X, MoreHorizontal, Edit, Mail, Copy, Eye, Clock } from "lucide-react";
+import { Plus, Filter, X, MoreHorizontal, Edit, Mail, Copy, Eye, Clock, Archive } from "lucide-react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import PageHeader from "../../-components/layout/page-header";
 import Loading from "@/components/loading";
@@ -250,7 +250,6 @@ function RouteComponent() {
                 <TableHead>Subject</TableHead>
                 <TableHead>Recipient</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Send Date</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -279,6 +278,7 @@ function RouteComponent() {
 
 // EmailTableRow component
 const EmailTableRow = ({ email }: { email: IEmail }) => {
+  const navigate = useNavigate();
   const getStatusBadge = (status: EmailStatus) => {
     switch (status) {
       case "created":
@@ -298,27 +298,15 @@ const EmailTableRow = ({ email }: { email: IEmail }) => {
     }
   };
 
-  const handlePreview = () => {
-    // TODO: Navigate to preview email page when route is implemented
-    console.log("Preview email:", email.id);
+  const handleArchive = () => {
+    console.log("Archive email:", email.id);
   };
 
-  const handleEdit = () => {
-    // TODO: Navigate to edit email page when route is implemented
-    console.log("Edit email:", email.id);
+  const handleViewSendReport = async () => {
+    navigate({ to: "/emails/emails/$emailId/report", params: { emailId: email.id } });
   };
 
-  const handleCopyId = async () => {
-    try {
-      await navigator.clipboard.writeText(email.id);
-      toast.success("Email ID copied to clipboard");
-    } catch {
-      toast.error("Failed to copy ID to clipboard");
-    }
-  };
-
-  const recipient = email.recipientEmail || `Email List ${email.emailListId}`;
-  const sendDate = email.sendDate ? new Date(email.sendDate).toLocaleDateString() : "Not scheduled";
+  const recipient = email.recipientEmail || `List: ${email.emailListTitle}`;
 
   return (
     <TableRow>
@@ -329,12 +317,6 @@ const EmailTableRow = ({ email }: { email: IEmail }) => {
         <div className="text-sm">{recipient}</div>
       </TableCell>
       <TableCell>{getStatusBadge(email.status)}</TableCell>
-      <TableCell>
-        <div className="flex items-center gap-1">
-          {email.sendDate && <Clock className="h-4 w-4 text-muted-foreground" />}
-          <span className="text-sm">{sendDate}</span>
-        </div>
-      </TableCell>
       <TableCell>{formatDistanceToNow(new Date(email.createdAt), { addSuffix: true })}</TableCell>
       <TableCell className="text-right">
         <div className="flex items-center justify-end gap-2">
@@ -345,17 +327,15 @@ const EmailTableRow = ({ email }: { email: IEmail }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handlePreview}>
-                <Eye className="h-4 w-4 mr-2" />
-                Preview
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleEdit}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleCopyId}>
-                <Copy className="h-4 w-4 mr-2" />
-                Copy ID
+              {email.status === "processed" && (
+                <DropdownMenuItem onClick={handleViewSendReport}>
+                  <Mail className="h-4 w-4 mr-2" />
+                  View Send Report
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={handleArchive}>
+                <Archive className="h-4 w-4 mr-2" />
+                Archive
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -34,8 +34,7 @@ export const EmailSection: UserComponent<EmailSectionProps> = ({
         if (!dom) return;
         connect(dom);
       }}
-      className="component-rendered"
-      style={{ padding: "0 16px", width: "100%", height: "auto" }}
+      style={{ width: "100%", height: "auto" }}
     >
       <Element key={columns} id={"Section_Parent"} is={SingleSection} canvas height={height}>
         {Array.from({ length: columns }).map((_, index) => (

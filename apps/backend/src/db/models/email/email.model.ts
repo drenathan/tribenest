@@ -42,7 +42,9 @@ export class EmailModel extends BaseModel<"emails", "id"> {
     const total = await filterQuery.select(({ fn }) => fn.countAll().as("total")).executeTakeFirstOrThrow();
 
     const data = await filterQuery
+      .leftJoin("emailLists", "emailLists.id", "emails.emailListId")
       .selectAll("emails")
+      .select((eb) => [eb.ref("emailLists.title").as("emailListTitle")])
       .orderBy("emails.createdAt", "desc")
       .limit(input.limit)
       .offset(offset)

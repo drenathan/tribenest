@@ -1,7 +1,7 @@
 import { useEditor } from "@craftjs/core";
 import { Tooltip } from "@mui/material";
-import { Square as SquareSvg, Type as TypeSvg, Atom, Columns2, Columns3, Image } from "lucide-react";
-import { EmailImage, EmailText } from "../selectors";
+import { Square as SquareSvg, Type as TypeSvg, Atom, Columns2, Columns3, Image, Circle } from "lucide-react";
+import { EmailButton, EmailImage, EmailText } from "../selectors";
 import { EmailSection } from "../selectors/section";
 
 const Label = ({ children }: { children: React.ReactNode }) => {
@@ -99,6 +99,20 @@ export const Toolbox = () => {
             <Item>
               <Image />
               <Label>Image</Label>
+            </Item>
+          </Tooltip>
+        </div>
+        <div
+          ref={(ref) => {
+            if (ref) {
+              create(ref, <EmailButton />);
+            }
+          }}
+        >
+          <Tooltip title="Button" placement="right">
+            <Item>
+              <Circle />
+              <Label>Button</Label>
             </Item>
           </Tooltip>
         </div>

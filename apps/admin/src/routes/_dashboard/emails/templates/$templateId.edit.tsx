@@ -10,7 +10,7 @@ import {
 } from "@tribe-nest/frontend-shared";
 import { useState } from "react";
 import { EditEmailHeader } from "./-components/EditEmailHeader";
-import selectors from "@tribe-nest/email-selectors";
+import selectors, { SelectorProvider } from "@tribe-nest/email-selectors";
 import { useAuth } from "@/hooks/useAuth";
 import httpClient from "@/services/httpClient";
 import { useGetEmailTemplate } from "@/hooks/queries/useEmails";
@@ -55,27 +55,34 @@ function RouteComponent() {
 
   return (
     <div className="h-screen">
-      <EditorContextProvider
-        profile={profile}
-        isAdminView={true}
-        httpClient={httpClient}
-        themeSettings={defaultSmartLinkThemeSettings}
-        navigate={() => {}}
-        pages={[]}
-      >
-        <Editor enabled={true} onRender={EmailRenderNode} resolver={selectors}>
-          <EditEmailHeader isMobile={isMobile} setIsMobile={setIsMobile} onSaveTemplate={handleUpdateTemplate} />
-          <EmailViewport isMobile={isMobile}>
-            {emptyContent ? (
-              <Frame>
-                <Element is={EmailContainer} canvas></Element>
-              </Frame>
-            ) : (
-              <Frame data={template.content}></Frame>
-            )}
-          </EmailViewport>
-        </Editor>
-      </EditorContextProvider>
+      <SelectorProvider isRenderMode={false}>
+        <EditorContextProvider
+          profile={profile}
+          isAdminView={true}
+          httpClient={httpClient}
+          themeSettings={defaultSmartLinkThemeSettings}
+          navigate={() => {}}
+          pages={[]}
+        >
+          <Editor enabled={true} onRender={EmailRenderNode} resolver={selectors}>
+            <EditEmailHeader
+              templateId={templateId}
+              isMobile={isMobile}
+              setIsMobile={setIsMobile}
+              onSaveTemplate={handleUpdateTemplate}
+            />
+            <EmailViewport isMobile={isMobile}>
+              {emptyContent ? (
+                <Frame>
+                  <Element is={EmailContainer} canvas></Element>
+                </Frame>
+              ) : (
+                <Frame data={template.content}></Frame>
+              )}
+            </EmailViewport>
+          </Editor>
+        </EditorContextProvider>
+      </SelectorProvider>
     </div>
   );
 }

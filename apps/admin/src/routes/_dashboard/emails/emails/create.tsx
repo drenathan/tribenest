@@ -182,7 +182,7 @@ function CreateEmailComponent() {
             control={form.control}
             render={({ field, fieldState }) => (
               <div className="space-y-2">
-                <Label htmlFor="title">Title *</Label>
+                <Label htmlFor="title">Title * (For internal use only)</Label>
                 <Input
                   id="title"
                   placeholder="Enter email title..."
@@ -310,63 +310,6 @@ function CreateEmailComponent() {
           )}
 
           {/* Schedule Options */}
-          <Controller
-            name="shouldSchedule"
-            control={form.control}
-            render={({ field }) => (
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="schedule" checked={field.value} onCheckedChange={field.onChange} />
-                  <Label htmlFor="schedule">Schedule for later</Label>
-                </div>
-              </div>
-            )}
-          />
-
-          {watchedValues.shouldSchedule && (
-            <div className="grid grid-cols-2 gap-4">
-              <Controller
-                name="sendDate"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="sendDate">Send Date</Label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="sendDate"
-                        type="date"
-                        {...field}
-                        className={`pl-10 ${fieldState.error ? "border-red-500" : ""}`}
-                        min={new Date().toISOString().split("T")[0]}
-                      />
-                    </div>
-                    {fieldState.error && <p className="text-sm text-red-500">{fieldState.error.message}</p>}
-                  </div>
-                )}
-              />
-
-              <Controller
-                name="sendTime"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="sendTime">Send Time</Label>
-                    <div className="relative">
-                      <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="sendTime"
-                        type="time"
-                        {...field}
-                        className={`pl-10 ${fieldState.error ? "border-red-500" : ""}`}
-                      />
-                    </div>
-                    {fieldState.error && <p className="text-sm text-red-500">{fieldState.error.message}</p>}
-                  </div>
-                )}
-              />
-            </div>
-          )}
 
           {/* Submit Buttons */}
           <div className="flex gap-4 pt-6">

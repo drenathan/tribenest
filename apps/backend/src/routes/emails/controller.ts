@@ -20,6 +20,8 @@ import {
   getEmailSchema,
   GetEmailTemplatesInput,
   getEmailTemplatesSchema,
+  SendTestEmailInput,
+  sendTestEmailSchema,
 } from "./schema";
 import * as policy from "./policy";
 
@@ -164,5 +166,17 @@ export class EmailsController extends BaseController {
       ...body!,
       emailTemplateId: req.params.id,
     });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(sendTestEmailSchema)
+  @isAuthorized(policy.read)
+  public async sendTestEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: SendTestEmailInput,
+  ): Promise<any> {
+    return this.services.admin.emails.sendTestEmail(body!);
   }
 }

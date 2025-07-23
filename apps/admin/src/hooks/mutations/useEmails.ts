@@ -37,6 +37,13 @@ export type CreateEmailPayload = {
   sendDate?: string;
 };
 
+export type SendTestEmailPayload = {
+  templateId: string;
+  recipientEmail: string;
+  subject: string;
+  profileId: string;
+};
+
 export const useCreateEmailList = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -108,6 +115,14 @@ export const useCreateEmail = () => {
       queryClient.invalidateQueries({
         queryKey: ["emails", "list"],
       });
+    },
+  });
+};
+
+export const useSendTestEmail = () => {
+  return useMutation({
+    mutationFn: async (payload: SendTestEmailPayload) => {
+      await httpClient.post("/emails/test", payload);
     },
   });
 };

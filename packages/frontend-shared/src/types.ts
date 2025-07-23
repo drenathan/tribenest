@@ -336,6 +336,7 @@ export type IEmail = {
   emailTemplateId: string;
   recipientEmail?: string;
   emailListId?: string;
+  emailListTitle?: string;
   subject: string;
   status: EmailStatus;
   sendDate?: string;
