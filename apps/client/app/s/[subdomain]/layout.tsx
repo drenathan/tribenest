@@ -14,6 +14,8 @@ import { WebPage } from "./_api";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ConfigProvider, useConfig } from "./_contexts/config";
+import { InstallPWABanner } from "../../_components/InstallPWA";
+import { PWAHead } from "../../_components/PWAHead";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,52 +81,62 @@ const Content = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div
-      ref={ref}
-      className="h-screen w-full @container"
-      style={{
-        color: theme.themeSettings.colors.text,
-      }}
-    >
-      <ContainerQueryProvider ref={ref}>
-        <EditorContextProvider
-          profile={webPage.profile}
-          isAdminView={false}
-          httpClient={httpClient}
-          themeSettings={webPage.themeSettings}
-          themeName={webPage.themeName}
-          pages={theme.pages}
-          navigate={(path, options) => {
-            if (options?.replace) {
-              router.replace(path);
-            } else {
-              router.push(path);
-            }
-          }}
-        >
-          <QueryClientProvider client={queryClient}>
-            <PublicAuthProvider httpClient={httpClient} setHttpClientToken={setHttpClientToken}>
-              <CartProvider>
-                <AudioPlayerProvider>
-                  {children}
-                  <Toaster
-                    closeButton
-                    position="top-center"
-                    style={
-                      {
-                        "--normal-bg": theme.themeSettings.colors.background,
-                        "--normal-text": theme.themeSettings.colors.text,
-                        "--normal-border": theme.themeSettings.colors.primary,
-                      } as React.CSSProperties
-                    }
-                  />
-                  <ThemeAudioPlayer />
-                </AudioPlayerProvider>
-              </CartProvider>
-            </PublicAuthProvider>
-          </QueryClientProvider>
-        </EditorContextProvider>
-      </ContainerQueryProvider>
-    </div>
+    <>
+      <PWAHead
+        subdomain={params.subdomain}
+        appName={webPage.profile?.name ? `${webPage.profile.name} - TribeNest` : undefined}
+        description={webPage.page?.description || undefined}
+        themeColor={theme.themeSettings.colors.primary}
+        backgroundColor={theme.themeSettings.colors.background}
+      />
+      <div
+        ref={ref}
+        className="h-screen w-full @container"
+        style={{
+          color: theme.themeSettings.colors.text,
+        }}
+      >
+        <ContainerQueryProvider ref={ref}>
+          <EditorContextProvider
+            profile={webPage.profile}
+            isAdminView={false}
+            httpClient={httpClient}
+            themeSettings={webPage.themeSettings}
+            themeName={webPage.themeName}
+            pages={theme.pages}
+            navigate={(path, options) => {
+              if (options?.replace) {
+                router.replace(path);
+              } else {
+                router.push(path);
+              }
+            }}
+          >
+            <QueryClientProvider client={queryClient}>
+              <PublicAuthProvider httpClient={httpClient} setHttpClientToken={setHttpClientToken}>
+                <CartProvider>
+                  <AudioPlayerProvider>
+                    {children}
+                    <Toaster
+                      closeButton
+                      position="top-center"
+                      style={
+                        {
+                          "--normal-bg": theme.themeSettings.colors.background,
+                          "--normal-text": theme.themeSettings.colors.text,
+                          "--normal-border": theme.themeSettings.colors.primary,
+                        } as React.CSSProperties
+                      }
+                    />
+                    <ThemeAudioPlayer />
+                    <InstallPWABanner />
+                  </AudioPlayerProvider>
+                </CartProvider>
+              </PublicAuthProvider>
+            </QueryClientProvider>
+          </EditorContextProvider>
+        </ContainerQueryProvider>
+      </div>
+    </>
   );
 };

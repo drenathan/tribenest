@@ -6,7 +6,6 @@ import {
   EditorContextProvider,
   PublicAuthProvider,
   SmartLink,
-  smartLinkTemplates,
   ThemeAudioPlayer,
   Toaster,
 } from "@tribe-nest/frontend-shared";
@@ -69,10 +68,6 @@ const Content = ({ children }: { children: React.ReactNode }) => {
   if (!smartLink) {
     return <div>404</div>;
   }
-
-  const Template = smartLink?.template
-    ? smartLinkTemplates.find((template) => template.slug === smartLink.template)?.Component
-    : null;
 
   if (!smartLink) {
     return <div>404</div>;

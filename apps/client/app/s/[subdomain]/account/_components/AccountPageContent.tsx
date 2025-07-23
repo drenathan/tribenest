@@ -2,7 +2,12 @@
 
 import { InternalPageRenderer } from "../../_components/internal-page-renderer";
 import { ProtectedRoute } from "../../_components/protected-route";
-import { usePublicAuth, useEditorContext, alphaToHexCode } from "@tribe-nest/frontend-shared";
+import {
+  usePublicAuth,
+  useEditorContext,
+  alphaToHexCode,
+  EditorButtonWithoutEditor,
+} from "@tribe-nest/frontend-shared";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@tribe-nest/frontend-shared";
 import { Crown, CreditCard, Bookmark, User } from "lucide-react";
 import { MembershipTab } from "./MembershipTab";
@@ -11,6 +16,7 @@ import { SavedTab } from "./SavedTab";
 import { AccountTab } from "./AccountTab";
 import { useSearchParams } from "next/navigation";
 import { usePublicAuthGuard } from "../../_hooks/usePublicAuthGuard";
+import { usePWA } from "@/lib/hooks/usePWA";
 
 export function AccountPageContent() {
   usePublicAuthGuard();
@@ -18,6 +24,7 @@ export function AccountPageContent() {
   const { themeSettings, navigate } = useEditorContext();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") ?? "membership";
+  const { isInstalled, isInstallable, installPWA } = usePWA();
 
   if (!isAuthenticated) {
     return null;
@@ -34,9 +41,11 @@ export function AccountPageContent() {
             >
               My Account
             </h1>
-            <p style={{ color: themeSettings.colors.text }}>
+            <p style={{ color: themeSettings.colors.text }} className="mb-4">
               Manage your membership, orders, saved content, and account details
             </p>
+
+            {!isInstalled && isInstallable && <EditorButtonWithoutEditor onClick={installPWA} text="Install App" />}
           </div>
 
           <Tabs
