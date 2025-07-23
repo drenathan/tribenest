@@ -37,6 +37,7 @@ export const createEmailListSchema = z.object({
   body: z.object({
     profileId: z.string(),
     title: z.string().min(5),
+    isDefault: z.boolean().optional(),
   }),
 });
 
@@ -44,8 +45,8 @@ export const createEmailTemplateSchema = z.object({
   body: z.object({
     profileId: z.string(),
     title: z.string().min(5),
-    content: z.string(),
-    config: z.string(),
+    content: z.string().default("{}"),
+    config: z.string().default("{}"),
   }),
 });
 

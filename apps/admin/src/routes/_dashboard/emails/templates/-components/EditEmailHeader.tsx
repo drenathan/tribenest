@@ -11,9 +11,11 @@ import { useEditor } from "@craftjs/core";
 export const EditEmailHeader = ({
   isMobile,
   setIsMobile,
+  onSaveTemplate,
 }: {
   isMobile: boolean;
   setIsMobile: (isMobile: boolean) => void;
+  onSaveTemplate: (content: string) => void;
 }) => {
   const navigate = useNavigate();
   const router = useRouter();
@@ -31,7 +33,7 @@ export const EditEmailHeader = ({
 
   const handleSaveClick = async () => {
     const serializedNodes = query.getSerializedNodes();
-    console.log(serializedNodes);
+    onSaveTemplate(JSON.stringify(serializedNodes));
   };
 
   return (
@@ -45,7 +47,7 @@ export const EditEmailHeader = ({
               if (router.history.canGoBack()) {
                 router.history.back();
               } else {
-                navigate({ to: "/email-lists/templates" });
+                navigate({ to: "/emails/templates" });
               }
             }}
           >

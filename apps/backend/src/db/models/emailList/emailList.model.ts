@@ -9,7 +9,7 @@ type EmailListFilter = {
   query?: string;
 };
 
-export class EmailListModel extends BaseModel<"emailLists", "id", EmailListFilter> {
+export class EmailListModel extends BaseModel<"emailLists", "id"> {
   constructor(client: Kysely<DB>) {
     super(client, "emailLists", "id");
   }

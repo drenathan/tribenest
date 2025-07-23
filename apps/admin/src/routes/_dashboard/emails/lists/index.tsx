@@ -1,5 +1,6 @@
 import EmptyState from "@/components/empty-state";
 import { useGetEmailLists, type GetEmailListsFilter } from "@/hooks/queries/useEmails";
+import { useCreateEmailList, useUpdateEmailList } from "@/hooks/mutations/useEmails";
 import {
   Button,
   DropdownMenu,
@@ -19,8 +20,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Label,
+  Checkbox,
 } from "@tribe-nest/frontend-shared";
-import { Plus, Filter, X, MoreHorizontal, Edit, Users, Mail, Star } from "lucide-react";
+import { Plus, Filter, X, MoreHorizontal, Edit, Users, Mail, Star, Copy } from "lucide-react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import PageHeader from "../../-components/layout/page-header";
 import Loading from "@/components/loading";
@@ -28,8 +31,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { AdminPagination } from "@/components/pagination";
 import { z } from "zod";
 import { debounce } from "lodash";
-import { useState, useMemo, useCallback } from "react";
-import type { IEmailList } from "@tribe-nest/frontend-shared";
+import { useState, useMemo, useCallback, useEffect } from "react";
+import type { ApiError, IEmailList } from "@tribe-nest/frontend-shared";
+import { toast } from "sonner";
 
 const routeParams = z.object({
   page: z.number().default(1),
@@ -41,14 +45,128 @@ export const Route = createFileRoute("/_dashboard/emails/lists/")({
   component: RouteComponent,
 });
 
+// Email List Dialog Component
+const EmailListDialog = ({
+  open,
+  onOpenChange,
+  list,
+  profileId,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  list?: IEmailList;
+  profileId: string;
+}) => {
+  const createEmailList = useCreateEmailList();
+  const updateEmailList = useUpdateEmailList();
+  const isEditing = !!list;
+
+  const [title, setTitle] = useState(list?.title || "");
+  const [isDefault, setIsDefault] = useState(list?.isDefault || false);
+  const [titleError, setTitleError] = useState("");
+
+  useEffect(() => {
+    if (open && list) {
+      setTitle(list.title);
+      setIsDefault(list.isDefault);
+    }
+  }, [open, list]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validation
+    if (!title.trim()) {
+      setTitleError("List title is required");
+      return;
+    }
+    setTitleError("");
+
+    try {
+      if (isEditing && list) {
+        await updateEmailList.mutateAsync({
+          title: title.trim(),
+          profileId,
+          emailListId: list.id,
+          isDefault,
+        });
+        toast.success("List updated successfully");
+        onOpenChange(false);
+      } else {
+        await createEmailList.mutateAsync({
+          title: title.trim(),
+          profileId,
+          isDefault,
+        });
+        toast.success("List created successfully");
+        onOpenChange(false);
+      }
+    } catch (error) {
+      const message = (error as ApiError)?.response?.data?.message;
+      toast.error(message || (isEditing ? "Failed to update list" : "Failed to create list"));
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{isEditing ? "Edit List" : "Create List"}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">List Title</Label>
+            <Input
+              id="title"
+              placeholder="Enter list title..."
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (titleError) setTitleError("");
+              }}
+              className={titleError ? "border-red-500" : ""}
+            />
+            {titleError && <p className="text-sm text-red-500">{titleError}</p>}
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isDefault"
+              checked={isDefault}
+              onCheckedChange={(checked) => setIsDefault(checked === true)}
+            />
+            <Label
+              htmlFor="isDefault"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Set as default list
+            </Label>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+              Cancel
+            </Button>
+            <Button type="submit" className="flex-1" disabled={createEmailList.isPending || updateEmailList.isPending}>
+              {isEditing ? "Update List" : "Create List"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 function RouteComponent() {
   const { currentProfileAuthorization } = useAuth();
   const navigate = useNavigate();
   const search = useSearch({ from: "/_dashboard/emails/lists/" });
 
-  // Local state for search input and dialog
+  // Local state for search input and dialogs
   const [searchQuery, setSearchQuery] = useState(search.search);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isListDialogOpen, setIsListDialogOpen] = useState(false);
+  const [editingList, setEditingList] = useState<IEmailList | undefined>();
 
   // Update URL search params when filters change
   const updateURLParams = useCallback(
@@ -101,8 +219,13 @@ function RouteComponent() {
   const isEmpty = !isLoading && !emailLists?.data?.length;
 
   const handleCreateList = () => {
-    // TODO: Navigate to create list page when route is implemented
-    console.log("Create list clicked");
+    setEditingList(undefined);
+    setIsListDialogOpen(true);
+  };
+
+  const handleEditList = (list: IEmailList) => {
+    setEditingList(list);
+    setIsListDialogOpen(true);
   };
 
   return (
@@ -204,7 +327,7 @@ function RouteComponent() {
             </TableHeader>
             <TableBody>
               {emailLists?.data?.map((list) => (
-                <EmailListTableRow key={list.id} list={list} />
+                <EmailListTableRow key={list.id} list={list} onEdit={handleEditList} />
               ))}
             </TableBody>
           </Table>
@@ -220,15 +343,24 @@ function RouteComponent() {
           onPageChange={handlePageChange}
         />
       )}
+
+      {/* Email List Dialog */}
+      {currentProfileAuthorization?.profileId && (
+        <EmailListDialog
+          open={isListDialogOpen}
+          onOpenChange={setIsListDialogOpen}
+          list={editingList}
+          profileId={currentProfileAuthorization.profileId}
+        />
+      )}
     </div>
   );
 }
 
 // EmailListTableRow component
-const EmailListTableRow = ({ list }: { list: IEmailList }) => {
+const EmailListTableRow = ({ list, onEdit }: { list: IEmailList; onEdit: (list: IEmailList) => void }) => {
   const handleEdit = () => {
-    // TODO: Navigate to edit list page when route is implemented
-    console.log("Edit list:", list.id);
+    onEdit(list);
   };
 
   const handleViewSubscribers = () => {
@@ -239,6 +371,15 @@ const EmailListTableRow = ({ list }: { list: IEmailList }) => {
   const handleSendEmail = () => {
     // TODO: Navigate to compose email with this list when route is implemented
     console.log("Send email to list:", list.id);
+  };
+
+  const handleCopyId = async () => {
+    try {
+      await navigator.clipboard.writeText(list.id);
+      toast.success("List ID copied to clipboard");
+    } catch {
+      toast.error("Failed to copy ID to clipboard");
+    }
   };
 
   return (
@@ -280,6 +421,10 @@ const EmailListTableRow = ({ list }: { list: IEmailList }) => {
               <DropdownMenuItem onClick={handleSendEmail}>
                 <Mail className="h-4 w-4 mr-2" />
                 Send Email
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleCopyId}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy ID
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

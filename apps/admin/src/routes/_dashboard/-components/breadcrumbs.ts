@@ -60,11 +60,11 @@ export const breadcrumbs: Record<
     ],
     currentPage: "Create Theme",
   },
-  "/email-lists/lists": {
+  "/emails/lists": {
     links: [{ label: "Home", href: "/" }],
     currentPage: "Email Lists",
   },
-  "/email-lists/templates": {
+  "/emails/templates": {
     links: [{ label: "Home", href: "/" }],
     currentPage: "Email Templates",
   },

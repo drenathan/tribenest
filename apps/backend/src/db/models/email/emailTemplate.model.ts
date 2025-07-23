@@ -8,7 +8,7 @@ type EmailTemplateFilter = {
   query?: string;
 };
 
-export class EmailTemplateModel extends BaseModel<"emailTemplates", "id", EmailTemplateFilter> {
+export class EmailTemplateModel extends BaseModel<"emailTemplates", "id"> {
   constructor(client: Kysely<DB>) {
     super(client, "emailTemplates", "id");
   }

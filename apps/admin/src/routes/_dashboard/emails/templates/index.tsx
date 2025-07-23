@@ -1,5 +1,6 @@
 import EmptyState from "@/components/empty-state";
 import { useGetEmailTemplates, type GetEmailTemplatesFilter } from "@/hooks/queries/useEmails";
+import { useCreateEmailTemplate, useUpdateEmailTemplate } from "@/hooks/mutations/useEmails";
 import {
   Button,
   DropdownMenu,
@@ -19,6 +20,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Label,
 } from "@tribe-nest/frontend-shared";
 import { Plus, Filter, X, MoreHorizontal, Edit, Mail } from "lucide-react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
@@ -28,9 +30,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { AdminPagination } from "@/components/pagination";
 import { z } from "zod";
 import { debounce } from "lodash";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
-import type { IEmailTemplate } from "@tribe-nest/frontend-shared";
+import type { ApiError, IEmailTemplate } from "@tribe-nest/frontend-shared";
+import { toast } from "sonner";
 
 const routeParams = z.object({
   page: z.number().default(1),
@@ -42,14 +45,120 @@ export const Route = createFileRoute("/_dashboard/emails/templates/")({
   component: RouteComponent,
 });
 
+// Template Dialog Component
+const TemplateDialog = ({
+  open,
+  onOpenChange,
+  template,
+  profileId,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  template?: IEmailTemplate;
+  profileId: string;
+}) => {
+  const navigate = useNavigate();
+  const createEmailTemplate = useCreateEmailTemplate();
+  const updateEmailTemplate = useUpdateEmailTemplate();
+  const isEditing = !!template;
+
+  const [title, setTitle] = useState(template?.title || "");
+  const [titleError, setTitleError] = useState("");
+
+  useEffect(() => {
+    if (open && template) {
+      setTitle(template.title);
+    }
+  }, [open, template]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validation
+    if (!title.trim()) {
+      setTitleError("Template title is required");
+      return;
+    }
+    setTitleError("");
+
+    try {
+      if (isEditing && template) {
+        await updateEmailTemplate.mutateAsync({
+          title: title.trim(),
+          profileId,
+          emailTemplateId: template.id,
+          content: typeof template.content === "string" ? template.content : JSON.stringify(template.content),
+        });
+        toast.success("Template updated successfully");
+        onOpenChange(false);
+      } else {
+        const newTemplate = await createEmailTemplate.mutateAsync({
+          title: title.trim(),
+          profileId,
+          content: "{}", // Empty content for new templates
+        });
+        toast.success("Template created successfully");
+        onOpenChange(false);
+        navigate({
+          to: "/emails/templates/$templateId/edit",
+          params: { templateId: newTemplate.id },
+        });
+      }
+    } catch (error) {
+      const message = (error as ApiError)?.response?.data?.message;
+      toast.error(message || (isEditing ? "Failed to update template" : "Failed to create template"));
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{isEditing ? "Edit Template" : "Create Template"}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Template Title</Label>
+            <Input
+              id="title"
+              placeholder="Enter template title..."
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (titleError) setTitleError("");
+              }}
+              className={titleError ? "border-red-500" : ""}
+            />
+            {titleError && <p className="text-sm text-red-500">{titleError}</p>}
+          </div>
+          <div className="flex gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={createEmailTemplate.isPending || updateEmailTemplate.isPending}
+            >
+              {isEditing ? "Update Template" : "Create Template"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 function RouteComponent() {
   const { currentProfileAuthorization } = useAuth();
   const navigate = useNavigate();
   const search = useSearch({ from: "/_dashboard/emails/templates/" });
 
-  // Local state for search input and dialog
+  // Local state for search input and dialogs
   const [searchQuery, setSearchQuery] = useState(search.search);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<IEmailTemplate | undefined>();
 
   // Update URL search params when filters change
   const updateURLParams = useCallback(
@@ -106,8 +215,13 @@ function RouteComponent() {
   const isEmpty = !isLoading && !emailTemplates?.data?.length;
 
   const handleCreateTemplate = () => {
-    // TODO: Navigate to create template page when route is implemented
-    console.log("Create template clicked");
+    setEditingTemplate(undefined);
+    setIsTemplateDialogOpen(true);
+  };
+
+  const handleEditTemplate = (template: IEmailTemplate) => {
+    setEditingTemplate(template);
+    setIsTemplateDialogOpen(true);
   };
 
   return (
@@ -204,14 +318,13 @@ function RouteComponent() {
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
-                <TableHead>Created</TableHead>
                 <TableHead>Last Updated</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {emailTemplates?.data?.map((template) => (
-                <EmailTemplateTableRow key={template.id} template={template} />
+                <EmailTemplateTableRow key={template.id} template={template} onEdit={handleEditTemplate} />
               ))}
             </TableBody>
           </Table>
@@ -227,15 +340,38 @@ function RouteComponent() {
           onPageChange={handlePageChange}
         />
       )}
+
+      {/* Template Dialog */}
+      {currentProfileAuthorization?.profileId && (
+        <TemplateDialog
+          open={isTemplateDialogOpen}
+          onOpenChange={setIsTemplateDialogOpen}
+          template={editingTemplate}
+          profileId={currentProfileAuthorization.profileId}
+        />
+      )}
     </div>
   );
 }
 
 // EmailTemplateTableRow component
-const EmailTemplateTableRow = ({ template }: { template: IEmailTemplate }) => {
+const EmailTemplateTableRow = ({
+  template,
+  onEdit,
+}: {
+  template: IEmailTemplate;
+  onEdit: (template: IEmailTemplate) => void;
+}) => {
+  const navigate = useNavigate();
   const handleEdit = () => {
-    // TODO: Navigate to edit template page when route is implemented
-    console.log("Edit template:", template.id);
+    onEdit(template);
+  };
+
+  const handleEditContent = () => {
+    navigate({
+      to: "/emails/templates/$templateId/edit",
+      params: { templateId: template.id },
+    });
   };
 
   const handlePreview = () => {
@@ -255,7 +391,6 @@ const EmailTemplateTableRow = ({ template }: { template: IEmailTemplate }) => {
           <div className="font-medium">{template.title}</div>
         </div>
       </TableCell>
-      <TableCell>{formatDistanceToNow(new Date(template.createdAt), { addSuffix: true })}</TableCell>
       <TableCell>{formatDistanceToNow(new Date(template.updatedAt), { addSuffix: true })}</TableCell>
       <TableCell className="text-right">
         <div className="flex items-center justify-end gap-2">
@@ -266,17 +401,21 @@ const EmailTemplateTableRow = ({ template }: { template: IEmailTemplate }) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleEditContent}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Content
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleEdit}>
                 <Edit className="h-4 w-4 mr-2" />
-                Edit
+                Edit Title
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handlePreview}>
                 <Mail className="h-4 w-4 mr-2" />
-                Preview
+                Send Test Email
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleUse}>
                 <Plus className="h-4 w-4 mr-2" />
-                Use Template
+                Create Email
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

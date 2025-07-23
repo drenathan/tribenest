@@ -101,7 +101,10 @@ export class EmailsController extends BaseController {
     next: NextFunction,
     @Body body?: CreateEmailListInput,
   ): Promise<any> {
-    return this.services.admin.emails.updateEmailList(body!);
+    return this.services.admin.emails.updateEmailList({
+      ...body!,
+      emailListId: req.params.id,
+    });
   }
 
   @RouteHandler()
@@ -152,6 +155,9 @@ export class EmailsController extends BaseController {
     next: NextFunction,
     @Body body?: CreateEmailTemplateInput,
   ): Promise<any> {
-    return this.services.admin.emails.updateEmailTemplate(body!);
+    return this.services.admin.emails.updateEmailTemplate({
+      ...body!,
+      emailTemplateId: req.params.id,
+    });
   }
 }
