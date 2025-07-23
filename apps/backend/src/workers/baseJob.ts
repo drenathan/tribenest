@@ -4,6 +4,7 @@ import { Queue } from "bullmq";
 // import Workers from ".";
 import { logger } from "@src/utils/logger";
 import { Workers } from ".";
+import { Database } from "@src/db";
 
 export default abstract class BaseJob<Payload = {}> {
   abstract name: string;
@@ -16,6 +17,7 @@ export default abstract class BaseJob<Payload = {}> {
   constructor(
     protected queue: Queue,
     protected services: Services,
+    protected database: Database,
   ) {}
 
   abstract handle(payload: Payload): Promise<any>;

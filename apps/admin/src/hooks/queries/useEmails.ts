@@ -1,6 +1,6 @@
 import httpClient from "@/services/httpClient";
 import { useQuery } from "@tanstack/react-query";
-import type { IEmailList, IEmailTemplate, PaginatedData } from "@tribe-nest/frontend-shared";
+import type { EmailStatus, IEmail, IEmailList, IEmailTemplate, PaginatedData } from "@tribe-nest/frontend-shared";
 
 export type GetEmailListsFilter = {
   query?: string;
@@ -72,5 +72,23 @@ export const useGetEmailTemplate = (emailTemplateId?: string, profileId?: string
       return response.data;
     },
     enabled: !!profileId && !!emailTemplateId,
+  });
+};
+
+export type GetEmailsFilter = {
+  query?: string;
+  emailTemplateId?: string;
+  emailListId?: string;
+  status?: EmailStatus;
+};
+
+export const useGetEmails = (profileId?: string, page = 1, filter?: GetEmailsFilter) => {
+  return useQuery<PaginatedData<IEmail>>({
+    queryKey: ["emails", profileId, page, filter],
+    queryFn: async () => {
+      const response = await httpClient.get("/emails", { params: { profileId, page, limit: 10, filter } });
+      return response.data;
+    },
+    enabled: !!profileId,
   });
 };

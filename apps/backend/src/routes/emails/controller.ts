@@ -50,7 +50,12 @@ export class EmailsController extends BaseController {
     next: NextFunction,
     @Body body?: CreateEmailInput,
   ): Promise<any> {
-    return this.services.admin.emails.createEmail(body!);
+    const email = await this.services.admin.emails.createEmail(body!);
+
+    if (email.status === "scheduled") {
+      await this.workers.jobs.emails.processEmail.now({ emailId: email.id });
+    }
+    return email;
   }
 
   @RouteHandler()

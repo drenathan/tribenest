@@ -12,10 +12,11 @@ export const createEmailSchema = z.object({
   body: z.object({
     profileId: z.string(),
     emailListId: z.string().uuid().optional(),
-    recipient: z.string().email().optional(),
+    recipientEmail: z.string().email().optional(),
     subject: z.string().min(5),
     emailTemplateId: z.string().uuid(),
-    sendDate: z.date().optional(),
+    sendDate: z.string().optional(),
+    title: z.string().min(5),
   }),
 });
 

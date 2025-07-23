@@ -1,6 +1,6 @@
 import httpClient from "@/services/httpClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { IEmailList, IEmailTemplate } from "@tribe-nest/frontend-shared";
+import type { IEmail, IEmailList, IEmailTemplate } from "@tribe-nest/frontend-shared";
 
 export type CreateEmailListPayload = {
   title: string;
@@ -26,6 +26,15 @@ export type UpdateEmailTemplatePayload = {
   profileId: string;
   emailTemplateId: string;
   content: string;
+};
+
+export type CreateEmailPayload = {
+  profileId: string;
+  emailTemplateId: string;
+  recipientEmail?: string;
+  emailListId?: string;
+  subject: string;
+  sendDate?: string;
 };
 
 export const useCreateEmailList = () => {
@@ -83,6 +92,21 @@ export const useUpdateEmailTemplate = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["email-templates"],
+      });
+    },
+  });
+};
+
+export const useCreateEmail = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: CreateEmailPayload) => {
+      const { data } = await httpClient.post("/emails", payload);
+      return data as IEmail;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["emails", "list"],
       });
     },
   });

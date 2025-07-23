@@ -5,6 +5,7 @@ import { PostType } from "./post";
 import { MembershipStatus } from "./membership";
 import { OrderStatus } from "./product";
 import { ProfileOnboardingStepId } from "./profile";
+import { EmailRecipientStatus, EmailStatus } from "./email";
 
 type Media = Omit<GeneratedTypes.Media, "type" | "parent"> & {
   type: MediaType;
@@ -32,6 +33,14 @@ type ProfileOnboardingStep = Omit<GeneratedTypes.ProfileOnboardingSteps, "id"> &
   id: ProfileOnboardingStepId;
 };
 
+type Email = Omit<GeneratedTypes.Emails, "status"> & {
+  status: EmailStatus;
+};
+
+type EmailRecipient = Omit<GeneratedTypes.EmailRecipients, "status"> & {
+  status: EmailRecipientStatus;
+};
+
 export interface DB extends GeneratedTypes.DB {
   media: Media;
   posts: Post;
@@ -39,4 +48,6 @@ export interface DB extends GeneratedTypes.DB {
   memberships: Membership;
   orders: Order;
   profileOnboardingSteps: ProfileOnboardingStep;
+  emails: Email;
+  emailRecipients: EmailRecipient;
 }

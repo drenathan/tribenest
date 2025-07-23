@@ -17,7 +17,7 @@ const startApp = async () => {
   logger.info("Starting app...");
   const database = new Database();
   const services = new Services(database);
-  const workers = new Workers(services);
+  const workers = new Workers(services, database);
   workers.setWorkersInstanceOnJobs();
 
   if (IS_DEVELOPMENT || !DEPLOYMENT) {

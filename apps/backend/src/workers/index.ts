@@ -9,6 +9,7 @@ import { isNil } from "lodash";
 import { bootstrapEmails } from "./emails";
 import { IS_DEVELOPMENT, IS_TEST } from "@src/configuration/secrets";
 import BaseEmailTemplate from "./emails/BaseEmailTemplate";
+import { Database } from "@src/db";
 const QUEUE_NAME = "tribeNestMainQueue";
 const SCHEDULER_ID = "tribeNestScheduler";
 
@@ -18,11 +19,11 @@ export class Workers {
   private tags = ["worker", "bootstrap"];
   emails: ReturnType<typeof bootstrapEmails>;
 
-  constructor(services: Services) {
+  constructor(services: Services, database: Database) {
     logger.info("Initializing workers");
     if (IS_TEST) {
       this.queue = {} as Queue;
-      this.jobs = bootstrapJobs(this.queue, services);
+      this.jobs = bootstrapJobs(this.queue, services, database);
       this.emails = bootstrapEmails(this.queue, services);
       return;
     }
@@ -31,7 +32,7 @@ export class Workers {
       connection: { url: process.env.REDIS_URL },
     });
 
-    this.jobs = bootstrapJobs(this.queue, services);
+    this.jobs = bootstrapJobs(this.queue, services, database);
     this.emails = bootstrapEmails(this.queue, services);
 
     this.scheduleJobs();

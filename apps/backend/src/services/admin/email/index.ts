@@ -10,6 +10,7 @@ import { getEmail } from "./queries/getEmail";
 import { getEmails } from "./queries/getEmails";
 import { updateEmailList } from "./commands/updateEmailList";
 import { updateEmailTemplate } from "./commands/updateEmailTemplate";
+import { sendEmail } from "./commands/sendEmail";
 
 export class EmailService extends BaseService {
   public readonly createEmailList = createEmailList;
@@ -23,6 +24,7 @@ export class EmailService extends BaseService {
   public readonly getEmails = getEmails;
   public readonly updateEmailList = updateEmailList;
   public readonly updateEmailTemplate = updateEmailTemplate;
+  public readonly sendEmail = sendEmail;
   constructor(args: BaseServiceArgs) {
     super(args);
     this.createEmailList = createEmailList.bind(this);
@@ -36,5 +38,6 @@ export class EmailService extends BaseService {
     this.getEmails = getEmails.bind(this);
     this.updateEmailList = updateEmailList.bind(this);
     this.updateEmailTemplate = updateEmailTemplate.bind(this);
+    this.sendEmail = sendEmail.bind(this);
   }
 }

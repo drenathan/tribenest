@@ -24,7 +24,7 @@ export class EmailClient {
       : nodemailer.createTransport(this.config);
   }
 
-  public async sendEmail(args: SendEmailArgs) {
+  public async sendEmail(args: SendEmailArgs, throwOnError = false) {
     const content = {
       to: Array.isArray(args.to) ? args.to.filter(Boolean).join(",") : args.to,
       cc: Array.isArray(args.cc) ? args.cc.filter(Boolean).join(",") : args.cc,
@@ -57,6 +57,9 @@ export class EmailClient {
         to: content.to,
         error: err instanceof Error ? err.message : String(err),
       });
+      if (throwOnError) {
+        throw err;
+      }
     }
   }
 }

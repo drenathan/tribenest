@@ -1,12 +1,11 @@
 import React from "react";
 import { Editor, Frame } from "@craftjs/core";
 import { Body, Head, Html, render } from "@react-email/components";
-import { nodes } from "./contants";
 import selectors from "@tribe-nest/email-selectors";
 
 export const EmailRenderer = ({ json, subject }: { json: string; subject: string }) => {
   return (
-    <Html lang="en" className="dark">
+    <Html lang="en">
       <Head>
         <title>{subject}</title>
       </Head>
@@ -21,6 +20,6 @@ export const EmailRenderer = ({ json, subject }: { json: string; subject: string
   );
 };
 
-export const renderHtml = () => {
-  return render(<EmailRenderer json={JSON.stringify(nodes)} subject="Your Music is Ready!" />);
+export const renderHtml = (json: string, subject: string) => {
+  return render(<EmailRenderer json={json} subject={subject} />);
 };

@@ -92,12 +92,16 @@ const items: NavItem[] = [
     icon: Mails,
     items: [
       {
-        title: "Lists",
-        url: "/emails/lists",
-      },
-      {
         title: "Templates",
         url: "/emails/templates",
+      },
+      {
+        title: "Emails",
+        url: "/emails/emails",
+      },
+      {
+        title: "Email Lists",
+        url: "/emails/lists",
       },
     ],
   },

@@ -69,6 +69,7 @@ export interface EmailListSubscribers {
 export interface EmailRecipients {
   createdAt: Generated<Timestamp>;
   emailId: string;
+  failedAt: Timestamp | null;
   firstName: string | null;
   id: Generated<string>;
   recipientEmail: string;
@@ -83,10 +84,11 @@ export interface Emails {
   emailTemplateId: string;
   id: Generated<string>;
   profileId: string;
-  recipient: string | null;
+  recipientEmail: string | null;
   sendDate: Timestamp | null;
   status: string | null;
   subject: string;
+  title: string;
   updatedAt: Generated<Timestamp>;
 }
 

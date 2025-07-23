@@ -32,11 +32,13 @@ import { Route as DashboardSmartLinksTemplatesIndexRouteImport } from './routes/
 import { Route as DashboardSmartLinksLinksIndexRouteImport } from './routes/_dashboard/smart-links/links/index'
 import { Route as DashboardEmailsTemplatesIndexRouteImport } from './routes/_dashboard/emails/templates/index'
 import { Route as DashboardEmailsListsIndexRouteImport } from './routes/_dashboard/emails/lists/index'
+import { Route as DashboardEmailsEmailsIndexRouteImport } from './routes/_dashboard/emails/emails/index'
 import { Route as DashboardTribePostsCreateRouteImport } from './routes/_dashboard/tribe/posts/create'
 import { Route as DashboardTribeMembershipTiersCreateRouteImport } from './routes/_dashboard/tribe/membership-tiers/create'
 import { Route as DashboardStoreProductsCeateRouteImport } from './routes/_dashboard/store/products/ceate'
 import { Route as DashboardStoreMusicCreateRouteImport } from './routes/_dashboard/store/music/create'
 import { Route as DashboardSmartLinksLinksCreateRouteImport } from './routes/_dashboard/smart-links/links/create'
+import { Route as DashboardEmailsEmailsCreateRouteImport } from './routes/_dashboard/emails/emails/create'
 import { Route as DashboardWebsiteThemesSlugPreviewRouteImport } from './routes/_dashboard/website/themes/$slug.preview'
 import { Route as DashboardWebsiteHomeVersionIdEditRouteImport } from './routes/_dashboard/website/home/$versionId.edit'
 import { Route as DashboardTribePostsPostIdEditRouteImport } from './routes/_dashboard/tribe/posts/$postId.edit'
@@ -173,6 +175,12 @@ const DashboardEmailsListsIndexRoute =
     path: '/emails/lists/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardEmailsEmailsIndexRoute =
+  DashboardEmailsEmailsIndexRouteImport.update({
+    id: '/emails/emails/',
+    path: '/emails/emails/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardTribePostsCreateRoute =
   DashboardTribePostsCreateRouteImport.update({
     id: '/tribe/posts/create',
@@ -201,6 +209,12 @@ const DashboardSmartLinksLinksCreateRoute =
   DashboardSmartLinksLinksCreateRouteImport.update({
     id: '/smart-links/links/create',
     path: '/smart-links/links/create',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardEmailsEmailsCreateRoute =
+  DashboardEmailsEmailsCreateRouteImport.update({
+    id: '/emails/emails/create',
+    path: '/emails/emails/create',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardWebsiteThemesSlugPreviewRoute =
@@ -254,11 +268,13 @@ export interface FileRoutesByFullPath {
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
+  '/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
   '/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/tribe/posts/create': typeof DashboardTribePostsCreateRoute
+  '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
@@ -289,11 +305,13 @@ export interface FileRoutesByTo {
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
+  '/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
   '/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/tribe/posts/create': typeof DashboardTribePostsCreateRoute
+  '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
@@ -327,11 +345,13 @@ export interface FileRoutesById {
   '/_dashboard/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_dashboard/tribe/': typeof DashboardTribeIndexRoute
+  '/_dashboard/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
   '/_dashboard/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/_dashboard/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/_dashboard/store/products/ceate': typeof DashboardStoreProductsCeateRoute
   '/_dashboard/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/_dashboard/tribe/posts/create': typeof DashboardTribePostsCreateRoute
+  '/_dashboard/emails/emails/': typeof DashboardEmailsEmailsIndexRoute
   '/_dashboard/emails/lists/': typeof DashboardEmailsListsIndexRoute
   '/_dashboard/emails/templates/': typeof DashboardEmailsTemplatesIndexRoute
   '/_dashboard/smart-links/links/': typeof DashboardSmartLinksLinksIndexRoute
@@ -364,11 +384,13 @@ export interface FileRouteTypes {
     | '/tribe/collections'
     | '/settings'
     | '/tribe'
+    | '/emails/emails/create'
     | '/smart-links/links/create'
     | '/store/music/create'
     | '/store/products/ceate'
     | '/tribe/membership-tiers/create'
     | '/tribe/posts/create'
+    | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
     | '/smart-links/links'
@@ -399,11 +421,13 @@ export interface FileRouteTypes {
     | '/tribe/collections'
     | '/settings'
     | '/tribe'
+    | '/emails/emails/create'
     | '/smart-links/links/create'
     | '/store/music/create'
     | '/store/products/ceate'
     | '/tribe/membership-tiers/create'
     | '/tribe/posts/create'
+    | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
     | '/smart-links/links'
@@ -436,11 +460,13 @@ export interface FileRouteTypes {
     | '/_dashboard/tribe/collections'
     | '/_dashboard/settings/'
     | '/_dashboard/tribe/'
+    | '/_dashboard/emails/emails/create'
     | '/_dashboard/smart-links/links/create'
     | '/_dashboard/store/music/create'
     | '/_dashboard/store/products/ceate'
     | '/_dashboard/tribe/membership-tiers/create'
     | '/_dashboard/tribe/posts/create'
+    | '/_dashboard/emails/emails/'
     | '/_dashboard/emails/lists/'
     | '/_dashboard/emails/templates/'
     | '/_dashboard/smart-links/links/'
@@ -632,6 +658,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardEmailsListsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/emails/emails/': {
+      id: '/_dashboard/emails/emails/'
+      path: '/emails/emails'
+      fullPath: '/emails/emails'
+      preLoaderRoute: typeof DashboardEmailsEmailsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/tribe/posts/create': {
       id: '/_dashboard/tribe/posts/create'
       path: '/tribe/posts/create'
@@ -665,6 +698,13 @@ declare module '@tanstack/react-router' {
       path: '/smart-links/links/create'
       fullPath: '/smart-links/links/create'
       preLoaderRoute: typeof DashboardSmartLinksLinksCreateRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/emails/emails/create': {
+      id: '/_dashboard/emails/emails/create'
+      path: '/emails/emails/create'
+      fullPath: '/emails/emails/create'
+      preLoaderRoute: typeof DashboardEmailsEmailsCreateRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/website/themes/$slug/preview': {
@@ -740,11 +780,13 @@ interface DashboardRouteRouteChildren {
   DashboardTribeCollectionsRoute: typeof DashboardTribeCollectionsRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardTribeIndexRoute: typeof DashboardTribeIndexRoute
+  DashboardEmailsEmailsCreateRoute: typeof DashboardEmailsEmailsCreateRoute
   DashboardSmartLinksLinksCreateRoute: typeof DashboardSmartLinksLinksCreateRoute
   DashboardStoreMusicCreateRoute: typeof DashboardStoreMusicCreateRoute
   DashboardStoreProductsCeateRoute: typeof DashboardStoreProductsCeateRoute
   DashboardTribeMembershipTiersCreateRoute: typeof DashboardTribeMembershipTiersCreateRoute
   DashboardTribePostsCreateRoute: typeof DashboardTribePostsCreateRoute
+  DashboardEmailsEmailsIndexRoute: typeof DashboardEmailsEmailsIndexRoute
   DashboardEmailsListsIndexRoute: typeof DashboardEmailsListsIndexRoute
   DashboardEmailsTemplatesIndexRoute: typeof DashboardEmailsTemplatesIndexRoute
   DashboardSmartLinksLinksIndexRoute: typeof DashboardSmartLinksLinksIndexRoute
@@ -773,12 +815,14 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardTribeCollectionsRoute: DashboardTribeCollectionsRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardTribeIndexRoute: DashboardTribeIndexRoute,
+  DashboardEmailsEmailsCreateRoute: DashboardEmailsEmailsCreateRoute,
   DashboardSmartLinksLinksCreateRoute: DashboardSmartLinksLinksCreateRoute,
   DashboardStoreMusicCreateRoute: DashboardStoreMusicCreateRoute,
   DashboardStoreProductsCeateRoute: DashboardStoreProductsCeateRoute,
   DashboardTribeMembershipTiersCreateRoute:
     DashboardTribeMembershipTiersCreateRoute,
   DashboardTribePostsCreateRoute: DashboardTribePostsCreateRoute,
+  DashboardEmailsEmailsIndexRoute: DashboardEmailsEmailsIndexRoute,
   DashboardEmailsListsIndexRoute: DashboardEmailsListsIndexRoute,
   DashboardEmailsTemplatesIndexRoute: DashboardEmailsTemplatesIndexRoute,
   DashboardSmartLinksLinksIndexRoute: DashboardSmartLinksLinksIndexRoute,

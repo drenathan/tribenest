@@ -327,3 +327,18 @@ export type IEmailTemplate = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type EmailStatus = "created" | "scheduled" | "processing" | "processed";
+
+export type IEmail = {
+  id: string;
+  profileId: string;
+  emailTemplateId: string;
+  recipientEmail?: string;
+  emailListId?: string;
+  subject: string;
+  status: EmailStatus;
+  sendDate?: string;
+  createdAt: string;
+  updatedAt: string;
+};

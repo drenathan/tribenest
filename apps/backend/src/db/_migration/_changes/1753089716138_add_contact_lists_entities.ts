@@ -39,11 +39,12 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("id", "uuid", (col) => col.primaryKey().defaultTo(sql`gen_random_uuid()`))
     .addColumn("profile_id", "uuid", (col) => col.notNull().references(`${tables.profiles}.id`))
     .addColumn("email_list_id", "uuid", (col) => col.references(`${tables.email_lists}.id`))
-    .addColumn("recipient", "text")
+    .addColumn("recipient_email", "text")
     .addColumn("email_template_id", "uuid", (col) => col.notNull().references(`${tables.email_templates}.id`))
     .addColumn("subject", "text", (col) => col.notNull())
     .addColumn("send_date", "timestamptz")
     .addColumn("status", "text")
+    .addColumn("title", "text", (col) => col.notNull())
     .$call(addDefaultColumns)
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.emails);
@@ -56,6 +57,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("first_name", "text")
     .addColumn("status", "text")
     .addColumn("sent_at", "timestamptz")
+    .addColumn("failed_at", "timestamptz")
     .$call(addDefaultColumns)
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.email_recipients);
