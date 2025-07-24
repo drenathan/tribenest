@@ -69,12 +69,14 @@ export class ProfilesController extends BaseController {
     @Body body?: UpdateProfileConfigurationInput,
   ): Promise<any> {
     const { id } = req.params;
-    const { email, r2, payment } = body!;
+    const { email, r2, payment, pwa, address } = body!;
 
     const updateData: any = {};
     if (email) updateData.email = email;
     if (r2) updateData.r2 = r2;
     if (payment) updateData.payment = payment;
+    if (pwa) updateData.pwa = pwa;
+    if (address) updateData.address = address;
 
     const result = await this.services.profile.updateProfileConfiguration(id, updateData);
     return result;

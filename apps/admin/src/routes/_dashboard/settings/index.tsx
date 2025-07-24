@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks/useAuth";
 import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
 import { capitalize } from "lodash";
+import { PWAConfigTab } from "./-components/PWAConfigTab";
+import { AddressConfigTab } from "./-components/AddressConfigTab";
 
 // Validation schemas
 const emailConfigSchema = z.object({
@@ -46,12 +48,19 @@ const settingsSchema = z.object({
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
+const routeParams = z.object({
+  tab: z.string().default("email"),
+});
+
 export const Route = createFileRoute("/_dashboard/settings/")({
+  validateSearch: routeParams,
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const { currentProfileAuthorization } = useAuth();
+  const navigate = useNavigate();
+  const search = useSearch({ from: "/_dashboard/settings/" });
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState<string | null>(null);
 
@@ -190,11 +199,22 @@ function RouteComponent() {
         </p>
       </div>
 
-      <Tabs defaultValue="email" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs
+        value={search.tab}
+        onValueChange={(value) => {
+          navigate({
+            to: "/settings",
+            search: (prev) => ({ ...prev, tab: value }),
+          });
+        }}
+        className="w-full"
+      >
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="email">Email (SMTP)</TabsTrigger>
           <TabsTrigger value="r2">File Storage (R2)</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
+          <TabsTrigger value="pwa">App (PWA)</TabsTrigger>
+          <TabsTrigger value="address">Address</TabsTrigger>
         </TabsList>
 
         <TabsContent value="email" className="space-y-4">
@@ -413,6 +433,14 @@ function RouteComponent() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="pwa" className="space-y-4">
+          <PWAConfigTab />
+        </TabsContent>
+
+        <TabsContent value="address" className="space-y-4">
+          <AddressConfigTab />
         </TabsContent>
       </Tabs>
 

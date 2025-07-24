@@ -344,12 +344,14 @@ export interface ProfileAuthorizations {
 }
 
 export interface ProfileConfigurations {
+  address: Json | null;
   id: Generated<string>;
   paymentProviderName: string | null;
   paymentProviderPrivateKey: string | null;
   paymentProviderPublicKey: string | null;
   paymentProviderWebhookSecret: string | null;
   profileId: string;
+  pwaConfig: Json | null;
   r2AccessKeyId: string | null;
   r2BucketName: string | null;
   r2BucketUrl: string | null;

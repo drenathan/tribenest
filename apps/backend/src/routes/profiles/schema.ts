@@ -68,11 +68,49 @@ const paymentConfigurationSchema = z.object({
   }),
 });
 
+const pwaConfigurationSchema = z.object({
+  body: z.object({
+    name: z.string().min(1, "Name is required"),
+    shortName: z.string().min(1, "Short name is required"),
+    description: z.string().min(1, "Description is required"),
+    icon192: z.string().min(1, "Icon 192 is required"),
+    icon512: z.string().min(1, "Icon 512 is required"),
+    icon96: z.string().min(1, "Icon 96 is required"),
+    screenshotWide1280X720: z.string().min(1, "Screenshot wide 1280x720 is required"),
+    screenshotNarrow750X1334: z.string().min(1, "Screenshot narrow 750x1334 is required"),
+  }),
+});
+
+const addressConfigurationSchema = z.object({
+  body: z
+    .object({
+      street: z.string().min(1, "Street is required"),
+      city: z.string().min(1, "City is required"),
+      state: z.string().min(1, "State is required"),
+      zipCode: z.string().min(1, "Zip code is required").optional(),
+      country: z.string().min(1, "Country is required"),
+    })
+    .refine(
+      (data) => {
+        if (data.country?.toLocaleLowerCase() === "us") {
+          return (data.zipCode?.length ?? 0) > 4;
+        }
+
+        return true;
+      },
+      {
+        message: "Zip code must be 5 digits",
+      },
+    ),
+});
+
 const updateProfileConfigurationSchema = z.object({
   body: z.object({
     email: emailConfigurationSchema.shape.body.optional(),
     r2: r2ConfigurationSchema.shape.body.optional(),
     payment: paymentConfigurationSchema.shape.body.optional(),
+    pwa: pwaConfigurationSchema.shape.body.optional(),
+    address: addressConfigurationSchema.shape.body.optional(),
   }),
 });
 
@@ -83,6 +121,8 @@ export type GetMediaInput = z.infer<typeof getMediaSchema>["query"];
 export type EmailConfigurationInput = z.infer<typeof emailConfigurationSchema>["body"];
 export type R2ConfigurationInput = z.infer<typeof r2ConfigurationSchema>["body"];
 export type PaymentConfigurationInput = z.infer<typeof paymentConfigurationSchema>["body"];
+export type PWAConfigurationInput = z.infer<typeof pwaConfigurationSchema>["body"];
+export type AddressConfigurationInput = z.infer<typeof addressConfigurationSchema>["body"];
 export type UpdateProfileConfigurationInput = z.infer<typeof updateProfileConfigurationSchema>["body"];
 
 export {

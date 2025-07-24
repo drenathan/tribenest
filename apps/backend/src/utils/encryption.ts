@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { JWT_SECRET } from "@src/configuration/secrets";
+import { Json } from "@src/db/types/generated";
 
 export class EncryptionService {
   private static readonly ALGORITHM = "aes-256-gcm";
@@ -55,11 +56,11 @@ export class EncryptionService {
   /**
    * Encrypt an object's sensitive fields
    */
-  static encryptObject<T extends Record<string, string | null>>(obj: T, fieldsToEncrypt: (keyof T)[]): T {
+  static encryptObject<T extends Record<string, string | null | Json>>(obj: T, fieldsToEncrypt: (keyof T)[]): T {
     const encrypted = { ...obj };
 
     for (const field of fieldsToEncrypt) {
-      if (encrypted[field]) {
+      if (encrypted[field] && typeof encrypted[field] === "string") {
         encrypted[field] = this.encrypt(encrypted[field]) as any;
       }
     }
@@ -70,11 +71,11 @@ export class EncryptionService {
   /**
    * Decrypt an object's sensitive fields
    */
-  static decryptObject<T extends Record<string, string | null>>(obj: T, fieldsToDecrypt: (keyof T)[]): T {
+  static decryptObject<T extends Record<string, string | null | Json>>(obj: T, fieldsToDecrypt: (keyof T)[]): T {
     const decrypted = { ...obj };
 
     for (const field of fieldsToDecrypt) {
-      if (decrypted[field]) {
+      if (decrypted[field] && typeof decrypted[field] === "string") {
         decrypted[field] = this.decrypt(decrypted[field]) as any;
       }
     }

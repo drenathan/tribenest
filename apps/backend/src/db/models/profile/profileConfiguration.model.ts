@@ -1,9 +1,11 @@
-import { Kysely } from "kysely";
+import { Insertable, Kysely, Updateable } from "kysely";
 import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { EncryptionService } from "@src/utils/encryption";
 import { UpdateProfileConfigurationInput } from "@src/routes/profiles/schema";
 import { maskConfiguration } from "@src/utils/mask";
+
+export type IProfileConfiguration = DB["profileConfigurations"];
 
 export class ProfileConfigurationModel extends BaseModel<"profileConfigurations", "id"> {
   constructor(client: Kysely<DB>) {
@@ -58,9 +60,10 @@ export class ProfileConfigurationModel extends BaseModel<"profileConfigurations"
   public async updateProfileConfiguration(profileId: string, data: UpdateProfileConfigurationInput) {
     // Get current configuration to compare with new data
     const currentConfig = await this.getProfileConfiguration(profileId);
+    type UpdateProfileConfigurationData = Updateable<IProfileConfiguration>;
 
     // Prepare update data, only including fields that have changed
-    const updateData: any = {};
+    const updateData: Partial<UpdateProfileConfigurationData> = {};
 
     // Handle email configuration
     if (data.email) {
@@ -70,7 +73,7 @@ export class ProfileConfigurationModel extends BaseModel<"profileConfigurations"
 
         // Only update if the value has changed and is not a masked value
         if (newValue !== undefined && newValue !== currentValue && !this.isMaskedValue(newValue)) {
-          updateData[key] = newValue;
+          updateData[key as keyof UpdateProfileConfigurationData] = newValue;
         }
       });
     }
@@ -83,7 +86,7 @@ export class ProfileConfigurationModel extends BaseModel<"profileConfigurations"
 
         // Only update if the value has changed and is not a masked value
         if (newValue !== undefined && newValue !== currentValue && !this.isMaskedValue(newValue)) {
-          updateData[key] = newValue;
+          updateData[key as keyof UpdateProfileConfigurationData] = newValue;
         }
       });
     }
@@ -96,9 +99,16 @@ export class ProfileConfigurationModel extends BaseModel<"profileConfigurations"
 
         // Only update if the value has changed and is not a masked value
         if (newValue !== undefined && newValue !== currentValue && !this.isMaskedValue(newValue)) {
-          updateData[key] = newValue;
+          updateData[key as keyof UpdateProfileConfigurationData] = newValue;
         }
       });
+    }
+
+    if (data.pwa) {
+      updateData.pwaConfig = JSON.stringify(data.pwa);
+    }
+    if (data.address) {
+      updateData.address = JSON.stringify(data.address);
     }
 
     // If no changes, return current configuration
@@ -124,12 +134,11 @@ export class ProfileConfigurationModel extends BaseModel<"profileConfigurations"
       "r2BucketUrl",
     ]);
 
-    return this.client
-      .updateTable("profileConfigurations")
-      .set(encryptedData)
-      .where("profileId", "=", profileId)
-      .returningAll()
-      .executeTakeFirst();
+    console.log(encryptedData, "encryptedData");
+
+    await this.updateOne({ profileId }, encryptedData);
+
+    return true;
   }
 
   /**

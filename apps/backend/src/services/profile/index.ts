@@ -1,7 +1,12 @@
 import { BadRequestError } from "@src/utils/app_error";
 import { BaseService, BaseServiceArgs } from "../baseService";
 import { FORBIDDEN_SUBDOMAINS, getDefaultProfileOnboardingSteps } from "./contants";
-import { CreateProfileInput, GetMediaInput, UploadMediaInput } from "@src/routes/profiles/schema";
+import {
+  CreateProfileInput,
+  GetMediaInput,
+  UpdateProfileConfigurationInput,
+  UploadMediaInput,
+} from "@src/routes/profiles/schema";
 import { safeStringify } from "@src/utils/json";
 import { MediaParent } from "@src/db/types/media";
 import { ProfilePaymentService } from "./profilePaymentService";
@@ -37,7 +42,12 @@ export class ProfileService extends BaseService {
         { profileId: profile.id, accountId, isOwner: true },
         trx,
       );
-      await this.database.models.ProfileConfiguration.insertOne({ profileId: profile.id }, trx);
+
+      await this.database.models.ProfileConfiguration.insertOne(
+        { profileId: profile.id, pwaConfig: "{}", address: "{}" },
+        trx,
+      );
+
       await this.database.models.MembershipTier.insertOne(
         {
           name: "Free Membership",
@@ -104,7 +114,7 @@ export class ProfileService extends BaseService {
   /**
    * Update profile configuration with encrypted sensitive fields
    */
-  public async updateProfileConfiguration(profileId: string, data: any) {
+  public async updateProfileConfiguration(profileId: string, data: UpdateProfileConfigurationInput) {
     return this.database.models.ProfileConfiguration.updateProfileConfiguration(profileId, data);
   }
 
