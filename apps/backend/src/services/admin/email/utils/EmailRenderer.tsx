@@ -1,7 +1,7 @@
 import React from "react";
 import { Editor, Frame } from "@craftjs/core";
 import { Body, Head, Html, render } from "@react-email/components";
-import selectors, { SelectorProvider } from "@tribe-nest/email-selectors";
+import selectors, { SelectorProvider } from "../utils/components";
 
 export const EmailRenderer = ({ json, subject }: { json: string; subject: string }) => {
   return (

@@ -44,7 +44,6 @@ export function AddressConfigTab() {
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
     reset,
     trigger,

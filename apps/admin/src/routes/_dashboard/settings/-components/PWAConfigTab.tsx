@@ -57,7 +57,6 @@ export function PWAConfigTab() {
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors },
     reset,
