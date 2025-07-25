@@ -22,9 +22,21 @@ export class MembershipTierModel extends BaseModel<"membershipTiers", "id"> {
             .orderBy("mtb.order", "asc"),
         ).as("benefits"),
       ])
-      .orderBy("mt.createdAt", "desc")
+      .orderBy("mt.order", "asc")
       .execute();
 
     return membershipTiers;
+  }
+
+  public async getNextOrder(profileId: string) {
+    const membershipTiers = await this.client
+      .selectFrom("membershipTiers")
+      .where("profileId", "=", profileId)
+      .select("order")
+      .orderBy("order", "desc")
+      .limit(1)
+      .execute();
+
+    return membershipTiers[0]?.order + 1 || 0;
   }
 }

@@ -52,7 +52,8 @@ export class MembershipService extends BaseService {
   }
 
   public async createMembershipTier(input: CreateMembershipTierInput) {
-    await this.models.MembershipTier.insertOne(input);
+    const nextOrder = await this.models.MembershipTier.getNextOrder(input.profileId);
+    await this.models.MembershipTier.insertOne({ ...input, order: nextOrder });
 
     await this.database.models.ProfileOnboardingStep.updateOne(
       { profileId: input.profileId, id: ProfileOnboardingStepId.MembershipTier, completedAt: null },

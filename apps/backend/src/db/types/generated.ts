@@ -167,11 +167,13 @@ export interface Memberships {
 }
 
 export interface MembershipTiers {
+  archivedAt: Timestamp | null;
   createdAt: Generated<Timestamp>;
   description: string;
   id: Generated<string>;
   isDefault: Generated<boolean | null>;
   name: string;
+  order: Generated<number>;
   payWhatYouWant: Generated<boolean | null>;
   payWhatYouWantMaximum: number | null;
   payWhatYouWantMinimum: number | null;
