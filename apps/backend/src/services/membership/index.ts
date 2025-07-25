@@ -4,12 +4,26 @@ import { CreateMembershipBenefitInput } from "@src/routes/membershipBenefits/sch
 import { BadRequestError } from "@src/utils/app_error";
 import { GetMembershipsInput } from "@src/routes/memberships/schema";
 import { ProfileOnboardingStepId } from "@src/db/types/profile";
+
 export type CreateMembershipInput = {
   profileId: string;
   membershipTierId?: string;
   accountId: string;
   endDate?: Date;
 };
+
+export type UpdateMembershipTierInput = {
+  id: string;
+  name: string;
+  description: string;
+  profileId: string;
+};
+
+export type ReorderMembershipTiersInput = {
+  profileId: string;
+  membershipTierIds: string[];
+};
+
 export class MembershipService extends BaseService {
   public async getMembershipTiers(profileId: string) {
     const data = await this.models.MembershipTier.getManyWithBenefits(profileId);
@@ -59,6 +73,60 @@ export class MembershipService extends BaseService {
       { profileId: input.profileId, id: ProfileOnboardingStepId.MembershipTier, completedAt: null },
       { completedAt: new Date() },
     );
+  }
+
+  public async updateMembershipTier(input: UpdateMembershipTierInput) {
+    const membershipTier = await this.models.MembershipTier.findOne({ id: input.id, profileId: input.profileId });
+    if (!membershipTier) {
+      throw new BadRequestError("Membership tier not found");
+    }
+
+    await this.models.MembershipTier.updateOne({ id: input.id }, { name: input.name, description: input.description });
+
+    return this.models.MembershipTier.findOne({ id: input.id });
+  }
+
+  public async archiveMembershipTier({ id, profileId }: { id: string; profileId: string }) {
+    const membershipTier = await this.models.MembershipTier.findOne({ id, profileId });
+    if (!membershipTier) {
+      throw new BadRequestError("Membership tier not found");
+    }
+
+    await this.models.MembershipTier.updateOne({ id }, { archivedAt: new Date() });
+
+    return this.models.MembershipTier.findOne({ id });
+  }
+
+  public async unarchiveMembershipTier({ id, profileId }: { id: string; profileId: string }) {
+    const membershipTier = await this.models.MembershipTier.findOne({ id, profileId });
+    if (!membershipTier) {
+      throw new BadRequestError("Membership tier not found");
+    }
+
+    await this.models.MembershipTier.updateOne({ id }, { archivedAt: null });
+
+    return this.models.MembershipTier.findOne({ id });
+  }
+
+  public async reorderMembershipTiers(input: ReorderMembershipTiersInput) {
+    const { profileId, membershipTierIds } = input;
+
+    // Verify all membership tiers belong to the profile
+    const membershipTiers = await this.models.MembershipTier.find({
+      id: membershipTierIds,
+      profileId,
+    });
+
+    if (membershipTiers.length !== membershipTierIds.length) {
+      throw new BadRequestError("Some membership tiers not found or don't belong to this profile");
+    }
+
+    // Update the order for each membership tier
+    await Promise.all(
+      membershipTierIds.map((id, index) => this.models.MembershipTier.updateOne({ id, profileId }, { order: index })),
+    );
+
+    return this.getMembershipTiers(profileId);
   }
 
   public async getMembershipBenefits(profileId: string) {

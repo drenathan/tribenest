@@ -10,6 +10,10 @@ const init: InitRouteFunction = ({ services, workers }) => {
 
   router.get("/", (...args) => controller.getMembershipTiers(...args));
   router.post("/", (...args) => controller.createMembershipTier(...args));
+  router.put("/:id", (...args) => controller.updateMembershipTier(...args));
+  router.post("/:id/archive", (...args) => controller.archiveMembershipTier(...args));
+  router.post("/:id/unarchive", (...args) => controller.unarchiveMembershipTier(...args));
+  router.post("/reorder", (...args) => controller.reorderMembershipTiers(...args));
   router.put("/:id/benefits", (...args) => controller.updateMembershipTierBenefits(...args));
   return router;
 };

@@ -15,3 +15,15 @@ export const create: PolicyFunction = async (req, services) => {
 
   return isOwner;
 };
+
+export const update: PolicyFunction = async (req, services) => {
+  const profileId = req.body?.profileId || req.params?.profileId;
+  const accountId = req.account?.id;
+  if (!profileId || !accountId) {
+    return false;
+  }
+
+  const isOwner = await services.profileAuthorization.isOwner({ profileId, accountId });
+
+  return isOwner;
+};

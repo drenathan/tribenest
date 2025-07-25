@@ -181,7 +181,10 @@ export const publicAuthentication = async (
   req.account = account;
   req.session = session;
   const membership = await services.membership.getAccountMembership(account.id, req.query.profileId as string);
-  req.membership = membership;
+
+  if (membership) {
+    req.membership = membership;
+  }
   // TODO: get the current profile id from the request query and get the user's membership details
   setRequestProperty("currentAccountId", account.id);
 

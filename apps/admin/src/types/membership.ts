@@ -8,6 +8,8 @@ export type MembershipTier = {
   payWhatYouWantMinimum?: number;
   payWhatYouWantMaximum?: number;
   benefits: MembershipBenefit[];
+  order: number;
+  archivedAt?: string;
 };
 
 export type MembershipBenefit = {

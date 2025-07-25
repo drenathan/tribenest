@@ -40,13 +40,31 @@ export const createMembershipTierSchema = z.object({
     ),
 });
 
+export type CreateMembershipTierInput = z.infer<typeof createMembershipTierSchema>["body"];
+
+export const updateMembershipTierSchema = z.object({
+  body: z.object({
+    name: z.string().min(5).max(100),
+    description: z.string().min(10).max(1000),
+    profileId: z.string().uuid(),
+  }),
+});
+
+export type UpdateMembershipTierInput = z.infer<typeof updateMembershipTierSchema>["body"];
+
+export const reorderMembershipTiersSchema = z.object({
+  body: z.object({
+    profileId: z.string(),
+    membershipTierIds: z.array(z.string()),
+  }),
+});
+
+export type ReorderMembershipTiersInput = z.infer<typeof reorderMembershipTiersSchema>["body"];
+
 export const updateMembershipTierBenefitsSchema = z.object({
   body: z.object({
     benefits: z.array(z.string()),
-    profileId: z.string(),
   }),
 });
 
 export type UpdateMembershipTierBenefitsInput = z.infer<typeof updateMembershipTierBenefitsSchema>["body"];
-
-export type CreateMembershipTierInput = z.infer<typeof createMembershipTierSchema>["body"];

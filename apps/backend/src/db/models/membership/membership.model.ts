@@ -1,4 +1,4 @@
-import { Expression, Kysely, sql, SqlBool } from "kysely";
+import { Expression, Kysely, Selectable, sql, SqlBool } from "kysely";
 import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { GetMembershipsInput } from "@src/routes/memberships/schema";
@@ -24,6 +24,15 @@ export type GetProfileMembershipsResponse = {
   email: string;
   country?: string;
 };
+
+export type GetActiveMembershipResponse = Selectable<DB["memberships"]> & {
+  membershipTier: Selectable<DB["membershipTiers"]> & {
+    benefits: Selectable<DB["membershipBenefits"]>[];
+  };
+  amount: number;
+  billingCycle: string;
+};
+
 export class MembershipModel extends BaseModel<"memberships", "id"> {
   constructor(client: Kysely<DB>) {
     super(client, "memberships", "id");
@@ -174,6 +183,6 @@ export class MembershipModel extends BaseModel<"memberships", "id"> {
       ])
       .executeTakeFirst();
 
-    return membership;
+    return membership as unknown as GetActiveMembershipResponse;
   }
 }

@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { GalleryVerticalEnd } from "lucide-react";
 
 import {
@@ -54,9 +54,6 @@ export function ProfileSwitcher() {
                 onClick={() => setCurrentProfileAuthorization(auth)}
                 className="gap-2 p-2"
               >
-                {/* <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
-                </div> */}
                 {auth?.profile?.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>

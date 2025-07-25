@@ -1,3 +1,4 @@
+import { GetActiveMembershipResponse } from "@src/db/models/membership/membership.model";
 import { DB, IProfileMembership } from "@src/db/types";
 import { Locale } from "@src/types";
 import { Selectable } from "kysely";
@@ -8,7 +9,7 @@ declare global {
     export interface Request {
       account?: Selectable<DB["accounts"]>;
       session?: Selectable<DB["sessions"]>;
-      membership?: Selectable<DB["memberships"]>;
+      membership?: GetActiveMembershipResponse;
       resource?: any;
     }
   }

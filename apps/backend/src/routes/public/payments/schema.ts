@@ -79,3 +79,4 @@ export const cancelSubscriptionSchema = z.object({
 export type StartPaymentInput = z.infer<typeof startPaymentSchema>["body"];
 export type FinalizePaymentInput = z.infer<typeof finalizePaymentSchema>["body"];
 export type CreateSubscriptionInput = z.infer<typeof createSubscriptionSchema>["body"];
+export type CancelSubscriptionInput = z.infer<typeof cancelSubscriptionSchema>["body"];
