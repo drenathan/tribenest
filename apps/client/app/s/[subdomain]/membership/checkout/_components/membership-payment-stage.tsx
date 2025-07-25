@@ -81,7 +81,7 @@ const Content = ({ clientSecret, onBackToDetails }: { clientSecret: string; onBa
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState("");
-  const { user } = usePublicAuth();
+  const { user, refetchUser } = usePublicAuth();
   const { themeSettings } = useEditorContext();
   const [isLoading, setIsLoading] = useState(false);
   const { navigate } = useEditorContext();
@@ -106,7 +106,7 @@ const Content = ({ clientSecret, onBackToDetails }: { clientSecret: string; onBa
     setIsLoading(true);
 
     // Use card Element to tokenize payment details
-    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+    const { error } = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: cardElement,
         billing_details: {
@@ -124,6 +124,7 @@ const Content = ({ clientSecret, onBackToDetails }: { clientSecret: string; onBa
 
     setIsLoading(false);
 
+    refetchUser();
     navigate("/account", { replace: true });
   };
 

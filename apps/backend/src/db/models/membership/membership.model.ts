@@ -138,10 +138,22 @@ export class MembershipModel extends BaseModel<"memberships", "id"> {
   public async getActiveMembership({ accountId, profileId }: { accountId: string; profileId: string }) {
     const membership = await this.client
       .selectFrom("memberships")
-      .where("accountId", "=", accountId)
-      .where("profileId", "=", profileId)
-      .where("status", "=", "active")
+      .leftJoin("profilePaymentSubscriptions as pps", "pps.id", "memberships.profilePaymentSubscriptionsId")
+      .leftJoin("profilePaymentPrices as ppp", "ppp.id", "pps.paymentProfilePriceId")
+      .where((eb) => {
+        const conditions: Expression<SqlBool>[] = [];
+        conditions.push(eb("memberships.accountId", "=", accountId));
+        conditions.push(eb("memberships.profileId", "=", profileId));
+        conditions.push(
+          eb.or([
+            eb("memberships.status", "=", "active"),
+            eb.and([eb("memberships.status", "=", "cancelled"), eb("memberships.endDate", ">", new Date())]),
+          ]),
+        );
+        return eb.and(conditions);
+      })
       .selectAll("memberships")
+      .select((eb) => [eb.ref("ppp.amount").as("subscriptionAmount"), eb.ref("ppp.billingCycle").as("billingCycle")])
       .select((eb) => [
         this.jsonObjectFrom(
           eb

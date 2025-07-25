@@ -210,6 +210,8 @@ export interface Membership {
   status: string;
   membershipTier: MembershipTier;
   startDate: string;
+  subscriptionAmount: number;
+  billingCycle: string;
 }
 export interface PublicAuthUser {
   email: string;

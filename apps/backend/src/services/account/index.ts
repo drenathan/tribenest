@@ -49,12 +49,12 @@ export class AccountService extends BaseService {
       email: input.email,
     });
     if (!account) {
-      throw new UnauthenticatedError("Invalid credentials");
+      throw new UnauthenticatedError("Invalid email or password");
     }
 
     const isPasswordValid = await bcrypt.compare(input.password, account.password);
     if (!isPasswordValid) {
-      throw new UnauthenticatedError("Invalid credentials");
+      throw new UnauthenticatedError("Invalid email or password");
     }
 
     const session = await this.database.models.Session.insertOne({

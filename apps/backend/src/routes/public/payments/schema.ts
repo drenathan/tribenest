@@ -69,6 +69,13 @@ export const createSubscriptionSchema = z.object({
   }),
 });
 
+export const cancelSubscriptionSchema = z.object({
+  body: z.object({
+    profileId: z.string().uuid("Invalid profile ID"),
+    membershipId: z.string().uuid("Invalid membership ID"),
+  }),
+});
+
 export type StartPaymentInput = z.infer<typeof startPaymentSchema>["body"];
 export type FinalizePaymentInput = z.infer<typeof finalizePaymentSchema>["body"];
 export type CreateSubscriptionInput = z.infer<typeof createSubscriptionSchema>["body"];

@@ -18,6 +18,11 @@ const init: InitRouteFunction = ({ services, workers }) => {
     (req, _, next) => publicAuthentication(req, next, services, throwOnError),
     (...args) => controller.createSubscription(...args),
   );
+  router.post(
+    "/subscriptions/cancel",
+    (req, _, next) => publicAuthentication(req, next, services, throwOnError),
+    (...args) => controller.cancelSubscription(...args),
+  );
   return router;
 };
 

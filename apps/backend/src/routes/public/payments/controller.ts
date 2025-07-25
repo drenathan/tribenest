@@ -1,7 +1,14 @@
 import { Body, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
-import { startPaymentSchema, StartPaymentInput, createSubscriptionSchema, CreateSubscriptionInput } from "./schema";
+import {
+  startPaymentSchema,
+  StartPaymentInput,
+  createSubscriptionSchema,
+  CreateSubscriptionInput,
+  cancelSubscriptionSchema,
+  CancelSubscriptionInput,
+} from "./schema";
 import { NotFoundError } from "@src/utils/app_error";
 
 export class PublicPayments extends BaseController {
@@ -52,5 +59,16 @@ export class PublicPayments extends BaseController {
       email: req.account!.email,
       name: `${req.account!.firstName} ${req.account!.lastName}`,
     });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(cancelSubscriptionSchema)
+  public async cancelSubscription(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: CancelSubscriptionInput,
+  ): Promise<any> {
+    return this.services.profile.payment.cancelSubscription(body!);
   }
 }

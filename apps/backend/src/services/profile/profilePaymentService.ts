@@ -1,6 +1,6 @@
-import { CreateSubscriptionInput } from "@src/routes/public/payments/schema";
+import { CancelSubscriptionInput, CreateSubscriptionInput } from "@src/routes/public/payments/schema";
 import { BaseService } from "../baseService";
-import { BadRequestError } from "@src/utils/app_error";
+import { BadRequestError, ValidationError } from "@src/utils/app_error";
 import { SubscriptionStatus } from "../paymentProvider/PaymentProvider";
 
 type FinalizeSubscriptionInput = {
@@ -269,5 +269,43 @@ export class ProfilePaymentService extends BaseService {
         );
       }
     });
+  }
+
+  public async cancelSubscription(input: CancelSubscriptionInput) {
+    const membership = await this.database.models.Membership.findOne({
+      id: input.membershipId,
+      profileId: input.profileId,
+    });
+
+    if (!membership) {
+      throw new ValidationError("Membership not found");
+    }
+
+    if (membership.status !== "active") {
+      throw new ValidationError("Membership is not active");
+    }
+
+    if (!membership.profilePaymentSubscriptionsId) {
+      throw new ValidationError("Profile payment subscription not found");
+    }
+
+    const profilePaymentSubscription = await this.database.models.ProfilePaymentSubscription.findOne({
+      id: membership.profilePaymentSubscriptionsId,
+    });
+
+    if (!profilePaymentSubscription?.paymentProviderSubscriptionId) {
+      throw new ValidationError("Profile payment subscription not found");
+    }
+
+    const paymentProvider = await this.apis.getPaymentProvider(membership.profileId);
+
+    await paymentProvider.cancelSubscription(profilePaymentSubscription.paymentProviderSubscriptionId);
+
+    await this.database.models.Membership.updateOne({ id: membership.id }, { status: "cancelled" });
+
+    await this.database.models.ProfilePaymentSubscription.updateOne(
+      { id: profilePaymentSubscription.id },
+      { status: "cancelled" },
+    );
   }
 }
