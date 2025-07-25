@@ -22,7 +22,7 @@ services:
       - DATABASE_NAME=tribe
 
       # Redis configuration
-      - REDIS_URL=redis://tribenest-redis:6379
+      - REDIS_URL=redis://:tribe_redis_password@tribenest-redis:6379
 
       # JWT configuration
       - JWT_SECRET=verylongandverysafejwtsecret
@@ -59,6 +59,9 @@ services:
     image: redis:7-alpine
     container_name: tribenest-redis
     restart: unless-stopped
+    command: redis-server --requirepass tribe_redis_password
+    environment:
+      - REDIS_PASSWORD=tribe_redis_password
     ports:
       - "6379:6379"
     volumes:
