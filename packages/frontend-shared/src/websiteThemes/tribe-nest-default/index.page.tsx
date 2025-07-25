@@ -19,10 +19,11 @@ export default function IndexPage({ profile }: { profile: Profile }) {
         height="100%"
         id="page-hero"
         width="100%"
-        paddingHorizontal="0"
+        paddingHorizontal="10"
         paddingVertical="0"
         backgroundImage="https://cdn.coumo.com/geo-chierchia-o-9-fSSiCT0-unsplash.jpg"
-        custom={{ displayName: "Page", preventDelete: true }}
+        backgroundVideo="https://assets-dev.coumo.com/9fe946e3-75f9-4a6b-a916-e993b0f7ab64/1753452800271-3326187-hd_1920_1080_24fps (1).mp4"
+        custom={{ displayName: "Hero Section", preventDelete: true }}
       >
         <PageHeader showCart={false} />
         <div className="flex flex-col items-center justify-center h-full w-full @md:px-8 px-4">

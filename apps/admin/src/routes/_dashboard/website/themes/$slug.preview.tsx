@@ -51,7 +51,7 @@ function RouteComponent() {
               <AudioPlayerProvider>
                 <Editor
                   key={currentPage?.pathname}
-                  enabled={false}
+                  enabled={true}
                   resolver={{ ...editorResolver, page: currentPage.Component, ...theme.editorResolver }}
                   onRender={RenderNode}
                 >

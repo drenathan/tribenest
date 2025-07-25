@@ -1,9 +1,10 @@
 import { useAuth } from "@/hooks/useAuth";
 import httpClient, { publicHttpClient, setPublicHttpClientToken } from "@/services/httpClient";
-import { Editor, Frame } from "@craftjs/core";
+import { Editor, Frame, Element } from "@craftjs/core";
 import {
   AudioPlayerProvider,
   CartProvider,
+  Container,
   EditorContextProvider,
   editorResolver,
   PublicAuthProvider,
@@ -17,6 +18,7 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useGetSmartLink } from "@/hooks/queries/useSmartLinks";
 import { EditSmartLinkHeader } from "./-components/EditSmartLinkHeader";
+import { isEmpty } from "lodash";
 const queryClient = new QueryClient();
 
 export const Route = createFileRoute("/_dashboard/smart-links/links/$smartLinkId/edit")({
@@ -27,7 +29,7 @@ function RouteComponent() {
   const { smartLinkId } = Route.useParams();
   const { currentProfileAuthorization } = useAuth();
   const { data: smartLink } = useGetSmartLink(smartLinkId, currentProfileAuthorization?.profile.id);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
   const Template = smartLink?.template
     ? smartLinkTemplates.find((template) => template.slug === smartLink.template)?.Component
     : null;
@@ -36,6 +38,7 @@ function RouteComponent() {
     return null;
   }
 
+  const isEmptyContent = isEmpty(smartLink.content);
   return (
     <div className="h-screen">
       <EditorContextProvider
@@ -57,7 +60,22 @@ function RouteComponent() {
                 >
                   <EditSmartLinkHeader smartLink={smartLink} isMobile={isMobile} setIsMobile={setIsMobile} />
                   <Viewport isMobile={isMobile}>
-                    <Frame data={smartLink.content}></Frame>
+                    <Frame data={!isEmptyContent ? smartLink.content : undefined}>
+                      {isEmptyContent && (
+                        <Element
+                          canvas
+                          is={Container}
+                          height="auto"
+                          id="page-container"
+                          width="100%"
+                          alignItems="center"
+                          paddingHorizontal="10"
+                          paddingVertical="10"
+                          custom={{ displayName: "Page", preventDelete: true }}
+                          className="min-h-full"
+                        ></Element>
+                      )}
+                    </Frame>
                   </Viewport>
                 </Editor>
                 <ThemeAudioPlayer />

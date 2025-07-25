@@ -15,7 +15,7 @@ import {
 
 type NavItem = {
   title: string;
-  url: string;
+  path: string;
   icon?: React.ElementType;
   items?: NavItem[];
 };
@@ -23,118 +23,118 @@ type NavItem = {
 const items: NavItem[] = [
   {
     title: "My Website",
-    url: "/website",
+    path: "/website",
     icon: Globe,
     items: [
       {
         title: "Home",
-        url: "/website/home",
+        path: "/website/home",
       },
       {
         title: "Themes",
-        url: "/website/themes",
+        path: "/website/themes",
       },
     ],
   },
   {
     title: "My Tribe",
-    url: "/tribe",
+    path: "/tribe",
     icon: Users,
     items: [
       {
         title: "Membership Tiers",
-        url: "/tribe/membership-tiers",
+        path: "/tribe/membership-tiers",
       },
       {
         title: "Posts",
-        url: "/tribe/posts",
+        path: "/tribe/posts",
       },
       {
         title: "Collections",
-        url: "/tribe/collections",
+        path: "/tribe/collections",
       },
       {
         title: "Members",
-        url: "/tribe/members",
+        path: "/tribe/members",
       },
       {
         title: "Messages",
-        url: "/tribe/messages",
+        path: "/tribe/messages",
       },
     ],
   },
   {
     title: "Store",
-    url: "/store",
+    path: "/store",
     icon: ShoppingBag,
     items: [
       {
         title: "Music",
-        url: "/store/music",
+        path: "/store/music",
       },
       {
         title: "Merch",
-        url: "/store/products",
+        path: "/store/products",
       },
       {
         title: "Orders",
-        url: "/store/orders",
+        path: "/store/orders",
       },
     ],
   },
   {
     title: "Emails",
-    url: "#",
+    path: "/emails",
     icon: Mails,
     items: [
       {
         title: "Templates",
-        url: "/emails/templates",
+        path: "/emails/templates",
       },
       {
         title: "Emails",
-        url: "/emails/emails",
+        path: "/emails/emails",
       },
       {
         title: "Email Lists",
-        url: "/emails/lists",
+        path: "/emails/lists",
       },
     ],
   },
   {
     title: "Smart Links",
-    url: "#",
+    path: "/smart-links",
     icon: Link2Icon,
     items: [
       {
         title: "Links",
-        url: "/smart-links/links",
+        path: "/smart-links/links",
       },
       {
         title: "Templates",
-        url: "/smart-links/templates",
+        path: "/smart-links/templates",
       },
     ],
   },
   {
     title: "Events",
-    url: "#",
+    path: "/events",
     icon: Calendar,
     items: [
       {
         title: "My Events",
-        url: "/events/list",
+        path: "/events/list",
       },
     ],
   },
   {
     title: "Social Media",
-    url: "#",
+    path: "/social-media",
     icon: Share2,
     items: [
       {
         title: "Connections",
-        url: "/social-media/connections",
+        path: "/social-media/connections",
       },
     ],
   },
@@ -179,7 +179,7 @@ export function NavMain() {
           </Link>
         </SidebarMenuItem>
         {items.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={isActive(item.url)} className="group/collapsible">
+          <Collapsible key={item.title} asChild defaultOpen={isActive(item.path)} className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild className="cursor-pointer">
                 <SidebarMenuButton tooltip={item.title}>
@@ -193,10 +193,10 @@ export function NavMain() {
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem
                       key={subItem.title}
-                      className={cn(isActive(subItem.url) && "bg-primary rounded-md")}
+                      className={cn(isActive(subItem.path) && "bg-primary rounded-md")}
                     >
                       <SidebarMenuSubButton asChild>
-                        <Link onClick={() => isMobile && toggleSidebar()} to={subItem.url}>
+                        <Link onClick={() => isMobile && toggleSidebar()} to={subItem.path}>
                           <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>

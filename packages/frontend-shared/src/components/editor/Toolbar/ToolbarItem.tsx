@@ -19,7 +19,7 @@ export type ToolbarItemProps = {
   propKey: string;
   index?: number;
   children?: React.ReactNode;
-  type: "text" | "color" | "bg" | "number" | "slider" | "radio" | "select" | "image" | "checkbox";
+  type: "text" | "color" | "bg" | "number" | "slider" | "radio" | "select" | "image" | "checkbox" | "video";
   onChange?: (value: unknown) => unknown;
   min?: number;
   max?: number;
@@ -96,9 +96,10 @@ export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }:
           />
         )}
 
-        {type === "image" && (
+        {["image", "video"].includes(type) && (
           <div>
             <SelectImageDialog
+              type={type === "image" ? "image" : "video"}
               value={value}
               onImageSelect={(url) => setProp((props: any) => (props[propKey] = url))}
               onRemove={() => setProp((props: any) => (props[propKey] = undefined))}

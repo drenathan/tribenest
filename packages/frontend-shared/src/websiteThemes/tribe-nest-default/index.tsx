@@ -17,8 +17,8 @@ export default {
   description: "TribeNest Default",
   author: "TribeNest",
   version: "1.0.0",
-  thumbnail: "https://cdn.coumo.com/geo-chierchia-o-9-fSSiCT0-unsplash.jpg",
-  preview: "https://cdn.coumo.com/geo-chierchia-o-9-fSSiCT0-unsplash.jpg",
+  thumbnail: "https://assets-dev.coumo.com/default_theme_screenshot.png",
+  preview: "https://assets-dev.coumo.com/default_theme_screenshot.png",
   themeSettings: {
     colors: {
       primary: "#c90ca0",
@@ -28,7 +28,7 @@ export default {
     },
     cornerRadius: "10",
     fontFamily: "Arial",
-    logo: "https://cdn.coumo.com/geo-chierchia-o-9-fSSiCT0-unsplash.jpg",
+    logo: "https://assets-dev.coumo.com/default_theme_screenshot.png",
     headerLinks: [
       { href: "/members", label: "Members" },
       { href: "/music", label: "Music" },

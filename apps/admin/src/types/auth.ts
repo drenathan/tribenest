@@ -1,5 +1,6 @@
 import type { CreateAccountInput } from "@/routes/_auth/-components/schema";
 import type { LoginInput } from "@/routes/_auth/-components/schema";
+import type { Profile } from "@tribe-nest/frontend-shared";
 
 export interface AuthUser {
   email: string;
@@ -12,14 +13,6 @@ export interface AuthUser {
   id: string;
 }
 export type UpdateLocalUserPayload = Pick<AuthUser, "firstName">;
-
-export interface Profile {
-  id: string;
-  name: string;
-  avatar?: string;
-  paymentProvider: string;
-  paymentProviderPublicKey: string;
-}
 
 export type ProjectUser = {
   id: string;

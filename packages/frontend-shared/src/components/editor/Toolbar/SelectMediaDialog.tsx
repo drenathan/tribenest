@@ -21,19 +21,20 @@ type Props = {
   onImageSelect: (url: string) => void;
   value?: string;
   onRemove?: () => void;
+  type?: "image" | "video";
 };
-export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
+export function SelectImageDialog({ onImageSelect, value, onRemove, type = "image" }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { profile, httpClient } = useEditorContext();
   const queryClient = useQueryClient();
 
   const { data: media } = useQuery<Media[]>({
-    queryKey: ["media", profile?.id],
+    queryKey: ["media", profile?.id, type],
     queryFn: async () => {
       const { data } = await httpClient!.get(`profiles/${profile?.id}/media`, {
         params: {
           parent: "website",
-          type: "image",
+          type,
         },
       });
       return data;
@@ -64,7 +65,7 @@ export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
         size: result[0].size,
         name: result[0].name,
         parent: "website",
-        type: "image",
+        type,
       });
 
       queryClient.invalidateQueries({ queryKey: ["media", profile.id] });
@@ -82,9 +83,15 @@ export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
       <DialogTrigger asChild>
         <div className="flex gap-2 items-center text-foreground cursor-pointer">
           {value ? (
-            <img src={value} alt={value} className="object-cover w-[50px] h-[50px]" />
+            <>
+              {type === "image" ? (
+                <img src={value} alt={value} className="object-cover w-[50px] h-[50px]" />
+              ) : (
+                <video src={value} autoPlay loop muted playsInline className="object-cover w-[50px] h-[50px]" />
+              )}
+            </>
           ) : (
-            <Button variant="outline">Select Image</Button>
+            <Button variant="outline">Select {type === "image" ? "Image" : "Video"}</Button>
           )}
           {value && (
             <X
@@ -101,20 +108,20 @@ export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
       <DialogContent className="min-w-[700px] min-h-[500px] overflow-hidden overflow-y-scroll text-foreground flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex justify-between mr-7 items-center shrink-0">
-            Select Image
+            Select {type === "image" ? "Image" : "Video"}
             <Button
               onClick={() => {
                 inputRef.current?.click();
               }}
               variant="outline"
             >
-              <Plus /> Upload new image
+              <Plus /> Upload new {type === "image" ? "Image" : "Video"}
             </Button>
           </DialogTitle>
           <DialogDescription>
             {isUploading && (
               <>
-                <span>Uploading image...</span>
+                <span>Uploading {type === "image" ? "Image" : "Video"} ...</span>
                 <span>{progress}%</span>
               </>
             )}
@@ -123,7 +130,7 @@ export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
         <div className="grid grid-cols-3 gap-4">
           <input
             type="file"
-            accept="image/*"
+            accept={type === "image" ? "image/*" : "video/mp4"}
             ref={inputRef}
             hidden
             onChange={(e) => {
@@ -134,10 +141,18 @@ export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
           {media?.map((m) => (
             <div
               key={m.id}
-              className="flex items-center gap-4 cursor-pointer hover:scale-95 transition-all col-span-1"
+              className="flex items-center flex-col gap-4 cursor-pointer hover:scale-95 transition-all col-span-1"
               onClick={() => handleImageSelect(m.url)}
             >
-              <img src={m.url} alt={m.url} className="object-cover w-[100%] aspect-square" />
+              {type === "image" ? (
+                <img src={m.url} alt={m.url} className="object-cover w-[100%] aspect-square" />
+              ) : (
+                <video src={m.url} autoPlay loop muted playsInline className="object-cover w-[100%] aspect-square" />
+              )}
+              <div className="flex flex-col gap-1 text-sm">
+                <span>{m.name}</span>
+                <span>{formatBytes(m.size)}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -146,6 +161,14 @@ export function SelectImageDialog({ onImageSelect, value, onRemove }: Props) {
     </Dialog>
   );
 }
+
+const formatBytes = (bytes: number) => {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+};
 
 const useUploadFiles = () => {
   const [progress, setProgress] = useState(0);

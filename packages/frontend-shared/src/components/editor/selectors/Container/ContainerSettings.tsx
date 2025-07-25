@@ -64,6 +64,19 @@ export const ContainerSettings = () => {
       <ToolbarSection title="Background Image" props={["backgroundImage"]}>
         <ToolbarItem full={true} propKey="backgroundImage" type="image" label="Background Image" />
       </ToolbarSection>
+      <ToolbarSection title="Background Video" props={["backgroundVideo"]}>
+        <ToolbarItem full={true} propKey="backgroundVideo" type="video" label="Background Video" />
+      </ToolbarSection>
+      <ToolbarSection title="Background Brightness" props={["backgroundBrightness"]}>
+        <ToolbarItem
+          full={true}
+          propKey="backgroundBrightness"
+          type="slider"
+          label="Background Brightness"
+          min={0}
+          max={100}
+        />
+      </ToolbarSection>
       <ToolbarSection title="Alignment">
         <ToolbarItem propKey="flexDirection" type="radio" label="Flex Direction">
           <ToolbarRadio value="row" label="Row" />

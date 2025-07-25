@@ -5,7 +5,7 @@ import type { ImageProps } from ".";
 export const ImageSettings = () => {
   return (
     <React.Fragment>
-      <ToolbarSection title="Image" props={["src"]}>
+      <ToolbarSection defaultExpanded={true} title="Image" props={["src"]}>
         <ToolbarItem full={true} propKey="src" type="image" label="Image" />
       </ToolbarSection>
       <ToolbarSection

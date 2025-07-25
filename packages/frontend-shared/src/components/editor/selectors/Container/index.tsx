@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { ContainerSettings } from "./ContainerSettings";
 import { useNode } from "@craftjs/core";
 import { useEditorContext } from "../../context";
+import { round } from "lodash";
 
 export type ContainerProps = {
   background: string;
@@ -23,6 +24,8 @@ export type ContainerProps = {
   backgroundImage: string;
   style: React.CSSProperties;
   className: string;
+  backgroundVideo: string;
+  backgroundBrightness: number;
 };
 
 const defaultProps: Partial<ContainerProps> = {
@@ -77,7 +80,10 @@ export const Container = (props: Partial<ContainerProps>) => {
     height,
     backgroundImage,
     style,
+    width,
     className,
+    backgroundVideo,
+    backgroundBrightness,
   } = props;
   return (
     <div
@@ -101,17 +107,20 @@ export const Container = (props: Partial<ContainerProps>) => {
         borderRadius: `${radius}px`,
         flex: fillSpace === "yes" ? 1 : "unset",
         height,
+        width,
         ...(style ? style : {}),
       }}
     >
-      {backgroundImage && (
+      {backgroundImage && !backgroundVideo && (
         <div
           style={{
             backgroundImage: `url('${backgroundImage}')`,
             backgroundSize: "cover",
             backgroundPosition: "top",
             backgroundRepeat: "no-repeat",
-            filter: "brightness(0.6)",
+            filter: backgroundBrightness
+              ? `brightness(${round(Number(backgroundBrightness) / 100, 2)})`
+              : "brightness(0.6)",
             zIndex: -1,
             position: "absolute",
             top: 0,
@@ -120,6 +129,23 @@ export const Container = (props: Partial<ContainerProps>) => {
             height: "100%",
           }}
         />
+      )}
+      {backgroundVideo && (
+        <div
+          style={{
+            zIndex: -1,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            filter: backgroundBrightness
+              ? `brightness(${round(Number(backgroundBrightness) / 100, 2)})`
+              : "brightness(0.5)",
+          }}
+        >
+          <video src={backgroundVideo} autoPlay loop muted playsInline className="object-cover w-[100%] h-[100%]" />
+        </div>
       )}
       {children}
     </div>
