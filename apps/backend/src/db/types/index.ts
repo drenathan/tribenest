@@ -45,6 +45,21 @@ type ProfileConfiguration = Omit<GeneratedTypes.ProfileConfigurations, "pwaConfi
   pwaConfig: ColumnType<PWAConfig, GeneratedTypes.Json, string | null>;
   address: ColumnType<ProfileAddress, GeneratedTypes.Json, string | null>;
 };
+
+type Event = Omit<GeneratedTypes.Events, "address"> & {
+  address: ColumnType<
+    {
+      name: string;
+      street: string;
+      city: string;
+      country: string;
+      zipCode?: string;
+    },
+    GeneratedTypes.Json,
+    string
+  >;
+};
+
 export interface DB extends GeneratedTypes.DB {
   media: Media;
   posts: Post;
@@ -55,4 +70,5 @@ export interface DB extends GeneratedTypes.DB {
   emails: Email;
   emailRecipients: EmailRecipient;
   profileConfigurations: ProfileConfiguration;
+  events: Event;
 }

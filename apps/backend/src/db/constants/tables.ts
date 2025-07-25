@@ -6,6 +6,7 @@ export const tables = {
   emails: "emails",
   email_recipients: "email_recipients",
   email_variables: "email_variables",
+  events: "events",
   sessions: "sessions",
   profiles: "profiles",
   profile_configurations: "profile_configurations",

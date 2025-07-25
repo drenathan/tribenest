@@ -1,10 +1,13 @@
 import {
   Expression,
+  ExpressionBuilder,
   Kysely,
   Selectable,
   SelectQueryBuilder,
   SelectType,
+  sql,
   SqlBool,
+  StringReference,
   Transaction,
   UpdateObject,
 } from "kysely";
@@ -220,4 +223,16 @@ export default class BaseModel<
 
   public jsonArrayFrom = jsonArrayFrom;
   public jsonObjectFrom = jsonObjectFrom;
+
+  public traverseJSONB<DB, TB extends keyof DB>(
+    eb: ExpressionBuilder<DB, TB>,
+    column: StringReference<DB, TB>,
+    path: string | [string, ...string[]],
+  ) {
+    if (!Array.isArray(path)) {
+      path = [path];
+    }
+
+    return sql`${sql.ref(column)}->>${sql.raw(path.map((item) => `'${item}'`).join("->>"))}`;
+  }
 }

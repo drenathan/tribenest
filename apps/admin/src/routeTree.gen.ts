@@ -32,6 +32,7 @@ import { Route as DashboardSocialMediaConnectionsIndexRouteImport } from './rout
 import { Route as DashboardSmartLinksTemplatesIndexRouteImport } from './routes/_dashboard/smart-links/templates/index'
 import { Route as DashboardSmartLinksLinksIndexRouteImport } from './routes/_dashboard/smart-links/links/index'
 import { Route as DashboardEventsListIndexRouteImport } from './routes/_dashboard/events/list/index'
+import { Route as DashboardEventsCreateIndexRouteImport } from './routes/_dashboard/events/create/index'
 import { Route as DashboardEmailsTemplatesIndexRouteImport } from './routes/_dashboard/emails/templates/index'
 import { Route as DashboardEmailsListsIndexRouteImport } from './routes/_dashboard/emails/lists/index'
 import { Route as DashboardEmailsEmailsIndexRouteImport } from './routes/_dashboard/emails/emails/index'
@@ -178,6 +179,12 @@ const DashboardEventsListIndexRoute =
     path: '/events/list/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardEventsCreateIndexRoute =
+  DashboardEventsCreateIndexRouteImport.update({
+    id: '/events/create/',
+    path: '/events/create/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardEmailsTemplatesIndexRoute =
   DashboardEmailsTemplatesIndexRouteImport.update({
     id: '/emails/templates/',
@@ -298,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
+  '/events/create': typeof DashboardEventsCreateIndexRoute
   '/events/list': typeof DashboardEventsListIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
   '/smart-links/templates': typeof DashboardSmartLinksTemplatesIndexRoute
@@ -338,6 +346,7 @@ export interface FileRoutesByTo {
   '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
+  '/events/create': typeof DashboardEventsCreateIndexRoute
   '/events/list': typeof DashboardEventsListIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
   '/smart-links/templates': typeof DashboardSmartLinksTemplatesIndexRoute
@@ -381,6 +390,7 @@ export interface FileRoutesById {
   '/_dashboard/emails/emails/': typeof DashboardEmailsEmailsIndexRoute
   '/_dashboard/emails/lists/': typeof DashboardEmailsListsIndexRoute
   '/_dashboard/emails/templates/': typeof DashboardEmailsTemplatesIndexRoute
+  '/_dashboard/events/create/': typeof DashboardEventsCreateIndexRoute
   '/_dashboard/events/list/': typeof DashboardEventsListIndexRoute
   '/_dashboard/smart-links/links/': typeof DashboardSmartLinksLinksIndexRoute
   '/_dashboard/smart-links/templates/': typeof DashboardSmartLinksTemplatesIndexRoute
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
+    | '/events/create'
     | '/events/list'
     | '/smart-links/links'
     | '/smart-links/templates'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
+    | '/events/create'
     | '/events/list'
     | '/smart-links/links'
     | '/smart-links/templates'
@@ -505,6 +517,7 @@ export interface FileRouteTypes {
     | '/_dashboard/emails/emails/'
     | '/_dashboard/emails/lists/'
     | '/_dashboard/emails/templates/'
+    | '/_dashboard/events/create/'
     | '/_dashboard/events/list/'
     | '/_dashboard/smart-links/links/'
     | '/_dashboard/smart-links/templates/'
@@ -697,6 +710,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardEventsListIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/events/create/': {
+      id: '/_dashboard/events/create/'
+      path: '/events/create'
+      fullPath: '/events/create'
+      preLoaderRoute: typeof DashboardEventsCreateIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/emails/templates/': {
       id: '/_dashboard/emails/templates/'
       path: '/emails/templates'
@@ -849,6 +869,7 @@ interface DashboardRouteRouteChildren {
   DashboardEmailsEmailsIndexRoute: typeof DashboardEmailsEmailsIndexRoute
   DashboardEmailsListsIndexRoute: typeof DashboardEmailsListsIndexRoute
   DashboardEmailsTemplatesIndexRoute: typeof DashboardEmailsTemplatesIndexRoute
+  DashboardEventsCreateIndexRoute: typeof DashboardEventsCreateIndexRoute
   DashboardEventsListIndexRoute: typeof DashboardEventsListIndexRoute
   DashboardSmartLinksLinksIndexRoute: typeof DashboardSmartLinksLinksIndexRoute
   DashboardSmartLinksTemplatesIndexRoute: typeof DashboardSmartLinksTemplatesIndexRoute
@@ -888,6 +909,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardEmailsEmailsIndexRoute: DashboardEmailsEmailsIndexRoute,
   DashboardEmailsListsIndexRoute: DashboardEmailsListsIndexRoute,
   DashboardEmailsTemplatesIndexRoute: DashboardEmailsTemplatesIndexRoute,
+  DashboardEventsCreateIndexRoute: DashboardEventsCreateIndexRoute,
   DashboardEventsListIndexRoute: DashboardEventsListIndexRoute,
   DashboardSmartLinksLinksIndexRoute: DashboardSmartLinksLinksIndexRoute,
   DashboardSmartLinksTemplatesIndexRoute:

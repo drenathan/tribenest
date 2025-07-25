@@ -111,6 +111,20 @@ export interface EmailVariables {
   value: string;
 }
 
+export interface Events {
+  actionLink: string;
+  actionText: string;
+  address: Json;
+  archivedAt: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  dateTime: Timestamp;
+  description: string | null;
+  id: Generated<string>;
+  profileId: string;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface Likes {
   accountId: string;
   createdAt: Generated<Timestamp>;
@@ -521,6 +535,7 @@ export interface DB {
   emails: Emails;
   emailTemplates: EmailTemplates;
   emailVariables: EmailVariables;
+  events: Events;
   likes: Likes;
   media: Media;
   mediaMappings: MediaMappings;

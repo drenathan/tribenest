@@ -41,6 +41,7 @@ import { SmartLinkClickModel } from "./smartLink/smartLinkClickModel";
 import { EmailModel } from "./email/email.model";
 import { EmailRecipientModel } from "./email/emailRecipient.model";
 import { EmailVariableModel } from "./email/emailVariable.model";
+import { EventModel } from "./event/event.model";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
@@ -85,5 +86,6 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     SmartLinkClick: new SmartLinkClickModel(client),
     WebsiteVersion: new WebsiteVersionModel(client),
     WebsiteVersionPage: new WebsiteVersionPageModel(client),
+    Event: new EventModel(client),
   };
 };
