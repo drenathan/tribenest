@@ -3,6 +3,7 @@ import { ProductService } from "..";
 import { BadRequestError } from "@src/utils/app_error";
 import { MediaType } from "@src/types";
 import { ProductDeliveryType } from "@src/db/types/product";
+import { ProfileOnboardingStepId } from "@src/db/types/profile";
 
 export async function createProduct(this: ProductService, input: CreateProductInput) {
   const trx = await this.database.client.startTransaction().execute();
@@ -101,6 +102,12 @@ export async function createProduct(this: ProductService, input: CreateProductIn
         );
       }
     }
+
+    await this.database.models.ProfileOnboardingStep.updateOne(
+      { profileId: input.profileId, id: ProfileOnboardingStepId.UploadFirstMusic, completedAt: null },
+      { completedAt: new Date() },
+      trx,
+    );
 
     await trx.commit().execute();
   } catch (error) {

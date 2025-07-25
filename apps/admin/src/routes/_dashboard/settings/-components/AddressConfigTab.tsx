@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
 import { countryCodes, isUSCountry, validateZipCode } from "@/utils/countryCodes";
+import { useGetProfileConfiguration } from "@/hooks/queries/useGetProfileAuthorizations";
 
 // Dynamic validation schema for address configuration
 const createAddressConfigSchema = (countryCode: string) =>
@@ -39,6 +40,7 @@ export function AddressConfigTab() {
   const { currentProfileAuthorization } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("");
+  const { data: configuration } = useGetProfileConfiguration(currentProfileAuthorization?.profileId);
 
   const {
     register,
@@ -64,21 +66,11 @@ export function AddressConfigTab() {
 
   // Load current address configuration
   useEffect(() => {
-    const loadAddressConfig = async () => {
-      if (!currentProfileAuthorization?.profileId) return;
-      try {
-        const { data } = await httpClient.get(`/profiles/${currentProfileAuthorization.profileId}/configuration`);
-        if (data.address) {
-          reset(data.address);
-          setSelectedCountry(data.address.country || "");
-        }
-      } catch (error) {
-        console.error("Failed to load address configuration:", error);
-      }
-    };
-
-    loadAddressConfig();
-  }, [currentProfileAuthorization?.profileId, reset]);
+    if (configuration?.address) {
+      reset(configuration.address);
+      setSelectedCountry(configuration.address.country || "");
+    }
+  }, [configuration, reset]);
 
   const onSubmit = async (data: AddressConfigFormData) => {
     if (!currentProfileAuthorization?.profileId) return;

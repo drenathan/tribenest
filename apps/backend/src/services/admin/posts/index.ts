@@ -4,6 +4,7 @@ import { CreatePostInput, GetPostsInput, UpdatePostInput } from "@src/routes/pos
 import { MediaType } from "@src/db/types/media";
 import { PaginatedData } from "@src/types";
 import { JsonArray } from "@src/db/types/generated";
+import { ProfileOnboardingStepId } from "@src/db/types/profile";
 
 const postTypeToMediaType: Record<PostType, MediaType> = {
   image: "image",
@@ -70,6 +71,12 @@ export class PostService extends BaseService {
 
       await this.database.models.MediaMapping.insertOne(
         { entityId: post.id, mediaId: media.id, order: 1, entityType: "post" },
+        trx,
+      );
+
+      await this.database.models.ProfileOnboardingStep.updateOne(
+        { profileId: input.profileId, id: ProfileOnboardingStepId.CreateFirstPost, completedAt: null },
+        { completedAt: new Date() },
         trx,
       );
 

@@ -3,6 +3,7 @@ import { BaseService } from "../baseService";
 import { CreateMembershipBenefitInput } from "@src/routes/membershipBenefits/schema";
 import { BadRequestError } from "@src/utils/app_error";
 import { GetMembershipsInput } from "@src/routes/memberships/schema";
+import { ProfileOnboardingStepId } from "@src/db/types/profile";
 export type CreateMembershipInput = {
   profileId: string;
   membershipTierId?: string;
@@ -51,7 +52,12 @@ export class MembershipService extends BaseService {
   }
 
   public async createMembershipTier(input: CreateMembershipTierInput) {
-    return this.models.MembershipTier.insertOne(input);
+    await this.models.MembershipTier.insertOne(input);
+
+    await this.database.models.ProfileOnboardingStep.updateOne(
+      { profileId: input.profileId, id: ProfileOnboardingStepId.MembershipTier, completedAt: null },
+      { completedAt: new Date() },
+    );
   }
 
   public async getMembershipBenefits(profileId: string) {

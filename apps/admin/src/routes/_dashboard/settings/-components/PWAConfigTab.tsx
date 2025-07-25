@@ -18,6 +18,7 @@ import { useUploadFiles } from "@/hooks/useUploadFiles";
 import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
 import { Upload, X, CheckCircle } from "lucide-react";
+import { useGetProfileConfiguration } from "@/hooks/queries/useGetProfileAuthorizations";
 
 // Validation schema for PWA configuration
 const pwaConfigSchema = z.object({
@@ -53,6 +54,7 @@ export function PWAConfigTab() {
     screenshotWide1280X720: null,
     screenshotNarrow750X1334: null,
   });
+  const { data: configuration } = useGetProfileConfiguration(currentProfileAuthorization?.profileId);
 
   const {
     register,
@@ -66,20 +68,10 @@ export function PWAConfigTab() {
 
   // Load current PWA configuration
   useEffect(() => {
-    const loadPWAConfig = async () => {
-      if (!currentProfileAuthorization?.profileId) return;
-      try {
-        const { data } = await httpClient.get(`/profiles/${currentProfileAuthorization.profileId}/configuration`);
-        if (data.pwa) {
-          reset(data.pwa);
-        }
-      } catch (error) {
-        console.error("Failed to load PWA configuration:", error);
-      }
-    };
-
-    loadPWAConfig();
-  }, [currentProfileAuthorization?.profileId, reset]);
+    if (configuration?.pwa) {
+      reset(configuration.pwa);
+    }
+  }, [configuration, reset]);
 
   const validateImageDimensions = (file: File, expectedWidth: number, expectedHeight: number): Promise<boolean> => {
     return new Promise((resolve) => {

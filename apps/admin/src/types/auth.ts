@@ -59,3 +59,26 @@ export type ActionMap<M extends { [index: string]: unknown }> = {
         payload: M[Key];
       };
 };
+
+export interface ProfileOnboarding {
+  id: ProfileOnboardingStepId;
+  step: number;
+  title: string;
+  description: string;
+  actionText: string;
+  actionPath: string;
+  helpLink: string;
+  completedAt: string | null;
+}
+
+export enum ProfileOnboardingStepId {
+  FileStorage = "file-storage-configuration",
+  EmailConfiguration = "email-configuration",
+  PaymentConfiguration = "payment-configuration",
+  ProfileAddress = "profile-address",
+  MembershipTier = "membership-tiers",
+  WebsiteConfiguration = "website-configuration",
+  CreateFirstPost = "create-first-post",
+  UploadFirstMusic = "upload-first-music",
+  PWAConfiguration = "pwa-configuration",
+}

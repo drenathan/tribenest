@@ -87,6 +87,16 @@ export const getDefaultProfileOnboardingSteps = (profileId: string): Insertable<
     helpLink: "https://docs.webpage.com/website-configuration",
   },
   {
+    id: ProfileOnboardingStepId.PWAConfiguration,
+    step: 7,
+    title: "Your Application",
+    description: "Set up your progressive web application to allow your fans to download your website as an app.",
+    actionText: "Configure",
+    actionPath: "/settings?tab=pwa",
+    profileId,
+    helpLink: "https://docs.webpage.com/website-configuration",
+  },
+  {
     id: ProfileOnboardingStepId.CreateFirstPost,
     step: 7,
     title: "Create First Post",

@@ -7,6 +7,7 @@ export enum ProfileOnboardingStepId {
   WebsiteConfiguration = "website-configuration",
   CreateFirstPost = "create-first-post",
   UploadFirstMusic = "upload-first-music",
+  PWAConfiguration = "pwa-configuration",
 }
 
 export type PWAConfig = {

@@ -115,7 +115,31 @@ export class ProfileService extends BaseService {
    * Update profile configuration with encrypted sensitive fields
    */
   public async updateProfileConfiguration(profileId: string, data: UpdateProfileConfigurationInput) {
-    return this.database.models.ProfileConfiguration.updateProfileConfiguration(profileId, data);
+    await this.database.models.ProfileConfiguration.updateProfileConfiguration(profileId, data);
+
+    const configuration = await this.database.models.ProfileConfiguration.getProfileConfiguration(profileId);
+
+    const onboardingStepIds: ProfileOnboardingStepId[] = [];
+    if (configuration?.pwaConfig) {
+      onboardingStepIds.push(ProfileOnboardingStepId.PWAConfiguration);
+    }
+    if (configuration?.address) {
+      onboardingStepIds.push(ProfileOnboardingStepId.ProfileAddress);
+    }
+    if (configuration?.smtpPassword) {
+      onboardingStepIds.push(ProfileOnboardingStepId.EmailConfiguration);
+    }
+    if (configuration?.paymentProviderPrivateKey) {
+      onboardingStepIds.push(ProfileOnboardingStepId.PaymentConfiguration);
+    }
+    if (configuration?.r2BucketName) {
+      onboardingStepIds.push(ProfileOnboardingStepId.FileStorage);
+    }
+
+    await this.database.models.ProfileOnboardingStep.updateMany(
+      { profileId, id: onboardingStepIds, completedAt: null },
+      { completedAt: new Date() },
+    );
   }
 
   /**

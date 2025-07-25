@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { capitalize } from "lodash";
 import { PWAConfigTab } from "./-components/PWAConfigTab";
 import { AddressConfigTab } from "./-components/AddressConfigTab";
+import { useGetProfileConfiguration } from "@/hooks/queries/useGetProfileAuthorizations";
 
 // Validation schemas
 const emailConfigSchema = z.object({
@@ -34,7 +35,7 @@ const r2ConfigSchema = z.object({
 });
 
 const paymentConfigSchema = z.object({
-  paymentProviderName: z.enum(["stripe", "paypal"]),
+  paymentProviderName: z.enum(["stripe"]),
   paymentProviderPublicKey: z.string().min(1, "Payment provider public key is required"),
   paymentProviderPrivateKey: z.string().min(1, "Payment provider private key is required"),
   paymentProviderWebhookSecret: z.string().min(1, "Payment provider webhook secret is required"),
@@ -63,6 +64,7 @@ function RouteComponent() {
   const search = useSearch({ from: "/_dashboard/settings/" });
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState<string | null>(null);
+  const { data: configuration, refetch } = useGetProfileConfiguration(currentProfileAuthorization?.profileId);
 
   const {
     register,
@@ -74,44 +76,33 @@ function RouteComponent() {
     resolver: zodResolver(settingsSchema),
   });
 
-  const loadConfiguration = useCallback(async () => {
-    if (!currentProfileAuthorization?.profileId) return;
-    try {
-      const { data } = await httpClient.get(`/profiles/${currentProfileAuthorization?.profileId}/configuration`);
+  useEffect(() => {
+    if (configuration) {
       reset({
         email: {
-          smtpHost: data.smtpHost ?? "",
-          smtpPort: data.smtpPort ?? "",
-          smtpUsername: data.smtpUsername ?? "",
-          smtpPassword: data.smtpPassword ?? "",
-          smtpFrom: data.smtpFrom ?? "",
+          smtpHost: configuration.smtpHost ?? "",
+          smtpPort: configuration.smtpPort ?? "",
+          smtpUsername: configuration.smtpUsername ?? "",
+          smtpPassword: configuration.smtpPassword ?? "",
+          smtpFrom: configuration.smtpFrom ?? "",
         },
         r2: {
-          r2BucketName: data.r2BucketName ?? "",
-          r2AccessKeyId: data.r2AccessKeyId ?? "",
-          r2SecretAccessKey: data.r2SecretAccessKey ?? "",
-          r2Endpoint: data.r2Endpoint ?? "",
-          r2Region: data.r2Region ?? "",
-          r2BucketUrl: data.r2BucketUrl ?? "",
+          r2BucketName: configuration.r2BucketName ?? "",
+          r2AccessKeyId: configuration.r2AccessKeyId ?? "",
+          r2SecretAccessKey: configuration.r2SecretAccessKey ?? "",
+          r2Endpoint: configuration.r2Endpoint ?? "",
+          r2Region: configuration.r2Region ?? "",
+          r2BucketUrl: configuration.r2BucketUrl ?? "",
         },
         payment: {
-          paymentProviderName: data.paymentProviderName ?? "",
-          paymentProviderPublicKey: data.paymentProviderPublicKey ?? "",
-          paymentProviderPrivateKey: data.paymentProviderPrivateKey ?? "",
-          paymentProviderWebhookSecret: data.paymentProviderWebhookSecret ?? "",
+          paymentProviderName: configuration.paymentProviderName ?? "",
+          paymentProviderPublicKey: configuration.paymentProviderPublicKey ?? "",
+          paymentProviderPrivateKey: configuration.paymentProviderPrivateKey ?? "",
+          paymentProviderWebhookSecret: configuration.paymentProviderWebhookSecret ?? "",
         },
       });
-    } catch (error) {
-      console.error("Failed to load configuration:", error);
     }
-  }, [currentProfileAuthorization?.profileId, reset]);
-
-  // Load current configuration
-  useEffect(() => {
-    if (currentProfileAuthorization?.profileId) {
-      loadConfiguration();
-    }
-  }, [currentProfileAuthorization?.profileId, loadConfiguration]);
+  }, [configuration, reset]);
 
   const saveSection = async (section: "email" | "r2" | "payment") => {
     if (!currentProfileAuthorization?.profileId) return;
@@ -129,7 +120,7 @@ function RouteComponent() {
       });
 
       toast.success(`${capitalize(section)} settings saved successfully!`);
-      await loadConfiguration();
+      await refetch();
     } catch (error) {
       console.error(`Failed to save ${section} settings:`, error);
       toast.error(`Failed to save ${section} settings`);
@@ -211,7 +202,7 @@ function RouteComponent() {
       >
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="email">Email (SMTP)</TabsTrigger>
-          <TabsTrigger value="r2">File Storage (R2)</TabsTrigger>
+          <TabsTrigger value="file">File Storage (R2)</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
           <TabsTrigger value="pwa">App (PWA)</TabsTrigger>
           <TabsTrigger value="address">Address</TabsTrigger>
@@ -283,7 +274,7 @@ function RouteComponent() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="r2" className="space-y-4">
+        <TabsContent value="file" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Cloudflare R2 Configuration</CardTitle>

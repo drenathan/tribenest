@@ -2,6 +2,7 @@ import { BadRequestError } from "@src/utils/app_error";
 import { BaseService } from "../baseService";
 import { ActivateThemeInput, UpdateWebsiteVersionInput } from "@src/routes/websites/schema";
 import { EncryptionService } from "@src/utils/encryption";
+import { ProfileOnboardingStepId } from "@src/db/types/profile";
 
 export class WebsiteService extends BaseService {
   async getWebsitesForProfile(profileId: string) {
@@ -79,6 +80,12 @@ export class WebsiteService extends BaseService {
           content: page.json,
           description: page.description,
         })),
+        trx,
+      );
+
+      await this.database.models.ProfileOnboardingStep.updateOne(
+        { profileId: input.profileId, id: ProfileOnboardingStepId.WebsiteConfiguration, completedAt: null },
+        { completedAt: new Date() },
         trx,
       );
 
