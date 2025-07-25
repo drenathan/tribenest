@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import PageHeader from "../../-components/layout/page-header";
 import { Badge, Button, Card, CardContent } from "@tribe-nest/frontend-shared";
 import { useAuth } from "@/hooks/useAuth";
+import EmptyState from "@/components/empty-state";
 
 export const Route = createFileRoute("/_dashboard/website/home/")({
   component: RouteComponent,
@@ -13,10 +14,18 @@ function RouteComponent() {
   const navigate = useNavigate();
   const { currentProfileAuthorization } = useAuth();
   const { data: websiteVersions } = useGetWebsites(currentProfileAuthorization?.profile.id);
+  const isEmpty = websiteVersions && websiteVersions?.length === 0;
 
   return (
     <div>
-      <PageHeader title="Website" />
+      <PageHeader title="My Website" />
+      {isEmpty && (
+        <EmptyState
+          title="No website versions found"
+          description="Select and activate a theme to get started"
+          action={<Button onClick={() => navigate({ to: "/website/themes" })}>Select Theme</Button>}
+        />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         {websiteVersions?.map((version) => (
