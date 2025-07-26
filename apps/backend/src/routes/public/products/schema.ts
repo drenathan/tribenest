@@ -13,7 +13,7 @@ export const getProductsSchema = z.object({
 export const getFeaturedProductsSchema = z.object({
   query: z.object({
     profileId: z.string().uuid("Invalid profile ID"),
-    category: z.nativeEnum(ProductCategory),
+    category: z.nativeEnum(ProductCategory).default(ProductCategory.Music),
   }),
 });
 

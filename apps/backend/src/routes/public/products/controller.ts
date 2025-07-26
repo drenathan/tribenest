@@ -1,20 +1,20 @@
 import { Query, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
-import { GetMembershipTiersInput, getMembershipTiersSchema } from "@src/routes/membershipTiers/schema";
+import { getMembershipTiersSchema } from "@src/routes/membershipTiers/schema";
 import { NextFunction, Request, Response } from "express";
-import { GetProductsInput, getProductsSchema } from "./schema";
+import { GetFeaturedProductsInput, getFeaturedProductsSchema, GetProductsInput, getProductsSchema } from "./schema";
 import { GetProductInput, getProductSchema } from "@src/routes/product/schema";
 
 export class PublicProducts extends BaseController {
   @RouteHandler()
-  @ValidateSchema(getMembershipTiersSchema)
+  @ValidateSchema(getFeaturedProductsSchema)
   public async getFeaturedProducts(
     req: Request,
     res: Response,
     next: NextFunction,
-    @Query query?: GetMembershipTiersInput,
+    @Query query?: GetFeaturedProductsInput,
   ): Promise<any> {
-    return this.services.membership.getMembershipTiers({ profileId: query!.profileId });
+    return this.services.public.product.getFeaturedProducts(query!);
   }
 
   @RouteHandler()

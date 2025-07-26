@@ -1,4 +1,6 @@
 import { DB } from "@src/db/types";
+import { ProductCategory } from "@src/db/types/product";
+import { GetFeaturedProductsInput } from "@src/routes/public/products/schema";
 import { GetProductInput, GetProductsInput } from "@src/routes/product/schema";
 import { BaseService } from "@src/services/baseService";
 import { PaginatedData } from "@src/types";
@@ -24,5 +26,9 @@ export class ProductService extends BaseService {
 
   public async getOne(input: GetProductInput & { productId: string }, membership?: Selectable<DB["memberships"]>) {
     return this.database.models.Product.getOne(input);
+  }
+
+  public async getFeaturedProducts(input: GetFeaturedProductsInput) {
+    return this.database.models.Product.getFeaturedProductsPublic(input);
   }
 }

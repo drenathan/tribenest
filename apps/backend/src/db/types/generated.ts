@@ -287,6 +287,7 @@ export interface Products {
   credits: string | null;
   description: string;
   id: Generated<string>;
+  isFeatured: Generated<boolean>;
   isSingle: Generated<boolean | null>;
   profileId: string;
   publishedAt: Timestamp | null;

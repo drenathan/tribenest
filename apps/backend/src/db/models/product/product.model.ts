@@ -2,7 +2,10 @@ import { Expression, Kysely, Selectable, SqlBool } from "kysely";
 import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { GetProductInput, type GetProductsInput } from "@src/routes/product/schema";
-import { type GetProductsInput as GetPublicProductsInput } from "@src/routes/public/products/schema";
+import {
+  GetFeaturedProductsInput,
+  type GetProductsInput as GetPublicProductsInput,
+} from "@src/routes/public/products/schema";
 import { IProductVariant } from "./productVariant.model";
 import { IProductVariantTrack } from "./productVariantTrack.model";
 import { IMedia } from "../media/media.model";
@@ -35,7 +38,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
     return product;
   }
 
-  public async getMany(input: GetProductsInput & { productId?: string }) {
+  public async getMany(input: GetProductsInput & { productId?: string; productIds?: string[] }) {
     const limit = input.limit ?? 10;
     const page = input.page ?? 1;
     const { query, archived, futureRelease, releaseType } = (input.filter ?? {}) as GetProductsFilter;
@@ -51,6 +54,10 @@ export class ProductModel extends BaseModel<"products", "id"> {
         const conditions: Expression<SqlBool>[] = [];
         if (input.productId) {
           conditions.push(eb("p.id", "=", input.productId));
+        }
+
+        if (input.productIds) {
+          conditions.push(eb("p.id", "in", input.productIds));
         }
         conditions.push(eb("p.profileId", "=", input.profileId));
         if (input.category) {
@@ -161,5 +168,30 @@ export class ProductModel extends BaseModel<"products", "id"> {
 
   public async getManyForPublic(input: GetPublicProductsInput, membership?: Selectable<DB["memberships"]>) {
     return this.getMany(input);
+  }
+
+  public async getFeaturedProductsPublic(input: GetFeaturedProductsInput) {
+    const featuredProducts = await this.client
+      .selectFrom("products")
+      .innerJoin("productCategories as pc", "pc.id", "products.categoryId")
+      .where("products.profileId", "=", input.profileId)
+      .where("products.archivedAt", "is", null)
+      .where("pc.title", "=", input.category)
+      .where("products.isFeatured", "=", true)
+      .select("products.id")
+      .execute();
+
+    if (!featuredProducts.length) {
+      return [];
+    }
+
+    return this.getMany({
+      productIds: featuredProducts.map((product) => product.id),
+      profileId: input.profileId,
+      category: input.category,
+      page: 1,
+      limit: 1000,
+      filter: {},
+    });
   }
 }
