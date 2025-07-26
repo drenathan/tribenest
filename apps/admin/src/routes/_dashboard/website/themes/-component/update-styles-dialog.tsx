@@ -68,7 +68,9 @@ export function UpdateStylesDialog({
             label="Text Color over primary"
             type="color"
             value={theme.colors.textPrimary}
-            onChange={() => {}}
+            onChange={(value) => {
+              setTheme({ ...theme, colors: { ...theme.colors, textPrimary: value } });
+            }}
           />
           <ToolbarTextInput
             type="text"

@@ -58,6 +58,7 @@ function RouteComponent() {
       artist: currentProfileAuthorization?.profile.name ?? "",
       deliveryType: ProductDeliveryType.Digital,
       payWhatYouWant: false,
+      isFeatured: false,
       credits: "",
       upcCode: "",
       price: 0,
@@ -288,6 +289,12 @@ function RouteComponent() {
         <FormCheckbox<CreateProductInput>
           name="payWhatYouWant"
           label="Allow users to pay what they want (Minimum is the price set)"
+          control={methods.control}
+        />
+
+        <FormCheckbox<CreateProductInput>
+          name="isFeatured"
+          label="Feature this product (will be included on the featured music section on your website)"
           control={methods.control}
         />
 

@@ -9,13 +9,16 @@ import {
   Contact,
   Mail,
   Image as ImageSvg,
+  Calendar,
+  Music,
 } from "lucide-react";
 import { EditorButton } from "../selectors/Button";
 import { Container } from "../selectors/Container";
 import { MembershipSection } from "../selectors/MembershipSection";
 import { EditorText } from "../selectors/Text";
 import { EditorSocialIcons } from "../selectors/SocialIcons";
-import { EditorImage, EmailList } from "../selectors";
+import { EditorImage, EmailList, FeaturedMusicSection } from "../selectors";
+import { UpcomingEvents } from "../selectors/UpcomingEvents";
 
 const Label = ({ children }: { children: React.ReactNode }) => {
   return <h2 className="text-xs uppercase">{children}</h2>;
@@ -140,6 +143,34 @@ export const Toolbox = () => {
             <Item>
               <Contact />
               <Label>Social Icons</Label>
+            </Item>
+          </Tooltip>
+        </div>
+        <div
+          ref={(ref) => {
+            if (ref) {
+              create(ref, <UpcomingEvents title="Upcoming Events" />);
+            }
+          }}
+        >
+          <Tooltip title="Upcoming Events" placement="right">
+            <Item>
+              <Calendar />
+              <Label>Upcoming Events</Label>
+            </Item>
+          </Tooltip>
+        </div>
+        <div
+          ref={(ref) => {
+            if (ref) {
+              create(ref, <FeaturedMusicSection title="Featured Music" />);
+            }
+          }}
+        >
+          <Tooltip title="Featured Music" placement="right">
+            <Item>
+              <Music />
+              <Label>Featured Music</Label>
             </Item>
           </Tooltip>
         </div>

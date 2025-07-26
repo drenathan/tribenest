@@ -22,6 +22,7 @@ export type IProduct = {
   credits: string;
   publishedAt: string;
   archivedAt: string | null;
+  isFeatured: boolean;
 };
 
 export type IProductVariant = {

@@ -109,6 +109,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
         eb.ref("p.credits").as("credits"),
         eb.ref("p.archivedAt").as("archivedAt"),
         eb.ref("p.profileId").as("profileId"),
+        eb.ref("p.isFeatured").as("isFeatured"),
       ])
       .select((eb) => [
         this.jsonArrayFrom(
@@ -185,7 +186,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
       return [];
     }
 
-    return this.getMany({
+    const results = await this.getMany({
       productIds: featuredProducts.map((product) => product.id),
       profileId: input.profileId,
       category: input.category,
@@ -193,5 +194,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
       limit: 1000,
       filter: {},
     });
+
+    return results.data;
   }
 }

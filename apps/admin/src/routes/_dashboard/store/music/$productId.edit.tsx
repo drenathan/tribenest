@@ -54,13 +54,14 @@ function RouteComponent() {
       methods.reset({
         title: product.title,
         description: product.description,
-        artist: product.artist,
+        artist: product.artist ?? "",
         payWhatYouWant: defaultVariant?.payWhatYouWant || false,
         credits: product?.credits || "",
         upcCode: defaultVariant?.upcCode || "",
         price: defaultVariant?.price,
         publishedAt: product.publishedAt ? format(new Date(product.publishedAt), "yyyy-MM-dd") : "",
         profileId: product.profileId,
+        isFeatured: product.isFeatured,
         coverImage: {
           file:
             product.media.find((m) => m.type === "image")?.url ||
@@ -296,6 +297,12 @@ function RouteComponent() {
         <FormCheckbox<EditProductInput>
           name="payWhatYouWant"
           label="Allow users to pay what they want (Minimum is the price set)"
+          control={methods.control}
+        />
+
+        <FormCheckbox<EditProductInput>
+          name="isFeatured"
+          label="Feature this product (will be included on the featured music section on your website)"
           control={methods.control}
         />
 

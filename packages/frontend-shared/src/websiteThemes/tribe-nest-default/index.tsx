@@ -21,10 +21,10 @@ export default {
   preview: "https://assets-dev.coumo.com/default_theme_screenshot.png",
   themeSettings: {
     colors: {
-      primary: "#c90ca0",
-      background: "#020838",
       text: "#ffffff",
-      textPrimary: "#ffffff",
+      primary: "#d4bbcf",
+      background: "#1c1d29",
+      textPrimary: "#160404",
     },
     cornerRadius: "10",
     fontFamily: "Arial",

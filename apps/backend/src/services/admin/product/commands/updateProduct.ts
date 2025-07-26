@@ -25,6 +25,7 @@ export async function updateProduct(this: ProductService, input: UpdateProductIn
           publishedAt: input.publishedAt ? new Date(input.publishedAt) : undefined,
           credits: input.credits,
           artist: input.artist,
+          isFeatured: input.isFeatured,
         },
         isUndefined,
       ),

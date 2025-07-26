@@ -1,6 +1,6 @@
 "use client";
 import { Element } from "@craftjs/core";
-import { Container, PageHeader } from "../../components/editor/selectors";
+import { Container, EditorFooter, PageHeader } from "../../components/editor/selectors";
 import { PostsPage } from "./components/PostsPage";
 
 export default function MembersPage() {
@@ -18,6 +18,8 @@ export default function MembersPage() {
       <PageHeader logo={""} background={""} hasBorder={true} />
 
       <PostsPage />
+
+      <EditorFooter />
     </Element>
   );
 }

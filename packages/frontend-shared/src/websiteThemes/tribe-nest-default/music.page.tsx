@@ -1,6 +1,6 @@
 "use client";
 import { Element } from "@craftjs/core";
-import { Container, PageHeader } from "../../components/editor/selectors";
+import { Container, EditorFooter, PageHeader } from "../../components/editor/selectors";
 import { MusicPageContent } from "./components/MusicPageContent";
 
 export default function MusicPage() {
@@ -18,6 +18,7 @@ export default function MusicPage() {
       <PageHeader logo={""} background={""} hasBorder={true} />
 
       <MusicPageContent />
+      <EditorFooter />
     </Element>
   );
 }

@@ -27,6 +27,7 @@ export async function createProduct(this: ProductService, input: CreateProductIn
         profileId: input.profileId,
         credits: input.credits,
         artist: input.artist,
+        isFeatured: input.isFeatured || false,
       },
       trx,
     );

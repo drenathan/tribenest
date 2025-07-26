@@ -6,6 +6,9 @@ import {
   Container,
   PageHeader,
   MembershipSection,
+  UpcomingEvents,
+  FeaturedMusicSection,
+  EditorFooter,
 } from "../../components/editor/selectors";
 import type { Profile } from "../../types";
 import { Element } from "@craftjs/core";
@@ -58,6 +61,13 @@ export default function IndexPage({ profile }: { profile: Profile }) {
       <Element canvas is={Container} height="auto" id="page-membership" width="100%">
         <MembershipSection title="Join the tribe" />
       </Element>
+      <Element canvas is={Container} height="auto" id="page-featured-music" width="100%">
+        <FeaturedMusicSection title="Featured Music" />
+      </Element>
+      <Element canvas is={Container} height="auto" id="page-upcoming-events" width="100%">
+        <UpcomingEvents title="Upcoming Events" />
+      </Element>
+      <EditorFooter />
     </>
   );
 }

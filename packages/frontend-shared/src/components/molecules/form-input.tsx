@@ -44,6 +44,7 @@ export function FormInput<T extends FieldValues>(props: UseControllerProps<T> & 
             field.onChange(e);
             props.onChange?.(e.target.value);
           }}
+          step="any"
           min={props.min}
         />
       )}

@@ -38,6 +38,7 @@ export const createProductSchema = z.object({
       artist: z.string().optional(),
       credits: z.string().optional(),
       upcCode: z.string().optional(),
+      isFeatured: z.boolean().optional().default(false),
       coverImage: z.object({
         file: z.string().url("Cover image is required"),
         fileSize: z.number(),
@@ -85,6 +86,7 @@ export const updateProductSchema = z.object({
     artist: z.string().optional(),
     credits: z.string().optional(),
     upcCode: z.string().optional(),
+    isFeatured: z.boolean().optional().default(false),
     coverImage: z
       .object({
         file: z.string().url("Cover image is required").optional(),

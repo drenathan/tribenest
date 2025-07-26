@@ -18,6 +18,7 @@ export const createProductSchema = z
     profileId: z.string().uuid().optional(),
     payWhatYouWant: z.boolean().default(false).optional(),
     upcCode: z.string().optional(),
+    isFeatured: z.boolean().default(false).optional(),
     coverImage: z.object({
       file: z.union([
         z.instanceof(File, { message: "Cover image is required" }),
@@ -70,6 +71,7 @@ export const editProductSchema = z.object({
   profileId: z.string().uuid(),
   payWhatYouWant: z.boolean().default(false).optional(),
   upcCode: z.string().optional(),
+  isFeatured: z.boolean().default(false).optional(),
   coverImage: z
     .object({
       file: z

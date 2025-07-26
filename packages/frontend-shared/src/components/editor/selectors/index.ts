@@ -10,6 +10,9 @@ import { EditorModal } from "./components/Modal";
 import { LoadingState } from "./Loading";
 import { EditorImage } from "./Image";
 import { EmailList } from "./EmailList";
+import { UpcomingEvents } from "./UpcomingEvents";
+import { FeaturedMusicSection } from "./FeaturedMusicSection";
+import { EditorFooter } from "./Footer";
 
 export * from "./Container";
 export * from "./Text";
@@ -23,6 +26,9 @@ export * from "./components/Modal";
 export * from "./Loading";
 export * from "./Image";
 export * from "./EmailList";
+export * from "./UpcomingEvents";
+export * from "./FeaturedMusicSection";
+export * from "./Footer";
 
 export const editorResolver = {
   Container,
@@ -37,4 +43,7 @@ export const editorResolver = {
   LoadingState,
   EditorImage,
   EmailList,
+  UpcomingEvents,
+  FeaturedMusicSection,
+  EditorFooter,
 };

@@ -47,10 +47,10 @@ export function InstallPWABanner() {
           <X />
         </button>
         <div className="pr-6">
-          <h4 className="font-medium mb-1" style={{ color: themeSettings?.colors?.textPrimary || "#111827" }}>
+          <h4 className="font-medium mb-1" style={{ color: themeSettings?.colors?.text }}>
             Install App
           </h4>
-          <p className="text-sm mb-3" style={{ color: themeSettings?.colors?.text || "#6b7280" }}>
+          <p className="text-sm mb-3" style={{ color: themeSettings?.colors?.text }}>
             Get quick access from your home screen
           </p>
           <EditorButtonWithoutEditor

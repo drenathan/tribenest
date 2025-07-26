@@ -50,9 +50,9 @@ export const MembershipSection: UserComponent<MembershipSectionProps> = ({ title
           connect(ref);
         }
       }}
-      className="w-full @md:p-8 p-4"
+      className="w-full @md:p-8 p-4 flex flex-col items-center"
     >
-      <h1 className="text-2xl font-bold text-center @md:text-left mb-4">{title}</h1>
+      <h1 className="text-2xl font-bold text-center @md:text-left mb-6">{title}</h1>
 
       <div className="flex gap-4 flex-col @md:flex-row w-full flex-wrap">
         {membershipTiers.map((tier) => {

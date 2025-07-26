@@ -1,7 +1,7 @@
 "use client";
 
 import { Element } from "@craftjs/core";
-import { Container, PageHeader } from "../../components/editor/selectors";
+import { Container, EditorFooter, PageHeader } from "../../components/editor/selectors";
 
 export default function PrivacyPolicyPage() {
   return (
@@ -16,8 +16,9 @@ export default function PrivacyPolicyPage() {
     >
       <PageHeader logo={""} background={""} />
       <Container>
-        <div>Privacy Policy work</div>
+        <div className="min-h-[100vh]">Privacy Policy work</div>
       </Container>
+      <EditorFooter />
     </Element>
   );
 }
