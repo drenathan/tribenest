@@ -118,7 +118,7 @@ const Input = ({
         }
 
         &::placeholder {
-          color: ${themeSettings.colors.textPrimary}${alphaToHexCode(0.45)};
+          color: ${themeSettings.colors.text}${alphaToHexCode(0.45)};
         }
       `}
     />
