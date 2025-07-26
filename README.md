@@ -1,10 +1,10 @@
 # TribeNest
 
-A modern web application built with Turborepo, featuring a backend API, client-facing Next.js app, and admin dashboard.
+The Complete artist platform
 
 ## What's inside?
 
-This Turborepo includes the following packages/apps:
+This Turborepo includes the following packages and apps:
 
 ### Apps and Packages
 
@@ -39,71 +39,50 @@ This Turborepo has some additional tools already setup for you:
 # Install dependencies
 npm install
 
-# Build all apps and packages
-npm run build
-
 # Start development servers
 npm run dev
 ```
 
-### Docker Development
+# How to deploy to production
 
-For a fully containerized development environment:
+- You need A server. We recommend ubuntu linux [Herztner](https://www.hetzner.com/?country=en) pre-installed with docker or you can install docker manually.
+
+- Before running the next step you will need access to your domain name registrar to update the following:
+  - Add a A record for host: @ and value: your server ip
+  - Another A record for host: \* and value: your server ip
+
+- Edit the docker-compose.prod.yml in the root of the repo on your machine. you need to update POSTGRES_PASSWORD,REDIS_PASSWORD, ROOT_DOMAIN, API_URL, ADMIN_URL as specified in the file.
+- ssh into your server
 
 ```bash
-# Start development environment
-./scripts/docker-dev.sh up
-
-# View logs
-./scripts/docker-dev.sh logs
-
-# Stop development environment
-./scripts/docker-dev.sh down
+ssh root@your-server-ip
 ```
 
-See [DOCKER_README.md](./DOCKER_README.md) for detailed Docker setup instructions.
+-Copy the updated docker-compose.prod.yml file to your server
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+```bash
+scp docker-compose.prod.yml root@your-server-ip:/root/
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- copy the scripts/setup-nginx.sh file to your server
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
-
+```bash
 scp scripts/setup-nginx.sh root@your-server-ip:/root/
+```
 
-# SSH to server
+- Start up the application on the server
 
-ssh user@your-server
-cd /tmp
+```bash
+docker compose -f docker-compose.prod.yml up -d
+```
+
+- Run the domain setup script on the server you will need to add your domain name and you current email address to the script.
+
+```bash
 chmod +x setup-nginx.sh
+./setup-nginx.sh domain.com admin@myemail.com
+```
 
-# Basic setup first
+- Update your domain name DNS (TXT) as required by the script. This is required for you application to work.
 
-./setup-nginx.sh tribenest.co admin@tribenest.co
+- Congratulations. go to https://admin.yourdomain.com to access the admin dashboard. and create your first account. You website will be live at https://yourdomain.com and you smart links at https://links.yourdomain.com/link-path
