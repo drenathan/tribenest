@@ -21,7 +21,7 @@ export default function OfflinePage() {
             </svg>
           </div>
 
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">You're offline</h2>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">You are offline</h2>
 
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Check your internet connection and try again. Some content may still be available from your cache.

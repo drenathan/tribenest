@@ -25,8 +25,14 @@ export type ReorderMembershipTiersInput = {
 };
 
 export class MembershipService extends BaseService {
-  public async getMembershipTiers(profileId: string) {
-    const data = await this.models.MembershipTier.getManyWithBenefits(profileId);
+  public async getMembershipTiers({
+    profileId,
+    removeArchived = false,
+  }: {
+    profileId: string;
+    removeArchived?: boolean;
+  }) {
+    const data = await this.models.MembershipTier.getManyWithBenefits({ profileId, removeArchived });
     return data;
   }
 
@@ -126,7 +132,7 @@ export class MembershipService extends BaseService {
       membershipTierIds.map((id, index) => this.models.MembershipTier.updateOne({ id, profileId }, { order: index })),
     );
 
-    return this.getMembershipTiers(profileId);
+    return this.getMembershipTiers({ profileId });
   }
 
   public async getMembershipBenefits(profileId: string) {

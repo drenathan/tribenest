@@ -12,6 +12,6 @@ export class PublicMembershipTier extends BaseController {
     next: NextFunction,
     @Query query?: GetMembershipTiersInput,
   ): Promise<any> {
-    return this.services.membership.getMembershipTiers(query!.profileId);
+    return this.services.membership.getMembershipTiers({ profileId: query!.profileId, removeArchived: true });
   }
 }

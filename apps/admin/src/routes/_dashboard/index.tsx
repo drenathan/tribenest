@@ -75,13 +75,13 @@ function RouteComponent() {
       <PageHeader title="Welcome" />
 
       {completedSteps === totalSteps ? (
-        <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800">
+        <Card className="">
           <CardContent className="pt-6 text-center">
-            <div className="flex items-center justify-center mb-4">
-              <CheckCircle className="w-12 h-12 text-green-600 dark:text-green-400" />
+            <div className="flex items-center justify-center mb-4 text-green-300">
+              <CheckCircle className="w-12 h-12" />
             </div>
-            <h3 className="text-xl font-semibold text-green-800 dark:text-green-200 mb-2">🎉 Setup Complete!</h3>
-            <p className="text-green-700 dark:text-green-300">
+            <h3 className="text-xl font-semibold mb-2">🎉 Setup Complete!</h3>
+            <p className="">
               Your profile is fully configured and ready to go. Start creating amazing content for your audience!
             </p>
           </CardContent>
@@ -121,7 +121,7 @@ function RouteComponent() {
               <Card
                 className={`transition-all duration-300 hover:shadow-lg ${
                   isCompleted
-                    ? "border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20"
+                    ? ""
                     : isNextStep
                       ? "border-primary/30 bg-primary/5 dark:border-primary/40 dark:bg-primary/10 ring-2 ring-primary/20 dark:ring-primary/30"
                       : "border-gray-200 dark:border-gray-700"

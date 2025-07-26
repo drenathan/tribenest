@@ -7,10 +7,17 @@ export class MembershipTierModel extends BaseModel<"membershipTiers", "id"> {
     super(client, "membershipTiers", "id");
   }
 
-  public async getManyWithBenefits(profileId: string) {
+  public async getManyWithBenefits({
+    profileId,
+    removeArchived = false,
+  }: {
+    profileId: string;
+    removeArchived?: boolean;
+  }) {
     const membershipTiers = await this.client
       .selectFrom("membershipTiers as mt")
       .where("mt.profileId", "=", profileId)
+      .$if(removeArchived, (eb) => eb.where("mt.archivedAt", "is", null))
       .selectAll("mt")
       .select((eb) => [
         this.jsonArrayFrom(

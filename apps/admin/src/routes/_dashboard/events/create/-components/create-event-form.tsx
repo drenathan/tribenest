@@ -17,6 +17,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  type ApiError,
 } from "@tribe-nest/frontend-shared";
 import { useCreateEvent } from "@/hooks/mutations/useEvent";
 import { useAuth } from "@/hooks/useAuth";
@@ -93,8 +94,9 @@ export function CreateEventForm() {
       });
       toast.success("Event created successfully");
       navigate({ to: "/events/list" });
-    } catch (error: any) {
-      setErrorMessage(error?.response?.data?.message || "Failed to create event");
+    } catch (error) {
+      const message = (error as ApiError).response?.data?.message;
+      setErrorMessage(message || "Failed to create event");
     }
   });
 
