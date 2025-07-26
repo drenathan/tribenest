@@ -90,7 +90,7 @@ export class MembershipModel extends BaseModel<"memberships", "id"> {
             eb.ref("m.startDate").as("startDate"),
             eb.ref("m.endDate").as("endDate"),
             eb.ref("mt.name").as("membershipTierName"),
-            eb.ref("m.profilePaymentSubscriptionsId").as("profilePaymentSubscriptionsId"),
+            eb.ref("m.profilePaymentSubscriptionId").as("profilePaymentSubscriptionId"),
             sql`ROW_NUMBER() OVER (PARTITION BY m.account_id ORDER BY m.start_date DESC)`.as("rowNumber"),
             sql`a.first_name || ' ' || a.last_name`.as("fullName"),
             eb.ref("a.email").as("email"),
@@ -112,7 +112,7 @@ export class MembershipModel extends BaseModel<"memberships", "id"> {
     }
 
     const data = await filterQuery
-      .leftJoin("profilePaymentSubscriptions as pps", "pps.id", "om.profilePaymentSubscriptionsId")
+      .leftJoin("profilePaymentSubscriptions as pps", "pps.id", "om.profilePaymentSubscriptionId")
       .leftJoin("profilePaymentPrices as ppp", "ppp.id", "pps.paymentProfilePriceId")
       .selectAll("om")
       .select((eb) => [eb.ref("ppp.amount").as("subscriptionAmount"), eb.ref("ppp.billingCycle").as("billingCycle")])
@@ -147,7 +147,7 @@ export class MembershipModel extends BaseModel<"memberships", "id"> {
   public async getActiveMembership({ accountId, profileId }: { accountId: string; profileId: string }) {
     const membership = await this.client
       .selectFrom("memberships")
-      .leftJoin("profilePaymentSubscriptions as pps", "pps.id", "memberships.profilePaymentSubscriptionsId")
+      .leftJoin("profilePaymentSubscriptions as pps", "pps.id", "memberships.profilePaymentSubscriptionId")
       .leftJoin("profilePaymentPrices as ppp", "ppp.id", "pps.paymentProfilePriceId")
       .where((eb) => {
         const conditions: Expression<SqlBool>[] = [];

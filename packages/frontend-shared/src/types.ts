@@ -205,7 +205,7 @@ export type IPublicProductTrack = {
 export interface Membership {
   id: string;
   membershipTierId: string;
-  profilePaymentSubscriptionsId: string;
+  profilePaymentSubscriptionId: string;
   endDate: string;
   status: string;
   membershipTier: MembershipTier;

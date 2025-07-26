@@ -92,7 +92,7 @@ export class ProfilePaymentService extends BaseService {
           status: "pending",
           startDate: subscription.currentPeriodStart,
           endDate: subscription.currentPeriodEnd,
-          profilePaymentSubscriptionsId: profilePaymentSubscription.id,
+          profilePaymentSubscriptionId: profilePaymentSubscription.id,
         },
         trx,
       );
@@ -136,18 +136,18 @@ export class ProfilePaymentService extends BaseService {
       (qb) => {
         return qb
           .where("status", "in", ["active", "changed", "cancelled", "expired"])
-          .where("profilePaymentSubscriptionsId", "is not", null)
+          .where("profilePaymentSubscriptionId", "is not", null)
           .orderBy("endDate", "desc")
           .limit(1);
       },
     );
 
-    if (!lastMembership || !lastMembership.profilePaymentSubscriptionsId) {
+    if (!lastMembership || !lastMembership.profilePaymentSubscriptionId) {
       throw new BadRequestError("no membership not found");
     }
 
     const profilePaymentSubscription = await this.database.models.ProfilePaymentSubscription.findOne({
-      id: lastMembership.profilePaymentSubscriptionsId,
+      id: lastMembership.profilePaymentSubscriptionId,
     });
 
     if (!profilePaymentSubscription) {
@@ -191,7 +191,7 @@ export class ProfilePaymentService extends BaseService {
           status: "active",
           startDate: subscription.currentPeriodStart,
           endDate: subscription.currentPeriodEnd,
-          profilePaymentSubscriptionsId: profilePaymentSubscription.id,
+          profilePaymentSubscriptionId: profilePaymentSubscription.id,
         },
         trx,
       );
@@ -233,7 +233,7 @@ export class ProfilePaymentService extends BaseService {
     }
 
     const membership = await this.database.models.Membership.findOne({
-      profilePaymentSubscriptionsId: profilePaymentSubscription.id,
+      profilePaymentSubscriptionId: profilePaymentSubscription.id,
     });
 
     if (!membership) {
@@ -285,12 +285,12 @@ export class ProfilePaymentService extends BaseService {
       throw new ValidationError("Membership is not active");
     }
 
-    if (!membership.profilePaymentSubscriptionsId) {
+    if (!membership.profilePaymentSubscriptionId) {
       throw new ValidationError("Profile payment subscription not found");
     }
 
     const profilePaymentSubscription = await this.database.models.ProfilePaymentSubscription.findOne({
-      id: membership.profilePaymentSubscriptionsId,
+      id: membership.profilePaymentSubscriptionId,
     });
 
     if (!profilePaymentSubscription?.paymentProviderSubscriptionId) {

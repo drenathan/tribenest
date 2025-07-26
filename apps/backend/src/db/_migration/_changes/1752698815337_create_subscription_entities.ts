@@ -58,7 +58,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.alterTable(tables.memberships).dropColumn("profile_payment_subscriptions_id").execute();
+  await db.schema.alterTable(tables.memberships).dropColumn("profile_payment_subscription_id").execute();
   await db.schema.dropTable(tables.profile_payment_subscriptions).execute();
   await db.schema.dropTable(tables.profile_payment_prices).execute();
   await db.schema.dropTable(tables.profile_payment_customers).execute();

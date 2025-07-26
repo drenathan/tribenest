@@ -174,7 +174,7 @@ export interface Memberships {
   id: Generated<string>;
   membershipTierId: string;
   profileId: string;
-  profilePaymentSubscriptionsId: string | null;
+  profilePaymentSubscriptionId: string | null;
   startDate: Timestamp;
   status: string;
   updatedAt: Generated<Timestamp>;

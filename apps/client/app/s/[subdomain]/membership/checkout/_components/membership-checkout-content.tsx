@@ -27,7 +27,7 @@ export function MembershipCheckoutContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [isChangeMembershipLoading, setIsChangeMembershipLoading] = useState(false);
 
-  const hasPaymentSetup = !!user?.membership?.profilePaymentSubscriptionsId;
+  const hasPaymentSetup = !!user?.membership?.profilePaymentSubscriptionId;
 
   // Fetch membership tiers
   useEffect(() => {
