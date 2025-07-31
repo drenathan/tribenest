@@ -2,6 +2,14 @@
 
 The Complete artist platform
 
+# Features
+- Website builder
+- Sell memberships
+- Sell music
+- Mobile App (PWA)
+- Build Email Lists and Send Emails
+- Smartlinks (linktree, toneden)
+
 ## What's inside?
 
 This Turborepo includes the following packages and apps:
