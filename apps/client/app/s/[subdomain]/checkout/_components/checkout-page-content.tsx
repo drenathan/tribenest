@@ -6,7 +6,6 @@ import { useForm, Controller } from "react-hook-form";
 import { alphaToHexCode } from "@tribe-nest/frontend-shared";
 import { StripeCheckout } from "./stripe-checkout";
 import { round } from "lodash";
-import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
 import InternalPageRenderer from "../../_components/internal-page-renderer";
 
@@ -27,7 +26,7 @@ export function CheckoutPageContent() {
 export function Content() {
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
-  const { themeSettings, navigate, profile } = useEditorContext();
+  const { themeSettings, navigate, profile, httpClient } = useEditorContext();
   const [currentStage, setCurrentStage] = useState<1 | 2>(1);
   const [guestUserData, setGuestUserData] = useState<GuestUserData | null>(null);
   const [isFreeCheckoutLoading, setIsFreeCheckoutLoading] = useState(false);
@@ -68,7 +67,7 @@ export function Content() {
   const handleFreeCheckout = async () => {
     try {
       setIsFreeCheckoutLoading(true);
-      const { data } = await httpClient.post("/public/orders", {
+      const { data } = await httpClient!.post("/public/orders", {
         amount: total,
         profileId: profile?.id,
         email: guestUserData?.email || user?.email || "",

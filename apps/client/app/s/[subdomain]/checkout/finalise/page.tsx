@@ -2,7 +2,6 @@
 
 import { useSearchParams } from "next/navigation";
 import InternalPageRenderer from "../../_components/internal-page-renderer";
-import httpClient from "@/services/httpClient";
 import { useQuery } from "@tanstack/react-query";
 import { IPublicOrder, useEditorContext, OrderStatus, alphaToHexCode } from "@tribe-nest/frontend-shared";
 import { useCart } from "@tribe-nest/frontend-shared";
@@ -16,13 +15,13 @@ export default function Page() {
   const paymentProviderName = searchParams.get("paymentProviderName") as string;
   const paymentId = searchParams.get("paymentId") as string;
   const orderId = searchParams.get("orderId") as string;
-  const { profile, themeSettings, navigate } = useEditorContext();
+  const { profile, themeSettings, navigate, httpClient } = useEditorContext();
   const { clearCart, cartItems } = useCart();
 
   const { data, isLoading } = useQuery<IPublicOrder>({
     queryKey: ["paymentStatus", paymentId, paymentProviderName, profile?.id, orderId],
     queryFn: async () => {
-      const res = await httpClient.post("/public/orders/finalize", {
+      const res = await httpClient!.post("/public/orders/finalize", {
         paymentId,
         paymentProviderName,
         profileId: profile?.id,

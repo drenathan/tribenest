@@ -10,7 +10,6 @@ import {
 } from "@tribe-nest/frontend-shared";
 import { useCallback, useRef, useState } from "react";
 import { Appearance, loadStripe } from "@stripe/stripe-js";
-import httpClient from "@/services/httpClient";
 import { Elements } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +21,7 @@ type Props = {
   lastName?: string;
 };
 export const StripeCheckout = ({ amount, email, firstName, lastName }: Props) => {
-  const { themeSettings, profile } = useEditorContext();
+  const { themeSettings, profile, httpClient } = useEditorContext();
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
 
@@ -33,7 +32,7 @@ export const StripeCheckout = ({ amount, email, firstName, lastName }: Props) =>
   }>({
     queryKey: ["order", profile?.id, email, firstName, lastName, user?.id, cartItems],
     queryFn: async () => {
-      const res = await httpClient.post("/public/payments/start", {
+      const res = await httpClient!.post("/public/payments/start", {
         amount,
         profileId: profile?.id,
         email,
@@ -137,7 +136,7 @@ export default function CheckoutForm({
   paymentId: string;
 }) {
   const { user } = usePublicAuth();
-  const { profile } = useEditorContext();
+  const { profile, httpClient } = useEditorContext();
   const { cartItems } = useCart();
   const stripe = useStripe();
   const elements = useElements();
@@ -161,7 +160,7 @@ export default function CheckoutForm({
       // This function is called even if the form is invalid, we only want to create the order once no matter how many times the user clicks the button
       if (!localOrder) {
         try {
-          const res = await httpClient.post("/public/orders", {
+          const res = await httpClient!.post("/public/orders", {
             amount,
             profileId: profile.id,
             email,
