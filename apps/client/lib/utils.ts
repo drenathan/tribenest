@@ -1,3 +1,5 @@
+import { NextRequest } from "next/server";
+
 // Cache for runtime config
 let runtimeConfigCache: { rootDomain: string } | null = null;
 let configPromise: Promise<{ rootDomain: string }> | null = null;
@@ -71,4 +73,34 @@ export { rootDomain };
 export function isUUID(str: string) {
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(str);
+}
+
+export function extractSubdomain(request: NextRequest): string | null {
+  const host = request.headers.get("host") || "";
+  const hostname = host.split(":")[0] ?? "";
+
+  // Local development environment
+  if (request.url.includes("localhost") || request.url.includes("127.0.0.1")) {
+    if (hostname.includes(".localhost")) {
+      return hostname.split(".")[0] ?? "";
+    }
+    return null;
+  }
+
+  // Production environment
+  const rootDomainFormatted = rootDomain.split(":")[0];
+
+  // Handle preview deployment URLs (tenant---branch-name.vercel.app)
+  if (hostname.includes("---") && hostname.endsWith(".vercel.app")) {
+    const parts = hostname.split("---");
+    return parts.length > 0 ? (parts[0] ?? "") : "";
+  }
+
+  // Regular subdomain detection
+  const isSubdomain =
+    hostname !== rootDomainFormatted &&
+    hostname !== `www.${rootDomainFormatted}` &&
+    hostname.endsWith(`.${rootDomainFormatted}`);
+
+  return isSubdomain ? hostname.replace(`.${rootDomainFormatted}`, "") : null;
 }
