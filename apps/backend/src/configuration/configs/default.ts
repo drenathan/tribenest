@@ -57,6 +57,11 @@ const config: Partial<IConfig> = {
     presignedUrlExpiration: 60 * 60 * 30, // 30 minutes
     bucketUrl: R2_BUCKET_URL,
   },
+  mailCatcher: {
+    enabled: false,
+    host: "localhost",
+    port: 1025,
+  },
 };
 
 export default config;
