@@ -29,6 +29,14 @@ services:
       - ROOT_DOMAIN=tribenest.local
       - API_URL=http://api.tribenest.local
       - ADMIN_URL=http://admin.tribenest.local
+
+        # Minio configuration
+      - MINIO_ACCESS_KEY=tribenest
+      - MINIO_SECRET_KEY=tribenest
+      - MINIO_BUCKET=tribenest
+      - MINIO_URL=http://assets.tribenest.local
+      - MINIO_REGION=us-east-1
+      - MINIO_BUCKET_URL=http://assets.tribenest.local/tribenest
     ports:
       - "80:80"
     depends_on:
@@ -67,10 +75,59 @@ services:
       - tribenest_redis_test_prod_data:/data
     networks:
       - tribenest-test-prod-network
+  minio:
+    image: minio/minio:latest
+    container_name: tribenest-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - tribenest_minio_test_prod_data:/data
+    networks:
+      - tribenest-test-prod-network
+    environment:
+      - MINIO_ROOT_USER=tribenest
+      - MINIO_ROOT_PASSWORD=tribenest
+    command: server /data --console-address ":9001"
+
+  # set up minio bucket
+  minio_setup:
+    image: minio/mc
+    depends_on:
+      - minio
+    networks:
+      - tribenest-test-prod-network
+    volumes:
+      - ./minio-anon-permission.json:/minio-anon-permission.json
+    entrypoint: >
+      /bin/sh -c "
+        # Wait until MinIO is responding
+        until mc alias set tribenest http://tribenest-minio:9000 tribenest tribenest; do
+          echo 'Waiting for MinIO...';
+          sleep 2;
+        done;
+
+        echo 'Connected to MinIO';
+
+        # Only create the bucket if it doesn't exist
+        if ! mc ls tribenest/tribenest > /dev/null 2>&1; then
+          echo 'Bucket not found. Creating...';
+          mc mb tribenest/tribenest;
+          mc anonymous set-json minio-anon-permission.json tribenest/tribenest;
+          echo 'Bucket created and policy set to public';
+        else
+          echo 'Bucket already exists';
+        fi;
+
+        echo 'MinIO setup complete';
+        tail -f /dev/null;
+      "
 
 volumes:
   tribenest_postgres_test_prod_data:
   tribenest_redis_test_prod_data:
+  tribenest_minio_test_prod_data:
 
 networks:
   tribenest-test-prod-network:

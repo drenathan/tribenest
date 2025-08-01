@@ -75,26 +75,13 @@ export function isUUID(str: string) {
   return uuidRegex.test(str);
 }
 
-export function extractSubdomain(request: NextRequest): string | null {
+export async function extractSubdomain(request: NextRequest): Promise<string | null> {
   const host = request.headers.get("host") || "";
   const hostname = host.split(":")[0] ?? "";
 
-  // Local development environment
-  if (request.url.includes("localhost") || request.url.includes("127.0.0.1")) {
-    if (hostname.includes(".localhost")) {
-      return hostname.split(".")[0] ?? "";
-    }
-    return null;
-  }
-
   // Production environment
+  const rootDomain = await getRootDomainValue();
   const rootDomainFormatted = rootDomain.split(":")[0];
-
-  // Handle preview deployment URLs (tenant---branch-name.vercel.app)
-  if (hostname.includes("---") && hostname.endsWith(".vercel.app")) {
-    const parts = hostname.split("---");
-    return parts.length > 0 ? (parts[0] ?? "") : "";
-  }
 
   // Regular subdomain detection
   const isSubdomain =

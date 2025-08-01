@@ -28,3 +28,5 @@ export type ProfileAddress = {
   zipCode?: string;
   country: string;
 };
+
+export type StorageType = "local" | "remote";

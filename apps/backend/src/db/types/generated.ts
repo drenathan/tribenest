@@ -380,6 +380,7 @@ export interface ProfileConfigurations {
   smtpPassword: string | null;
   smtpPort: string | null;
   smtpUsername: string | null;
+  storageType: string | null;
 }
 
 export interface ProfileOnboardingSteps {

@@ -4,7 +4,7 @@ import { ColumnType } from "kysely";
 import { PostType } from "./post";
 import { MembershipStatus } from "./membership";
 import { OrderStatus } from "./product";
-import { ProfileAddress, ProfileOnboardingStepId, PWAConfig } from "./profile";
+import { ProfileAddress, ProfileOnboardingStepId, PWAConfig, StorageType } from "./profile";
 import { EmailRecipientStatus, EmailStatus } from "./email";
 
 type Media = Omit<GeneratedTypes.Media, "type" | "parent"> & {
@@ -41,9 +41,10 @@ type EmailRecipient = Omit<GeneratedTypes.EmailRecipients, "status"> & {
   status: EmailRecipientStatus;
 };
 
-type ProfileConfiguration = Omit<GeneratedTypes.ProfileConfigurations, "pwaConfig" | "address"> & {
+type ProfileConfiguration = Omit<GeneratedTypes.ProfileConfigurations, "pwaConfig" | "address" | "storageType"> & {
   pwaConfig: ColumnType<PWAConfig, GeneratedTypes.Json, string | null>;
   address: ColumnType<ProfileAddress, GeneratedTypes.Json, string | null>;
+  storageType: StorageType;
 };
 
 type Event = Omit<GeneratedTypes.Events, "address"> & {

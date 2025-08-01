@@ -43,4 +43,14 @@ export interface IConfig {
     normalQueueLockDuration: number;
     scheduledQueueLockDuration: number;
   };
+
+  minio: {
+    accessKeyId: string;
+    secretAccessKey: string;
+    region: string;
+    bucketName: string;
+    url: string;
+    presignedUrlExpiration: number;
+    bucketUrl: string;
+  };
 }

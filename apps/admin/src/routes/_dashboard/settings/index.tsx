@@ -25,15 +25,6 @@ const emailConfigSchema = z.object({
   smtpFrom: z.string().min(1, "From email is required"),
 });
 
-const r2ConfigSchema = z.object({
-  r2BucketName: z.string().min(1, "R2 bucket name is required"),
-  r2AccessKeyId: z.string().min(1, "R2 access key ID is required"),
-  r2SecretAccessKey: z.string().min(1, "R2 secret access key is required"),
-  r2Endpoint: z.string().min(1, "R2 endpoint is required"),
-  r2Region: z.string().min(1, "R2 region is required"),
-  r2BucketUrl: z.string().url("R2 bucket URL must be valid"),
-});
-
 const paymentConfigSchema = z.object({
   paymentProviderName: z.enum(["stripe"]),
   paymentProviderPublicKey: z.string().min(1, "Payment provider public key is required"),
@@ -43,7 +34,6 @@ const paymentConfigSchema = z.object({
 
 const settingsSchema = z.object({
   email: emailConfigSchema.optional(),
-  r2: r2ConfigSchema.optional(),
   payment: paymentConfigSchema.optional(),
 });
 
@@ -86,14 +76,6 @@ function RouteComponent() {
           smtpPassword: configuration.smtpPassword ?? "",
           smtpFrom: configuration.smtpFrom ?? "",
         },
-        r2: {
-          r2BucketName: configuration.r2BucketName ?? "",
-          r2AccessKeyId: configuration.r2AccessKeyId ?? "",
-          r2SecretAccessKey: configuration.r2SecretAccessKey ?? "",
-          r2Endpoint: configuration.r2Endpoint ?? "",
-          r2Region: configuration.r2Region ?? "",
-          r2BucketUrl: configuration.r2BucketUrl ?? "",
-        },
         payment: {
           paymentProviderName: configuration.paymentProviderName ?? "",
           paymentProviderPublicKey: configuration.paymentProviderPublicKey ?? "",
@@ -104,7 +86,7 @@ function RouteComponent() {
     }
   }, [configuration, reset]);
 
-  const saveSection = async (section: "email" | "r2" | "payment") => {
+  const saveSection = async (section: "email" | "payment") => {
     if (!currentProfileAuthorization?.profileId) return;
 
     // Validate the specific section
@@ -146,11 +128,6 @@ function RouteComponent() {
             `/profiles/${currentProfileAuthorization.profileId}/configuration/test-email`,
             { testEmail, profileId: currentProfileAuthorization?.profile?.id },
           );
-          break;
-        case "r2":
-          response = await httpClient.post(`/profiles/${currentProfileAuthorization.profileId}/configuration/test-r2`, {
-            profileId: currentProfileAuthorization?.profile?.id,
-          });
           break;
         case "payment":
           response = await httpClient.post(
@@ -202,7 +179,6 @@ function RouteComponent() {
       >
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="email">Email (SMTP)</TabsTrigger>
-          <TabsTrigger value="file">File Storage (R2)</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
           <TabsTrigger value="pwa">App (PWA)</TabsTrigger>
           <TabsTrigger value="address">Address</TabsTrigger>
@@ -268,81 +244,6 @@ function RouteComponent() {
                   disabled={isTesting === "email"}
                 >
                   {isTesting === "email" ? "Testing..." : "Test Email Configuration"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="file" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Cloudflare R2 Configuration</CardTitle>
-              <CardDescription>Configure Cloudflare R2 for file storage and uploads.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="r2BucketName">R2 Bucket Name</Label>
-                <Input id="r2BucketName" {...register("r2.r2BucketName")} placeholder="your-bucket-name" />
-                {errors.r2?.r2BucketName && <FormError message={errors.r2.r2BucketName.message ?? ""} />}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="r2AccessKeyId">R2 Access Key ID</Label>
-                  <Input id="r2AccessKeyId" {...register("r2.r2AccessKeyId")} placeholder="Your R2 access key ID" />
-                  {errors.r2?.r2AccessKeyId && <FormError message={errors.r2.r2AccessKeyId.message ?? ""} />}
-                </div>
-                <div>
-                  <Label htmlFor="r2SecretAccessKey">R2 Secret Access Key</Label>
-                  <Input
-                    id="r2SecretAccessKey"
-                    type="password"
-                    {...register("r2.r2SecretAccessKey")}
-                    placeholder="Your R2 secret access key"
-                  />
-                  {errors.r2?.r2SecretAccessKey && <FormError message={errors.r2.r2SecretAccessKey.message ?? ""} />}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="r2Endpoint">R2 Endpoint</Label>
-                  <Input
-                    id="r2Endpoint"
-                    {...register("r2.r2Endpoint")}
-                    placeholder="https://your-account-id.r2.cloudflarestorage.com"
-                  />
-                  {errors.r2?.r2Endpoint && <FormError message={errors.r2.r2Endpoint.message ?? ""} />}
-                </div>
-                <div>
-                  <Label htmlFor="r2Region">R2 Region</Label>
-                  <Input id="r2Region" {...register("r2.r2Region")} placeholder="auto" />
-                  {errors.r2?.r2Region && <FormError message={errors.r2.r2Region.message ?? ""} />}
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="r2BucketUrl">R2 Bucket URL</Label>
-                <Input
-                  id="r2BucketUrl"
-                  {...register("r2.r2BucketUrl")}
-                  placeholder="https://your-bucket.your-subdomain.com"
-                />
-                {errors.r2?.r2BucketUrl && <FormError message={errors.r2.r2BucketUrl.message ?? ""} />}
-              </div>
-
-              <div className="flex gap-2">
-                <Button type="button" onClick={() => saveSection("r2")} disabled={isLoading === "r2"}>
-                  {isLoading === "r2" ? "Saving..." : "Save R2 Settings"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => testConfiguration("r2")}
-                  disabled={isTesting === "r2"}
-                >
-                  {isTesting === "r2" ? "Testing..." : "Test R2 Configuration"}
                 </Button>
               </div>
             </CardContent>

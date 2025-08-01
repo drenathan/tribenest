@@ -49,7 +49,7 @@ export async function seedDatabase() {
 
   await db
     .insertInto("profileConfigurations")
-    .values({ profileId: profile!.id, paymentProviderName: PaymentProviderName.Stripe })
+    .values({ profileId: profile!.id, paymentProviderName: PaymentProviderName.Stripe, storageType: "local" })
     .executeTakeFirst();
 
   await db

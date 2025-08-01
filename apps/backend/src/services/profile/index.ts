@@ -44,7 +44,7 @@ export class ProfileService extends BaseService {
       );
 
       await this.database.models.ProfileConfiguration.insertOne(
-        { profileId: profile.id, pwaConfig: "{}", address: "{}" },
+        { profileId: profile.id, pwaConfig: "{}", address: "{}", storageType: "local" },
         trx,
       );
 

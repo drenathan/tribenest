@@ -32,6 +32,14 @@ services:
       - API_URL=https://api.yourdomain.com
       - ADMIN_URL=https://admin.yourdomain.com
 
+      # Minio configuration
+      - MINIO_ACCESS_KEY=tribenest
+      - MINIO_SECRET_KEY=tribenest
+      - MINIO_BUCKET=tribenest
+      - MINIO_URL=http://assets.yourdomain.com
+      - MINIO_REGION=us-east-1
+      - MINIO_BUCKET_URL=http://assets.yourdomain.com/tribenest
+
     depends_on:
       - postgres
       - redis
@@ -69,9 +77,58 @@ services:
     networks:
       - tribenest-prod-network
 
+  # Minio storage
+  minio:
+    image: minio/minio:latest
+    container_name: tribenest-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - tribenest_minio_prod_data:/data
+    networks:
+      - tribenest-prod-network
+    environment:
+      - MINIO_ROOT_USER=tribenest
+      - MINIO_ROOT_PASSWORD=tribenest
+    command: server /data --console-address ":9001"
+
+  # set up minio bucket
+  minio_setup:
+    image: minio/mc
+    depends_on:
+      - minio
+    networks:
+      - tribenest-prod-network
+    entrypoint: >
+      /bin/sh -c "
+        # Wait until MinIO is responding
+        until mc alias set tribenest http://tribenest-minio:9000 tribenest tribenest; do
+          echo 'Waiting for MinIO...';
+          sleep 2;
+        done;
+
+        echo 'Connected to MinIO';
+
+        # Only create the bucket if it doesn't exist
+        if ! mc ls tribenest/tribenest > /dev/null 2>&1; then
+          echo 'Bucket not found. Creating...';
+          mc mb tribenest/tribenest;
+          mc anonymous set-json minio-anon-permission.json tribenest/tribenest;
+          echo 'Bucket created and policy set to public';
+        else
+          echo 'Bucket already exists';
+        fi;
+
+        echo 'MinIO setup complete';
+        exit 0;
+      "
+
 volumes:
   tribenest_postgres_prod_data:
   tribenest_redis_prod_data:
+  tribenest_minio_prod_data:
 
 networks:
   tribenest-prod-network:

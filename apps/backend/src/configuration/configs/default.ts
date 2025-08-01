@@ -16,6 +16,12 @@ import {
   SMTP_PORT,
   SMTP_HOST,
   SMTP_FROM,
+  MINIO_REGION,
+  MINIO_URL,
+  MINIO_BUCKET_URL,
+  MINIO_SECRET_KEY,
+  MINIO_ACCESS_KEY,
+  MINIO_BUCKET,
 } from "../secrets";
 import { IConfig } from "../types";
 
@@ -61,6 +67,15 @@ const config: Partial<IConfig> = {
     enabled: false,
     host: "localhost",
     port: 1025,
+  },
+  minio: {
+    accessKeyId: MINIO_ACCESS_KEY,
+    secretAccessKey: MINIO_SECRET_KEY,
+    region: MINIO_REGION,
+    bucketName: MINIO_BUCKET,
+    url: MINIO_URL,
+    presignedUrlExpiration: 60 * 60 * 30, // 30 minutes
+    bucketUrl: MINIO_BUCKET_URL,
   },
 };
 

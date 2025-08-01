@@ -12,6 +12,8 @@ show_urls() {
     echo "PostgreSQL: localhost:5432"
     echo "Redis: localhost:6379"
     echo "Mailcatcher: localhost:1080"
+    echo "Minio: localhost:9000"
+    echo "Minio Console: localhost:9001"
 }
 
 # Function to validate app name

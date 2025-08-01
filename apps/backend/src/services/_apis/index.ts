@@ -1,10 +1,10 @@
 import { Database } from "@src/db";
-import { EncryptionService } from "@src/utils/encryption";
 import { EmailClient } from "@src/workers/emails/EmailClient";
 import S3Service from "./s3";
 import { PaymentProviderFactory } from "../paymentProvider/PaymentProviderFactory";
 import { PaymentProviderName } from "../paymentProvider/PaymentProvider";
-import { BadRequestError } from "@src/utils/app_error";
+import { BadRequestError, ValidationError } from "@src/utils/app_error";
+import { getConfig } from "@src/configuration";
 
 export default class ApiServices {
   constructor(private database: Database) {}
@@ -35,8 +35,16 @@ export default class ApiServices {
 
   public async getS3Client(profileId: string) {
     const config = await this.database.models.ProfileConfiguration.getProfileConfiguration(profileId);
+    if (!config) {
+      throw new ValidationError("Profile configuration not found");
+    }
+
+    if (config.storageType === "local") {
+      const minioConfig = getConfig("minio");
+      return new S3Service(minioConfig);
+    }
+
     if (
-      !config ||
       !config.r2BucketName ||
       !config.r2AccessKeyId ||
       !config.r2SecretAccessKey ||

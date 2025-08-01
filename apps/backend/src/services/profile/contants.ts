@@ -25,16 +25,6 @@ export const FORBIDDEN_SUBDOMAINS = [
 
 export const getDefaultProfileOnboardingSteps = (profileId: string): Insertable<IProfileOnboardingStep>[] => [
   {
-    id: ProfileOnboardingStepId.FileStorage,
-    step: 1,
-    title: "File Storage Configuration",
-    description: "To store your files, you need to add a s3 compatible file storage provider. We recommend using R2.",
-    actionText: "Configure",
-    actionPath: "/settings?tab=file",
-    profileId,
-    helpLink: "https://docs.webpage.com/file-storage-configuration",
-  },
-  {
     id: ProfileOnboardingStepId.EmailConfiguration,
     step: 2,
     title: "Email Configuration",

@@ -43,9 +43,59 @@ services:
     networks:
       - tribenest-dev-network
 
+  # Minio storage
+  minio:
+    image: minio/minio:latest
+    container_name: tribenest-minio-dev
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - tribenest_minio_dev_data:/data
+    networks:
+      - tribenest-dev-network
+    environment:
+      - MINIO_ROOT_USER=tribenest
+      - MINIO_ROOT_PASSWORD=tribenest
+    command: server /data --console-address ":9001"
+
+  # set up minio bucket
+  minio-setup:
+    image: minio/mc:latest
+    container_name: minio-setup-dev
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+        # Wait until MinIO is responding
+        until mc alias set tribenest http://tribenest-minio-dev:9000 tribenest tribenest; do
+          echo 'Waiting for MinIO...';
+          sleep 2;
+        done;
+
+        echo 'Connected to MinIO';
+
+        # Only create the bucket if it doesn't exist
+        if ! mc ls tribenest/tribenest > /dev/null 2>&1; then
+          echo 'Bucket not found. Creating...';
+          mc mb tribenest/tribenest;
+          mc anonymous set download tribenest/tribenest;
+          echo 'Bucket created and policy set to public';
+        else
+          echo 'Bucket already exists';
+        fi;
+
+        tail -f /dev/null;
+      "
+
+    networks:
+      - tribenest-dev-network
+
 volumes:
   tribenest_postgres_dev_data:
   tribenest_redis_dev_data:
+  tribenest_minio_dev_data:
 
 networks:
   tribenest-dev-network:
