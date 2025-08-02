@@ -120,7 +120,8 @@ export function OrdersTab() {
                 <div className="space-y-3">
                   {order.items.map((item, index) => (
                     <div key={`${item.productId}-${item.productVariantId}-${index}`} className="flex gap-4 items-start">
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={item.coverImage || ""}
                         alt={item.title}
                         className="w-12 h-12 @md:w-16 @md:h-16 object-cover rounded"

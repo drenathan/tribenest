@@ -114,7 +114,7 @@ export default function Page() {
         <div className="w-full max-w-4xl mx-auto p-6">
           <div className="text-center">
             <XCircle className="w-12 h-12 mx-auto mb-4" style={{ color: themeSettings.colors.text }} />
-            <h2 className="text-xl font-semibold mb-2" style={{ color: themeSettings.colors.textPrimary }}>
+            <h2 className="text-xl font-semibold mb-2" style={{ color: themeSettings.colors.text }}>
               Order Not Found
             </h2>
             <p style={{ color: themeSettings.colors.text }}>Unable to retrieve order information.</p>
@@ -129,7 +129,7 @@ export default function Page() {
       <div className="w-full max-w-4xl mx-auto p-6 pb-10">
         {/* Order Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-2" style={{ color: themeSettings.colors.textPrimary }}>
+          <h1 className="text-2xl font-bold mb-2" style={{ color: themeSettings.colors.text }}>
             Order #{data.id}
           </h1>
           <div className="flex items-center gap-3 mb-4">
@@ -193,7 +193,7 @@ export default function Page() {
           </div>
         )}
         <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4" style={{ color: themeSettings.colors.textPrimary }}>
+          <h2 className="text-xl font-semibold mb-4" style={{ color: themeSettings.colors.text }}>
             Order Items
           </h2>
           <div className="space-y-4">
@@ -208,7 +208,8 @@ export default function Page() {
                   className="flex gap-4 items-start border-b pb-4"
                   style={{ borderColor: themeSettings.colors.primary }}
                 >
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={item.coverImage || ""}
                     alt={item.title}
                     className="w-16 h-16 object-cover rounded"
@@ -217,7 +218,7 @@ export default function Page() {
                     height={64}
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate" style={{ color: themeSettings.colors.textPrimary }}>
+                    <div className="font-semibold truncate" style={{ color: themeSettings.colors.text }}>
                       {item.title}
                     </div>
                     <div className="text-sm" style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.8)}` }}>
@@ -261,7 +262,7 @@ export default function Page() {
             borderColor: themeSettings.colors.primary,
           }}
         >
-          <span className="text-lg font-semibold" style={{ color: themeSettings.colors.textPrimary }}>
+          <span className="text-lg font-semibold" style={{ color: themeSettings.colors.text }}>
             Total:
           </span>
           <span className="text-lg font-bold" style={{ color: themeSettings.colors.primary }}>
