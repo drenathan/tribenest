@@ -11,8 +11,15 @@ export async function GET(request: NextRequest) {
   }
 
   const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const isMultiTenant = process.env.MULTI_TENANT === "true";
 
-  const response = await fetch(`${apiUrl}/public/websites?subdomain=${subdomain || "default-site"}&pathname=/`);
+  if (isMultiTenant && !subdomain) {
+    return new NextResponse(null, { status: 404 });
+  }
+
+  const response = await fetch(
+    `${apiUrl}/public/websites?subdomain=${isMultiTenant ? subdomain : "default-site"}&pathname=/`,
+  );
   const webPage = (await response.json()) as WebPage;
 
   if (!webPage || !webPage.profile?.pwaConfig || !webPage.profile.pwaConfig.name) {
