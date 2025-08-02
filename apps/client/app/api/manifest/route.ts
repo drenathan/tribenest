@@ -3,7 +3,7 @@ import { extractSubdomain } from "../../../lib/utils";
 import { WebPage } from "@/app/s/[subdomain]/_api";
 
 export async function GET(request: NextRequest) {
-  const subdomain = extractSubdomain(request);
+  const subdomain = await extractSubdomain(request);
 
   if (subdomain && subdomain === "links") {
     // Block PWA installation for "links" subdomain by returning 404
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   const response = await fetch(`${apiUrl}/public/websites?subdomain=${subdomain || "default-site"}&pathname=/`);
   const webPage = (await response.json()) as WebPage;
 
-  if (!webPage.profile.pwaConfig || !webPage.profile.pwaConfig.name) {
+  if (!webPage || !webPage.profile?.pwaConfig || !webPage.profile.pwaConfig.name) {
     return new NextResponse(null, { status: 404 });
   }
   if (webPage) {
