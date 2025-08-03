@@ -13,7 +13,7 @@ export const useUploadFiles = () => {
   // const { handleError } = useHandleError();
 
   const uploadFiles = useCallback(
-    async (files: File[]) => {
+    async (files: (File & { id?: string })[]) => {
       setTotalFiles(files.length);
       setProgress(0);
       setFilesUploaded(1);
@@ -22,6 +22,7 @@ export const useUploadFiles = () => {
         url: string;
         size: number;
         name: string;
+        id?: string;
       }[] = [];
 
       for (const file of files) {
@@ -51,6 +52,7 @@ export const useUploadFiles = () => {
             url: data.remoteUrl,
             size: file.size,
             name: file.name,
+            id: file.id,
           });
         } catch (error) {
           console.error(error);

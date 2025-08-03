@@ -1,5 +1,5 @@
 import httpClient from "@/services/httpClient";
-import type { ProfileAuthorization, ProfileOnboarding } from "@/types/auth";
+import type { IProfileConfiguration, ProfileAuthorization, ProfileOnboarding } from "@/types/auth";
 import { useQuery } from "@tanstack/react-query";
 
 export function useGetProfileAuthorizations() {
@@ -24,7 +24,7 @@ export function useGetProfileOnboarding(profileId?: string) {
 }
 
 export function useGetProfileConfiguration(profileId?: string) {
-  return useQuery({
+  return useQuery<IProfileConfiguration>({
     queryKey: ["profile-configuration", profileId],
     queryFn: async () => {
       const response = await httpClient.get(`/profiles/${profileId}/configuration`);

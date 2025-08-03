@@ -1,6 +1,6 @@
 import type { CreateAccountInput } from "@/routes/_auth/-components/schema";
 import type { LoginInput } from "@/routes/_auth/-components/schema";
-import type { Profile } from "@tribe-nest/frontend-shared";
+import type { PaymentProviderName, Profile } from "@tribe-nest/frontend-shared";
 
 export interface AuthUser {
   email: string;
@@ -82,3 +82,30 @@ export enum ProfileOnboardingStepId {
   UploadFirstMusic = "upload-first-music",
   PWAConfiguration = "pwa-configuration",
 }
+
+export type IProfileConfiguration = {
+  pwaConfig: {
+    name: string;
+    shortName: string;
+    description: string;
+    icon192: string;
+    icon512: string;
+    icon96: string;
+  };
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+  smtpHost: string;
+  smtpPort: string;
+  smtpUsername: string;
+  smtpPassword: string;
+  smtpFrom: string;
+  paymentProviderName: PaymentProviderName;
+  paymentProviderPublicKey: string;
+  paymentProviderPrivateKey: string;
+  paymentProviderWebhookSecret: string;
+};

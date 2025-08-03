@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Form, FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -17,7 +17,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUploadFiles } from "@/hooks/useUploadFiles";
 import httpClient from "@/services/httpClient";
 import { toast } from "sonner";
-import { Upload, X, CheckCircle } from "lucide-react";
 import { useGetProfileConfiguration } from "@/hooks/queries/useGetProfileAuthorizations";
 
 // Validation schema for PWA configuration
@@ -25,36 +24,40 @@ const pwaConfigSchema = z.object({
   name: z.string().min(1, "App name is required").max(50, "App name must be 50 characters or less"),
   shortName: z.string().min(1, "Short name is required").max(12, "Short name must be 12 characters or less"),
   description: z.string().min(1, "Description is required").max(200, "Description must be 200 characters or less"),
-  icon192: z.string().optional(),
-  icon512: z.string().optional(),
-  icon96: z.string().optional(),
-  screenshotWide1280X720: z.string().optional(),
-  screenshotNarrow750X1334: z.string().optional(),
+  icon192: z.union([
+    z.instanceof(File, { message: "Icon 192x192 is required" }),
+    z.string().url("Icon 192x192 is required"),
+  ]),
+  icon512: z.union([
+    z.instanceof(File, { message: "Icon 512x512 is required" }),
+    z.string().url("Icon 512x512 is required"),
+  ]),
+  icon96: z.union([
+    z.instanceof(File, { message: "Icon 96x96 is required" }),
+    z.string().url("Icon 96x96 is required"),
+  ]),
+  screenshotWide1280X720: z.union([
+    z.instanceof(File, { message: "Wide screenshot is required" }),
+    z.string().url("Wide screenshot is required"),
+  ]),
+  screenshotNarrow750X1334: z.union([
+    z.instanceof(File, { message: "Narrow screenshot is required" }),
+    z.string().url("Narrow screenshot is required"),
+  ]),
 });
 
 type PWAConfigFormData = z.infer<typeof pwaConfigSchema>;
-
-interface FileUploadState {
-  icon192: File | null;
-  icon512: File | null;
-  icon96: File | null;
-  screenshotWide1280X720: File | null;
-  screenshotNarrow750X1334: File | null;
-}
 
 export function PWAConfigTab() {
   const { currentProfileAuthorization } = useAuth();
   const { uploadFiles, isUploading } = useUploadFiles();
   const [isLoading, setIsLoading] = useState(false);
-  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
-  const [fileUploads, setFileUploads] = useState<FileUploadState>({
-    icon192: null,
-    icon512: null,
-    icon96: null,
-    screenshotWide1280X720: null,
-    screenshotNarrow750X1334: null,
-  });
+
   const { data: configuration } = useGetProfileConfiguration(currentProfileAuthorization?.profileId);
+
+  const methods = useForm<PWAConfigFormData>({
+    resolver: zodResolver(pwaConfigSchema),
+  });
 
   const {
     register,
@@ -62,16 +65,164 @@ export function PWAConfigTab() {
     watch,
     formState: { errors },
     reset,
-  } = useForm<PWAConfigFormData>({
-    resolver: zodResolver(pwaConfigSchema),
-  });
+  } = methods;
 
-  // Load current PWA configuration
   useEffect(() => {
-    if (configuration?.pwa) {
-      reset(configuration.pwa);
+    if (configuration?.pwaConfig) {
+      reset(configuration.pwaConfig);
     }
   }, [configuration, reset]);
+
+  const onSubmit = async (data: PWAConfigFormData) => {
+    if (!currentProfileAuthorization?.profileId) return;
+    const filesKeys: (keyof PWAConfigFormData)[] = [
+      "icon192",
+      "icon512",
+      "icon96",
+      "screenshotWide1280X720",
+      "screenshotNarrow750X1334",
+    ];
+
+    setIsLoading(true);
+    try {
+      const filesToUpload = filesKeys
+        .map((key) => {
+          if (data[key] instanceof File) {
+            return Object.assign(data[key], { id: key as string });
+          }
+          return null;
+        })
+        .filter((file) => file !== null);
+
+      const uploadedFiles = await uploadFiles(filesToUpload);
+
+      const updatedData = {
+        ...data,
+        icon192: uploadedFiles.find((file) => file.id === "icon192")?.url ?? data.icon192,
+        icon512: uploadedFiles.find((file) => file.id === "icon512")?.url ?? data.icon512,
+        icon96: uploadedFiles.find((file) => file.id === "icon96")?.url ?? data.icon96,
+        screenshotWide1280X720:
+          uploadedFiles.find((file) => file.id === "screenshotWide1280X720")?.url ?? data.screenshotWide1280X720,
+        screenshotNarrow750X1334:
+          uploadedFiles.find((file) => file.id === "screenshotNarrow750X1334")?.url ?? data.screenshotNarrow750X1334,
+      };
+
+      await httpClient.put(`/profiles/${currentProfileAuthorization.profileId}/configuration`, {
+        pwa: updatedData,
+      });
+
+      toast.success("PWA configuration saved successfully!");
+    } catch (error) {
+      console.error("Failed to save PWA configuration:", error);
+      toast.error("Failed to save PWA configuration");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>PWA Configuration</CardTitle>
+        <CardDescription>
+          Configure your Progressive Web App settings. This will enable users to install your website as an app on their
+          devices.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="name">App Name</Label>
+                <Input id="name" {...register("name")} placeholder="My Awesome App" />
+                {errors.name && <FormError message={errors.name.message || ""} />}
+              </div>
+
+              <div>
+                <Label htmlFor="shortName">Short Name</Label>
+                <Input id="shortName" {...register("shortName")} placeholder="MyApp" />
+                {errors.shortName && <FormError message={errors.shortName.message || ""} />}
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Input id="description" {...register("description")} placeholder="A brief description of your app" />
+              {errors.description && <FormError message={errors.description.message || ""} />}
+            </div>
+
+            <div className="flex flex-col gap-8 mb-8">
+              <h3 className="text-lg font-semibold">App Icons</h3>
+
+              <FileUploadField
+                field="icon192"
+                label="Icon 192x192"
+                description="Square icon for Android devices"
+                dimensions="192x192px"
+              />
+
+              <FileUploadField
+                field="icon512"
+                label="Icon 512x512"
+                description="Square icon for Android devices (high resolution)"
+                dimensions="512x512px"
+              />
+
+              <FileUploadField
+                field="icon96"
+                label="Icon 96x96"
+                description="Square icon for smaller displays"
+                dimensions="96x96px"
+              />
+            </div>
+
+            <div className="flex flex-col gap-8">
+              <h3 className="text-lg font-semibold">App Screenshots</h3>
+
+              <FileUploadField
+                field="screenshotWide1280X720"
+                label="Wide Screenshot"
+                description="Landscape screenshot for app stores"
+                dimensions="1280x720px"
+              />
+
+              <FileUploadField
+                field="screenshotNarrow750X1334"
+                label="Narrow Screenshot"
+                description="Portrait screenshot for app stores"
+                dimensions="750x1334px"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <Button type="submit" disabled={isLoading || isUploading}>
+                {isLoading || isUploading ? "Saving..." : "Save PWA Configuration"}
+              </Button>
+            </div>
+          </form>
+        </FormProvider>
+      </CardContent>
+    </Card>
+  );
+}
+
+const FileUploadField = ({
+  field,
+  label,
+}: {
+  field: keyof PWAConfigFormData;
+  label: string;
+  description: string;
+  dimensions: string;
+}) => {
+  const {
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext();
+
+  const fieldValue = watch(field);
 
   const validateImageDimensions = (file: File, expectedWidth: number, expectedHeight: number): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -93,12 +244,7 @@ export function PWAConfigTab() {
     });
   };
 
-  const handleFileChange = async (field: keyof FileUploadState, file: File | null) => {
-    if (!file) {
-      setFileUploads((prev) => ({ ...prev, [field]: null }));
-      return;
-    }
-
+  const handleFileChange = async (field: string, file: File) => {
     // Validate file type
     if (!file.type.startsWith("image/")) {
       toast.error(`${field} must be an image file`);
@@ -130,235 +276,31 @@ export function PWAConfigTab() {
       return;
     }
 
-    setFileUploads((prev) => ({ ...prev, [field]: file }));
-  };
-
-  const onSubmit = async (data: PWAConfigFormData) => {
-    if (!currentProfileAuthorization?.profileId) return;
-
-    setHasAttemptedSubmit(true);
-
-    // Validate that required files are either uploaded or already exist
-    const requiredFields = ["icon192", "icon512", "icon96", "screenshotWide1280X720", "screenshotNarrow750X1334"];
-    const missingFields = requiredFields.filter((field) => {
-      const hasFile = fileUploads[field as keyof FileUploadState];
-      const hasExistingValue = data[field as keyof PWAConfigFormData];
-      return !hasFile && !hasExistingValue;
-    });
-
-    if (missingFields.length > 0) {
-      toast.error(`Please upload the following required files: ${missingFields.join(", ")}`);
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      // Upload all files first
-      const filesToUpload = Object.values(fileUploads).filter(Boolean) as File[];
-      let uploadedFiles: { url: string; name: string }[] = [];
-
-      if (filesToUpload.length > 0) {
-        uploadedFiles = await uploadFiles(filesToUpload);
-      }
-
-      // Map uploaded files to form data
-      const updatedData = { ...data };
-      uploadedFiles.forEach((file) => {
-        const fieldName = Object.keys(fileUploads).find(
-          (key) => fileUploads[key as keyof FileUploadState]?.name === file.name,
-        );
-        if (fieldName) {
-          (updatedData as any)[fieldName] = file.url;
-        }
-      });
-
-      // Save PWA configuration
-      await httpClient.put(`/profiles/${currentProfileAuthorization.profileId}/configuration`, {
-        pwa: updatedData,
-      });
-
-      toast.success("PWA configuration saved successfully!");
-
-      // Clear file uploads
-      setFileUploads({
-        icon192: null,
-        icon512: null,
-        icon96: null,
-        screenshotWide1280X720: null,
-        screenshotNarrow750X1334: null,
-      });
-
-      // Reload configuration
-      const { data: newData } = await httpClient.get(
-        `/profiles/${currentProfileAuthorization.profileId}/configuration`,
-      );
-      if (newData.pwa) {
-        reset(newData.pwa);
-      }
-    } catch (error) {
-      console.error("Failed to save PWA configuration:", error);
-      toast.error("Failed to save PWA configuration");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const FileUploadField = ({
-    field,
-    label,
-    description,
-    dimensions,
-  }: {
-    field: keyof FileUploadState;
-    label: string;
-    description: string;
-    dimensions: string;
-  }) => {
-    const currentFile = fileUploads[field];
-    const currentValue = watch(field);
-
-    // Check if field is required but missing (only show error after submit attempt)
-    const isRequired = ["icon192", "icon512", "icon96", "screenshotWide1280X720", "screenshotNarrow750X1334"].includes(
-      field,
-    );
-    const isMissing = isRequired && !currentFile && !currentValue && hasAttemptedSubmit;
-
-    return (
-      <div className="space-y-2">
-        <Label htmlFor={field}>{label}</Label>
-        <p className="text-sm text-muted-foreground">
-          {description} ({dimensions})
-        </p>
-
-        <div className="flex items-center gap-2">
-          <input
-            type="file"
-            id={field}
-            accept="image/*"
-            onChange={(e) => handleFileChange(field, e.target.files?.[0] || null)}
-            className="hidden"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => document.getElementById(field)?.click()}
-            disabled={isUploading}
-            className="flex items-center gap-2"
-          >
-            <Upload className="w-4 h-4" />
-            {currentFile ? "Change File" : "Upload File"}
-          </Button>
-
-          {currentFile && (
-            <div className="flex items-center gap-2 text-sm text-green-600">
-              <CheckCircle className="w-4 h-4" />
-              {currentFile.name}
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => handleFileChange(field, null)}
-                className="h-6 w-6 p-0"
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </div>
-          )}
-
-          {currentValue && !currentFile && (
-            <div className="flex items-center gap-2 text-sm text-blue-600">
-              <CheckCircle className="w-4 h-4" />
-              Current file uploaded
-            </div>
-          )}
-        </div>
-
-        {isMissing && <FormError message={`${label} is required`} />}
-      </div>
-    );
+    setValue(field, file);
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>PWA Configuration</CardTitle>
-        <CardDescription>
-          Configure your Progressive Web App settings. This will enable users to install your website as an app on their
-          devices.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="name">App Name</Label>
-              <Input id="name" {...register("name")} placeholder="My Awesome App" />
-              {errors.name && <FormError message={errors.name.message || ""} />}
-            </div>
+    <div className="flex flex-col gap-2">
+      <Label>{label}</Label>
+      <Input
+        placeholder="Upload file"
+        type="file"
+        accept={".jpg,.jpeg,.png"}
+        onChange={(e) => {
+          if (e.target.files?.[0]) {
+            handleFileChange(field, e.target.files[0]);
+          }
+        }}
+      />
+      {errors[field] && <FormError message={(errors[field]?.message as string) ?? ""} />}
 
-            <div>
-              <Label htmlFor="shortName">Short Name</Label>
-              <Input id="shortName" {...register("shortName")} placeholder="MyApp" />
-              {errors.shortName && <FormError message={errors.shortName.message || ""} />}
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Input id="description" {...register("description")} placeholder="A brief description of your app" />
-            {errors.description && <FormError message={errors.description.message || ""} />}
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">App Icons</h3>
-
-            <FileUploadField
-              field="icon192"
-              label="Icon 192x192"
-              description="Square icon for Android devices"
-              dimensions="192x192px"
-            />
-
-            <FileUploadField
-              field="icon512"
-              label="Icon 512x512"
-              description="Square icon for Android devices (high resolution)"
-              dimensions="512x512px"
-            />
-
-            <FileUploadField
-              field="icon96"
-              label="Icon 96x96"
-              description="Square icon for smaller displays"
-              dimensions="96x96px"
-            />
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">App Screenshots</h3>
-
-            <FileUploadField
-              field="screenshotWide1280X720"
-              label="Wide Screenshot"
-              description="Landscape screenshot for app stores"
-              dimensions="1280x720px"
-            />
-
-            <FileUploadField
-              field="screenshotNarrow750X1334"
-              label="Narrow Screenshot"
-              description="Portrait screenshot for app stores"
-              dimensions="750x1334px"
-            />
-          </div>
-
-          <div className="flex gap-2">
-            <Button type="submit" disabled={isLoading || isUploading}>
-              {isLoading || isUploading ? "Saving..." : "Save PWA Configuration"}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      {fieldValue && (
+        <img
+          src={fieldValue instanceof File ? URL.createObjectURL(fieldValue) : fieldValue}
+          alt={label}
+          className="w-30 object-cover "
+        />
+      )}
+    </div>
   );
-}
+};

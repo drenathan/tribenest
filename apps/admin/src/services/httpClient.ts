@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Dynamically determine API URL based on current domain
-const getApiUrl = () => {
+export const getApiUrl = () => {
   // In development, use the environment variable
   if (import.meta.env.DEV) {
     return import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -16,8 +16,7 @@ const getApiUrl = () => {
     return `${protocol}//api.${hostname.substring(6)}`;
   }
 
-  // If we're on a custom domain, use the same domain for API
-  return `${protocol}//${hostname}`;
+  return "http://localhost:8000";
 };
 
 const httpClient = axios.create({

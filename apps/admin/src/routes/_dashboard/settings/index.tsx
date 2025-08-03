@@ -9,7 +9,7 @@ import { Input } from "@tribe-nest/frontend-shared";
 import { Label } from "@tribe-nest/frontend-shared";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@tribe-nest/frontend-shared";
 import { useAuth } from "@/hooks/useAuth";
-import httpClient from "@/services/httpClient";
+import httpClient, { getApiUrl } from "@/services/httpClient";
 import { toast } from "sonner";
 import { capitalize } from "lodash";
 import { PWAConfigTab } from "./-components/PWAConfigTab";
@@ -77,7 +77,7 @@ function RouteComponent() {
           smtpFrom: configuration.smtpFrom ?? "",
         },
         payment: {
-          paymentProviderName: configuration.paymentProviderName ?? "",
+          paymentProviderName: configuration.paymentProviderName ?? PaymentProviderName.Stripe,
           paymentProviderPublicKey: configuration.paymentProviderPublicKey ?? "",
           paymentProviderPrivateKey: configuration.paymentProviderPrivateKey ?? "",
           paymentProviderWebhookSecret: configuration.paymentProviderWebhookSecret ?? "",
@@ -308,6 +308,20 @@ function RouteComponent() {
                 {errors.payment?.paymentProviderWebhookSecret && (
                   <FormError message={errors.payment.paymentProviderWebhookSecret.message ?? ""} />
                 )}
+              </div>
+
+              <div>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `${getApiUrl()}/public/webhooks/stripe/${currentProfileAuthorization.profileId}`,
+                    );
+                    toast.success("Webhook URL copied to clipboard");
+                  }}
+                >
+                  Copy Webhook URL
+                </Button>
               </div>
 
               <div className="flex gap-2">
