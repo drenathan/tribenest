@@ -9,7 +9,7 @@ import { addAlphaToHexCode } from "../../../lib/utils";
 interface PostItemProps {
   product: IPublicProduct;
 }
-
+// another
 export const MusicItem: UserComponent<PostItemProps> = ({ product }) => {
   const { themeSettings, profile, navigate } = useEditorContext();
   const defaultVariant = product.variants.find((variant) => variant.isDefault);
