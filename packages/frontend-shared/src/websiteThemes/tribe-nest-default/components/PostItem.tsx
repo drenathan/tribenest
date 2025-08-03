@@ -19,6 +19,8 @@ interface PostItemProps {
   post: IPublicPost;
 }
 
+//empty here
+
 export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
   const { themeSettings, profile, httpClient, navigate } = useEditorContext();
   const { isAuthenticated } = usePublicAuth();
