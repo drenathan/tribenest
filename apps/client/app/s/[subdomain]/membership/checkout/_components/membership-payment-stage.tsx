@@ -122,8 +122,7 @@ const Content = ({ clientSecret, onBackToDetails }: { clientSecret: string; onBa
       return;
     }
 
-    setIsLoading(false);
-
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // wait a bit for webhook to be processed
     refetchUser();
     navigate("/account", { replace: true });
   };

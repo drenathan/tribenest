@@ -96,7 +96,7 @@
     "redis": "^5.0.0",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
-    "stripe": "^17.0.0",
+    "stripe": "^18.4.0",
     "supertest": "^7.1.0",
     "url-slug": "^4.0.1",
     "uuid": "^11.1.0",

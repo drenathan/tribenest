@@ -134,8 +134,6 @@ export class ProfileConfigurationModel extends BaseModel<"profileConfigurations"
       "r2BucketUrl",
     ]);
 
-    console.log(encryptedData, "encryptedData");
-
     await this.updateOne({ profileId }, encryptedData);
 
     return true;

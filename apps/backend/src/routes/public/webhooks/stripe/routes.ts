@@ -30,6 +30,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
     // Review important events for Billing webhooks
     // https://stripe.com/docs/billing/webhooks
     // Remove comment to see the various objects sent for this sample
+
     switch (event.type) {
       case "invoice.payment_succeeded":
         if (dataObject["billing_reason"] == "subscription_create") {
@@ -37,15 +38,8 @@ const init: InitRouteFunction = ({ services, workers }) => {
           // Set the payment method used to pay the first invoice
           // as the default payment method for that subscription
           const subscription_id = dataObject["subscription"];
-          const payment_intent_id = dataObject["payment_intent"];
-
-          // Retrieve the payment intent used to pay the subscription
-          const payment_intent = await paymentProvider.client.paymentIntents.retrieve(payment_intent_id);
 
           try {
-            await paymentProvider.client.subscriptions.update(subscription_id, {
-              default_payment_method: payment_intent.payment_method as string,
-            });
             await services.profile.payment.finalizeSubscription({
               profileId: req.params.profileId,
               subscriptionId: subscription_id,

@@ -4,7 +4,9 @@ import { extractSubdomain } from "./lib/utils";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const subdomain = await extractSubdomain(request);
-  const isMultiTenant = process.env.MULTI_TENANT === "true";
+  // const isMultiTenant = process.env.MULTI_TENANT === "true";
+  const isMultiTenant = true;
+  console.log("isMultiTenant", isMultiTenant, subdomain);
 
   if (subdomain === "links") {
     return NextResponse.rewrite(new URL(`/s/links${pathname}`, request.url));
