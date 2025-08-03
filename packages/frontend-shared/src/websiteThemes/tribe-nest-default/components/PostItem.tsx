@@ -52,6 +52,8 @@ export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
     };
   }, []);
 
+  // empty here
+
   const loadLikeStatus = useCallback(async () => {
     if (!httpClient) return;
     try {
