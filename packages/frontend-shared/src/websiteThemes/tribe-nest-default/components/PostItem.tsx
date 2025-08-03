@@ -14,15 +14,11 @@ import {
 } from "../../../components/editor/selectors";
 import { usePublicAuth } from "../../../contexts/PublicAuthContext";
 import ReactPlayer from "react-player";
-//empty here
 
 interface PostItemProps {
   post: IPublicPost;
 }
 
-//empty here
-//empty here
-//empty here
 export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
   const { themeSettings, profile, httpClient, navigate } = useEditorContext();
   const { isAuthenticated } = usePublicAuth();
@@ -51,8 +47,6 @@ export const PostItem: UserComponent<PostItemProps> = ({ post }) => {
       }
     };
   }, []);
-
-  // empty here
 
   const loadLikeStatus = useCallback(async () => {
     if (!httpClient) return;
