@@ -15,7 +15,6 @@ export default class S3Service {
 
   constructor(private s3Config: S3Config) {
     const { accessKeyId, secretAccessKey, url, region } = this.s3Config;
-    console.log("s3Config", this.s3Config);
     this.client = new S3Client({
       credentials: { accessKeyId, secretAccessKey },
       endpoint: url,

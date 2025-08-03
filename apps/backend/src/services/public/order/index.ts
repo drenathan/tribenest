@@ -284,7 +284,9 @@ export class OrderService extends BaseService {
       // Single track: add directly to root
       const track = tracks[0];
       const media = track.media[0];
-      const filename = `${track.title.replace(/[^a-zA-Z0-9\s-]/g, "")}.${media.filename?.split(".").pop() ?? "wav"}`;
+      const trackTitle = track.title || product.title;
+      const filename = `${trackTitle.replace(/[^a-zA-Z0-9\s-]/g, "")}.${media.filename?.split(".").pop() ?? "wav"}`;
+
       await this.addFileToArchive(archive, track, filename);
     }
   }

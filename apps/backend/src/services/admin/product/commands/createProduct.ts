@@ -88,6 +88,7 @@ export async function createProduct(this: ProductService, input: CreateProductIn
             size: track.fileSize,
             type: MediaType.Audio,
             profileId: input.profileId,
+            filename: track.fileName,
             parent: "product_variant_track",
           },
           trx,

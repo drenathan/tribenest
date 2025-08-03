@@ -116,7 +116,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
           eb
             .selectFrom("mediaMappings as mp")
             .innerJoin("media as m", "m.id", "mp.mediaId")
-            .select(["m.url", "m.type", "m.size", "m.id"])
+            .select(["m.url", "m.type", "m.size", "m.id", "m.filename"])
             .whereRef("mp.entityId", "=", "p.id")
             .orderBy("mp.order", "asc"),
         ).as("media"),
@@ -143,7 +143,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
                       eb
                         .selectFrom("mediaMappings as mp")
                         .innerJoin("media as m", "m.id", "mp.mediaId")
-                        .select(["m.url", "m.type", "m.size", "m.id"])
+                        .select(["m.url", "m.type", "m.size", "m.id", "m.filename"])
                         .whereRef("mp.entityId", "=", "pvt.id")
                         .orderBy("mp.order", "asc"),
                     ).as("media"),
