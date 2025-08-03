@@ -14,7 +14,7 @@ import {
 } from "../../../components/editor/selectors";
 import { usePublicAuth } from "../../../contexts/PublicAuthContext";
 import ReactPlayer from "react-player";
-//empty here
+
 interface PostItemProps {
   post: IPublicPost;
 }

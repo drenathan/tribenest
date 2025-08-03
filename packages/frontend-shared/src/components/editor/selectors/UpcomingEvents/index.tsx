@@ -1,6 +1,6 @@
 "use client";
 import { type UserComponent, useNode } from "@craftjs/core";
-import { IEvent } from "../../../../types";
+import { type IEvent } from "../../../../types";
 import { useEditorContext } from "../../context";
 import { useEffect, useState } from "react";
 import { UpcomingEventsSettings } from "./Settings";
@@ -13,7 +13,7 @@ type UpcomingEventsProps = {
 
 export const UpcomingEvents: UserComponent<UpcomingEventsProps> = ({ title }: UpcomingEventsProps) => {
   const [events, setEvents] = useState<IEvent[]>([]);
-  const { httpClient, themeSettings, profile, navigate } = useEditorContext();
+  const { httpClient, themeSettings, profile } = useEditorContext();
 
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);

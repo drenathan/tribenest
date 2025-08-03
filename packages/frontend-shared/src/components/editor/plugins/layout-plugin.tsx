@@ -1,4 +1,3 @@
-import * as React from "react";
 import { type JSX, useEffect, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $findMatchingParent, $insertNodeToNearestRoot, mergeRegister } from "@lexical/utils";

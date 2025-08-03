@@ -1,4 +1,4 @@
-import { JSX, useEffect } from "react";
+import { type JSX, useEffect } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $insertNodeToNearestRoot } from "@lexical/utils";
 import { COMMAND_PRIORITY_EDITOR, createCommand, type LexicalCommand } from "lexical";

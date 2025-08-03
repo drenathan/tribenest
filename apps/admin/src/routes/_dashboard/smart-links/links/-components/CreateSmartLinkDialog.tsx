@@ -45,7 +45,7 @@ export const CreateSmartLinkDialog = ({
   const createSmartLink = useCreateSmartLink();
   const navigate = useNavigate();
 
-  const { control, handleSubmit, reset, watch, setValue, formState } = useForm<CreateSmartLinkFormData>({
+  const { control, handleSubmit, reset, watch, setValue } = useForm<CreateSmartLinkFormData>({
     resolver: zodResolver(createSmartLinkSchema),
     defaultValues: {
       title: "",

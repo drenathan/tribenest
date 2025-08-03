@@ -1,10 +1,9 @@
 "use client";
 import { type UserComponent, useNode } from "@craftjs/core";
 import { FeaturedMusicSectionSettings } from "./Settings";
-import { IPublicProduct, ProductCategory } from "../../../../types";
+import { type IPublicProduct, ProductCategory } from "../../../../types";
 import { useEditorContext } from "../../context";
 import { useEffect, useState } from "react";
-import { EditorText } from "../Text";
 import { addAlphaToHexCode } from "../../../../lib/utils";
 import { Badge } from "../../../ui/badge";
 import { Music } from "lucide-react";

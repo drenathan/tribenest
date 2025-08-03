@@ -81,7 +81,10 @@ export const useReorderMembershipTiers = () => {
 export const useCreateMembershipBenefit = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateMembershipBenefitInput) => httpClient.post("/membership-benefits", data),
+    mutationFn: async (data: CreateMembershipBenefitInput) => {
+      const result = await httpClient.post("/membership-benefits", data);
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["membership-benefits"] });
     },

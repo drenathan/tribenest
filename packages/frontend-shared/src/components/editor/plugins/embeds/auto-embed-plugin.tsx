@@ -240,7 +240,7 @@ export function AutoEmbedPlugin(): JSX.Element {
         embedConfigs={EmbedConfigs}
         onOpenEmbedModalForConfig={openEmbedModal}
         getMenuOptions={getMenuOptions}
-        menuRenderFn={(anchorElementRef, { selectedIndex, options, selectOptionAndCleanUp, setHighlightedIndex }) => {
+        menuRenderFn={(anchorElementRef, { options, selectOptionAndCleanUp }) => {
           return anchorElementRef.current ? (
             <Popover open={true}>
               <PopoverPortal container={anchorElementRef.current}>
@@ -250,7 +250,7 @@ export function AutoEmbedPlugin(): JSX.Element {
                     <Command>
                       <CommandList>
                         <CommandGroup>
-                          {options.map((option, i: number) => (
+                          {options.map((option) => (
                             <CommandItem
                               key={option.key}
                               value={option.title}

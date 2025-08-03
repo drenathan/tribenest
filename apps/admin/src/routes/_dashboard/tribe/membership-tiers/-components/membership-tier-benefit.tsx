@@ -1,4 +1,12 @@
-import { Button, Checkbox, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@tribe-nest/frontend-shared";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@tribe-nest/frontend-shared";
 import type { MembershipBenefit, MembershipTier } from "@/types/membership";
 import EmptyState from "@/components/empty-state";
 import { useEffect, useState } from "react";

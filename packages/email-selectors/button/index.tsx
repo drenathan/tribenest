@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useNode, type UserComponent } from "@craftjs/core";
-import { Column, Button } from "@react-email/components";
+import { Button } from "@react-email/components";
 import { useSelectorContext } from "../selectorContext";
 
 export type EmailButtonProps = {

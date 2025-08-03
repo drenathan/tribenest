@@ -1,16 +1,14 @@
 "use client";
 import { type UserComponent, useNode } from "@craftjs/core";
 import { useEditorContext } from "../../context";
-import { useEffect, useState } from "react";
 import { EditorFooterSettings } from "./Settings";
-import { Calendar, ExternalLink, MapPin } from "lucide-react";
 import { addAlphaToHexCode } from "../../../../lib/utils";
 import { EditorSocialIcons } from "../SocialIcons";
 
 type EditorFooterProps = {};
 
 export const EditorFooter: UserComponent<EditorFooterProps> = () => {
-  const { profile, navigate, themeSettings } = useEditorContext();
+  const { profile, themeSettings } = useEditorContext();
 
   const {
     connectors: { connect },

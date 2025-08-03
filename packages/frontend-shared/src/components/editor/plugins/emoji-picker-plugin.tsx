@@ -7,11 +7,11 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { MenuOption, useBasicTypeaheadTriggerMatch } from "@lexical/react/LexicalTypeaheadMenuPlugin";
-import { $createTextNode, $getSelection, $isRangeSelection, TextNode } from "lexical";
+// import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { MenuOption } from "@lexical/react/LexicalTypeaheadMenuPlugin";
+// import { $createTextNode, $getSelection, $isRangeSelection, TextNode } from "lexical";
 
 const LexicalTypeaheadMenuPlugin = dynamic(() => import("./default/lexical-typeahead-menu-plugin"), { ssr: false });
 
@@ -45,66 +45,66 @@ type Emoji = {
   skin_tones?: boolean;
 };
 
-const MAX_EMOJI_SUGGESTION_COUNT = 10;
+// const MAX_EMOJI_SUGGESTION_COUNT = 10;
 
 export function EmojiPickerPlugin() {
-  const [editor] = useLexicalComposerContext();
-  const [queryString, setQueryString] = useState<string | null>(null);
-  const [emojis, setEmojis] = useState<Array<Emoji>>([]);
-  const [isOpen, setIsOpen] = useState(false);
+  // const [editor] = useLexicalComposerContext();
+  // const [queryString, setQueryString] = useState<string | null>(null);
+  const [_, setEmojis] = useState<Array<Emoji>>([]);
+  // const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     import("../utils/emoji-list").then((file) => setEmojis(file.default));
   }, []);
 
-  const emojiOptions = useMemo(
-    () =>
-      emojis != null
-        ? emojis.map(
-            ({ emoji, aliases, tags }) =>
-              new EmojiOption(aliases[0], emoji, {
-                keywords: [...aliases, ...tags],
-              }),
-          )
-        : [],
-    [emojis],
-  );
+  // const emojiOptions = useMemo(
+  //   () =>
+  //     emojis != null
+  //       ? emojis.map(
+  //           ({ emoji, aliases, tags }) =>
+  //             new EmojiOption(aliases[0], emoji, {
+  //               keywords: [...aliases, ...tags],
+  //             }),
+  //         )
+  //       : [],
+  //   [emojis],
+  // );
 
-  const checkForTriggerMatch = useBasicTypeaheadTriggerMatch(":", {
-    minLength: 0,
-  });
+  // const checkForTriggerMatch = useBasicTypeaheadTriggerMatch(":", {
+  //   minLength: 0,
+  // });
 
-  const options: Array<EmojiOption> = useMemo(() => {
-    return emojiOptions
-      .filter((option: EmojiOption) => {
-        return queryString != null
-          ? new RegExp(queryString, "gi").exec(option.title) || option.keywords != null
-            ? option.keywords.some((keyword: string) => new RegExp(queryString, "gi").exec(keyword))
-            : false
-          : emojiOptions;
-      })
-      .slice(0, MAX_EMOJI_SUGGESTION_COUNT);
-  }, [emojiOptions, queryString]);
+  // const options: Array<EmojiOption> = useMemo(() => {
+  //   return emojiOptions
+  //     .filter((option: EmojiOption) => {
+  //       return queryString != null
+  //         ? new RegExp(queryString, "gi").exec(option.title) || option.keywords != null
+  //           ? option.keywords.some((keyword: string) => new RegExp(queryString, "gi").exec(keyword))
+  //           : false
+  //         : emojiOptions;
+  //     })
+  //     .slice(0, MAX_EMOJI_SUGGESTION_COUNT);
+  // }, [emojiOptions, queryString]);
 
-  const onSelectOption = useCallback(
-    (selectedOption: EmojiOption, nodeToRemove: TextNode | null, closeMenu: () => void) => {
-      editor.update(() => {
-        const selection = $getSelection();
+  // const onSelectOption = useCallback(
+  //   (selectedOption: EmojiOption, nodeToRemove: TextNode | null, closeMenu: () => void) => {
+  //     editor.update(() => {
+  //       const selection = $getSelection();
 
-        if (!$isRangeSelection(selection) || selectedOption == null) {
-          return;
-        }
+  //       if (!$isRangeSelection(selection) || selectedOption == null) {
+  //         return;
+  //       }
 
-        if (nodeToRemove) {
-          nodeToRemove.remove();
-        }
+  //       if (nodeToRemove) {
+  //         nodeToRemove.remove();
+  //       }
 
-        selection.insertNodes([$createTextNode(selectedOption.emoji)]);
+  //       selection.insertNodes([$createTextNode(selectedOption.emoji)]);
 
-        closeMenu();
-      });
-    },
-    [editor],
-  );
+  //       closeMenu();
+  //     });
+  //   },
+  //   [editor],
+  // );
 
   return (
     // @ts-ignore

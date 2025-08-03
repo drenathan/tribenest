@@ -130,7 +130,7 @@ function TableActionMenu({
     columns: 1,
     rows: 1,
   });
-  const [modal, showModal] = useEditorModal();
+  const [modal] = useEditorModal();
   const [canMergeCells, setCanMergeCells] = useState(false);
   const [canUnmergeCell, setCanUnmergeCell] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState(() => currentCellBackgroundColor(editor) || "");

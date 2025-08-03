@@ -1,4 +1,3 @@
-import React from "react";
 import { type UserComponent, useNode } from "@craftjs/core";
 
 export type ImageProps = {

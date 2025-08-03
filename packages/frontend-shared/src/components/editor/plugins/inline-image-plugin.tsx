@@ -1,4 +1,3 @@
-import * as React from "react";
 import { type JSX, useEffect, useRef, useState } from "react";
 // import '../nodes/inline-image-node.css';
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -60,13 +59,13 @@ export function InsertInlineImageDialog({
 
   const isDisabled = src === "";
 
-  const handleShowCaptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setShowCaption(e.target.checked);
-  };
+  // const handleShowCaptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setShowCaption(e.target.checked);
+  // };
 
-  const handlePositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPosition(e.target.value as Position);
-  };
+  // const handlePositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setPosition(e.target.value as Position);
+  // };
 
   const loadImage = (files: FileList | null) => {
     const reader = new FileReader();

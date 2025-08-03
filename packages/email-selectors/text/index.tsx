@@ -1,5 +1,3 @@
-import React from "react";
-
 import { useNode, type UserComponent } from "@craftjs/core";
 
 export type EmailTextProps = {
