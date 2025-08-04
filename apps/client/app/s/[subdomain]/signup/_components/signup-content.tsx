@@ -64,7 +64,7 @@ export function SignupContent() {
         // If the membership tier is free, redirect to the home page or members page
         navigate("/");
       } else if (membershipTier) {
-        navigate(`/membership/checkout?tierId=${membershipTier.id}`);
+        navigate(`/membership/checkout?membershipTierId=${membershipTier.id}`);
       } else {
         navigate(redirect || "/");
       }
