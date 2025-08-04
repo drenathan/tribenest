@@ -112,7 +112,7 @@ export class PaymentProviderStripe extends PaymentProvider<Stripe> {
       },
     });
 
-    const lineItem = (subscription.latest_invoice as Stripe.Invoice)?.lines?.data?.[0];
+    const lineItem = (subscription.latest_invoice as Stripe.Invoice)?.lines?.data?.slice(-1)?.[0];
 
     if (!lineItem) {
       throw new ValidationError("No line item found unable to create subscription");
@@ -142,14 +142,27 @@ export class PaymentProviderStripe extends PaymentProvider<Stripe> {
       product_data: { name: `${input.subscriptionId}${input.amount} per ${input.billingCycle}` },
     });
 
+    const currentSubscription = await this.client.subscriptions.retrieve(input.subscriptionId);
+
     const subscription = await this.client.subscriptions.update(input.subscriptionId, {
-      items: [{ price: price.id }],
+      items: [
+        ...currentSubscription.items.data.map((item) => ({
+          id: item.id,
+          deleted: true,
+        })),
+        { price: price.id },
+      ],
       expand: ["latest_invoice"],
     });
 
-    const lineItem = (subscription.latest_invoice as Stripe.Invoice)?.lines?.data?.[0];
+    const latestInvoice = subscription.latest_invoice as Stripe.Invoice;
 
-    console.log("lineItem", JSON.stringify(subscription.latest_invoice, null, 2));
+    if (latestInvoice.status !== "paid") {
+      throw new ValidationError("Unable to update subscription");
+      // TODO: Handle payment error on subscription change
+    }
+
+    const lineItem = latestInvoice?.lines?.data?.slice(-1)?.[0]; // get the last line item
 
     if (!lineItem) {
       throw new ValidationError("No line item found unable to update subscription");

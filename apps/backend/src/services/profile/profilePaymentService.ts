@@ -143,7 +143,7 @@ export class ProfilePaymentService extends BaseService {
     );
 
     if (!lastMembership || !lastMembership.profilePaymentSubscriptionId) {
-      throw new BadRequestError("no membership not found");
+      throw new BadRequestError("no membership found");
     }
 
     const profilePaymentSubscription = await this.database.models.ProfilePaymentSubscription.findOne({
@@ -159,6 +159,7 @@ export class ProfilePaymentService extends BaseService {
       amount: input.amount,
       currency: "usd",
       billingCycle: input.billingCycle,
+      customerId: customer.customerId,
     });
 
     const membershipId = await this.database.client.transaction().execute(async (trx) => {
@@ -239,6 +240,10 @@ export class ProfilePaymentService extends BaseService {
     if (!membership) {
       // TODO: we need some error handling here
       console.error("Membership not found");
+      return;
+    }
+
+    if (membership.status === "active") {
       return;
     }
 

@@ -76,6 +76,7 @@ export type UpdateSubscriptionInput = {
   amount: number;
   currency: string;
   billingCycle: "month" | "year";
+  customerId: string;
 };
 
 export type UpdateSubscriptionResponse = {
