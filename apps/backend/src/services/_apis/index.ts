@@ -5,6 +5,8 @@ import { PaymentProviderFactory } from "../paymentProvider/PaymentProviderFactor
 import { PaymentProviderName } from "../paymentProvider/PaymentProvider";
 import { BadRequestError, ValidationError } from "@src/utils/app_error";
 import { getConfig } from "@src/configuration";
+import { ExternalStoreFactory } from "./store/ExternalStoreFactory";
+import { ExternalStoreProvider } from "./store/ExternalStore";
 
 export default class ApiServices {
   constructor(private database: Database) {}
@@ -83,6 +85,12 @@ export default class ApiServices {
         publicKey: config.paymentProviderPublicKey,
         webhookSecret: config.paymentProviderWebhookSecret,
       },
+    });
+  }
+
+  public async getExternalStore(storeProvider: ExternalStoreProvider, accessToken: string) {
+    return ExternalStoreFactory.create(ExternalStoreProvider.Printful, {
+      accessToken: "",
     });
   }
 }

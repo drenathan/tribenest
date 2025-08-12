@@ -4,14 +4,17 @@ import { NextFunction, Request, Response } from "express";
 import {
   CreateProductInput,
   createProductSchema,
+  createExternalStoreSchema,
   GetProductInput,
   getProductSchema,
   GetProductsInput,
   getProductsSchema,
   UpdateProductInput,
   updateProductSchema,
+  CreateExternalStoreInput,
 } from "./schema";
 import * as policy from "./policy";
+import { profileIdQuerySchema } from "../schema";
 
 export class ProductsController extends BaseController {
   @RouteHandler()
@@ -74,5 +77,33 @@ export class ProductsController extends BaseController {
   @isAuthorized(policy.create)
   public async unarchiveProduct(req: Request, res: Response, next: NextFunction): Promise<any> {
     return this.services.admin.products.unarchiveProduct(req.params.id as string);
+  }
+
+  @RouteHandler()
+  @ValidateSchema(createExternalStoreSchema)
+  @isAuthorized(policy.create)
+  public async createExternalStore(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: CreateExternalStoreInput,
+  ): Promise<any> {
+    const store = await this.services.admin.products.createProductStore(body!);
+
+    await this.workers.jobs.products.syncExternalProducts.now({ storeId: store.id });
+
+    return store;
+  }
+
+  @RouteHandler()
+  @isAuthorized(policy.getAll)
+  @ValidateSchema(profileIdQuerySchema)
+  public async getStores(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Query query?: { profileId: string },
+  ): Promise<any> {
+    return this.services.admin.products.getStores({ profileId: req.query.profileId as string });
   }
 }

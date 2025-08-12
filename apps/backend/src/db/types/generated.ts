@@ -140,6 +140,7 @@ export interface Media {
   id: Generated<string>;
   name: string | null;
   parent: string;
+  productStoreId: string | null;
   profileId: string;
   size: Int8;
   type: string;
@@ -286,13 +287,27 @@ export interface Products {
   createdAt: Generated<Timestamp>;
   credits: string | null;
   description: string;
+  externalId: string | null;
   id: Generated<string>;
   isFeatured: Generated<boolean>;
   isSingle: Generated<boolean | null>;
+  productStoreId: string | null;
   profileId: string;
   publishedAt: Timestamp | null;
   tags: string[] | null;
   title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface ProductStores {
+  accessToken: string;
+  createdAt: Generated<Timestamp>;
+  externalId: string;
+  id: Generated<string>;
+  lastSyncedAt: Timestamp | null;
+  name: string;
+  profileId: string;
+  provider: string;
   updatedAt: Generated<Timestamp>;
 }
 
@@ -315,15 +330,18 @@ export interface ProductVariantOptions {
 export interface ProductVariantOptionValues {
   createdAt: Generated<Timestamp>;
   id: Generated<string>;
+  label: string | null;
   productVariantOptionId: string;
   updatedAt: Generated<Timestamp>;
   value: string;
 }
 
 export interface ProductVariants {
+  availabilityStatus: Generated<string>;
   createdAt: Generated<Timestamp>;
   deliveryType: string;
   description: string | null;
+  externalId: string | null;
   id: Generated<string>;
   isDefault: Generated<boolean>;
   payWhatYouWant: Generated<boolean | null>;
@@ -552,6 +570,7 @@ export interface DB {
   posts: Posts;
   productCategories: ProductCategories;
   products: Products;
+  productStores: ProductStores;
   productVariantConfigurations: ProductVariantConfigurations;
   productVariantOptions: ProductVariantOptions;
   productVariantOptionValues: ProductVariantOptionValues;

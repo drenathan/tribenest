@@ -1,0 +1,126 @@
+import {
+  ExternalProduct,
+  ExternalStore,
+  ExternalStoreArgs,
+  ExternalStoreDetails,
+  ExternalStoreProvider,
+} from "./ExternalStore";
+import axios, { AxiosInstance } from "axios";
+
+type PrintfulSyncProduct = {
+  id: number;
+  name: string;
+  thumbnail_url: string;
+  variants: number;
+  is_ignored: boolean;
+};
+type GetProductsResponse = {
+  code: number;
+  result: PrintfulSyncProduct[];
+};
+
+type GetProductResponse = {
+  code: number;
+  result: {
+    sync_product: PrintfulSyncProduct;
+    sync_variants: PrintfulSyncProductVariant[];
+  };
+};
+
+type PrintfulSyncProductVariant = {
+  id: number;
+  retail_price: string;
+  currency: string;
+  size: string;
+  color: string;
+  name: string;
+  is_ignored: boolean;
+  availability_status: string;
+  files: {
+    type: "preview" | "default";
+    preview_url: string;
+    mime_type: string;
+    size: number;
+  }[];
+};
+
+export class ExternalStorePrintful extends ExternalStore {
+  public provider = ExternalStoreProvider.Printful;
+  private client: AxiosInstance;
+
+  constructor(args: ExternalStoreArgs) {
+    super(args);
+    this.client = axios.create({
+      baseURL: "https://api.printful.com",
+      headers: {
+        Authorization: `Bearer ${args.accessToken}`,
+      },
+    });
+  }
+
+  private async request<T>(requestFunction: () => Promise<any>): Promise<T> {
+    try {
+      const { data } = await requestFunction();
+      if (data.code !== 200) {
+        throw new Error(data.result);
+      }
+      return data.result;
+    } catch (error) {
+      throw new Error("Failed to fetch data from Printful");
+    }
+  }
+
+  public async getProducts(offset = 0, limit = 10): Promise<ExternalProduct[]> {
+    const result = await this.request<PrintfulSyncProduct[]>(() =>
+      this.client.get<PrintfulSyncProduct[]>("/store/products", {
+        params: {
+          offset,
+          limit,
+        },
+      }),
+    );
+
+    return Promise.all(
+      result
+        .filter((product) => !product.is_ignored)
+        .map(async (product) => {
+          const { data: productData } = await this.client.get<GetProductResponse>(`/store/products/${product.id}`);
+          return {
+            id: product.id.toString(),
+            name: product.name,
+            coverImage: product.thumbnail_url,
+            variants: productData.result.sync_variants
+              .filter((variant) => !variant.is_ignored)
+              .map((variant) => ({
+                id: variant.id.toString(),
+                name: variant.name,
+                availabilityStatus: variant.availability_status,
+                size: variant.size,
+                color: variant.color,
+                price: Number(variant.retail_price),
+                images: variant.files.filter((file) => file.type === "preview").map((file) => file.preview_url),
+              })),
+          };
+        }),
+    );
+  }
+
+  public async validateAccessToken(): Promise<boolean> {
+    const { data } = await this.client.get("/store/products", {
+      params: {
+        limit: 1,
+        offset: 0,
+      },
+    });
+    return data.code === 200;
+  }
+
+  public async getStoreDetails(): Promise<ExternalStoreDetails> {
+    const result = await this.request<{ name: string; id: number }>(() => this.client.get("/stores"));
+
+    return {
+      name: result.name,
+      externalId: result.id.toString(),
+    };
+  }
+}

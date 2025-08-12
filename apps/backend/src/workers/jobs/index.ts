@@ -4,6 +4,7 @@ import TestJob from "./testJob";
 import ProcessOrderJob from "./order/processOrder";
 import { Database } from "@src/db";
 import ProcessEmailJob from "./emails/processEmail";
+import SyncExternalProductsJob from "./products/SyncExternalProducts";
 
 export const bootstrapJobs = (queue: Queue, services: Services, database: Database) => {
   return {
@@ -13,6 +14,9 @@ export const bootstrapJobs = (queue: Queue, services: Services, database: Databa
     },
     emails: {
       processEmail: new ProcessEmailJob(queue, services, database),
+    },
+    products: {
+      syncExternalProducts: new SyncExternalProductsJob(queue, services, database),
     },
   };
 };

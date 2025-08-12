@@ -30,6 +30,8 @@ export const tables = {
   post_collection_posts: "post_collection_posts",
   products: "products",
   product_categories: "product_categories",
+  product_collections: "product_collections",
+  product_stores: "product_stores",
   product_variants: "product_variants",
   product_variant_options: "product_variant_options",
   product_variant_option_values: "product_variant_option_values",

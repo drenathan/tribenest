@@ -4,15 +4,27 @@ import { GetProductsInput } from "@src/routes/product/schema";
 import { PaginatedData } from "@src/types";
 import { updateProduct } from "./commands/updateProduct";
 import { GetManyProductResult } from "@src/db/models/product/product.model";
+import { syncProducts } from "./commands/syncProducts";
+import { syncProduct } from "./commands/syncProduct";
+import { createProductStore } from "./commands/createProductStore";
+import { getStores } from "./queries/getStores";
 
 export class ProductService extends BaseService {
   public create: typeof createProduct;
   public update: typeof updateProduct;
+  public syncProducts: typeof syncProducts;
+  public syncProduct: typeof syncProduct;
+  public createProductStore: typeof createProductStore;
+  public getStores: typeof getStores;
 
   constructor(args: BaseServiceArgs) {
     super(args);
     this.create = createProduct.bind(this);
     this.update = updateProduct.bind(this);
+    this.syncProducts = syncProducts.bind(this);
+    this.syncProduct = syncProduct.bind(this);
+    this.createProductStore = createProductStore.bind(this);
+    this.getStores = getStores.bind(this);
   }
 
   public async getProducts(input: GetProductsInput): Promise<PaginatedData<{}>> {

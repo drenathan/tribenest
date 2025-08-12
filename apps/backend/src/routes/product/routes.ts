@@ -10,6 +10,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
 
   router.get("/", (...args) => controller.getProducts(...args));
   router.post("/", (...args) => controller.createProduct(...args));
+  router.post("/stores", (...args) => controller.createExternalStore(...args));
   router.get("/:id", (...args) => controller.getProduct(...args));
   router.put("/:id", (...args) => controller.updateProduct(...args));
   router.delete("/:id", (...args) => controller.archiveProduct(...args));

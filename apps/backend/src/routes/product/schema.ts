@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { paginationSchema } from "../schema";
 import { ProductCategory, ProductDeliveryType } from "@src/db/types/product";
+import { ExternalStoreProvider } from "@src/services/_apis/store/ExternalStore";
 
 export const getProductsSchema = z.object({
   query: z.object({
@@ -112,5 +113,14 @@ export const updateProductSchema = z.object({
   }),
 });
 
+export const createExternalStoreSchema = z.object({
+  body: z.object({
+    provider: z.nativeEnum(ExternalStoreProvider),
+    accessToken: z.string(),
+    profileId: z.string().uuid(),
+  }),
+});
+
 export type CreateProductInput = z.infer<typeof createProductSchema>["body"];
 export type UpdateProductInput = z.infer<typeof updateProductSchema>["body"];
+export type CreateExternalStoreInput = z.infer<typeof createExternalStoreSchema>["body"];

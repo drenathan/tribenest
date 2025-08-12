@@ -6,6 +6,7 @@ import { MembershipStatus } from "./membership";
 import { OrderStatus } from "./product";
 import { ProfileAddress, ProfileOnboardingStepId, PWAConfig, StorageType } from "./profile";
 import { EmailRecipientStatus, EmailStatus } from "./email";
+import { ExternalStoreProvider } from "@src/services/_apis/store/ExternalStore";
 
 type Media = Omit<GeneratedTypes.Media, "type" | "parent"> & {
   type: MediaType;
@@ -47,6 +48,10 @@ type ProfileConfiguration = Omit<GeneratedTypes.ProfileConfigurations, "pwaConfi
   storageType: StorageType;
 };
 
+type ProductStore = Omit<GeneratedTypes.ProductStores, "provider"> & {
+  provider: ExternalStoreProvider;
+};
+
 type Event = Omit<GeneratedTypes.Events, "address"> & {
   address: ColumnType<
     {
@@ -67,6 +72,7 @@ export interface DB extends GeneratedTypes.DB {
   mediaMappings: MediaMapping;
   memberships: Membership;
   orders: Order;
+  productStores: ProductStore;
   profileOnboardingSteps: ProfileOnboardingStep;
   emails: Email;
   emailRecipients: EmailRecipient;

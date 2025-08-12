@@ -19,6 +19,7 @@ import { MediaModel } from "./media/media.model";
 import { MediaMappingModel } from "./media/mediaMapping.model";
 import { ProductCategoryModel } from "./product/productCategory.model";
 import { ProductModel } from "./product/product.model";
+import { ProductStoreModel } from "./product/productStore.model";
 import { ProductVariantModel } from "./product/productVariant.model";
 import { ProductVariantOptionModel } from "./product/productVariantOption.model";
 import { ProductVariantOptionValueModel } from "./product/productVariantOptionValue.model";
@@ -75,6 +76,7 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     ProfilePaymentSubscription: new ProfilePaymentSubscriptionModel(client),
     ProductCategory: new ProductCategoryModel(client),
     Product: new ProductModel(client),
+    ProductStore: new ProductStoreModel(client),
     ProductVariant: new ProductVariantModel(client),
     ProductVariantOption: new ProductVariantOptionModel(client),
     ProductVariantOptionValue: new ProductVariantOptionValueModel(client),
