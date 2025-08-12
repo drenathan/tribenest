@@ -1,4 +1,5 @@
 import type { CreateProductInput, EditProductInput } from "@/routes/_dashboard/store/music/-components/schema";
+import type { ExternalStoreProvider } from "@/types/product";
 
 import httpClient from "@/services/httpClient";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -51,6 +52,20 @@ export const useUnarchiveProduct = () => {
       return result.data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+};
+
+export const useCreateProductStore = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { provider: ExternalStoreProvider; accessToken: string; profileId: string }) => {
+      const result = await httpClient.post(`/products/stores`, data);
+      return result.data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["product-stores", variables.profileId] });
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });

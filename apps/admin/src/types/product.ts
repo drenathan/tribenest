@@ -5,6 +5,10 @@ export enum ProductDeliveryType {
   Physical = "physical",
 }
 
+export enum ExternalStoreProvider {
+  Printful = "printful",
+}
+
 export enum ProductCategory {
   Music = "Music",
   Merch = "Merch",
@@ -23,6 +27,13 @@ export type IProduct = {
   publishedAt: string;
   archivedAt: string | null;
   isFeatured: boolean;
+};
+
+export type IProductStore = {
+  id: string;
+  name: string;
+  provider: ExternalStoreProvider;
+  accessToken: string;
 };
 
 export type IProductVariant = {

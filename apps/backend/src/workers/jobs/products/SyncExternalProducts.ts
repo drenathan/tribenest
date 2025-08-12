@@ -11,7 +11,7 @@ type Args = {
 export default class SyncExternalProductsJob extends BaseJob<Args> {
   name = "SYNC_EXTERNAL_PRODUCTS_JOB";
   tags = ["worker", this.name];
-  retryCount = 3;
+  // retryCount = 3;
 
   async handle({ storeId, page = 1 }: Args) {
     logger.info({ tags: this.tags }, `Syncing external products for store ${storeId} with page ${page}`);
@@ -34,6 +34,7 @@ export default class SyncExternalProductsJob extends BaseJob<Args> {
 
     if (products.length === 0) {
       logger.info({ tags: this.tags }, `No more products to sync`);
+      await this.database.models.ProductStore.updateOne({ id: storeId }, { lastSyncedAt: new Date() });
       return;
     }
 

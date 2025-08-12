@@ -1,3 +1,4 @@
+import { logger } from "@src/utils/logger";
 import {
   ExternalProduct,
   ExternalStore,
@@ -5,7 +6,8 @@ import {
   ExternalStoreDetails,
   ExternalStoreProvider,
 } from "./ExternalStore";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
+import { ValidationError } from "@src/utils/app_error";
 
 type PrintfulSyncProduct = {
   id: number;
@@ -44,6 +46,11 @@ type PrintfulSyncProductVariant = {
   }[];
 };
 
+type PrintfulResponse = {
+  code: number;
+  result: any;
+};
+
 export class ExternalStorePrintful extends ExternalStore {
   public provider = ExternalStoreProvider.Printful;
   private client: AxiosInstance;
@@ -61,12 +68,15 @@ export class ExternalStorePrintful extends ExternalStore {
   private async request<T>(requestFunction: () => Promise<any>): Promise<T> {
     try {
       const { data } = await requestFunction();
-      if (data.code !== 200) {
-        throw new Error(data.result);
-      }
+
       return data.result;
     } catch (error) {
-      throw new Error("Failed to fetch data from Printful");
+      const message = (error as AxiosError<PrintfulResponse>)?.response?.data?.result;
+      if (message) {
+        error = new ValidationError(message);
+      }
+      logger.error(`Failed to fetch data from Printful: ${error}`);
+      throw error;
     }
   }
 
@@ -116,11 +126,15 @@ export class ExternalStorePrintful extends ExternalStore {
   }
 
   public async getStoreDetails(): Promise<ExternalStoreDetails> {
-    const result = await this.request<{ name: string; id: number }>(() => this.client.get("/stores"));
+    const result = await this.request<{ name: string; id: number }[]>(() => this.client.get("/stores"));
+
+    if (result.length === 0) {
+      throw new ValidationError("Store not found");
+    }
 
     return {
-      name: result.name,
-      externalId: result.id.toString(),
+      name: result[0].name,
+      externalId: result[0].id.toString(),
     };
   }
 }

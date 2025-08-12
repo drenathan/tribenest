@@ -20,24 +20,26 @@ export class MediaModel extends BaseModel<"media", "id"> {
       .where("entityType", "=", entityType)
       .execute();
 
-    await client
-      .deleteFrom("mediaMappings")
-      .where(
-        "id",
-        "in",
-        mediaMappings.map((m) => m.id),
-      )
-      .execute();
+    if (mediaMappings.length > 0) {
+      await client
+        .deleteFrom("mediaMappings")
+        .where(
+          "id",
+          "in",
+          mediaMappings.map((m) => m.id),
+        )
+        .execute();
 
-    await client
-      .deleteFrom("media")
-      .where("parent", "=", entityType)
-      .where(
-        "id",
-        "in",
-        mediaMappings.map((m) => m.mediaId),
-      )
-      .execute();
+      await client
+        .deleteFrom("media")
+        .where("parent", "=", entityType)
+        .where(
+          "id",
+          "in",
+          mediaMappings.map((m) => m.mediaId),
+        )
+        .execute();
+    }
 
     if (!trx) {
       await (client as ControlledTransaction<DB>).commit().execute();

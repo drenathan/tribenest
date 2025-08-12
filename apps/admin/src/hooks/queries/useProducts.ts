@@ -1,6 +1,6 @@
 import httpClient from "@/services/httpClient";
 import { useQuery } from "@tanstack/react-query";
-import type { IProduct, ProductCategory } from "@/types/product";
+import type { IProduct, IProductStore, ProductCategory } from "@/types/product";
 import type { PaginatedData } from "@tribe-nest/frontend-shared";
 
 export type GetProductsFilter = {
@@ -31,5 +31,16 @@ export const useGetProducts = (
       return response.data;
     },
     enabled: !!profileId && !!category,
+  });
+};
+
+export const useGetProductStores = (profileId?: string) => {
+  return useQuery<IProductStore[]>({
+    queryKey: ["product-stores", profileId],
+    queryFn: async () => {
+      const response = await httpClient.get("/products/stores", { params: { profileId } });
+      return response.data;
+    },
+    enabled: !!profileId,
   });
 };

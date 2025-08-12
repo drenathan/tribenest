@@ -13,10 +13,12 @@ import { getConfig } from "@src/configuration";
 import { bootstrapModels } from "./models";
 import { DB } from "./types";
 import isPlainObject from "lodash/isPlainObject";
+import { IS_DEVELOPMENT } from "@src/configuration/secrets";
+import { logger } from "@src/utils/logger";
 
 export type DatabaseConfig<DB> = {
   isolated?: boolean;
-  log?: (event: LogEvent) => void;
+  log?: (string: string) => void;
   debug?: boolean;
 };
 
@@ -28,7 +30,7 @@ export default class Database {
   public models: ReturnType<typeof bootstrapModels>;
 
   constructor(config: DatabaseConfig<DB> = {}) {
-    const { log, debug = false } = config;
+    const { log, debug } = config;
     const dbConfig = getConfig("postgres");
 
     this.log = log;
@@ -47,13 +49,13 @@ export default class Database {
       ],
       log: (event) => {
         if (this.debug) {
-          if (event.level === "query") {
-            console.log(event?.query?.sql);
-            console.log(event?.query?.parameters);
+          if (event.level === "error") {
+            this.log?.(event?.query?.sql);
+            if (IS_DEVELOPMENT) {
+              console.log(event?.query.parameters);
+            }
           }
         }
-
-        this.log?.(event);
       },
     });
     this.models = bootstrapModels(this.client);

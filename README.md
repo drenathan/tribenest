@@ -3,6 +3,7 @@
 The Complete artist platform
 
 # Features
+
 - Website builder
 - Sell memberships
 - Sell music

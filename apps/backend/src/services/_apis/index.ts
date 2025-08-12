@@ -89,8 +89,8 @@ export default class ApiServices {
   }
 
   public async getExternalStore(storeProvider: ExternalStoreProvider, accessToken: string) {
-    return ExternalStoreFactory.create(ExternalStoreProvider.Printful, {
-      accessToken: "",
+    return ExternalStoreFactory.create(storeProvider, {
+      accessToken,
     });
   }
 }

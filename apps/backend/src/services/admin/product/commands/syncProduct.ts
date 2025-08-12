@@ -52,6 +52,8 @@ export async function syncProduct(
 
     await this.database.models.Media.deleteManyForEntity(product.id, "product", trx);
 
+    console.log("media deleted", item.coverImage);
+
     const media = await this.database.models.Media.insertOne(
       {
         url: item.coverImage,

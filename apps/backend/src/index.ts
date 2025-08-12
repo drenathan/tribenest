@@ -15,7 +15,7 @@ import { Deployment } from "./types";
 
 const startApp = async () => {
   logger.info("Starting app...");
-  const database = new Database();
+  const database = new Database({ debug: true, log: (event) => console.log(event) });
   const services = new Services(database);
   const workers = new Workers(services, database);
   workers.setWorkersInstanceOnJobs();

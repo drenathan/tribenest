@@ -11,6 +11,10 @@ coverage
 # Turbo
 .turbo
 
+# Environment variables
+.env
+.env.production
+
 # Vercel
 .vercel
 
