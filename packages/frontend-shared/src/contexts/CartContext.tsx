@@ -28,6 +28,8 @@ interface CartContextType {
   addToCart: (item: CartItem) => boolean;
   removeFromCart: (productId: string, isGift: boolean, recipientEmail?: string) => void;
   clearCart: () => void;
+  isCartOpen: boolean;
+  setCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -37,6 +39,7 @@ const CART_STORAGE_KEY = "tribenest-cart";
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isCartOpen, setCartOpen] = useState(false);
 
   // Load cart from localStorage on initial mount
   useEffect(() => {
@@ -93,6 +96,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return false;
       }
       setCartItems((prev) => [...prev, item]);
+      setCartOpen(true);
       toast.success("Item added to cart");
       return true;
     },
@@ -108,7 +112,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clearCart = () => setCartItems([]);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>{children}</CartContext.Provider>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart, isCartOpen, setCartOpen }}>
+      {children}
+    </CartContext.Provider>
   );
 }
 

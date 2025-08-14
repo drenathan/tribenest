@@ -20,9 +20,8 @@ function PageHeaderContent({
 }) {
   const { profile, themeSettings, navigate } = useEditorContext();
   const { user, logout } = usePublicAuth();
-  const { cartItems, removeFromCart } = useCart();
+  const { cartItems, removeFromCart, isCartOpen, setCartOpen } = useCart();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isCartOpen, setCartOpen] = useState(false);
   const { currentTrack } = useAudioPlayer();
 
   const toggleSidebar = () => {
@@ -331,6 +330,7 @@ function PageHeaderContent({
                   fullWidth
                   onClick={() => {
                     navigate("/checkout");
+                    setCartOpen(false);
                   }}
                 />
               </div>
