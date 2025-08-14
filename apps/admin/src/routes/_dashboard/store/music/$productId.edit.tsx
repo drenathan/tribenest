@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router"
 import PageHeader from "../../-components/layout/page-header";
 import { useAuth } from "@/hooks/useAuth";
 import { useForm, useFieldArray, type UseFormReturn } from "react-hook-form";
-import { editProductResolver, type EditProductInput } from "./-components/schema";
+import { editProductResolver, type EditProductInput } from "../-components/schema";
 import { format } from "date-fns";
 import {
   AccordionContent,

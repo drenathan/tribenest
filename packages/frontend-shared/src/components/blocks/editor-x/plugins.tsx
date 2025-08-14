@@ -189,7 +189,7 @@ export function Plugins({}) {
         <HashtagPlugin />
         <HistoryPlugin />
 
-        <MentionsPlugin />
+        {/* <MentionsPlugin /> */}
         <PageBreakPlugin />
         <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
         <KeywordsPlugin />
@@ -267,7 +267,7 @@ export function Plugins({}) {
 
         <ContextMenuPlugin />
         <DragDropPastePlugin />
-        <EmojiPickerPlugin />
+        {/* <EmojiPickerPlugin /> */}
 
         <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} />
         <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />

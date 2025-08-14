@@ -1,4 +1,4 @@
-import type { CreateProductInput, EditProductInput } from "@/routes/_dashboard/store/music/-components/schema";
+import type { CreateProductInput, EditProductInput } from "@/routes/_dashboard/store/-components/schema";
 import type { ExternalStoreProvider } from "@/types/product";
 
 import httpClient from "@/services/httpClient";

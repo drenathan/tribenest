@@ -1,4 +1,5 @@
 "use client";
+import type { ProductDeliveryType } from "../types";
 import { createContext, useCallback, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
@@ -17,6 +18,9 @@ export type CartItem = {
   quantity: number;
   recipientMessage?: string;
   payWhatYouWant: boolean;
+  color?: string;
+  size?: string;
+  deliveryType?: ProductDeliveryType;
 };
 
 interface CartContextType {

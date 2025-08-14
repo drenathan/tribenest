@@ -2,24 +2,6 @@ import { tables } from "@src/db/constants/tables";
 import { Kysely, sql } from "kysely";
 import { addDefaultColumns, addUpdateUpdatedAtTrigger } from "../utils";
 
-const variantOptions = [
-  {
-    title: "Size",
-    values: [
-      { value: "M", label: "Medium" },
-      { value: "L", label: "Large" },
-      { value: "XL", label: "Extra Large" },
-    ],
-  },
-  {
-    title: "Color",
-    values: [
-      { value: "#000000", label: "Black" },
-      { value: "#FFFFFF", label: "White" },
-    ],
-  },
-];
-
 export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable(tables.product_stores)
@@ -30,7 +12,13 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("provider", "text", (b) => b.notNull())
     .addColumn("access_token", "text", (b) => b.notNull())
     .addColumn("last_synced_at", "timestamptz")
+    .addColumn("defaults", "jsonb", (b) => b.notNull().defaultTo("{}"))
     .$call(addDefaultColumns)
+    .addUniqueConstraint("product_stores_external_id_provider_profile_id_unique", [
+      "external_id",
+      "provider",
+      "profile_id",
+    ])
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.product_stores);
 
@@ -41,9 +29,26 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   await db.schema
+    .alterTable(tables.products)
+    .addUniqueConstraint("product_store_id_external_id_unique", ["product_store_id", "external_id"])
+    .execute();
+
+  await db.schema
     .alterTable(tables.product_variants)
     .addColumn("external_id", "text")
     .addColumn("availability_status", "text", (b) => b.notNull().defaultTo("active"))
+    .addColumn("color", "text")
+    .addColumn("size", "text")
+    .execute();
+
+  await db.schema
+    .alterTable(tables.product_variants)
+    .addUniqueConstraint("product_id_color_size_unique", ["product_id", "color", "size"])
+    .execute();
+
+  await db.schema
+    .alterTable(tables.product_variants)
+    .addUniqueConstraint("product_id_external_id_unique", ["product_id", "external_id"])
     .execute();
 
   await db.schema
@@ -51,23 +56,21 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("product_store_id", "uuid", (b) => b.references(`${tables.product_stores}.id`))
     .execute();
 
-  await db.schema.alterTable(tables.product_variant_option_values).addColumn("label", "text").execute();
-
-  for (const option of variantOptions) {
-    const optionId = await db
-      .insertInto(tables.product_variant_options)
-      .values({ title: option.title })
-      .returning("id")
-      .executeTakeFirstOrThrow();
-    for (const value of option.values) {
-      await db
-        .insertInto(tables.product_variant_option_values)
-        .values({ value, product_variant_option_id: optionId.id, label: value.label })
-        .execute();
-    }
-  }
+  await db.schema.dropTable(tables.product_variant_configurations).execute();
+  await db.schema.dropTable(tables.product_variant_option_values).execute();
+  await db.schema.dropTable(tables.product_variant_options).execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  await db.schema.alterTable(tables.products).dropColumn("is_external").execute();
+  await db.schema.alterTable(tables.products).dropColumn("product_store_id").dropColumn("external_id").execute();
+  await db.schema
+    .alterTable(tables.product_variants)
+    .dropColumn("external_id")
+    .dropColumn("availability_status")
+    .dropColumn("color")
+    .dropColumn("size")
+    .execute();
+  await db.schema.alterTable(tables.media).dropColumn("product_store_id").execute();
+  await db.schema.alterTable(tables.product_variant_option_values).dropColumn("label").execute();
+  await db.schema.dropTable(tables.product_stores).execute();
 }

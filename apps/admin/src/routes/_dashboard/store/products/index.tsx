@@ -36,6 +36,7 @@ import { ExternalStoreProvider } from "@/types/product";
 import { toast } from "sonner";
 import { debounce } from "lodash";
 import { AdminPagination } from "@/components/pagination";
+import { ProductItem } from "./-components/product-item";
 
 const routeParams = z.object({
   page: z.number().default(1),
@@ -93,10 +94,10 @@ function RouteComponent() {
   // Build filter object for API
   const filter: GetProductsFilter = useMemo(
     () => ({
-      query: searchQuery,
+      query: search.search || "",
       archived: search.archived,
     }),
-    [searchQuery, search.archived],
+    [search.search, search.archived],
   );
 
   const { data: products, isLoading: isProductsLoading } = useGetProducts(
@@ -105,8 +106,6 @@ function RouteComponent() {
     search.page,
     filter,
   );
-
-  console.log("products", products, isProductsLoading);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -303,6 +302,12 @@ function RouteComponent() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <div className="space-y-8 mt-8">
+        {products?.data?.map((product) => (
+          <ProductItem key={product.id} product={product} />
+        ))}
+      </div>
 
       {products && (
         <AdminPagination

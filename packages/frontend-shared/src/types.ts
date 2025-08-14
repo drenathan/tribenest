@@ -50,6 +50,7 @@ export type ThemePage = {
   title: string;
   description?: string;
   Component: React.ComponentType<{ profile: Profile }>;
+  deprecated?: boolean;
 };
 
 export type ThemeConfig = {
@@ -188,6 +189,9 @@ export type IPublicProductVariant = {
   payWhatYouWant?: boolean;
   payWhatYouWantMaximum?: number;
   upcCode: string;
+  color: string;
+  size: string;
+  availabilityStatus: "active" | "temporarily_out_of_stock";
 };
 
 export type IPublicProductTrack = {

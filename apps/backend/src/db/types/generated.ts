@@ -302,6 +302,7 @@ export interface Products {
 export interface ProductStores {
   accessToken: string;
   createdAt: Generated<Timestamp>;
+  defaults: Generated<Json>;
   externalId: string;
   id: Generated<string>;
   lastSyncedAt: Timestamp | null;
@@ -311,33 +312,9 @@ export interface ProductStores {
   updatedAt: Generated<Timestamp>;
 }
 
-export interface ProductVariantConfigurations {
-  createdAt: Generated<Timestamp>;
-  id: Generated<string>;
-  productVariantId: string;
-  productVariantOptionId: string;
-  productVariantOptionValueId: string;
-  updatedAt: Generated<Timestamp>;
-}
-
-export interface ProductVariantOptions {
-  createdAt: Generated<Timestamp>;
-  id: Generated<string>;
-  title: string;
-  updatedAt: Generated<Timestamp>;
-}
-
-export interface ProductVariantOptionValues {
-  createdAt: Generated<Timestamp>;
-  id: Generated<string>;
-  label: string | null;
-  productVariantOptionId: string;
-  updatedAt: Generated<Timestamp>;
-  value: string;
-}
-
 export interface ProductVariants {
   availabilityStatus: Generated<string>;
+  color: string | null;
   createdAt: Generated<Timestamp>;
   deliveryType: string;
   description: string | null;
@@ -348,6 +325,7 @@ export interface ProductVariants {
   payWhatYouWantMaximum: number | null;
   price: Numeric;
   productId: string;
+  size: string | null;
   title: string;
   upcCode: string | null;
   updatedAt: Generated<Timestamp>;
@@ -571,9 +549,6 @@ export interface DB {
   productCategories: ProductCategories;
   products: Products;
   productStores: ProductStores;
-  productVariantConfigurations: ProductVariantConfigurations;
-  productVariantOptions: ProductVariantOptions;
-  productVariantOptionValues: ProductVariantOptionValues;
   productVariants: ProductVariants;
   productVariantTracks: ProductVariantTracks;
   profileAuthorizations: ProfileAuthorizations;

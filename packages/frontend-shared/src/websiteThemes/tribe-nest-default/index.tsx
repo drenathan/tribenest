@@ -10,6 +10,9 @@ import { MusicItem } from "./components/MusicItem";
 import MusicDetailsPage from "./music-details.page";
 import { MusicDetailsContent } from "./components/MusicDetailsContent";
 import { Pagination } from "./components/Pagination";
+import { ProductItem } from "./components/ProductItem";
+import { MusicItemDetails } from "./components/MusicItemDetails";
+import { ProductDetails } from "./components/ProductDetails";
 
 export default {
   name: "TribeNest Default",
@@ -31,7 +34,7 @@ export default {
     logo: "https://assets-dev.coumo.com/default_theme_screenshot.png",
     headerLinks: [
       { href: "/members", label: "Members" },
-      { href: "/music", label: "Music" },
+      { href: "/products?category=Music", label: "Store" },
     ],
     socialLinks: [
       { href: "https://www.instagram.com", icon: "instagram" },
@@ -57,14 +60,26 @@ export default {
       Component: MembersPage,
     },
     {
-      pathname: "/music",
-      title: "Music",
+      pathname: "/products",
+      title: "Store",
       Component: MusicPage,
     },
     {
-      pathname: "/music/:id",
-      title: "Music Item",
+      pathname: "/products/:id",
+      title: "Store Item",
       Component: MusicDetailsPage,
+    },
+    {
+      pathname: "/music",
+      title: "Store",
+      Component: MusicPage,
+      deprecated: true,
+    },
+    {
+      pathname: "/music/:id",
+      title: "Store Item",
+      Component: MusicDetailsPage,
+      deprecated: true,
     },
   ],
   editorResolver: {
@@ -77,5 +92,8 @@ export default {
     MusicItem,
     MusicDetailsContent,
     Pagination,
+    ProductItem,
+    MusicItemDetails,
+    ProductDetails,
   },
 } as ThemeConfig;

@@ -8,6 +8,7 @@ import {
 } from "./ExternalStore";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { ValidationError } from "@src/utils/app_error";
+import { uniqBy } from "lodash";
 
 type PrintfulSyncProduct = {
   id: number;
@@ -51,14 +52,31 @@ type PrintfulResponse = {
   result: any;
 };
 
+type GetCatalogProductsResponse = {
+  data: {
+    colors: {
+      name: string;
+      value: string;
+    }[];
+  }[];
+};
+
 export class ExternalStorePrintful extends ExternalStore {
   public provider = ExternalStoreProvider.Printful;
   private client: AxiosInstance;
+  private clientV2: AxiosInstance;
 
   constructor(args: ExternalStoreArgs) {
     super(args);
     this.client = axios.create({
       baseURL: "https://api.printful.com",
+      headers: {
+        Authorization: `Bearer ${args.accessToken}`,
+      },
+    });
+
+    this.clientV2 = axios.create({
+      baseURL: "https://api.printful.com/v2",
       headers: {
         Authorization: `Bearer ${args.accessToken}`,
       },
@@ -135,6 +153,41 @@ export class ExternalStorePrintful extends ExternalStore {
     return {
       name: result[0].name,
       externalId: result[0].id.toString(),
+    };
+  }
+
+  private async getCatalogProducts(
+    page = 1,
+    previous: GetCatalogProductsResponse["data"] = [],
+  ): Promise<GetCatalogProductsResponse["data"]> {
+    const limit = 100;
+    const offset = (page - 1) * limit;
+
+    const { data } = await this.clientV2.get<GetCatalogProductsResponse>("/catalog-products", {
+      params: {
+        limit,
+        offset,
+      },
+    });
+
+    previous.push(...data.data);
+
+    if (data.data.length < limit) {
+      return previous;
+    }
+
+    return this.getCatalogProducts(page + 1, previous);
+  }
+
+  public async getDefaults(): Promise<Record<string, any>> {
+    const products = await this.getCatalogProducts();
+    const colors = uniqBy(
+      products.flatMap((item) => item.colors),
+      "name",
+    );
+
+    return {
+      colors,
     };
   }
 }

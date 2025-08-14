@@ -37,4 +37,6 @@ export abstract class ExternalStore {
 
   public abstract validateAccessToken(): Promise<boolean>;
   public abstract getStoreDetails(): Promise<ExternalStoreDetails>;
+
+  public abstract getDefaults(): Promise<Record<string, any>>;
 }

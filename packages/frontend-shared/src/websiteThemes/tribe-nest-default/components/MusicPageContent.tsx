@@ -17,6 +17,9 @@ import { MusicItem } from "./MusicItem";
 import { Pagination } from "./Pagination";
 import { Badge } from "../../../components/ui/badge";
 import { debounce } from "lodash";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@tribe-nest/frontend-shared";
+import { CreditCard, Music, Shirt } from "lucide-react";
+import { ProductItem } from "./ProductItem";
 
 export const MusicPageContent: UserComponent = () => {
   const { themeSettings, navigate } = useEditorContext();
@@ -28,6 +31,7 @@ export const MusicPageContent: UserComponent = () => {
 
   // Initialize state from URL params
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchParams.get("search") || "");
+  const [categoryFromURL, setCategoryFromURL] = useState(searchParams.get("category") || ProductCategory.Music);
   const [releaseTypeFromURL, setReleaseTypeFromURL] = useState(
     (searchParams.get("releaseType") as "album" | "single" | "all") || "all",
   );
@@ -80,11 +84,11 @@ export const MusicPageContent: UserComponent = () => {
   const filterParams = useMemo(
     () => ({
       query: debouncedSearchQuery,
-      category: ProductCategory.Music,
+      category: categoryFromURL as ProductCategory,
       page: currentPage,
       releaseType: releaseTypeFromURL,
     }),
-    [debouncedSearchQuery, currentPage, releaseTypeFromURL],
+    [debouncedSearchQuery, currentPage, releaseTypeFromURL, categoryFromURL],
   );
 
   const { data: products } = useGetProducts(filterParams);
@@ -94,7 +98,7 @@ export const MusicPageContent: UserComponent = () => {
     setDebouncedSearchQuery("");
     setCurrentPage(1);
     setReleaseTypeFromURL("all");
-    updateURLParams({ search: "", releaseType: "all", page: 1 });
+    updateURLParams({ search: "", releaseType: "all", page: 1, category: ProductCategory.Music });
   };
 
   const hasActiveFilters = searchQuery || releaseTypeFromURL !== "all";
@@ -109,16 +113,52 @@ export const MusicPageContent: UserComponent = () => {
   return (
     <div className="w-full flex flex-col items-center  px-2 @md:px-8 min-h-screen pb-10">
       <div className="w-full @md:w-3/5 flex flex-col gap-4 mt-6 @md:mt-8">
-        <EditorText text="My Music" fontSize="24" fontSizeMobile="18" fontWeight="bold" />
+        <EditorText text="My Store" fontSize="24" fontSizeMobile="18" fontWeight="bold" />
+        <div>
+          <Tabs
+            value={categoryFromURL}
+            onValueChange={(value) => {
+              setCategoryFromURL(value);
+              updateURLParams({ category: value });
+            }}
+            className="w-full"
+          >
+            <TabsList
+              className="grid w-full grid-cols-2 @md:grid-cols-4 mb-2 gap-4 border rounded-lg p-2"
+              style={{
+                backgroundColor: `${themeSettings.colors.background}${alphaToHexCode(0.1)}`,
+                border: "none",
+              }}
+            >
+              <TabsTrigger
+                value={ProductCategory.Music}
+                className="flex items-center gap-2 @md:gap-3"
+                style={{ color: themeSettings.colors.text }}
+              >
+                <Music className="w-4 h-4 @md:w-5 @md:h-5" />
+                <span className="text-xs @md:text-sm">Music</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value={ProductCategory.Merch}
+                className="flex items-center gap-2 @md:gap-3"
+                style={{ color: themeSettings.colors.text }}
+              >
+                <Shirt className="w-4 h-4 @md:w-5 @md:h-5" />
+                <span className="text-xs @md:text-sm">Merch</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
         <div className="w-full flex gap-4 items-center">
           <EditorInput
-            placeholder="Search music..."
+            placeholder={`Search ${categoryFromURL}...`}
             width="90%"
             widthMobile="100%"
             value={searchQuery}
             onChange={handleSearchChange}
           />
           <button
+            disabled={categoryFromURL === ProductCategory.Merch}
             className={css({
               border: `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.65)}`,
               borderRadius: `${themeSettings.cornerRadius}px`,
@@ -133,6 +173,10 @@ export const MusicPageContent: UserComponent = () => {
                 backgroundColor: `${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
                 borderColor: `${themeSettings.colors.primary}${alphaToHexCode(1)}`,
               }),
+              "&:disabled": {
+                opacity: 0.5,
+                cursor: "not-allowed",
+              },
             })}
             onClick={() => {
               setIsModalOpen(true);
@@ -215,9 +259,12 @@ export const MusicPageContent: UserComponent = () => {
           )}
         </div>
         <div className="w-full grid grid-cols-1 @md:grid-cols-2 gap-8">
-          {products?.data?.map((product) => (
-            <MusicItem key={product.id} product={product} />
-          ))}
+          {products?.data?.map((product) => {
+            if (product.category === ProductCategory.Music) {
+              return <MusicItem key={product.id} product={product} />;
+            }
+            return <ProductItem key={product.id} product={product} />;
+          })}
         </div>
 
         {/* Pagination */}

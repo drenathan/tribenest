@@ -49,7 +49,7 @@ type Emoji = {
 
 export function EmojiPickerPlugin() {
   // const [editor] = useLexicalComposerContext();
-  // const [queryString, setQueryString] = useState<string | null>(null);
+  const [queryString, setQueryString] = useState<string | null>(null);
   const [_, setEmojis] = useState<Array<Emoji>>([]);
   // const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {

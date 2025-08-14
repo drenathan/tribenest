@@ -5,6 +5,7 @@ import { ProductDeliveryType } from "@src/db/types/product";
 import { ExternalProduct } from "@src/services/_apis/store/ExternalStore";
 import { DB } from "@src/db/types";
 import { ControlledTransaction, Transaction } from "kysely";
+import { logger } from "@src/utils/logger";
 
 export async function syncProduct(
   this: ProductService,
@@ -20,6 +21,7 @@ export async function syncProduct(
     });
 
     const store = await this.database.models.ProductStore.findById(input.storeId);
+    const storeDefaults = (store?.defaults ?? {}) as { colors: { name: string; value: string }[] };
 
     if (!store) {
       throw new BadRequestError("Store not found");
@@ -52,8 +54,6 @@ export async function syncProduct(
 
     await this.database.models.Media.deleteManyForEntity(product.id, "product", trx);
 
-    console.log("media deleted", item.coverImage);
-
     const media = await this.database.models.Media.insertOne(
       {
         url: item.coverImage,
@@ -77,6 +77,12 @@ export async function syncProduct(
     );
 
     for (const variant of item.variants) {
+      const color = storeDefaults.colors.find((color: { name: string }) => color.name === variant.color)?.value;
+      if (!color) {
+        logger.error({ tags: ["syncProduct"] }, `Color ${variant.color} not found`);
+        continue;
+      }
+
       let productVariant = await this.database.models.ProductVariant.findOne({
         externalId: variant.id,
       });
@@ -90,13 +96,21 @@ export async function syncProduct(
             deliveryType: ProductDeliveryType.Physical,
             externalId: variant.id,
             availabilityStatus: variant.availabilityStatus,
+            color,
+            size: variant.size,
           },
           trx,
         );
       } else {
         await this.database.models.ProductVariant.updateOne(
           { id: productVariant.id },
-          { title: variant.name, price: variant.price, availabilityStatus: variant.availabilityStatus },
+          {
+            title: variant.name,
+            price: variant.price,
+            availabilityStatus: variant.availabilityStatus,
+            color,
+            size: variant.size,
+          },
           trx,
         );
       }

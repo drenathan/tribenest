@@ -47,6 +47,7 @@ export type IProductVariant = {
   isDefault: boolean;
   upcCode: string;
   payWhatYouWant: boolean;
+  availabilityStatus: "active" | "temporarily_out_of_stock";
 };
 
 export type IProductTrack = {

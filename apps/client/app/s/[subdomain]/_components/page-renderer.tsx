@@ -1,6 +1,12 @@
 "use client";
 
-import { editorResolver, RenderNode, useEditorContext, usePublicAuth, websiteThemes } from "@tribe-nest/frontend-shared";
+import {
+  editorResolver,
+  RenderNode,
+  useEditorContext,
+  usePublicAuth,
+  websiteThemes,
+} from "@tribe-nest/frontend-shared";
 import { WebPage } from "../_api";
 
 import { Editor, Frame } from "@craftjs/core";

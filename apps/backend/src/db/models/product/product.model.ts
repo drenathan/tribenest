@@ -46,6 +46,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
     const isFutureRelease = futureRelease === "true";
     const isSingle = releaseType === "single";
     const isAlbum = releaseType === "album";
+    console.log(input);
 
     const filterQuery = this.client
       .selectFrom("products as p")

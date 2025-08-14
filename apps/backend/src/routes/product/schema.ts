@@ -81,7 +81,7 @@ export const updateProductSchema = z.object({
       .string()
       .min(5, "Description must be at least 5 characters")
       .max(1000, "Description must be less than 1000 characters"),
-    price: z.number().min(0, "Price must be at least 0"),
+    price: z.number().min(0, "Price must be at least 0").optional(),
     publishedAt: z.string().optional(),
     payWhatYouWant: z.boolean().optional(),
     artist: z.string().optional(),

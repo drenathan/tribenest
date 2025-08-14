@@ -1,6 +1,5 @@
 import { Query, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
-import { getMembershipTiersSchema } from "@src/routes/membershipTiers/schema";
 import { NextFunction, Request, Response } from "express";
 import { GetFeaturedProductsInput, getFeaturedProductsSchema, GetProductsInput, getProductsSchema } from "./schema";
 import { GetProductInput, getProductSchema } from "@src/routes/product/schema";

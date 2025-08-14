@@ -28,6 +28,10 @@ export default class SyncExternalProductsJob extends BaseJob<Args> {
     const decrypted = EncryptionService.decryptObject({ accessToken: store.accessToken }, ["accessToken"]);
 
     const storeApi = await this.services.apis.getExternalStore(store.provider, decrypted.accessToken);
+    if (page === 1) {
+      const defaults = await storeApi.getDefaults();
+      await this.database.models.ProductStore.updateOne({ id: storeId }, { defaults: JSON.stringify(defaults) });
+    }
     const products = await storeApi.getProducts(offset, limit);
 
     logger.info({ tags: this.tags }, `Found ${products.length} products`);

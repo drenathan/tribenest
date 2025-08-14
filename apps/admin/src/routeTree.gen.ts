@@ -45,6 +45,7 @@ import { Route as DashboardEmailsEmailsCreateRouteImport } from './routes/_dashb
 import { Route as DashboardWebsiteThemesSlugPreviewRouteImport } from './routes/_dashboard/website/themes/$slug.preview'
 import { Route as DashboardWebsiteHomeVersionIdEditRouteImport } from './routes/_dashboard/website/home/$versionId.edit'
 import { Route as DashboardTribePostsPostIdEditRouteImport } from './routes/_dashboard/tribe/posts/$postId.edit'
+import { Route as DashboardStoreProductsProductIdEditRouteImport } from './routes/_dashboard/store/products/$productId.edit'
 import { Route as DashboardStoreMusicProductIdEditRouteImport } from './routes/_dashboard/store/music/$productId.edit'
 import { Route as DashboardSmartLinksTemplatesSlugPreviewRouteImport } from './routes/_dashboard/smart-links/templates/$slug.preview'
 import { Route as DashboardSmartLinksLinksSmartLinkIdEditRouteImport } from './routes/_dashboard/smart-links/links/$smartLinkId.edit'
@@ -257,6 +258,12 @@ const DashboardTribePostsPostIdEditRoute =
     path: '/tribe/posts/$postId/edit',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardStoreProductsProductIdEditRoute =
+  DashboardStoreProductsProductIdEditRouteImport.update({
+    id: '/store/products/$productId/edit',
+    path: '/store/products/$productId/edit',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardStoreMusicProductIdEditRoute =
   DashboardStoreMusicProductIdEditRouteImport.update({
     id: '/store/music/$productId/edit',
@@ -325,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/smart-links/links/$smartLinkId/edit': typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   '/smart-links/templates/$slug/preview': typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   '/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
+  '/store/products/$productId/edit': typeof DashboardStoreProductsProductIdEditRoute
   '/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -366,6 +374,7 @@ export interface FileRoutesByTo {
   '/smart-links/links/$smartLinkId/edit': typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   '/smart-links/templates/$slug/preview': typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   '/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
+  '/store/products/$productId/edit': typeof DashboardStoreProductsProductIdEditRoute
   '/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -410,6 +419,7 @@ export interface FileRoutesById {
   '/_dashboard/smart-links/links/$smartLinkId/edit': typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   '/_dashboard/smart-links/templates/$slug/preview': typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   '/_dashboard/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
+  '/_dashboard/store/products/$productId/edit': typeof DashboardStoreProductsProductIdEditRoute
   '/_dashboard/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/_dashboard/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/_dashboard/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -453,6 +463,7 @@ export interface FileRouteTypes {
     | '/smart-links/links/$smartLinkId/edit'
     | '/smart-links/templates/$slug/preview'
     | '/store/music/$productId/edit'
+    | '/store/products/$productId/edit'
     | '/tribe/posts/$postId/edit'
     | '/website/home/$versionId/edit'
     | '/website/themes/$slug/preview'
@@ -494,6 +505,7 @@ export interface FileRouteTypes {
     | '/smart-links/links/$smartLinkId/edit'
     | '/smart-links/templates/$slug/preview'
     | '/store/music/$productId/edit'
+    | '/store/products/$productId/edit'
     | '/tribe/posts/$postId/edit'
     | '/website/home/$versionId/edit'
     | '/website/themes/$slug/preview'
@@ -537,6 +549,7 @@ export interface FileRouteTypes {
     | '/_dashboard/smart-links/links/$smartLinkId/edit'
     | '/_dashboard/smart-links/templates/$slug/preview'
     | '/_dashboard/store/music/$productId/edit'
+    | '/_dashboard/store/products/$productId/edit'
     | '/_dashboard/tribe/posts/$postId/edit'
     | '/_dashboard/website/home/$versionId/edit'
     | '/_dashboard/website/themes/$slug/preview'
@@ -801,6 +814,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardTribePostsPostIdEditRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/store/products/$productId/edit': {
+      id: '/_dashboard/store/products/$productId/edit'
+      path: '/store/products/$productId/edit'
+      fullPath: '/store/products/$productId/edit'
+      preLoaderRoute: typeof DashboardStoreProductsProductIdEditRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/store/music/$productId/edit': {
       id: '/_dashboard/store/music/$productId/edit'
       path: '/store/music/$productId/edit'
@@ -889,6 +909,7 @@ interface DashboardRouteRouteChildren {
   DashboardSmartLinksLinksSmartLinkIdEditRoute: typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   DashboardSmartLinksTemplatesSlugPreviewRoute: typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   DashboardStoreMusicProductIdEditRoute: typeof DashboardStoreMusicProductIdEditRoute
+  DashboardStoreProductsProductIdEditRoute: typeof DashboardStoreProductsProductIdEditRoute
   DashboardTribePostsPostIdEditRoute: typeof DashboardTribePostsPostIdEditRoute
   DashboardWebsiteHomeVersionIdEditRoute: typeof DashboardWebsiteHomeVersionIdEditRoute
   DashboardWebsiteThemesSlugPreviewRoute: typeof DashboardWebsiteThemesSlugPreviewRoute
@@ -936,6 +957,8 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardSmartLinksTemplatesSlugPreviewRoute:
     DashboardSmartLinksTemplatesSlugPreviewRoute,
   DashboardStoreMusicProductIdEditRoute: DashboardStoreMusicProductIdEditRoute,
+  DashboardStoreProductsProductIdEditRoute:
+    DashboardStoreProductsProductIdEditRoute,
   DashboardTribePostsPostIdEditRoute: DashboardTribePostsPostIdEditRoute,
   DashboardWebsiteHomeVersionIdEditRoute:
     DashboardWebsiteHomeVersionIdEditRoute,

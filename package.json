@@ -12,6 +12,7 @@
     "docker": "./scripts/docker-dev.sh"
   },
   "devDependencies": {
+    "@types/html-to-text": "^9.0.4",
     "@types/jest": "^30.0.0",
     "i": "^0.3.7",
     "npm": "^11.4.2",
@@ -32,6 +33,7 @@
     "@mui/icons-material": "^7.1.2",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.4.0",
+    "html-to-text": "^9.0.5",
     "lzutf8": "^0.6.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

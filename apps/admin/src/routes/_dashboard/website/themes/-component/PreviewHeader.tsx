@@ -42,6 +42,7 @@ export const PreviewHeader = ({
   const [isRenderMode, setIsRenderMode] = useState(false);
   const [isSelectProductModalOpen, setIsSelectProductModalOpen] = useState(false);
   const [intendedPage, setIntendedPage] = useState<ThemePage | null>(null);
+  const availablePages = theme.pages.filter((page) => !page.deprecated);
 
   useEffect(() => {
     // The idea.
@@ -68,8 +69,8 @@ export const PreviewHeader = ({
       currentRenderingIndex++;
       isRendering = true;
 
-      if (currentRenderingIndex < theme.pages.length) {
-        const nextPage = theme.pages[currentRenderingIndex];
+      if (currentRenderingIndex < availablePages.length) {
+        const nextPage = availablePages[currentRenderingIndex];
         setCurrentPage(nextPage);
       } else {
         setIsRenderMode(false);
@@ -94,14 +95,24 @@ export const PreviewHeader = ({
           });
       }
     }
-  }, [isRenderMode, currentPage, currentProfileAuthorization, theme, setCurrentPage, activateTheme, navigate, query]);
+  }, [
+    isRenderMode,
+    currentPage,
+    currentProfileAuthorization,
+    theme,
+    setCurrentPage,
+    activateTheme,
+    navigate,
+    query,
+    availablePages,
+  ]);
 
   if (!currentProfileAuthorization || !profile) {
     return null;
   }
 
   const handlePageChange = (page: ThemePage) => {
-    if (page.pathname === "/music/:id") {
+    if (page.pathname === "/products/:id") {
       setIntendedPage(page);
       setIsSelectProductModalOpen(true);
       return;
@@ -110,7 +121,7 @@ export const PreviewHeader = ({
   };
 
   const handleActivateTheme = () => {
-    setCurrentPage(theme?.pages[0]);
+    setCurrentPage(availablePages[0]);
     setIsRenderMode(true);
   };
 
@@ -150,7 +161,7 @@ export const PreviewHeader = ({
               align="center"
               sideOffset={4}
             >
-              {theme?.pages.map((page) => {
+              {availablePages.map((page) => {
                 return (
                   <DropdownMenuItem
                     onClick={() => handlePageChange(page)}

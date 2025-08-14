@@ -32,9 +32,9 @@ export function ComponentPickerMenuPlugin({
   const [modal, showModal] = useEditorModal();
   const [queryString, setQueryString] = useState<string | null>(null);
 
-  // const checkForTriggerMatch = useBasicTypeaheadTriggerMatch("/", {
-  //   minLength: 0,
-  // });
+  const checkForTriggerMatch = useBasicTypeaheadTriggerMatch("/", {
+    minLength: 0,
+  });
 
   const options = useMemo(() => {
     if (!queryString) {
