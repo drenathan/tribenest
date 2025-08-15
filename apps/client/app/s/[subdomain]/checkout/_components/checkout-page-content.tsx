@@ -1,6 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { usePublicAuth, useCart, useEditorContext, PaymentProviderName, ApiError } from "@tribe-nest/frontend-shared";
+import {
+  usePublicAuth,
+  useCart,
+  useEditorContext,
+  PaymentProviderName,
+  ApiError,
+  ProductDeliveryType,
+} from "@tribe-nest/frontend-shared";
 import { EditorInputWithoutEditor, EditorButtonWithoutEditor } from "@tribe-nest/frontend-shared";
 import { useForm, Controller } from "react-hook-form";
 import { alphaToHexCode } from "@tribe-nest/frontend-shared";
@@ -8,6 +15,7 @@ import { StripeCheckout } from "./stripe-checkout";
 import { round } from "lodash";
 import { toast } from "sonner";
 import InternalPageRenderer from "../../_components/internal-page-renderer";
+import { CreditCard, Truck, User } from "lucide-react";
 
 type GuestUserData = {
   firstName: string;
@@ -22,22 +30,52 @@ export function CheckoutPageContent() {
     </InternalPageRenderer>
   );
 }
+enum CheckoutStage {
+  UserDetails,
+  ShippingDetails,
+  Payment,
+}
+type Country = {
+  name: string;
+  code: string;
+  region: string;
+  states?: {
+    name: string;
+    code: string;
+  }[];
+};
 
 export function Content() {
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
   const { themeSettings, navigate, profile, httpClient } = useEditorContext();
-  const [currentStage, setCurrentStage] = useState<1 | 2>(1);
+  const [currentStage, setCurrentStage] = useState<CheckoutStage>(CheckoutStage.UserDetails);
   const [guestUserData, setGuestUserData] = useState<GuestUserData | null>(null);
   const [isFreeCheckoutLoading, setIsFreeCheckoutLoading] = useState(false);
+  const hasPhysicalProduct = cartItems.some((item) => item.deliveryType === ProductDeliveryType.Physical);
+  const [shippingCountries, setShippingCountries] = useState<Country[]>([]);
+
+  console.log(shippingCountries);
+
+  useEffect(() => {
+    const fetchShippingCountries = async () => {
+      const { data } = await httpClient!.get("/public/products/shipping-countries");
+      setShippingCountries(data);
+    };
+    fetchShippingCountries();
+  }, [httpClient]);
 
   useEffect(() => {
     if (user) {
-      setCurrentStage(2);
+      if (hasPhysicalProduct) {
+        setCurrentStage(CheckoutStage.ShippingDetails);
+      } else {
+        setCurrentStage(CheckoutStage.Payment);
+      }
     } else {
-      setCurrentStage(1);
+      setCurrentStage(CheckoutStage.UserDetails);
     }
-  }, [user]);
+  }, [user, hasPhysicalProduct]);
 
   // Calculate totals
   const total = round(
@@ -57,7 +95,7 @@ export function Content() {
 
   const handleGuestContinue = (data: GuestUserData) => {
     setGuestUserData(data);
-    setCurrentStage(2);
+    setCurrentStage(hasPhysicalProduct ? CheckoutStage.ShippingDetails : CheckoutStage.Payment);
   };
 
   const handleLogin = () => {
@@ -108,7 +146,7 @@ export function Content() {
           <p className="mb-6" style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}>
             Add some items to your cart before checking out.
           </p>
-          <EditorButtonWithoutEditor text="Continue Shopping" onClick={() => navigate("/")} />
+          <EditorButtonWithoutEditor text="Continue Shopping" onClick={() => navigate("/store")} />
         </div>
       </div>
     );
@@ -127,52 +165,98 @@ export function Content() {
       <div className="mb-8">
         <div className="flex items-center justify-center space-x-4">
           <div
-            className={`flex items-center ${currentStage >= 1 ? "" : ""}`}
+            className={`flex items-center`}
             style={{
               color:
-                currentStage >= 1 ? themeSettings.colors.primary : `${themeSettings.colors.text}${alphaToHexCode(0.4)}`,
+                currentStage >= CheckoutStage.UserDetails
+                  ? themeSettings.colors.primary
+                  : `${themeSettings.colors.text}${alphaToHexCode(0.4)}`,
             }}
           >
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center border-2"
               style={{
                 borderColor:
-                  currentStage >= 1
+                  currentStage >= CheckoutStage.UserDetails
                     ? themeSettings.colors.primary
                     : `${themeSettings.colors.text}${alphaToHexCode(0.3)}`,
-                backgroundColor: currentStage >= 1 ? themeSettings.colors.primary : "transparent",
-                color: currentStage >= 1 ? themeSettings.colors.textPrimary : themeSettings.colors.text,
+                backgroundColor:
+                  currentStage >= CheckoutStage.UserDetails ? themeSettings.colors.primary : "transparent",
+                color:
+                  currentStage >= CheckoutStage.UserDetails
+                    ? themeSettings.colors.textPrimary
+                    : themeSettings.colors.text,
                 borderRadius: `${themeSettings.cornerRadius}px`,
               }}
             >
-              1
+              <User size={16} />
             </div>
-            <span className="ml-2">User Details</span>
+            <span className="ml-2">User</span>
           </div>
+          {hasPhysicalProduct && (
+            <div
+              className="w-4 h-0.5"
+              style={{ backgroundColor: `${themeSettings.colors.text}${alphaToHexCode(0.3)}` }}
+            ></div>
+          )}
+          {hasPhysicalProduct && (
+            <div
+              className={`flex items-center`}
+              style={{
+                color:
+                  currentStage >= CheckoutStage.ShippingDetails
+                    ? themeSettings.colors.primary
+                    : `${themeSettings.colors.text}${alphaToHexCode(0.4)}`,
+              }}
+            >
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center border-2"
+                style={{
+                  borderColor:
+                    currentStage >= CheckoutStage.ShippingDetails
+                      ? themeSettings.colors.primary
+                      : `${themeSettings.colors.text}${alphaToHexCode(0.3)}`,
+                  backgroundColor:
+                    currentStage >= CheckoutStage.ShippingDetails ? themeSettings.colors.primary : "transparent",
+                  color:
+                    currentStage >= CheckoutStage.ShippingDetails
+                      ? themeSettings.colors.textPrimary
+                      : themeSettings.colors.text,
+                  borderRadius: `${themeSettings.cornerRadius}px`,
+                }}
+              >
+                <Truck size={16} />
+              </div>
+              <span className="ml-2">Shipping</span>
+            </div>
+          )}
           <div
-            className="w-16 h-0.5"
+            className="w-4 h-0.5"
             style={{ backgroundColor: `${themeSettings.colors.text}${alphaToHexCode(0.3)}` }}
           ></div>
           <div
-            className={`flex items-center ${currentStage >= 2 ? "" : ""}`}
+            className={`flex items-center`}
             style={{
               color:
-                currentStage >= 2 ? themeSettings.colors.primary : `${themeSettings.colors.text}${alphaToHexCode(0.4)}`,
+                currentStage >= CheckoutStage.Payment
+                  ? themeSettings.colors.primary
+                  : `${themeSettings.colors.text}${alphaToHexCode(0.4)}`,
             }}
           >
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center border-2"
               style={{
                 borderColor:
-                  currentStage >= 2
+                  currentStage >= CheckoutStage.Payment
                     ? themeSettings.colors.primary
                     : `${themeSettings.colors.text}${alphaToHexCode(0.3)}`,
-                backgroundColor: currentStage >= 2 ? themeSettings.colors.primary : "transparent",
-                color: currentStage >= 2 ? themeSettings.colors.textPrimary : themeSettings.colors.text,
+                backgroundColor: currentStage >= CheckoutStage.Payment ? themeSettings.colors.primary : "transparent",
+                color:
+                  currentStage >= CheckoutStage.Payment ? themeSettings.colors.textPrimary : themeSettings.colors.text,
                 borderRadius: `${themeSettings.cornerRadius}px`,
               }}
             >
-              2
+              <CreditCard size={16} />
             </div>
             <span className="ml-2">Payment</span>
           </div>
@@ -182,7 +266,7 @@ export function Content() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2">
-          {currentStage === 1 && !user && (
+          {currentStage === CheckoutStage.UserDetails && !user && (
             <div
               className="rounded-lg shadow-md p-6"
               style={{
@@ -287,7 +371,7 @@ export function Content() {
             </div>
           )}
 
-          {currentStage === 2 && isPaidCheckout && (
+          {currentStage === CheckoutStage.Payment && isPaidCheckout && (
             <div
               className="rounded-lg shadow-md p-6"
               style={{
@@ -307,7 +391,7 @@ export function Content() {
               />
             </div>
           )}
-          {currentStage === 2 && !isPaidCheckout && (
+          {currentStage === CheckoutStage.Payment && !isPaidCheckout && (
             <div
               className="rounded-lg shadow-md p-6"
               style={{

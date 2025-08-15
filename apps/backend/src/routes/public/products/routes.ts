@@ -8,6 +8,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   const controller = new PublicProducts(services, workers);
   router.use((req, _, next) => publicAuthentication(req, next, services));
   router.get("/featured", (...args) => controller.getFeaturedProducts(...args));
+  router.get("/shipping-countries", (...args) => controller.getShippingCountries(...args));
   router.get("/", (...args) => controller.getProducts(...args));
   router.get("/:id", (...args) => controller.getProduct(...args));
   return router;

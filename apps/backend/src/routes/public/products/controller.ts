@@ -3,6 +3,7 @@ import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
 import { GetFeaturedProductsInput, getFeaturedProductsSchema, GetProductsInput, getProductsSchema } from "./schema";
 import { GetProductInput, getProductSchema } from "@src/routes/product/schema";
+import { SHIPPING_COUNTRIES } from "@src/constants";
 
 export class PublicProducts extends BaseController {
   @RouteHandler()
@@ -42,5 +43,10 @@ export class PublicProducts extends BaseController {
       },
       req.membership,
     );
+  }
+
+  @RouteHandler()
+  public async getShippingCountries(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return SHIPPING_COUNTRIES;
   }
 }

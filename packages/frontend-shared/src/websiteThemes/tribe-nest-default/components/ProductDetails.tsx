@@ -103,6 +103,7 @@ export function ProductDetails({ product }: { product: IPublicProduct }) {
       payWhatYouWant: selectedVariant.payWhatYouWant || false,
       color: selectedVariant.color,
       size: selectedVariant.size,
+      deliveryType: selectedVariant.deliveryType,
     });
   };
 

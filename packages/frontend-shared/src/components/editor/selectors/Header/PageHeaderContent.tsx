@@ -264,7 +264,7 @@ function PageHeaderContent({
                 <X size={24} />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-[200px]">
               {cartItems.length === 0 ? (
                 <div className="text-center">Your cart is empty.</div>
               ) : (
@@ -290,6 +290,15 @@ function PageHeaderContent({
                         {item.title}
                       </div>
                       <div className="text-sm opacity-80">${item.price.toFixed(2)}</div>
+                      {item.color && item.size && (
+                        <div
+                          className="text-xs mt-1 flex items-center gap-2"
+                          style={{ color: themeSettings.colors.primary }}
+                        >
+                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }}></div>
+                          {item.size}
+                        </div>
+                      )}
                       {item.isGift && (
                         <div className="text-xs mt-1" style={{ color: themeSettings.colors.primary }}>
                           Gift for {item.recipientName} ({item.recipientEmail})
@@ -298,7 +307,7 @@ function PageHeaderContent({
                       <div className="text-xs mt-1 opacity-70">Qty: {item.quantity}</div>
                     </div>
                     <button
-                      onClick={() => removeFromCart(item.productId, item.isGift, item.recipientEmail)}
+                      onClick={() => removeFromCart(item.productVariantId, item.isGift, item.recipientEmail)}
                       className="absolute top-0 right-0 p-1 rounded transition-colors cursor-pointer"
                       style={{ color: themeSettings.colors.primary }}
                       aria-label="Remove item"

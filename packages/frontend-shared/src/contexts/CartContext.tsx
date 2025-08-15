@@ -97,15 +97,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       setCartItems((prev) => [...prev, item]);
       setCartOpen(true);
-      toast.success("Item added to cart");
       return true;
     },
     [cartItems],
   );
 
-  const removeFromCart = (productId: string, isGift: boolean, recipientEmail?: string) => {
+  const removeFromCart = (productVariantId: string, isGift: boolean, recipientEmail?: string) => {
     setCartItems((prev) =>
-      prev.filter((i) => !(i.productId === productId && i.isGift === isGift && i.recipientEmail === recipientEmail)),
+      prev.filter(
+        (i) => !(i.productVariantId === productVariantId && i.isGift === isGift && i.recipientEmail === recipientEmail),
+      ),
     );
   };
 
