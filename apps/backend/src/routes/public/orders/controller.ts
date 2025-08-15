@@ -1,9 +1,8 @@
-import { Body, Query, RouteHandler, ValidateSchema } from "@src/decorators";
+import { Body, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
 import { CreateOrderInput, createOrderSchema, finalizeOrderSchema, FinalizeOrderInput } from "./schema";
 import { OrderStatus } from "@src/db/types/product";
-import { NotFoundError } from "@src/utils/app_error";
 
 export class PublicOrders extends BaseController {
   @RouteHandler()

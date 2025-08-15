@@ -1,17 +1,23 @@
-import { PaymentProviderName } from "@src/services/paymentProvider/PaymentProvider";
 import { z } from "zod";
 
 export const createOrderSchema = z.object({
   body: z
     .object({
-      paymentId: z.string(),
-      paymentProviderName: z.nativeEnum(PaymentProviderName),
       profileId: z.string().uuid("Invalid profile ID"),
       accountId: z.string().uuid("Invalid account ID").optional(),
       amount: z.number(),
       email: z.string().email("Invalid email").optional(),
       firstName: z.string().optional(),
       lastName: z.string().optional(),
+      shippingAddress: z
+        .object({
+          address1: z.string(),
+          city: z.string(),
+          stateCode: z.string(),
+          countryCode: z.string(),
+          zip: z.string(),
+        })
+        .optional(),
       cartItems: z
         .array(
           z

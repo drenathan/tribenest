@@ -39,6 +39,8 @@ export class OrderModel extends BaseModel<"orders", "id"> {
       .selectFrom("orders")
       .where((eb) => {
         const conditions: Expression<SqlBool>[] = [];
+        conditions.push(eb("orders.status", "!=", OrderStatus.InitiatedPayment));
+
         if (paymentId) {
           conditions.push(eb("orders.paymentId", "=", paymentId));
         }

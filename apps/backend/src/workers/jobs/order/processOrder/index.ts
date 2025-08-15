@@ -18,18 +18,18 @@ export default class ProcessOrderJob extends BaseJob<Args> {
     // make sure we can send emails before attempting to create all the files
     await this.services.apis.getEmailClient(profileId);
 
-    const result = await this.services.public.order.processOrder({ orderId });
+    // const result = await this.services.public.order.processOrder({ orderId });
 
-    for (const archive of result.archives) {
-      await this.workers.emails.orderDelivery.now({
-        ...archive,
-        ...result.order,
-        profileId,
-        to: archive.recipientEmail,
-      });
-    }
+    // for (const archive of result.archives) {
+    //   await this.workers.emails.orderDelivery.now({
+    //     ...archive,
+    //     ...result.order,
+    //     profileId,
+    //     to: archive.recipientEmail,
+    //   });
+    // }
 
-    await this.services.public.order.updateOrderStatus({ orderId, status: OrderStatus.Delivered });
+    // await this.services.public.order.updateOrderStatus({ orderId, status: OrderStatus.Delivered });
     logger.info({ tags: this.tags }, `Order ${orderId} processed`);
   }
 }

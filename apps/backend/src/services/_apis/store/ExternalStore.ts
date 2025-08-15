@@ -28,6 +28,23 @@ export type ExternalStoreDetails = {
   externalId: string;
 };
 
+export type GetShippingCostInput = {
+  items: { productVariantId: string; quantity: number }[];
+  recipient: {
+    address1: string;
+    city: string;
+    stateCode: string;
+    countryCode: string;
+    zip: string;
+    name: string;
+  };
+};
+
+export type GetShippingCostResult = {
+  shippingCost: number;
+  externalId: string;
+};
+
 export abstract class ExternalStore {
   public abstract provider: ExternalStoreProvider;
 
@@ -39,4 +56,6 @@ export abstract class ExternalStore {
   public abstract getStoreDetails(): Promise<ExternalStoreDetails>;
 
   public abstract getDefaults(): Promise<Record<string, any>>;
+
+  public abstract getShippingCost(input: GetShippingCostInput): Promise<GetShippingCostResult>;
 }

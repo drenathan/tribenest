@@ -23,6 +23,14 @@ type GuestUserData = {
   email: string;
 };
 
+type ShippingData = {
+  address1: string;
+  city: string;
+  stateCode: string;
+  countryCode: string;
+  zip: string;
+};
+
 export function CheckoutPageContent() {
   return (
     <InternalPageRenderer>
@@ -51,11 +59,16 @@ export function Content() {
   const { themeSettings, navigate, profile, httpClient } = useEditorContext();
   const [currentStage, setCurrentStage] = useState<CheckoutStage>(CheckoutStage.UserDetails);
   const [guestUserData, setGuestUserData] = useState<GuestUserData | null>(null);
+  const [shippingData, setShippingData] = useState<ShippingData>();
   const [isFreeCheckoutLoading, setIsFreeCheckoutLoading] = useState(false);
   const hasPhysicalProduct = cartItems.some((item) => item.deliveryType === ProductDeliveryType.Physical);
   const [shippingCountries, setShippingCountries] = useState<Country[]>([]);
-
-  console.log(shippingCountries);
+  const [shippingCost, setShippingCost] = useState(0);
+  const total = round(
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+    2,
+  );
+  const [subTotal, setSubTotal] = useState(total);
 
   useEffect(() => {
     const fetchShippingCountries = async () => {
@@ -77,11 +90,6 @@ export function Content() {
     }
   }, [user, hasPhysicalProduct]);
 
-  // Calculate totals
-  const total = round(
-    cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
-    2,
-  );
   const isPaidCheckout = total > 0;
 
   // Guest user form
@@ -93,14 +101,41 @@ export function Content() {
     },
   });
 
+  // Shipping form
+  const shippingForm = useForm<ShippingData>({
+    defaultValues: {
+      address1: "",
+      city: "",
+      stateCode: "",
+      countryCode: "",
+      zip: "",
+    },
+  });
+
   const handleGuestContinue = (data: GuestUserData) => {
     setGuestUserData(data);
     setCurrentStage(hasPhysicalProduct ? CheckoutStage.ShippingDetails : CheckoutStage.Payment);
   };
 
+  const handleShippingContinue = (data: ShippingData) => {
+    setShippingData(data);
+    setCurrentStage(CheckoutStage.Payment);
+  };
+
   const handleLogin = () => {
     navigate("/login?redirect=/checkout");
   };
+
+  // Watch for country changes to reset state selection
+  const selectedCountryCode = shippingForm.watch("countryCode");
+  const selectedCountry = shippingCountries.find((country) => country.code === selectedCountryCode);
+
+  useEffect(() => {
+    // Reset state when country changes
+    if (selectedCountryCode) {
+      shippingForm.setValue("stateCode", "");
+    }
+  }, [selectedCountryCode, shippingForm]);
 
   const handleFreeCheckout = async () => {
     try {
@@ -115,6 +150,7 @@ export function Content() {
         cartItems,
         paymentId: "",
         paymentProviderName: PaymentProviderName.Stripe,
+        shippingAddress: shippingData,
       });
 
       navigate(`/checkout/finalise?orderId=${data.id}`);
@@ -371,6 +407,170 @@ export function Content() {
             </div>
           )}
 
+          {currentStage === CheckoutStage.ShippingDetails && hasPhysicalProduct && (
+            <div
+              className="rounded-lg shadow-md p-6"
+              style={{
+                backgroundColor: themeSettings.colors.background,
+                border: `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
+                borderRadius: `${themeSettings.cornerRadius}px`,
+              }}
+            >
+              <h2 className="text-2xl font-bold mb-6" style={{ color: themeSettings.colors.text }}>
+                Shipping Details
+              </h2>
+              <form onSubmit={shippingForm.handleSubmit(handleShippingContinue)} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: themeSettings.colors.text }}>
+                    Address Line 1
+                  </label>
+                  <Controller
+                    control={shippingForm.control}
+                    name="address1"
+                    rules={{ required: "Address is required" }}
+                    render={({ field }) => (
+                      <EditorInputWithoutEditor
+                        placeholder="12 address avenue, Bankstown"
+                        value={field.value}
+                        onChange={field.onChange}
+                        width="100%"
+                      />
+                    )}
+                  />
+                  {shippingForm.formState.errors.address1 && (
+                    <p className="text-sm text-red-500 mt-1">{shippingForm.formState.errors.address1.message}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: themeSettings.colors.text }}>
+                      City
+                    </label>
+                    <Controller
+                      control={shippingForm.control}
+                      name="city"
+                      rules={{ required: "City is required" }}
+                      render={({ field }) => (
+                        <EditorInputWithoutEditor
+                          placeholder="Sydney"
+                          value={field.value}
+                          onChange={field.onChange}
+                          width="100%"
+                        />
+                      )}
+                    />
+                    {shippingForm.formState.errors.city && (
+                      <p className="text-sm text-red-500 mt-1">{shippingForm.formState.errors.city.message}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: themeSettings.colors.text }}>
+                      Postal Code
+                    </label>
+                    <Controller
+                      control={shippingForm.control}
+                      name="zip"
+                      rules={{ required: "Postal code is required" }}
+                      render={({ field }) => (
+                        <EditorInputWithoutEditor
+                          placeholder="2200"
+                          value={field.value}
+                          onChange={field.onChange}
+                          width="100%"
+                        />
+                      )}
+                    />
+                    {shippingForm.formState.errors.zip && (
+                      <p className="text-sm text-red-500 mt-1">{shippingForm.formState.errors.zip.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: themeSettings.colors.text }}>
+                      Country
+                    </label>
+                    <Controller
+                      control={shippingForm.control}
+                      name="countryCode"
+                      rules={{ required: "Country is required" }}
+                      render={({ field }) => (
+                        <select
+                          {...field}
+                          className="w-full px-3 py-2 border rounded-md"
+                          style={{
+                            backgroundColor: themeSettings.colors.background,
+                            borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.3)}`,
+                            color: themeSettings.colors.text,
+                            borderRadius: `${themeSettings.cornerRadius}px`,
+                          }}
+                        >
+                          <option value="">Select Country</option>
+                          {shippingCountries.map((country) => (
+                            <option key={country.code} value={country.code}>
+                              {country.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                    {shippingForm.formState.errors.countryCode && (
+                      <p className="text-sm text-red-500 mt-1">{shippingForm.formState.errors.countryCode.message}</p>
+                    )}
+                  </div>
+
+                  {selectedCountry?.states && selectedCountry.states.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: themeSettings.colors.text }}>
+                        State/Province
+                      </label>
+                      <Controller
+                        control={shippingForm.control}
+                        name="stateCode"
+                        rules={{ required: "State/Province is required" }}
+                        render={({ field }) => (
+                          <select
+                            {...field}
+                            className="w-full px-3 py-2 border rounded-md"
+                            style={{
+                              backgroundColor: themeSettings.colors.background,
+                              borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.3)}`,
+                              color: themeSettings.colors.text,
+                              borderRadius: `${themeSettings.cornerRadius}px`,
+                            }}
+                          >
+                            <option value="">Select State/Province</option>
+                            {selectedCountry.states!.map((state) => (
+                              <option key={state.code} value={state.code}>
+                                {state.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      />
+                      {shippingForm.formState.errors.stateCode && (
+                        <p className="text-sm text-red-500 mt-1">{shippingForm.formState.errors.stateCode.message}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <EditorButtonWithoutEditor
+                    text="Back"
+                    onClick={() => setCurrentStage(CheckoutStage.UserDetails)}
+                    variant="secondary"
+                    fullWidth={false}
+                  />
+                  <EditorButtonWithoutEditor text="Continue to Payment" type="submit" fullWidth />
+                </div>
+              </form>
+            </div>
+          )}
+
           {currentStage === CheckoutStage.Payment && isPaidCheckout && (
             <div
               className="rounded-lg shadow-md p-6"
@@ -388,6 +588,18 @@ export function Content() {
                 email={guestUserData?.email || user?.email || ""}
                 firstName={guestUserData?.firstName}
                 lastName={guestUserData?.lastName}
+                shippingAddress={shippingData}
+                setShippingCost={setShippingCost}
+              />
+              <div className="h-4" />
+              <EditorButtonWithoutEditor
+                text="Back"
+                variant="secondary"
+                onClick={() =>
+                  hasPhysicalProduct
+                    ? setCurrentStage(CheckoutStage.ShippingDetails)
+                    : setCurrentStage(CheckoutStage.UserDetails)
+                }
               />
             </div>
           )}
@@ -459,6 +671,27 @@ export function Content() {
               )}
             </div>
 
+            {/* Shipping Info */}
+            {hasPhysicalProduct && shippingData && (
+              <div
+                className="mb-4 pb-4"
+                style={{ borderBottom: `1px solid ${themeSettings.colors.primary}${alphaToHexCode(0.2)}` }}
+              >
+                <h4 className="font-semibold mb-2" style={{ color: themeSettings.colors.text }}>
+                  Shipping Address
+                </h4>
+                <div className="text-sm">
+                  <p style={{ color: themeSettings.colors.text }}>{shippingData.address1}</p>
+                  <p style={{ color: themeSettings.colors.text }}>
+                    {shippingData.city}, {shippingData.stateCode} {shippingData.zip}
+                  </p>
+                  <p style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.6)}` }}>
+                    {shippingCountries.find((c) => c.code === shippingData.countryCode)?.name}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Cart Items */}
             <div
               className="mb-4 pb-4"
@@ -496,14 +729,14 @@ export function Content() {
 
             {/* Totals */}
             <div className="space-y-2">
-              {/* <div className="flex justify-between">
+              <div className="flex justify-between">
                 <span style={{ color: themeSettings.colors.text }}>Subtotal</span>
-                <span style={{ color: themeSettings.colors.text }}>${subtotal.toFixed(2)}</span>
-              </div> */}
-              {/* <div className="flex justify-between">
-                <span style={{ color: themeSettings.colors.text }}>Tax (10%)</span>
-                <span style={{ color: themeSettings.colors.text }}>${tax.toFixed(2)}</span>
-              </div> */}
+                <span style={{ color: themeSettings.colors.text }}>${subTotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span style={{ color: themeSettings.colors.text }}>Shipping </span>
+                <span style={{ color: themeSettings.colors.text }}>${shippingCost.toFixed(2)}</span>
+              </div>
               <div
                 className="flex justify-between font-bold text-lg pt-2"
                 style={{
@@ -512,7 +745,7 @@ export function Content() {
                 }}
               >
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>${(total + shippingCost).toFixed(2)}</span>
               </div>
             </div>
           </div>

@@ -8,7 +8,6 @@ import { useCart } from "@tribe-nest/frontend-shared";
 import { useEffect } from "react";
 import { CheckCircle, XCircle, Clock, Truck, Package, AlertCircle } from "lucide-react";
 import { Badge } from "@tribe-nest/frontend-shared";
-import Image from "next/image";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -243,6 +242,15 @@ export default function Page() {
                     >
                       Qty: {item.quantity}
                     </div>
+                    {item.color && item.size && (
+                      <div
+                        className="text-xs mt-1 flex items-center gap-2"
+                        style={{ color: themeSettings.colors.primary }}
+                      >
+                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }}></div>
+                        {item.size}
+                      </div>
+                    )}
                   </div>
                   <div className="text-right">
                     <div className="font-semibold" style={{ color: themeSettings.colors.primary }}>

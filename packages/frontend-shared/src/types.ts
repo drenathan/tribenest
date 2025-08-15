@@ -310,6 +310,8 @@ export type IPublicOrderItem = {
   quantity: number;
   recipientMessage?: string;
   payWhatYouWant: boolean;
+  color: string;
+  size: string;
 };
 
 export type SmartLinkTemplate = {

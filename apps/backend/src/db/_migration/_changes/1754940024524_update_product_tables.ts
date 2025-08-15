@@ -56,6 +56,36 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("product_store_id", "uuid", (b) => b.references(`${tables.product_stores}.id`))
     .execute();
 
+  await db.schema
+    .alterTable(tables.order_items)
+    .addColumn("delivery_type", "text", (col) => col.notNull())
+    .addColumn("color", "text")
+    .addColumn("size", "text")
+    .addColumn("external_id", "text")
+    .execute();
+
+  await db.schema
+    .createTable(tables.order_delivery_groups)
+    .addColumn("id", "uuid", (b) => b.primaryKey().defaultTo(sql`gen_random_uuid()`))
+    .addColumn("order_id", "uuid", (b) => b.references(`${tables.orders}.id`))
+    .addColumn("external_id", "text")
+    .addColumn("shipping_cost", "decimal(10, 2)")
+    .addColumn("external_id", "text")
+    .addColumn("product_store_id", "uuid", (b) => b.references(`${tables.product_stores}.id`))
+    .$call(addDefaultColumns)
+    .execute();
+  await addUpdateUpdatedAtTrigger(db, tables.order_delivery_groups);
+
+  await db.schema
+    .createTable(tables.order_delivery_group_items)
+    .addColumn("id", "uuid", (b) => b.primaryKey().defaultTo(sql`gen_random_uuid()`))
+    .addColumn("order_item_id", "uuid", (b) => b.references(`${tables.order_items}.id`))
+    .addColumn("order_delivery_group_id", "uuid", (b) => b.references(`${tables.order_delivery_groups}.id`))
+    .addUniqueConstraint("order_item_id_order_delivery_group_id_unique", ["order_item_id", "order_delivery_group_id"])
+    .$call(addDefaultColumns)
+    .execute();
+  await addUpdateUpdatedAtTrigger(db, tables.order_delivery_group_items);
+
   await db.schema.dropTable(tables.product_variant_configurations).execute();
   await db.schema.dropTable(tables.product_variant_option_values).execute();
   await db.schema.dropTable(tables.product_variant_options).execute();
@@ -73,4 +103,6 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.alterTable(tables.media).dropColumn("product_store_id").execute();
   await db.schema.alterTable(tables.product_variant_option_values).dropColumn("label").execute();
   await db.schema.dropTable(tables.product_stores).execute();
+  // await db.schema.dropTable(tables.order_delivery_group_items).execute();
+  // await db.schema.dropTable(tables.order_delivery_groups).execute();
 }

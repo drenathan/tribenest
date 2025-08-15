@@ -5,6 +5,8 @@ import {
   ExternalStoreArgs,
   ExternalStoreDetails,
   ExternalStoreProvider,
+  GetShippingCostInput,
+  GetShippingCostResult,
 } from "./ExternalStore";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { ValidationError } from "@src/utils/app_error";
@@ -188,6 +190,30 @@ export class ExternalStorePrintful extends ExternalStore {
 
     return {
       colors,
+    };
+  }
+
+  public async getShippingCost(input: GetShippingCostInput): Promise<GetShippingCostResult> {
+    const result = await this.request<{ retail_costs: { shipping: string }; id: number }>(() =>
+      this.client.post("/orders", {
+        recipient: {
+          name: input.recipient.name,
+          address1: input.recipient.address1,
+          city: input.recipient.city,
+          state_code: input.recipient.stateCode,
+          country_code: input.recipient.countryCode,
+          zip: input.recipient.zip,
+        },
+        items: input.items.map((item) => ({
+          sync_variant_id: Number(item.productVariantId),
+          quantity: item.quantity,
+        })),
+      }),
+    );
+
+    return {
+      shippingCost: Number(result.retail_costs.shipping),
+      externalId: result.id.toString(),
     };
   }
 }

@@ -7,6 +7,10 @@ export class EncryptionService {
   private static readonly IV_LENGTH = 16;
   private static readonly TAG_LENGTH = 16;
 
+  private readonly ALGORITHM = "aes-256-gcm";
+  private readonly IV_LENGTH = 16;
+  private readonly TAG_LENGTH = 16;
+
   /**
    * Encrypt sensitive data using AES-256-GCM
    */
@@ -26,6 +30,17 @@ export class EncryptionService {
     return iv.toString("hex") + tag.toString("hex") + encrypted;
   }
 
+  public decrypt(encryptedText: string): string {
+    return EncryptionService.decrypt(encryptedText);
+  }
+
+  public encryptObject<T extends Record<string, string | null | Json>>(obj: T, fieldsToEncrypt: (keyof T)[]): T {
+    return EncryptionService.encryptObject(obj, fieldsToEncrypt);
+  }
+
+  public decryptObject<T extends Record<string, string | null | Json>>(obj: T, fieldsToDecrypt: (keyof T)[]): T {
+    return EncryptionService.decryptObject(obj, fieldsToDecrypt);
+  }
   /**
    * Decrypt sensitive data using AES-256-GCM
    */

@@ -2,49 +2,78 @@ import {
   alphaToHexCode,
   ApiError,
   EditorButtonWithoutEditor,
-  IPublicOrder,
-  PaymentProviderName,
   useCart,
   useEditorContext,
   usePublicAuth,
 } from "@tribe-nest/frontend-shared";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Appearance, loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
-import { useQuery } from "@tanstack/react-query";
 
 type Props = {
   amount: number;
   email: string;
   firstName?: string;
   lastName?: string;
+  setShippingCost: (cost: number) => void;
+  shippingAddress?: {
+    address1: string;
+    city: string;
+    stateCode: string;
+    countryCode: string;
+    zip: string;
+  };
 };
-export const StripeCheckout = ({ amount, email, firstName, lastName }: Props) => {
+export const StripeCheckout = ({ amount, email, firstName, lastName, shippingAddress, setShippingCost }: Props) => {
   const { themeSettings, profile, httpClient } = useEditorContext();
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
-
-  const stripePromise = useRef(loadStripe(profile!.paymentProviderPublicKey));
-  const { data: paymentIntent } = useQuery<{
+  const [order, setOrder] = useState<{
     paymentSecret: string;
     paymentId: string;
-  }>({
-    queryKey: ["order", profile?.id, email, firstName, lastName, user?.id, cartItems],
-    queryFn: async () => {
-      const res = await httpClient!.post("/public/payments/start", {
-        amount,
-        profileId: profile?.id,
-        email,
-        firstName,
-        lastName,
-        accountId: user?.id,
-        cartItems,
-      });
-      return res.data;
-    },
-    enabled: !!profile?.id,
-  });
+    orderId: string;
+    shippingCost: number;
+    totalAmount: number;
+    subTotal: number;
+  }>();
+
+  const stripePromise = useRef(loadStripe(profile!.paymentProviderPublicKey));
+
+  useEffect(() => {
+    if (profile?.id) {
+      httpClient!
+        .post("/public/orders", {
+          amount,
+          profileId: profile?.id,
+          email,
+          firstName,
+          lastName,
+          accountId: user?.id,
+          cartItems,
+          shippingAddress,
+        })
+        .then((res) => {
+          setOrder(res.data);
+          setShippingCost(res.data.shippingCost);
+        })
+        .catch((error) => {
+          toast.error((error as ApiError).response?.data?.message);
+          console.error(error);
+        });
+    }
+  }, [
+    profile?.id,
+    email,
+    firstName,
+    lastName,
+    user?.id,
+    cartItems,
+    shippingAddress,
+    amount,
+    httpClient,
+    setShippingCost,
+  ]);
 
   const appearance: Appearance = {
     theme: "flat",
@@ -102,17 +131,15 @@ export const StripeCheckout = ({ amount, email, firstName, lastName }: Props) =>
 
   return (
     <div>
-      {paymentIntent?.paymentSecret && paymentIntent?.paymentId && (
-        <Elements
-          options={{ clientSecret: paymentIntent.paymentSecret, appearance, loader }}
-          stripe={stripePromise.current}
-        >
+      {order?.paymentSecret && order?.paymentId && (
+        <Elements options={{ clientSecret: order.paymentSecret, appearance, loader }} stripe={stripePromise.current}>
           <CheckoutForm
-            amount={amount}
+            amount={order.totalAmount}
             firstName={firstName}
             lastName={lastName}
             email={email}
-            paymentId={paymentIntent.paymentId}
+            paymentId={order.paymentId}
+            orderId={order.orderId}
           />
         </Elements>
       )}
@@ -124,26 +151,21 @@ import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 
 export default function CheckoutForm({
   amount,
-  firstName,
-  lastName,
-  email,
-  paymentId,
+  orderId,
 }: {
   amount: number;
   firstName?: string;
   lastName?: string;
   email?: string;
   paymentId: string;
+  orderId: string;
 }) {
-  const { user } = usePublicAuth();
-  const { profile, httpClient } = useEditorContext();
-  const { cartItems } = useCart();
+  const { profile } = useEditorContext();
   const stripe = useStripe();
   const elements = useElements();
 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [order, setOrder] = useState<IPublicOrder | null>(null);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -156,36 +178,12 @@ export default function CheckoutForm({
       }
 
       setIsLoading(true);
-      let localOrder = order;
-      // This function is called even if the form is invalid, we only want to create the order once no matter how many times the user clicks the button
-      if (!localOrder) {
-        try {
-          const res = await httpClient!.post("/public/orders", {
-            amount,
-            profileId: profile.id,
-            email,
-            firstName,
-            lastName,
-            accountId: user?.id,
-            cartItems,
-            paymentId,
-            paymentProviderName: PaymentProviderName.Stripe,
-          });
-          setOrder(res.data);
-          localOrder = res.data;
-        } catch (error) {
-          toast.error((error as ApiError).response?.data?.message);
-          console.error(error);
-          setIsLoading(false);
-          return;
-        }
-      }
 
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
           // Make sure to change this to your payment completion page
-          return_url: `${window.location.origin}/checkout/finalise?orderId=${localOrder?.id}`,
+          return_url: `${window.location.origin}/checkout/finalise?orderId=${orderId}`,
         },
       });
 
@@ -202,7 +200,7 @@ export default function CheckoutForm({
 
       setIsLoading(false);
     },
-    [stripe, elements, profile, order, amount, email, firstName, lastName, user?.id, cartItems, paymentId],
+    [orderId, stripe, elements, profile],
   );
 
   const paymentElementOptions = {

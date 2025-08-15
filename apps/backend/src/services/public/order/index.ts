@@ -1,7 +1,7 @@
-import { OrderStatus } from "@src/db/types/product";
+import { OrderStatus, ProductDeliveryType } from "@src/db/types/product";
 import { CreateOrderInput } from "@src/routes/public/orders/schema";
 import { BaseService } from "@src/services/baseService";
-import { PaymentStatus } from "@src/services/paymentProvider/PaymentProvider";
+import { ChargeResponse, PaymentProvider, PaymentStatus } from "@src/services/paymentProvider/PaymentProvider";
 import { BadRequestError, NotFoundError } from "@src/utils/app_error";
 import * as fs from "fs";
 import * as path from "path";
@@ -11,6 +11,7 @@ import { groupBy } from "lodash";
 import { GetManyProductResult } from "@src/db/models/product/product.model";
 import { IOrderItem } from "@src/db/models/order/orderItem.model";
 import { Selectable } from "kysely";
+import { GetShippingCostResult } from "@src/services/_apis/store/ExternalStore";
 
 type FinalizeOrderInput = {
   profileId: string;
@@ -44,19 +45,97 @@ export class OrderService extends BaseService {
   }
 
   public async create(input: CreateOrderInput) {
-    const isPaidOrder = input.amount > 0;
-    const status = isPaidOrder ? OrderStatus.InitiatedPayment : OrderStatus.Paid;
+    const productVariants = await this.models.ProductVariant.find({
+      id: input.cartItems.map((item) => item.productVariantId),
+    });
+
+    let firstName = input.firstName;
+    let lastName = input.lastName;
+
+    if (input.accountId) {
+      const account = await this.models.Account.findById(input.accountId);
+      if (!account) {
+        throw new BadRequestError("Account not found");
+      }
+      firstName = account.firstName;
+      lastName = account.lastName;
+    }
+
+    const subTotal = input.cartItems.reduce((acc, item) => {
+      const productVariant = productVariants.find((variant) => variant.id === item.productVariantId);
+      if (!productVariant) {
+        throw new BadRequestError("Product variant not found");
+      }
+      return acc + Number(productVariant.price) * item.quantity;
+    }, 0);
+
+    const status = subTotal > 0 ? OrderStatus.InitiatedPayment : OrderStatus.Paid;
+
+    const physicalProductVariants = productVariants.filter((pv) => pv.deliveryType === ProductDeliveryType.Physical);
+
+    let shippingCost: GetShippingCostResult = {
+      shippingCost: 0,
+      externalId: "",
+    };
+
+    if (physicalProductVariants.length > 0 && subTotal > 0) {
+      if (!input.shippingAddress) {
+        throw new BadRequestError("Shipping address is required");
+      }
+
+      const profileProductStore = await this.models.ProductStore.findOne({ profileId: input.profileId });
+
+      if (!profileProductStore) {
+        throw new BadRequestError("Profile product store not found");
+      }
+      const decryptedAccessToken = this.apis.encryption.decrypt(profileProductStore.accessToken);
+      const storeApi = await this.apis.getExternalStore(profileProductStore.provider, decryptedAccessToken);
+
+      shippingCost = await storeApi.getShippingCost({
+        items: physicalProductVariants.map((pv) => {
+          if (!pv.externalId) {
+            throw new BadRequestError("Product variant external id not found");
+          }
+          const quantity = input.cartItems.find((item) => item.productVariantId === pv.id)?.quantity;
+          if (!quantity) {
+            throw new BadRequestError("Quantity not found");
+          }
+          return {
+            productVariantId: pv.externalId,
+            quantity,
+          };
+        }),
+        recipient: {
+          name: firstName + " " + lastName,
+          ...input.shippingAddress,
+        },
+      });
+    }
+
+    const totalAmount = subTotal + shippingCost.shippingCost;
+    let payment: ChargeResponse;
+    let paymentProvider: PaymentProvider;
+
+    if (totalAmount > 0) {
+      paymentProvider = await this.apis.getPaymentProvider(input.profileId);
+      payment = await paymentProvider.startCharge({
+        amount: totalAmount,
+        currency: "usd",
+        email: input.email,
+        returnUrl: "http://drenathan1.localhost:3001/checkout",
+      });
+    }
 
     return this.database.client.transaction().execute(async (trx) => {
       const order = await this.models.Order.insertOne(
         {
-          totalAmount: input.amount,
+          totalAmount,
           profileId: input.profileId,
           status,
-          paymentProviderName: input.paymentProviderName,
-          paymentId: input.paymentId,
-          firstName: input.firstName,
-          lastName: input.lastName,
+          paymentProviderName: paymentProvider?.name,
+          paymentId: payment?.paymentId,
+          firstName,
+          lastName,
           email: input.email,
           accountId: input.accountId,
         },
@@ -80,7 +159,13 @@ export class OrderService extends BaseService {
         trx,
       );
 
-      return order;
+      return {
+        ...payment,
+        orderId: order.id,
+        shippingCost: shippingCost.shippingCost,
+        subTotal,
+        totalAmount,
+      };
     });
   }
 

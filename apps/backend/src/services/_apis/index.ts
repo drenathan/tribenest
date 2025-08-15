@@ -7,9 +7,13 @@ import { BadRequestError, ValidationError } from "@src/utils/app_error";
 import { getConfig } from "@src/configuration";
 import { ExternalStoreFactory } from "./store/ExternalStoreFactory";
 import { ExternalStoreProvider } from "./store/ExternalStore";
+import { EncryptionService } from "@src/utils/encryption";
 
 export default class ApiServices {
-  constructor(private database: Database) {}
+  public readonly encryption: EncryptionService;
+  constructor(private database: Database) {
+    this.encryption = new EncryptionService();
+  }
 
   public async getEmailClient(profileId: string) {
     const config = await this.database.models.ProfileConfiguration.getProfileConfiguration(profileId);
