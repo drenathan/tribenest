@@ -164,23 +164,6 @@ function RouteComponent() {
         }
       />
       {isLoading && <Loading />}
-      {isEmptyStores && (
-        <EmptyState
-          title="No Products Found"
-          description={
-            hasActiveFilters
-              ? "No music found matching your filters"
-              : "Create your first products or connect an external store"
-          }
-          action={
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Link2 className="mr-2 h-4 w-4" />
-              Connect External Store
-            </Button>
-          }
-        />
-      )}
-
       <div className="flex flex-col gap-4 mt-6">
         <div className="flex gap-4 items-center">
           <div className="flex-1">
@@ -252,6 +235,23 @@ function RouteComponent() {
           </div>
         )}
       </div>
+      {isEmptyStores && (
+        <EmptyState
+          title="No Products Found"
+          className="mt-6"
+          description={
+            hasActiveFilters
+              ? "No music found matching your filters"
+              : "Create your first products or connect an external store"
+          }
+          action={
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Link2 className="mr-2 h-4 w-4" />
+              Connect External Store
+            </Button>
+          }
+        />
+      )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[520px]">
@@ -309,7 +309,7 @@ function RouteComponent() {
         ))}
       </div>
 
-      {products && (
+      {!!products?.data?.length && (
         <AdminPagination
           currentPage={products.page}
           totalItems={products.total}

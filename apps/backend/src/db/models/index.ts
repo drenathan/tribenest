@@ -27,6 +27,7 @@ import { ProductVariantConfigurationModel } from "./product/productVariantConfig
 import { ProductVariantTrackModel } from "./product/productVariantTrack.model";
 import { OrderModel } from "./order/order.model";
 import { OrderItemModel } from "./order/orderItem.model";
+import { OrderDeliveryGroupModel } from "./order/orderDeliveryGroup.model";
 import { ProfileConfigurationModel } from "./profile/profileConfiguration.model";
 import { ProfilePaymentCustomerModel } from "./profile/profilePaymentCustomer.model";
 import { ProfilePaymentPriceModel } from "./profile/profilePaymentPrice.model";
@@ -62,6 +63,7 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     MembershipTier: new MembershipTierModel(client),
     MembershipTierBenefit: new MembershipTierBenefitModel(client),
     Order: new OrderModel(client),
+    OrderDeliveryGroup: new OrderDeliveryGroupModel(client),
     OrderItem: new OrderItemModel(client),
     Post: new PostModel(client),
     MediaMapping: new MediaMappingModel(client),

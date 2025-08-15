@@ -207,11 +207,31 @@ export interface MembershipTiersBenefits {
   updatedAt: Generated<Timestamp>;
 }
 
-export interface OrderItems {
-  coverImage: string | null;
+export interface OrderDeliveryGroups {
   createdAt: Generated<Timestamp>;
+  deliveryType: string;
+  externalId: string | null;
+  fileUrl: string | null;
   id: Generated<string>;
   isGift: Generated<boolean>;
+  orderId: string | null;
+  productStoreId: string | null;
+  recipientEmail: string;
+  recipientName: string;
+  shippingCost: Numeric | null;
+  status: Generated<string>;
+  subTotal: Numeric;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface OrderItems {
+  color: string | null;
+  coverImage: string | null;
+  createdAt: Generated<Timestamp>;
+  externalId: string | null;
+  id: Generated<string>;
+  isGift: Generated<boolean>;
+  orderDeliveryGroupId: string | null;
   orderId: string;
   payWhatYouWant: Generated<boolean>;
   price: Numeric;
@@ -221,6 +241,7 @@ export interface OrderItems {
   recipientEmail: string | null;
   recipientMessage: string | null;
   recipientName: string | null;
+  size: string | null;
   title: string;
   updatedAt: Generated<Timestamp>;
 }
@@ -541,6 +562,7 @@ export interface DB {
   memberships: Memberships;
   membershipTiers: MembershipTiers;
   membershipTiersBenefits: MembershipTiersBenefits;
+  orderDeliveryGroups: OrderDeliveryGroups;
   orderItems: OrderItems;
   orders: Orders;
   postCollectionPosts: PostCollectionPosts;

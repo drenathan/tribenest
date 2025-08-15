@@ -40,7 +40,6 @@ export class OrderModel extends BaseModel<"orders", "id"> {
       .where((eb) => {
         const conditions: Expression<SqlBool>[] = [];
         conditions.push(eb("orders.status", "!=", OrderStatus.InitiatedPayment));
-
         if (paymentId) {
           conditions.push(eb("orders.paymentId", "=", paymentId));
         }
@@ -56,11 +55,20 @@ export class OrderModel extends BaseModel<"orders", "id"> {
       .select((eb) => [
         this.jsonArrayFrom(
           eb
-            .selectFrom("orderItems")
-            .selectAll()
+            .selectFrom("orderDeliveryGroups")
             .whereRef("orderId", "=", "orders.id")
-            .orderBy("orderItems.createdAt", "asc"),
-        ).as("items"),
+            .orderBy("orderDeliveryGroups.createdAt", "asc")
+            .selectAll()
+            .select((eb) => [
+              this.jsonArrayFrom(
+                eb
+                  .selectFrom("orderItems")
+                  .whereRef("orderDeliveryGroupId", "=", "orderDeliveryGroups.id")
+                  .orderBy("orderItems.createdAt", "asc")
+                  .selectAll(),
+              ).as("items"),
+            ]),
+        ).as("deliveryGroups"),
       ])
       .orderBy("orders.createdAt", "desc")
       .limit(input.limit ?? 10)
@@ -112,11 +120,20 @@ export class OrderModel extends BaseModel<"orders", "id"> {
         eb.ref("orders.email").as("customerEmail"),
         this.jsonArrayFrom(
           eb
-            .selectFrom("orderItems")
-            .selectAll()
+            .selectFrom("orderDeliveryGroups")
             .whereRef("orderId", "=", "orders.id")
-            .orderBy("orderItems.createdAt", "asc"),
-        ).as("items"),
+            .orderBy("orderDeliveryGroups.createdAt", "asc")
+            .selectAll()
+            .select((eb) => [
+              this.jsonArrayFrom(
+                eb
+                  .selectFrom("orderItems")
+                  .whereRef("orderDeliveryGroupId", "=", "orderDeliveryGroups.id")
+                  .orderBy("orderItems.createdAt", "asc")
+                  .selectAll(),
+              ).as("items"),
+            ]),
+        ).as("deliveryGroups"),
       ])
       .limit(input.limit)
       .offset(offset)

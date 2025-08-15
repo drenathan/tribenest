@@ -64,11 +64,10 @@ export function Content() {
   const hasPhysicalProduct = cartItems.some((item) => item.deliveryType === ProductDeliveryType.Physical);
   const [shippingCountries, setShippingCountries] = useState<Country[]>([]);
   const [shippingCost, setShippingCost] = useState(0);
-  const total = round(
-    cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+  const subTotal = round(
+    cartItems.reduce((cur, item) => cur + item.price * item.quantity, 0),
     2,
   );
-  const [subTotal, setSubTotal] = useState(total);
 
   useEffect(() => {
     const fetchShippingCountries = async () => {
@@ -90,7 +89,7 @@ export function Content() {
     }
   }, [user, hasPhysicalProduct]);
 
-  const isPaidCheckout = total > 0;
+  const isPaidCheckout = subTotal > 0;
 
   // Guest user form
   const guestForm = useForm<GuestUserData>({
@@ -141,7 +140,7 @@ export function Content() {
     try {
       setIsFreeCheckoutLoading(true);
       const { data } = await httpClient!.post("/public/orders", {
-        amount: total,
+        amount: subTotal,
         profileId: profile?.id,
         email: guestUserData?.email || user?.email || "",
         firstName: guestUserData?.firstName || user?.firstName || "",
@@ -153,7 +152,7 @@ export function Content() {
         shippingAddress: shippingData,
       });
 
-      navigate(`/checkout/finalise?orderId=${data.id}`);
+      navigate(`/checkout/finalise?orderId=${data.orderId}`);
     } catch (error) {
       const message = (error as ApiError).response?.data?.message;
       if (message) {
@@ -584,7 +583,7 @@ export function Content() {
                 Payment Information
               </h2>
               <StripeCheckout
-                amount={total}
+                amount={subTotal}
                 email={guestUserData?.email || user?.email || ""}
                 firstName={guestUserData?.firstName}
                 lastName={guestUserData?.lastName}
@@ -745,7 +744,7 @@ export function Content() {
                 }}
               >
                 <span>Total</span>
-                <span>${(total + shippingCost).toFixed(2)}</span>
+                <span>${(subTotal + shippingCost).toFixed(2)}</span>
               </div>
             </div>
           </div>

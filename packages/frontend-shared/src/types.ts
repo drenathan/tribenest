@@ -288,7 +288,14 @@ export enum OrderStatus {
 
 export type IPublicOrder = {
   id: string;
-  items: IPublicOrderItem[];
+  deliveryGroups: {
+    id: string;
+    deliveryType: ProductDeliveryType;
+    recipientName: string;
+    recipientEmail: string;
+    recipientMessage: string;
+    items: IPublicOrderItem[];
+  }[];
   totalAmount: number;
   status: OrderStatus;
   createdAt: string;

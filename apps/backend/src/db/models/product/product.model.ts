@@ -110,6 +110,7 @@ export class ProductModel extends BaseModel<"products", "id"> {
         eb.ref("p.archivedAt").as("archivedAt"),
         eb.ref("p.profileId").as("profileId"),
         eb.ref("p.isFeatured").as("isFeatured"),
+        eb.ref("p.productStoreId").as("productStoreId"),
       ])
       .select((eb) => [
         this.jsonArrayFrom(
