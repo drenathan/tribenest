@@ -11,9 +11,11 @@ export enum ProductDeliveryType {
 export enum OrderStatus {
   InitiatedPayment = "initiated_payment",
   PaymentFailed = "payment_failed",
+  Submitted = "submitted",
   Paid = "paid",
   Processing = "processing",
   Shipped = "shipped",
   Delivered = "delivered",
   Cancelled = "cancelled",
+  Failed = "failed",
 }

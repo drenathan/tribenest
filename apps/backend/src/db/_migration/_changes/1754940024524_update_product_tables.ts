@@ -59,7 +59,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable(tables.order_delivery_groups)
     .addColumn("id", "uuid", (b) => b.primaryKey().defaultTo(sql`gen_random_uuid()`))
-    .addColumn("order_id", "uuid", (b) => b.references(`${tables.orders}.id`))
+    .addColumn("order_id", "uuid", (b) => b.notNull().references(`${tables.orders}.id`))
     .addColumn("external_id", "text")
     .addColumn("shipping_cost", "decimal(10, 2)")
     .addColumn("delivery_type", "text", (b) => b.notNull())
@@ -70,6 +70,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("is_gift", "boolean", (b) => b.notNull().defaultTo(false))
     .addColumn("sub_total", "decimal(10, 2)", (b) => b.notNull())
     .addColumn("file_url", "text")
+    .addColumn("file_size", "integer")
+    .addColumn("file_name", "text")
     .$call(addDefaultColumns)
     .execute();
   await addUpdateUpdatedAtTrigger(db, tables.order_delivery_groups);

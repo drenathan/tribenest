@@ -45,6 +45,12 @@ export type GetShippingCostResult = {
   externalId: string;
 };
 
+export type ExternalOrderDetails = {
+  id: number;
+  status: string;
+  error: string;
+};
+
 export abstract class ExternalStore {
   public abstract provider: ExternalStoreProvider;
 
@@ -58,4 +64,9 @@ export abstract class ExternalStore {
   public abstract getDefaults(): Promise<Record<string, any>>;
 
   public abstract getShippingCost(input: GetShippingCostInput): Promise<GetShippingCostResult>;
+  public abstract confirmOrder(orderId: string): Promise<void>;
+
+  public abstract getOrderDetails(orderId: string): Promise<ExternalOrderDetails>;
+
+  public abstract setupWebhook(webhookUrl: string): Promise<void>;
 }

@@ -1,5 +1,6 @@
 import { logger } from "@src/utils/logger";
 import {
+  ExternalOrderDetails,
   ExternalProduct,
   ExternalStore,
   ExternalStoreArgs,
@@ -93,7 +94,7 @@ export class ExternalStorePrintful extends ExternalStore {
     } catch (error) {
       const message = (error as AxiosError<PrintfulResponse>)?.response?.data?.result;
       if (message) {
-        error = new ValidationError(message);
+        error = new ValidationError(`Printful Error: ${message}`);
       }
       logger.error(`Failed to fetch data from Printful: ${error}`);
       throw error;
@@ -215,5 +216,26 @@ export class ExternalStorePrintful extends ExternalStore {
       shippingCost: Number(result.retail_costs.shipping),
       externalId: result.id.toString(),
     };
+  }
+
+  public async confirmOrder(orderId: string): Promise<void> {
+    const result = await this.request<void>(() => this.client.post(`/orders/${orderId}/confirm`));
+    return result;
+  }
+
+  public async getOrderDetails(orderId: string): Promise<ExternalOrderDetails> {
+    console.log(`/orders/${orderId}`, "orders");
+    const result = await this.request<ExternalOrderDetails>(() => this.client.get(`/orders/${orderId}`));
+    return result;
+  }
+
+  public async setupWebhook(webhookUrl: string): Promise<void> {
+    const result = await this.request<void>(() =>
+      this.client.post("/webhooks", {
+        url: webhookUrl,
+        types: ["order_failed", "order_canceled", "order_updated"],
+      }),
+    );
+    return result;
   }
 }

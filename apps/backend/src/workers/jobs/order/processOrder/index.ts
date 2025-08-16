@@ -33,6 +33,8 @@ export default class ProcessOrderJob extends BaseJob<Args> {
         {
           fileUrl: archive.archive.url,
           status: OrderStatus.Delivered,
+          fileSize: archive.archive.size,
+          fileName: archive.archive.filename,
         },
       );
     }

@@ -2,6 +2,7 @@ import {
   alphaToHexCode,
   ApiError,
   EditorButtonWithoutEditor,
+  LoadingState,
   useCart,
   useEditorContext,
   usePublicAuth,
@@ -10,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Appearance, loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 type Props = {
   amount: number;
@@ -25,57 +27,55 @@ type Props = {
     zip: string;
   };
 };
+type CreateOrderResponse = {
+  paymentSecret: string;
+  paymentId: string;
+  orderId: string;
+  shippingCost: number;
+  totalAmount: number;
+  subTotal: number;
+};
 export const StripeCheckout = ({ amount, email, firstName, lastName, shippingAddress, setShippingCost }: Props) => {
   const { themeSettings, profile, httpClient } = useEditorContext();
-  const isOrderCreated = useRef(false); // its important that we only create the order once
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
-  const [order, setOrder] = useState<{
-    paymentSecret: string;
-    paymentId: string;
-    orderId: string;
-    shippingCost: number;
-    totalAmount: number;
-    subTotal: number;
-  }>();
+
+  const { data: order, isLoading: isCreatingOrder } = useQuery<CreateOrderResponse>({
+    queryKey: [
+      "create-order",
+      {
+        amount,
+        profileId: profile?.id,
+        email,
+        firstName,
+        lastName,
+        accountId: user?.id,
+        cartItems,
+        shippingAddress,
+      },
+    ],
+    queryFn: async () => {
+      const { data } = await httpClient!.post("/public/orders", {
+        amount,
+        profileId: profile?.id,
+        email,
+        firstName,
+        lastName,
+        accountId: user?.id,
+        cartItems,
+        shippingAddress,
+      });
+      return data;
+    },
+  });
 
   const stripePromise = useRef(loadStripe(profile!.paymentProviderPublicKey));
 
   useEffect(() => {
-    if (profile?.id && !isOrderCreated.current) {
-      httpClient!
-        .post("/public/orders", {
-          amount,
-          profileId: profile?.id,
-          email,
-          firstName,
-          lastName,
-          accountId: user?.id,
-          cartItems,
-          shippingAddress,
-        })
-        .then((res) => {
-          setOrder(res.data);
-          setShippingCost(res.data.shippingCost);
-          isOrderCreated.current = true;
-        })
-        .catch((error) => {
-          toast.error((error as ApiError).response?.data?.message);
-          console.error(error);
-        });
+    if (order) {
+      setShippingCost(order.shippingCost);
     }
-  }, [
-    profile?.id,
-    email,
-    firstName,
-    lastName,
-    user?.id,
-    cartItems,
-    shippingAddress,
-    amount,
-    httpClient,
-    setShippingCost,
-  ]);
+  }, [order, setShippingCost]);
 
   const appearance: Appearance = {
     theme: "flat",
@@ -133,6 +133,7 @@ export const StripeCheckout = ({ amount, email, firstName, lastName, shippingAdd
 
   return (
     <div>
+      {isCreatingOrder && <LoadingState />}
       {order?.paymentSecret && order?.paymentId && (
         <Elements options={{ clientSecret: order.paymentSecret, appearance, loader }} stripe={stripePromise.current}>
           <CheckoutForm

@@ -70,3 +70,35 @@ export const useCreateProductStore = () => {
     },
   });
 };
+
+export const useSyncProductStore = () => {
+  return useMutation({
+    mutationFn: async ({ productStoreId, profileId }: { productStoreId: string; profileId: string }) => {
+      const result = await httpClient.post(`/products/stores/${productStoreId}/sync`, {}, { params: { profileId } });
+      return result.data;
+    },
+  });
+};
+
+export const useFulfillOrder = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ orderId, profileId }: { orderId: string; profileId: string }) => {
+      const result = await httpClient.post(`/orders/${orderId}/fulfill`, {}, { params: { profileId } });
+      return result.data;
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["order"] });
+    },
+  });
+};
+
+export const useResendDigitalDelivery = () => {
+  return useMutation({
+    mutationFn: async ({ orderId, profileId }: { orderId: string; profileId: string }) => {
+      const result = await httpClient.post(`/orders/${orderId}/resend`, {}, { params: { profileId } });
+      return result.data;
+    },
+  });
+};

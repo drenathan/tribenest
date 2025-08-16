@@ -57,7 +57,7 @@ export class OrderModel extends BaseModel<"orders", "id"> {
           eb
             .selectFrom("orderDeliveryGroups")
             .whereRef("orderId", "=", "orders.id")
-            .orderBy("orderDeliveryGroups.createdAt", "asc")
+            .orderBy("orderDeliveryGroups.deliveryType", "desc")
             .selectAll()
             .select((eb) => [
               this.jsonArrayFrom(
@@ -137,7 +137,7 @@ export class OrderModel extends BaseModel<"orders", "id"> {
           eb
             .selectFrom("orderDeliveryGroups")
             .whereRef("orderId", "=", "orders.id")
-            .orderBy("orderDeliveryGroups.createdAt", "asc")
+            .orderBy("orderDeliveryGroups.deliveryType", "desc")
             .selectAll()
             .select((eb) => [
               this.jsonArrayFrom(

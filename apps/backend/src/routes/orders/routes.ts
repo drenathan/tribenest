@@ -9,6 +9,8 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.use((req, _, next) => requireAuthentication(req, next, services));
   router.get("/", (...args) => controller.getOrders(...args));
   router.get("/:id", (...args) => controller.getOrderById(...args));
+  router.post("/:id/fulfill", (...args) => controller.fullFillOrder(...args));
+  router.post("/:id/resend", (...args) => controller.resendDigitalDelivery(...args));
 
   return router;
 };

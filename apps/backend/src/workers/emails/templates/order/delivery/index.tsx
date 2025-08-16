@@ -7,8 +7,8 @@ import { Selectable } from "kysely";
 
 export interface IArchive {
   filename: string;
-  url: string;
-  size: number;
+  url?: string;
+  size?: number;
 }
 
 export interface IVariables extends BaseTemplateArgs {
@@ -63,6 +63,10 @@ export class OrderDeliveryTemplate extends BaseEmailTemplate<IVariables> {
           recipientEmail: "jane@example.com",
           recipientMessage: "Hope you enjoy this track!",
           updatedAt: new Date(),
+          size: "1024",
+          color: "red",
+          externalId: "123456",
+          orderDeliveryGroupId: "123456",
         },
         {
           title: "Chill Beats Single",
@@ -80,6 +84,10 @@ export class OrderDeliveryTemplate extends BaseEmailTemplate<IVariables> {
           recipientEmail: "jane@example.com",
           recipientMessage: "Hope you enjoy this track!",
           updatedAt: new Date(),
+          size: "1024",
+          color: "red",
+          externalId: "123456",
+          orderDeliveryGroupId: "123456",
         },
       ],
       archive: {

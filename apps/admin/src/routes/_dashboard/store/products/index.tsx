@@ -26,12 +26,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Tooltip2,
   type ApiError,
 } from "@tribe-nest/frontend-shared";
-import { FilterIcon, Link2, XIcon } from "lucide-react";
+import { FilterIcon, Link2, RefreshCcw, XIcon } from "lucide-react";
 import EmptyState from "@/components/empty-state";
 import Loading from "@/components/loading";
-import { useCreateProductStore } from "@/hooks/mutations/useProduct";
+import { useCreateProductStore, useSyncProductStore } from "@/hooks/mutations/useProduct";
 import { ExternalStoreProvider } from "@/types/product";
 import { toast } from "sonner";
 import { debounce } from "lodash";
@@ -52,6 +53,7 @@ function RouteComponent() {
   const { currentProfileAuthorization } = useAuth();
   const { data: productStores, isLoading } = useGetProductStores(currentProfileAuthorization?.profileId);
   const { mutateAsync: createStore, isPending } = useCreateProductStore();
+  const { mutate: syncStore, isPending: isSyncingStore } = useSyncProductStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const search = useSearch({ from: "/_dashboard/store/products/" });
   const navigate = useNavigate();
@@ -141,7 +143,9 @@ function RouteComponent() {
     if (!currentProfileAuthorization?.profileId) return;
     try {
       await createStore({ ...data, profileId: currentProfileAuthorization.profileId });
-      toast.success("Store connected successfully");
+      toast.success(
+        "Store connected successfully. Product sync started. Please wait a few minutes and refresh the page to see the products",
+      );
       setIsDialogOpen(false);
     } catch (err) {
       const message = (err as ApiError).response?.data?.message || "Failed to connect store";
@@ -149,19 +153,47 @@ function RouteComponent() {
     }
   });
 
+  if (!currentProfileAuthorization?.profileId) {
+    return null;
+  }
+
   return (
     <div>
       <PageHeader
         title="My Products"
         description="Manage your products"
-        // action={
-        //   !isEmptyStores && (
-        //     <Button onClick={() => setIsDialogOpen(true)}>
-        //       <Link2 className="mr-2 h-4 w-4" />
-        //       Create Merch
-        //     </Button>
-        //   )
-        // }
+        action={
+          !isEmptyStores &&
+          productStores?.[0] && (
+            <Tooltip2
+              text={`Sync Products. Last synced: ${new Date(productStores?.[0]?.lastSyncedAt).toLocaleString()}`}
+            >
+              <Button
+                disabled={isSyncingStore}
+                onClick={() =>
+                  syncStore(
+                    {
+                      productStoreId: productStores?.[0]?.id,
+                      profileId: currentProfileAuthorization?.profileId,
+                    },
+                    {
+                      onSuccess: () => {
+                        toast.success(
+                          "Products sync started, Please wait a few minutes before attempting to sync again",
+                        );
+                      },
+                      onError: () => {
+                        toast.error("Failed to sync products");
+                      },
+                    },
+                  )
+                }
+              >
+                <RefreshCcw className="mr-2 h-4 w-4" />
+              </Button>
+            </Tooltip2>
+          )
+        }
       />
       {isLoading && <Loading />}
       <div className="flex flex-col gap-4 mt-6">

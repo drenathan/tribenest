@@ -211,10 +211,12 @@ export interface OrderDeliveryGroups {
   createdAt: Generated<Timestamp>;
   deliveryType: string;
   externalId: string | null;
+  fileName: string | null;
+  fileSize: number | null;
   fileUrl: string | null;
   id: Generated<string>;
   isGift: Generated<boolean>;
-  orderId: string | null;
+  orderId: string;
   productStoreId: string | null;
   recipientEmail: string;
   recipientName: string;

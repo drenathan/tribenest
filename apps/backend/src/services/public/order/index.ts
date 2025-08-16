@@ -112,8 +112,8 @@ export class OrderService extends BaseService {
           recipientMessage: group.items.map((item) => item.recipientMessage).join("\n"),
           isGift: group.isGift,
           items: group.items as unknown as Selectable<IOrderItem>[],
-          senderName: group.isGift ? undefined : userFirstName,
-          senderEmail: group.isGift ? undefined : userEmail,
+          senderName: group.isGift ? userFirstName : undefined,
+          senderEmail: group.isGift ? userEmail : undefined,
           deliveryGroupId: group.id,
         };
       }),

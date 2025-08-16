@@ -66,6 +66,7 @@ export async function syncProduct(
       },
       trx,
     );
+
     await this.database.models.MediaMapping.insertOne(
       {
         mediaId: media.id,
@@ -120,22 +121,28 @@ export async function syncProduct(
       // Create the available options
 
       for (const image of variant.images) {
-        const media = await this.database.models.Media.insertOne({
-          url: image,
-          size: 0,
-          filename: image.split("/").pop() ?? "",
-          type: MediaType.Image,
-          profileId: store.profileId,
-          parent: "product_variant",
-          productStoreId: input.storeId,
-        });
+        const media = await this.database.models.Media.insertOne(
+          {
+            url: image,
+            size: 0,
+            filename: image.split("/").pop() ?? "",
+            type: MediaType.Image,
+            profileId: store.profileId,
+            parent: "product_variant",
+            productStoreId: input.storeId,
+          },
+          trx,
+        );
 
-        await this.database.models.MediaMapping.insertOne({
-          mediaId: media.id,
-          entityId: productVariant.id,
-          entityType: "product_variant",
-          order: 0,
-        });
+        await this.database.models.MediaMapping.insertOne(
+          {
+            mediaId: media.id,
+            entityId: productVariant.id,
+            entityType: "product_variant",
+            order: 0,
+          },
+          trx,
+        );
       }
     }
 

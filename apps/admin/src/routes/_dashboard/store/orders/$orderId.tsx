@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
   Button,
   Badge,
+  type ApiError,
 } from "@tribe-nest/frontend-shared";
 import { OrderStatus, ProductDeliveryType } from "@tribe-nest/frontend-shared";
 import {
@@ -34,9 +35,10 @@ import {
   User,
   Mail,
   Calendar,
-  DollarSign,
 } from "lucide-react";
 import Loading from "@/components/loading";
+import { useFulfillOrder, useResendDigitalDelivery } from "@/hooks/mutations/useProduct";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_dashboard/store/orders/$orderId")({
   component: RouteComponent,
@@ -46,6 +48,12 @@ function RouteComponent() {
   const { orderId } = Route.useParams();
   const { currentProfileAuthorization } = useAuth();
   const { data: order, isLoading } = useGetOrder(orderId, currentProfileAuthorization?.profileId);
+  const { mutateAsync: fulfillOrder, isPending: isFulfillingOrder } = useFulfillOrder();
+  const { mutateAsync: resendDigitalDelivery, isPending: isResendingDigitalDelivery } = useResendDigitalDelivery();
+
+  if (!currentProfileAuthorization) {
+    return null;
+  }
 
   // Helper functions
   const getStatusIcon = (status: OrderStatus) => {
@@ -53,6 +61,7 @@ function RouteComponent() {
       case OrderStatus.Paid:
         return <CheckCircle className="w-5 h-5 text-green-600" />;
       case OrderStatus.PaymentFailed:
+      case OrderStatus.Failed:
         return <XCircle className="w-5 h-5 text-red-600" />;
       case OrderStatus.Processing:
         return <Clock className="w-5 h-5 text-blue-600" />;
@@ -78,6 +87,7 @@ function RouteComponent() {
         return <Badge variant="default">{statusText}</Badge>;
       case OrderStatus.PaymentFailed:
       case OrderStatus.Cancelled:
+      case OrderStatus.Failed:
         return <Badge variant="destructive">{statusText}</Badge>;
       case OrderStatus.Processing:
       case OrderStatus.Shipped:
@@ -99,13 +109,29 @@ function RouteComponent() {
   };
 
   const handleResendDigital = async (deliveryGroupId: string) => {
-    // TODO: Implement resend digital delivery logic
-    console.log("Resending digital delivery for group:", deliveryGroupId);
+    try {
+      await resendDigitalDelivery({ orderId: deliveryGroupId, profileId: currentProfileAuthorization?.profileId });
+      toast.success("Digital delivery resent successfully");
+    } catch (error) {
+      const message = (error as ApiError)?.response?.data?.message;
+      toast.error(message || "Failed to resend digital delivery");
+    }
   };
 
   const handleFulfilPhysical = async (deliveryGroupId: string) => {
-    // TODO: Implement fulfil physical delivery logic
-    console.log("Fulfilling physical delivery for group:", deliveryGroupId);
+    if (order?.status === OrderStatus.Paid) {
+      try {
+        await fulfillOrder({ orderId: deliveryGroupId, profileId: currentProfileAuthorization?.profileId });
+        toast.success(
+          "Order submitted for fulfillment. Please wait a few minutes and refresh the page to get the latest status.",
+        );
+      } catch (error) {
+        const message = (error as ApiError)?.response?.data?.message;
+        toast.error(message || "Failed to fulfill order");
+      }
+    } else {
+      toast.error("Order status is not paid");
+    }
   };
 
   if (isLoading) {
@@ -287,14 +313,20 @@ function RouteComponent() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           {deliveryGroup.deliveryType === ProductDeliveryType.Digital ? (
-                            <DropdownMenuItem onClick={() => handleResendDigital(deliveryGroup.id)}>
+                            <DropdownMenuItem
+                              disabled={isResendingDigitalDelivery}
+                              onClick={() => handleResendDigital(deliveryGroup.id)}
+                            >
                               <Send className="w-4 h-4 mr-2" />
                               Resend
                             </DropdownMenuItem>
                           ) : (
-                            <DropdownMenuItem onClick={() => handleFulfilPhysical(deliveryGroup.id)}>
+                            <DropdownMenuItem
+                              onClick={() => handleFulfilPhysical(deliveryGroup.id)}
+                              disabled={isFulfillingOrder || !["pending", "failed"].includes(deliveryGroup.status)}
+                            >
                               <PackageCheck className="w-4 h-4 mr-2" />
-                              Fulfil Order
+                              Fulfill Order
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>

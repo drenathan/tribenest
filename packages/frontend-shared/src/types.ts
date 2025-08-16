@@ -279,6 +279,7 @@ export enum PaymentProviderName {
 export enum OrderStatus {
   InitiatedPayment = "initiated_payment",
   PaymentFailed = "payment_failed",
+  Failed = "failed",
   Paid = "paid",
   Processing = "processing",
   Shipped = "shipped",

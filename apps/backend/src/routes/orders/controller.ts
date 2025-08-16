@@ -27,4 +27,33 @@ export class OrdersController extends BaseController {
       orderId: req.params.id as string,
     });
   }
+
+  @RouteHandler()
+  @ValidateSchema(profileIdQuerySchema)
+  @isAuthorized(policy.read)
+  public async fullFillOrder(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Query query?: ProfileIdInput,
+  ): Promise<any> {
+    return this.services.admin.orders.fullFillOrder({
+      profileId: query!.profileId,
+      deliveryGroupId: req.params.id as string,
+    });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(profileIdQuerySchema)
+  @isAuthorized(policy.read)
+  public async resendDigitalDelivery(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Query query?: ProfileIdInput,
+  ): Promise<any> {
+    await this.workers.jobs.order.resendDigitalDelivery.now({
+      deliveryGroupId: req.params.id as string,
+    });
+  }
 }

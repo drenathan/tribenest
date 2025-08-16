@@ -34,3 +34,4 @@ export const MINIO_REGION = process.env.MINIO_REGION as string;
 export const MINIO_BUCKET = process.env.MINIO_BUCKET as string;
 export const MINIO_URL = process.env.MINIO_URL as string;
 export const MINIO_BUCKET_URL = process.env.MINIO_BUCKET_URL as string;
+export const API_URL = process.env.API_URL as string;

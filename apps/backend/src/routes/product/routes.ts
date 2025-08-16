@@ -12,6 +12,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.post("/", (...args) => controller.createProduct(...args));
   router.post("/stores", (...args) => controller.createExternalStore(...args));
   router.get("/stores", (...args) => controller.getStores(...args));
+  router.post("/stores/:id/sync", (...args) => controller.syncStore(...args));
   router.get("/:id", (...args) => controller.getProduct(...args));
   router.put("/:id", (...args) => controller.updateProduct(...args));
   router.delete("/:id", (...args) => controller.archiveProduct(...args));

@@ -106,4 +106,11 @@ export class ProductsController extends BaseController {
   ): Promise<any> {
     return this.services.admin.products.getStores({ profileId: req.query.profileId as string });
   }
+
+  @RouteHandler()
+  @isAuthorized(policy.getAll)
+  @ValidateSchema(profileIdQuerySchema)
+  public async syncStore(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.workers.jobs.products.syncExternalProducts.now({ storeId: req.params.id as string });
+  }
 }

@@ -34,6 +34,7 @@ export type IProductStore = {
   name: string;
   provider: ExternalStoreProvider;
   accessToken: string;
+  lastSyncedAt: string;
 };
 
 export type IProductVariant = {
