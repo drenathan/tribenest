@@ -39,6 +39,7 @@ import { Route as DashboardEmailsEmailsIndexRouteImport } from './routes/_dashbo
 import { Route as DashboardTribePostsCreateRouteImport } from './routes/_dashboard/tribe/posts/create'
 import { Route as DashboardTribeMembershipTiersCreateRouteImport } from './routes/_dashboard/tribe/membership-tiers/create'
 import { Route as DashboardStoreProductsCeateRouteImport } from './routes/_dashboard/store/products/ceate'
+import { Route as DashboardStoreOrdersOrderIdRouteImport } from './routes/_dashboard/store/orders/$orderId'
 import { Route as DashboardStoreMusicCreateRouteImport } from './routes/_dashboard/store/music/create'
 import { Route as DashboardSmartLinksLinksCreateRouteImport } from './routes/_dashboard/smart-links/links/create'
 import { Route as DashboardEmailsEmailsCreateRouteImport } from './routes/_dashboard/emails/emails/create'
@@ -222,6 +223,12 @@ const DashboardStoreProductsCeateRoute =
     path: '/store/products/ceate',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardStoreOrdersOrderIdRoute =
+  DashboardStoreOrdersOrderIdRouteImport.update({
+    id: '/store/orders/$orderId',
+    path: '/store/orders/$orderId',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardStoreMusicCreateRoute =
   DashboardStoreMusicCreateRouteImport.update({
     id: '/store/music/create',
@@ -306,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
+  '/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
   '/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/tribe/posts/create': typeof DashboardTribePostsCreateRoute
@@ -348,6 +356,7 @@ export interface FileRoutesByTo {
   '/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
+  '/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
   '/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/tribe/posts/create': typeof DashboardTribePostsCreateRoute
@@ -393,6 +402,7 @@ export interface FileRoutesById {
   '/_dashboard/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
   '/_dashboard/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/_dashboard/store/music/create': typeof DashboardStoreMusicCreateRoute
+  '/_dashboard/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
   '/_dashboard/store/products/ceate': typeof DashboardStoreProductsCeateRoute
   '/_dashboard/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/_dashboard/tribe/posts/create': typeof DashboardTribePostsCreateRoute
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/emails/emails/create'
     | '/smart-links/links/create'
     | '/store/music/create'
+    | '/store/orders/$orderId'
     | '/store/products/ceate'
     | '/tribe/membership-tiers/create'
     | '/tribe/posts/create'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/emails/emails/create'
     | '/smart-links/links/create'
     | '/store/music/create'
+    | '/store/orders/$orderId'
     | '/store/products/ceate'
     | '/tribe/membership-tiers/create'
     | '/tribe/posts/create'
@@ -523,6 +535,7 @@ export interface FileRouteTypes {
     | '/_dashboard/emails/emails/create'
     | '/_dashboard/smart-links/links/create'
     | '/_dashboard/store/music/create'
+    | '/_dashboard/store/orders/$orderId'
     | '/_dashboard/store/products/ceate'
     | '/_dashboard/tribe/membership-tiers/create'
     | '/_dashboard/tribe/posts/create'
@@ -772,6 +785,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardStoreProductsCeateRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/store/orders/$orderId': {
+      id: '/_dashboard/store/orders/$orderId'
+      path: '/store/orders/$orderId'
+      fullPath: '/store/orders/$orderId'
+      preLoaderRoute: typeof DashboardStoreOrdersOrderIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/store/music/create': {
       id: '/_dashboard/store/music/create'
       path: '/store/music/create'
@@ -883,6 +903,7 @@ interface DashboardRouteRouteChildren {
   DashboardEmailsEmailsCreateRoute: typeof DashboardEmailsEmailsCreateRoute
   DashboardSmartLinksLinksCreateRoute: typeof DashboardSmartLinksLinksCreateRoute
   DashboardStoreMusicCreateRoute: typeof DashboardStoreMusicCreateRoute
+  DashboardStoreOrdersOrderIdRoute: typeof DashboardStoreOrdersOrderIdRoute
   DashboardStoreProductsCeateRoute: typeof DashboardStoreProductsCeateRoute
   DashboardTribeMembershipTiersCreateRoute: typeof DashboardTribeMembershipTiersCreateRoute
   DashboardTribePostsCreateRoute: typeof DashboardTribePostsCreateRoute
@@ -923,6 +944,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardEmailsEmailsCreateRoute: DashboardEmailsEmailsCreateRoute,
   DashboardSmartLinksLinksCreateRoute: DashboardSmartLinksLinksCreateRoute,
   DashboardStoreMusicCreateRoute: DashboardStoreMusicCreateRoute,
+  DashboardStoreOrdersOrderIdRoute: DashboardStoreOrdersOrderIdRoute,
   DashboardStoreProductsCeateRoute: DashboardStoreProductsCeateRoute,
   DashboardTribeMembershipTiersCreateRoute:
     DashboardTribeMembershipTiersCreateRoute,

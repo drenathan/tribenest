@@ -3,7 +3,13 @@
 import { useSearchParams } from "next/navigation";
 import InternalPageRenderer from "../../_components/internal-page-renderer";
 import { useQuery } from "@tanstack/react-query";
-import { IPublicOrder, useEditorContext, OrderStatus, alphaToHexCode } from "@tribe-nest/frontend-shared";
+import {
+  IPublicOrder,
+  useEditorContext,
+  OrderStatus,
+  alphaToHexCode,
+  ProductDeliveryType,
+} from "@tribe-nest/frontend-shared";
 import { useCart } from "@tribe-nest/frontend-shared";
 import { useEffect } from "react";
 import { CheckCircle, XCircle, Clock, Truck, Package, AlertCircle } from "lucide-react";
@@ -195,67 +201,107 @@ export default function Page() {
           <h2 className="text-xl font-semibold mb-4" style={{ color: themeSettings.colors.text }}>
             Order Items
           </h2>
-          <div className="space-y-4">
-            {data.items.length === 0 ? (
+          <div className="space-y-6">
+            {data.deliveryGroups.length === 0 ? (
               <div className="text-center py-8" style={{ color: themeSettings.colors.text }}>
                 No items in this order.
               </div>
             ) : (
-              data.items.map((item, index) => (
-                <div
-                  key={`${item.productId}-${item.productVariantId}-${item.isGift}-${item.recipientEmail || ""}-${index}`}
-                  className="flex gap-4 items-start border-b pb-4"
-                  style={{ borderColor: themeSettings.colors.primary }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.coverImage || ""}
-                    alt={item.title}
-                    className="w-16 h-16 object-cover rounded"
-                    style={{ borderRadius: themeSettings.cornerRadius }}
-                    width={64}
-                    height={64}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate" style={{ color: themeSettings.colors.text }}>
-                      {item.title}
-                    </div>
-                    <div className="text-sm" style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.8)}` }}>
-                      ${item.price.toFixed(2)}
-                    </div>
-                    {item.isGift && (
-                      <div className="text-xs mt-1" style={{ color: themeSettings.colors.primary }}>
-                        Gift for {item.recipientName} ({item.recipientEmail})
+              data.deliveryGroups.map((deliveryGroup) => (
+                <div key={deliveryGroup.id} className="space-y-4">
+                  {/* Delivery Group Header */}
+                  <div
+                    className="p-3 rounded-lg border"
+                    style={{
+                      backgroundColor: `${themeSettings.colors.primary}${alphaToHexCode(0.05)}`,
+                      borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium" style={{ color: themeSettings.colors.text }}>
+                          {deliveryGroup.deliveryType === ProductDeliveryType.Physical
+                            ? "Physical Delivery"
+                            : "Digital Delivery"}
+                        </h3>
+                        <p className="text-sm" style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}>
+                          To: {deliveryGroup.recipientName} ({deliveryGroup.recipientEmail})
+                        </p>
+                        {deliveryGroup.recipientMessage && (
+                          <p
+                            className="text-xs mt-1"
+                            style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+                          >
+                            Message: {deliveryGroup.recipientMessage}
+                          </p>
+                        )}
                       </div>
-                    )}
-                    {item.recipientMessage && (
-                      <div
-                        className="text-xs mt-1"
-                        style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
-                      >
-                        Message: {item.recipientMessage}
-                      </div>
-                    )}
-                    <div
-                      className="text-xs mt-1"
-                      style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
-                    >
-                      Qty: {item.quantity}
                     </div>
-                    {item.color && item.size && (
-                      <div
-                        className="text-xs mt-1 flex items-center gap-2"
-                        style={{ color: themeSettings.colors.primary }}
-                      >
-                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }}></div>
-                        {item.size}
-                      </div>
-                    )}
                   </div>
-                  <div className="text-right">
-                    <div className="font-semibold" style={{ color: themeSettings.colors.primary }}>
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </div>
+
+                  {/* Delivery Group Items */}
+                  <div className="space-y-4 ml-4">
+                    {deliveryGroup.items.map((item, index) => (
+                      <div
+                        key={`${item.productId}-${item.productVariantId}-${item.isGift}-${item.recipientEmail || ""}-${index}`}
+                        className="flex gap-4 items-start border-b pb-4"
+                        style={{ borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.2)}` }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.coverImage || ""}
+                          alt={item.title}
+                          className="w-16 h-16 object-cover rounded"
+                          style={{ borderRadius: themeSettings.cornerRadius }}
+                          width={64}
+                          height={64}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold truncate" style={{ color: themeSettings.colors.text }}>
+                            {item.title}
+                          </div>
+                          <div
+                            className="text-sm"
+                            style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.8)}` }}
+                          >
+                            ${item.price.toFixed(2)}
+                          </div>
+                          {item.isGift && (
+                            <div className="text-xs mt-1" style={{ color: themeSettings.colors.primary }}>
+                              Gift for {item.recipientName} ({item.recipientEmail})
+                            </div>
+                          )}
+                          {item.recipientMessage && (
+                            <div
+                              className="text-xs mt-1"
+                              style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+                            >
+                              Message: {item.recipientMessage}
+                            </div>
+                          )}
+                          <div
+                            className="text-xs mt-1"
+                            style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+                          >
+                            Qty: {item.quantity}
+                          </div>
+                          {item.color && item.size && (
+                            <div
+                              className="text-xs mt-1 flex items-center gap-2"
+                              style={{ color: themeSettings.colors.primary }}
+                            >
+                              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: item.color }}></div>
+                              {item.size}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold" style={{ color: themeSettings.colors.primary }}>
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))

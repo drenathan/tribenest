@@ -154,14 +154,14 @@ function RouteComponent() {
       <PageHeader
         title="My Products"
         description="Manage your products"
-        action={
-          !isEmptyStores && (
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Link2 className="mr-2 h-4 w-4" />
-              Connect External Store
-            </Button>
-          )
-        }
+        // action={
+        //   !isEmptyStores && (
+        //     <Button onClick={() => setIsDialogOpen(true)}>
+        //       <Link2 className="mr-2 h-4 w-4" />
+        //       Create Merch
+        //     </Button>
+        //   )
+        // }
       />
       {isLoading && <Loading />}
       <div className="flex flex-col gap-4 mt-6">

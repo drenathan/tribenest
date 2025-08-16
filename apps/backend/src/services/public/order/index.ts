@@ -57,7 +57,7 @@ export class OrderService extends BaseService {
 
     const paymentProvider = await this.apis.getPaymentProvider(input.profileId);
     const paymentStatus = await paymentProvider.getPaymentStatus(order.paymentId);
-
+    console.log(paymentStatus, "paymentStatus");
     const status = this.getOrderStatus(paymentStatus);
 
     await this.database.client.transaction().execute(async (trx) => {

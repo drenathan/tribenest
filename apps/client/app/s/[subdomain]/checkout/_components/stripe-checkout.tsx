@@ -27,6 +27,7 @@ type Props = {
 };
 export const StripeCheckout = ({ amount, email, firstName, lastName, shippingAddress, setShippingCost }: Props) => {
   const { themeSettings, profile, httpClient } = useEditorContext();
+  const isOrderCreated = useRef(false); // its important that we only create the order once
   const { user } = usePublicAuth();
   const { cartItems } = useCart();
   const [order, setOrder] = useState<{
@@ -41,7 +42,7 @@ export const StripeCheckout = ({ amount, email, firstName, lastName, shippingAdd
   const stripePromise = useRef(loadStripe(profile!.paymentProviderPublicKey));
 
   useEffect(() => {
-    if (profile?.id) {
+    if (profile?.id && !isOrderCreated.current) {
       httpClient!
         .post("/public/orders", {
           amount,
@@ -56,6 +57,7 @@ export const StripeCheckout = ({ amount, email, firstName, lastName, shippingAdd
         .then((res) => {
           setOrder(res.data);
           setShippingCost(res.data.shippingCost);
+          isOrderCreated.current = true;
         })
         .catch((error) => {
           toast.error((error as ApiError).response?.data?.message);

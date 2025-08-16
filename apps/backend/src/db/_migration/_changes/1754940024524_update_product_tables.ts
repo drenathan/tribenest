@@ -72,6 +72,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("file_url", "text")
     .$call(addDefaultColumns)
     .execute();
+  await addUpdateUpdatedAtTrigger(db, tables.order_delivery_groups);
 
   await db.schema
     .alterTable(tables.order_items)
@@ -80,8 +81,6 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("external_id", "text")
     .addColumn("order_delivery_group_id", "uuid", (b) => b.references(`${tables.order_delivery_groups}.id`))
     .execute();
-
-  await addUpdateUpdatedAtTrigger(db, tables.order_delivery_groups);
 
   await db.schema.dropTable(tables.product_variant_configurations).execute();
   await db.schema.dropTable(tables.product_variant_option_values).execute();

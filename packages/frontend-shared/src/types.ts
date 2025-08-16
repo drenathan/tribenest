@@ -295,6 +295,9 @@ export type IPublicOrder = {
     recipientEmail: string;
     recipientMessage: string;
     items: IPublicOrderItem[];
+    status: OrderStatus;
+    subTotal: number;
+    shippingCost: number;
   }[];
   totalAmount: number;
   status: OrderStatus;

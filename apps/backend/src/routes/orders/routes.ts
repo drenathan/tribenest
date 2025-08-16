@@ -8,6 +8,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   const controller = new OrdersController(services, workers);
   router.use((req, _, next) => requireAuthentication(req, next, services));
   router.get("/", (...args) => controller.getOrders(...args));
+  router.get("/:id", (...args) => controller.getOrderById(...args));
 
   return router;
 };

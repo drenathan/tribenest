@@ -297,7 +297,11 @@ function RouteComponent() {
               </TableHeader>
               <TableBody>
                 {orders?.data?.map((order) => (
-                  <TableRow key={order.id}>
+                  <TableRow
+                    key={order.id}
+                    className="cursor-pointer"
+                    onClick={() => navigate({ to: "/store/orders/$orderId", params: { orderId: order.id } })}
+                  >
                     <TableCell className="p-4">
                       <div className="flex flex-col">
                         <span className="font-medium">{order.customerName}</span>
@@ -306,25 +310,32 @@ function RouteComponent() {
                     </TableCell>
                     <TableCell className="p-4">
                       <div className="space-y-2">
-                        {order.items.slice(0, 2).map((item, index) => (
-                          <div
-                            key={`${item.productId}-${item.productVariantId}-${index}`}
-                            className="flex gap-3 items-start"
-                          >
-                            {item.coverImage && (
-                              <img src={item.coverImage} alt={item.title} className="w-8 h-8 object-cover rounded" />
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-sm truncate">{item.title}</div>
-                              <div className="text-xs text-muted-foreground">
-                                Qty: {item.quantity} • ${item.price.toFixed(2)}
+                        {order.deliveryGroups
+                          .flatMap((group) => group.items)
+                          .slice(0, 2)
+                          .map((item, index) => (
+                            <div
+                              key={`${item.productId}-${item.productVariantId}-${index}`}
+                              className="flex gap-3 items-start"
+                            >
+                              {item.coverImage && (
+                                <img src={item.coverImage} alt={item.title} className="w-8 h-8 object-cover rounded" />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium text-sm truncate">{item.title}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  Qty: {item.quantity} • ${item.price.toFixed(2)}
+                                </div>
+                                {item.isGift && (
+                                  <div className="text-xs text-primary">Gift for {item.recipientName}</div>
+                                )}
                               </div>
-                              {item.isGift && <div className="text-xs text-primary">Gift for {item.recipientName}</div>}
                             </div>
+                          ))}
+                        {order.deliveryGroups.flatMap((group) => group.items).length > 2 && (
+                          <div className="text-xs text-muted-foreground">
+                            +{order.deliveryGroups.flatMap((group) => group.items).length - 2} more items
                           </div>
-                        ))}
-                        {order.items.length > 2 && (
-                          <div className="text-xs text-muted-foreground">+{order.items.length - 2} more items</div>
                         )}
                       </div>
                     </TableCell>

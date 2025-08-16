@@ -49,6 +49,17 @@ export const breadcrumbs: Record<
     ],
     currentPage: "Add Music",
   },
+  "/store/orders": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Orders",
+  },
+  "/store/orders/$orderId": {
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Orders List", goBack: true },
+    ],
+    currentPage: "Order",
+  },
   "/website/themes": {
     links: [{ label: "Website", href: "/website/home" }],
     currentPage: "Themes",

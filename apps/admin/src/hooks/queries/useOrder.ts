@@ -15,3 +15,14 @@ export const useGetOrders = (profileId?: string, page = 1, filter?: OrderFilter)
     enabled: !!profileId,
   });
 };
+
+export const useGetOrder = (orderId?: string, profileId?: string) => {
+  return useQuery<IPublicOrder>({
+    queryKey: ["order", orderId, profileId],
+    queryFn: async () => {
+      const result = await httpClient.get(`/orders/${orderId}`, { params: { profileId } });
+      return result.data;
+    },
+    enabled: !!orderId && !!profileId,
+  });
+};

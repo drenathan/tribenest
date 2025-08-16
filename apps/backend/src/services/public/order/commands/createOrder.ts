@@ -197,14 +197,17 @@ export async function createOrder(this: OrderService, input: CreateOrderInput) {
 
     if (Object.keys(giftDigitalItems).length > 0) {
       for (const [recipientEmail, items] of Object.entries(giftDigitalItems)) {
-        const giftDigitalProductGroup = await this.models.OrderDeliveryGroup.insertOne({
-          orderId: order.id,
-          recipientEmail,
-          recipientName: items[0].recipientName!,
-          isGift: true,
-          deliveryType: ProductDeliveryType.Digital,
-          subTotal: items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0),
-        });
+        const giftDigitalProductGroup = await this.models.OrderDeliveryGroup.insertOne(
+          {
+            orderId: order.id,
+            recipientEmail,
+            recipientName: items[0].recipientName!,
+            isGift: true,
+            deliveryType: ProductDeliveryType.Digital,
+            subTotal: items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0),
+          },
+          trx,
+        );
 
         await this.models.OrderItem.insertMany(
           items.map((orderItem) => ({

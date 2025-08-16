@@ -9,9 +9,9 @@ import {
   Separator,
   IPublicOrder,
   OrderStatus,
+  ProductDeliveryType,
 } from "@tribe-nest/frontend-shared";
 import { CreditCard, CheckCircle, XCircle, Clock, Truck, Package, AlertCircle, ShoppingBag } from "lucide-react";
-import Image from "next/image";
 
 export function OrdersTab() {
   const { user } = usePublicAuth();
@@ -117,42 +117,92 @@ export function OrdersTab() {
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  {order.items.map((item, index) => (
-                    <div key={`${item.productId}-${item.productVariantId}-${index}`} className="flex gap-4 items-start">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={item.coverImage || ""}
-                        alt={item.title}
-                        className="w-12 h-12 @md:w-16 @md:h-16 object-cover rounded"
-                        style={{ borderRadius: themeSettings.cornerRadius }}
-                        width={64}
-                        height={64}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold truncate">{item.title}</div>
-                        <div
-                          className="text-sm"
-                          style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.8)}` }}
-                        >
-                          ${item.price.toFixed(2)}
-                        </div>
-                        {item.isGift && (
-                          <div className="text-xs mt-1" style={{ color: themeSettings.colors.primary }}>
-                            Gift for {item.recipientName} ({item.recipientEmail})
-                          </div>
-                        )}
-                        <div
-                          className="text-xs mt-1"
-                          style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
-                        >
-                          Qty: {item.quantity}
+                <div className="space-y-4">
+                  {order.deliveryGroups.map((deliveryGroup) => (
+                    <div key={deliveryGroup.id} className="space-y-3">
+                      {/* Delivery Group Header */}
+                      <div
+                        className="p-2 rounded border"
+                        style={{
+                          backgroundColor: `${themeSettings.colors.primary}${alphaToHexCode(0.05)}`,
+                          borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-medium" style={{ color: themeSettings.colors.text }}>
+                            {deliveryGroup.deliveryType === ProductDeliveryType.Physical
+                              ? "Physical Delivery"
+                              : "Digital Delivery"}
+                          </h4>
+                          <span
+                            className="text-xs"
+                            style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+                          >
+                            to {deliveryGroup.recipientName}
+                          </span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-semibold" style={{ color: themeSettings.colors.primary }}>
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </div>
+
+                      {/* Delivery Group Items */}
+                      <div className="space-y-3 ml-2">
+                        {deliveryGroup.items.map((item, index) => (
+                          <div
+                            key={`${item.productId}-${item.productVariantId}-${index}`}
+                            className="flex gap-4 items-start"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={item.coverImage || ""}
+                              alt={item.title}
+                              className="w-12 h-12 @md:w-16 @md:h-16 object-cover rounded"
+                              style={{ borderRadius: themeSettings.cornerRadius }}
+                              width={64}
+                              height={64}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-semibold truncate">{item.title}</div>
+                              <div
+                                className="text-sm"
+                                style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.8)}` }}
+                              >
+                                ${item.price.toFixed(2)}
+                              </div>
+                              {item.isGift && (
+                                <div className="text-xs mt-1" style={{ color: themeSettings.colors.primary }}>
+                                  Gift for {item.recipientName} ({item.recipientEmail})
+                                </div>
+                              )}
+                              {item.recipientMessage && (
+                                <div
+                                  className="text-xs mt-1"
+                                  style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+                                >
+                                  Message: {item.recipientMessage}
+                                </div>
+                              )}
+                              <div
+                                className="text-xs mt-1"
+                                style={{ color: `${themeSettings.colors.text}${alphaToHexCode(0.7)}` }}
+                              >
+                                Qty: {item.quantity}
+                              </div>
+                              {item.color && item.size && (
+                                <div
+                                  className="text-xs mt-1 flex items-center gap-2"
+                                  style={{ color: themeSettings.colors.primary }}
+                                >
+                                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                                  {item.size}
+                                </div>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <div className="font-semibold" style={{ color: themeSettings.colors.primary }}>
+                                ${(item.price * item.quantity).toFixed(2)}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   ))}

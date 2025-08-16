@@ -22,6 +22,7 @@ type GetOrderInput = {
 type OrderFilters = {
   status?: string;
   query?: string;
+  orderId?: string;
 };
 
 export class OrderModel extends BaseModel<"orders", "id"> {
@@ -39,7 +40,6 @@ export class OrderModel extends BaseModel<"orders", "id"> {
       .selectFrom("orders")
       .where((eb) => {
         const conditions: Expression<SqlBool>[] = [];
-        conditions.push(eb("orders.status", "!=", OrderStatus.InitiatedPayment));
         if (paymentId) {
           conditions.push(eb("orders.paymentId", "=", paymentId));
         }
@@ -77,11 +77,22 @@ export class OrderModel extends BaseModel<"orders", "id"> {
     return result;
   }
 
+  public async getOrderById(input: { orderId: string; profileId: string }) {
+    const result = await this.getProfileOrders({
+      ...input,
+      filter: { orderId: input.orderId },
+      page: 1,
+      limit: 1,
+    });
+
+    return result.data[0];
+  }
+
   public async getProfileOrders(input: GetOrdersInput): Promise<PaginatedData<{}>> {
     const { profileId, page, limit } = input;
     const offset = (page - 1) * limit;
 
-    const { status, query } = (input.filter ?? {}) as OrderFilters;
+    const { status, query, orderId } = (input.filter ?? {}) as OrderFilters;
 
     const filterQuery = this.client
       .selectFrom("orders")
@@ -91,6 +102,10 @@ export class OrderModel extends BaseModel<"orders", "id"> {
 
         conditions.push(eb("orders.profileId", "=", profileId));
         conditions.push(eb("orders.status", "!=", OrderStatus.InitiatedPayment));
+
+        if (orderId) {
+          conditions.push(eb("orders.id", "=", orderId));
+        }
 
         if (status && status !== "all") {
           conditions.push(eb("orders.status", "=", status as OrderStatus));
@@ -114,7 +129,7 @@ export class OrderModel extends BaseModel<"orders", "id"> {
 
     const data = await filterQuery
       .orderBy("orders.createdAt", "desc")
-      .selectAll()
+      .selectAll("orders")
       .select((eb) => [
         sql`a.first_name || ' ' || a.last_name`.as("customerName"),
         eb.ref("orders.email").as("customerEmail"),
