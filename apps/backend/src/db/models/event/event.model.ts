@@ -8,6 +8,7 @@ type EventFilters = {
   query?: string;
   upcoming?: string;
   archived?: string;
+  eventId?: string;
 };
 
 export type IEvent = DB["events"];
@@ -18,7 +19,7 @@ export class EventModel extends BaseModel<"events", "id"> {
 
   public async getMany(input: GetEventsInput): Promise<PaginatedData<Selectable<IEvent>>> {
     const offset = (input.page - 1) * input.limit;
-    const { query, upcoming, archived } = input.filter as EventFilters;
+    const { query, upcoming, archived, eventId } = input.filter as EventFilters;
     const isUpcoming = upcoming === "upcoming";
     const isPast = upcoming === "past";
     const isArchived = archived === "true";
@@ -38,6 +39,10 @@ export class EventModel extends BaseModel<"events", "id"> {
         conditions.push(eb("dateTime", "<", new Date())); // TODO: need to get user's timezone
       }
 
+      if (eventId) {
+        conditions.push(eb("id", "=", eventId));
+      }
+
       if (query) {
         conditions.push(
           eb.or([
@@ -51,8 +56,17 @@ export class EventModel extends BaseModel<"events", "id"> {
     });
 
     const total = await filterQuery.select((eb) => eb.fn.countAll().as("total")).executeTakeFirstOrThrow();
-    const data = await filterQuery.selectAll().orderBy("dateTime", "asc").limit(input.limit).offset(offset).execute();
-
+    const data = await filterQuery
+      .selectAll()
+      .select((eb) => [
+        this.jsonArrayFrom(eb.selectFrom("eventTickets").whereRef("eventId", "=", "events.id").selectAll()).as(
+          "tickets",
+        ),
+      ])
+      .orderBy("dateTime", "asc")
+      .limit(input.limit)
+      .offset(offset)
+      .execute();
     const hasNextPage = data.length === input.limit;
     return {
       data,

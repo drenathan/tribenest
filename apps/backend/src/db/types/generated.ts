@@ -112,8 +112,8 @@ export interface EmailVariables {
 }
 
 export interface Events {
-  actionLink: string;
-  actionText: string;
+  actionLink: string | null;
+  actionText: string | null;
   address: Json;
   archivedAt: Timestamp | null;
   createdAt: Generated<Timestamp>;
@@ -121,6 +121,42 @@ export interface Events {
   description: string | null;
   id: Generated<string>;
   profileId: string;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface EventTicketOrderItems {
+  createdAt: Generated<Timestamp>;
+  eventTicketId: string;
+  eventTicketOrderId: string;
+  id: Generated<string>;
+  price: Numeric;
+  quantity: number;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface EventTicketOrders {
+  createdAt: Generated<Timestamp>;
+  email: string;
+  eventId: string;
+  firstName: string;
+  id: Generated<string>;
+  lastName: string;
+  paymentId: string | null;
+  paymentProviderName: string | null;
+  status: string;
+  totalAmount: Numeric;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface EventTickets {
+  createdAt: Generated<Timestamp>;
+  description: string;
+  eventId: string;
+  id: Generated<string>;
+  order: number;
+  price: Numeric;
+  quantity: number;
   title: string;
   updatedAt: Generated<Timestamp>;
 }
@@ -557,6 +593,9 @@ export interface DB {
   emailTemplates: EmailTemplates;
   emailVariables: EmailVariables;
   events: Events;
+  eventTicketOrderItems: EventTicketOrderItems;
+  eventTicketOrders: EventTicketOrders;
+  eventTickets: EventTickets;
   likes: Likes;
   media: Media;
   mediaMappings: MediaMappings;

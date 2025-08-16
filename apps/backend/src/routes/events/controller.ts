@@ -59,4 +59,11 @@ export class EventsController extends BaseController {
     const { id } = req.params;
     return this.services.event.unarchiveEvent({ id, profileId: req.query.profileId as string });
   }
+
+  @RouteHandler()
+  @ValidateSchema(profileIdQuerySchema)
+  public async getEvent(req: Request, res: Response, next: NextFunction): Promise<any> {
+    const { id } = req.params;
+    return this.services.event.getEvent({ eventId: id, profileId: req.query.profileId as string });
+  }
 }

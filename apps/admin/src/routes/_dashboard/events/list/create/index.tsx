@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import PageHeader from "../../-components/layout/page-header";
+import PageHeader from "../../../-components/layout/page-header";
 import { CreateEventForm } from "./-components/create-event-form";
 
-export const Route = createFileRoute("/_dashboard/events/create/")({
+export const Route = createFileRoute("/_dashboard/events/list/create/")({
   component: RouteComponent,
 });
 

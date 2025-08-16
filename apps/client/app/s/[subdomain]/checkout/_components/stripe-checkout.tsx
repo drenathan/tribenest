@@ -1,6 +1,5 @@
 import {
   alphaToHexCode,
-  ApiError,
   EditorButtonWithoutEditor,
   LoadingState,
   useCart,
@@ -10,7 +9,6 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Appearance, loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
 type Props = {
@@ -67,6 +65,7 @@ export const StripeCheckout = ({ amount, email, firstName, lastName, shippingAdd
       });
       return data;
     },
+    enabled: !!profile?.id,
   });
 
   const stripePromise = useRef(loadStripe(profile!.paymentProviderPublicKey));

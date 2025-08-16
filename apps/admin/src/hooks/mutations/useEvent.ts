@@ -17,8 +17,8 @@ export const useUpdateEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateEventInput) => httpClient.put("/events", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["event", id] });
     },
   });
 };

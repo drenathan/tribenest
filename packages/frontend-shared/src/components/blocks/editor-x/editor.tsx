@@ -29,6 +29,7 @@ export function Editor({
   onSerializedChange,
   initHtml,
   onHtmlChange,
+  height = "500px",
 }: {
   editorState?: EditorState;
   editorSerializedState?: SerializedEditorState;
@@ -36,6 +37,7 @@ export function Editor({
   onSerializedChange?: (editorSerializedState: SerializedEditorState) => void;
   initHtml: string;
   onHtmlChange?: (html: string) => void;
+  height?: string;
 }) {
   return (
     <div className="bg-background overflow-hidden rounded-lg border shadow text-foreground">
@@ -43,7 +45,7 @@ export function Editor({
         <TooltipProvider>
           <SharedAutocompleteContext>
             <FloatingLinkContext>
-              <Plugins />
+              <Plugins height={height} />
               <SetInitialValuePlugin initHtml={initHtml} />
               <OnChangePlugin
                 ignoreSelectionChange={true}

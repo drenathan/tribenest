@@ -14,6 +14,7 @@ export const createEventSchema = z.object({
   body: z.object({
     profileId: z.string().uuid(),
     dateTime: z.string().datetime(),
+    coverImage: z.string().url("Cover image must be a valid URL").optional(),
     address: z
       .object({
         name: z.string().min(1, "Name is required"),
@@ -36,8 +37,12 @@ export const createEventSchema = z.object({
       ),
     title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
     description: z.string().optional(),
-    actionText: z.string().min(1, "Action text is required").max(100, "Action text must be less than 100 characters"),
-    actionLink: z.string().url("Action link must be a valid URL"),
+    actionText: z
+      .string()
+      .min(1, "Action text is required")
+      .max(100, "Action text must be less than 100 characters")
+      .optional(),
+    actionLink: z.string().url("Action link must be a valid URL").optional(),
   }),
 });
 
@@ -48,6 +53,7 @@ export const updateEventSchema = z.object({
     id: z.string().uuid(),
     profileId: z.string().uuid(),
     dateTime: z.string().datetime(),
+    coverImage: z.string().url("Cover image must be a valid URL").optional(),
     address: z
       .object({
         name: z.string().min(1, "Name is required"),
@@ -70,8 +76,12 @@ export const updateEventSchema = z.object({
       ),
     title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
     description: z.string().optional(),
-    actionText: z.string().min(1, "Action text is required").max(100, "Action text must be less than 100 characters"),
-    actionLink: z.string().url("Action link must be a valid URL"),
+    actionText: z
+      .string()
+      .min(1, "Action text is required")
+      .max(100, "Action text must be less than 100 characters")
+      .optional(),
+    actionLink: z.string().url("Action link must be a valid URL").optional(),
   }),
 });
 

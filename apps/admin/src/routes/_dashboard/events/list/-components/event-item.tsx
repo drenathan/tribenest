@@ -1,14 +1,8 @@
 import type { IEvent } from "@/types/event";
-import {
-  Card,
-  CardContent,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@tribe-nest/frontend-shared";
-import { MoreVertical, Edit, Archive, RotateCcw, Calendar, MapPin, ExternalLink } from "lucide-react";
+import { Card, CardContent } from "@tribe-nest/frontend-shared";
+import { Calendar, MapPin, ExternalLink } from "lucide-react";
 import { getCountryName } from "@/utils/countryCodes";
+import { Link } from "@tanstack/react-router";
 
 type Props = {
   event: IEvent;
@@ -17,7 +11,7 @@ type Props = {
   onUnarchiveClick: VoidFunction;
 };
 
-function EventItem({ event, onEditClick, onArchiveClick, onUnarchiveClick }: Props) {
+function EventItem({ event }: Props) {
   const isArchived = !!event.archivedAt;
 
   const formatDateTime = (dateTime: string) => {
@@ -33,34 +27,7 @@ function EventItem({ event, onEditClick, onArchiveClick, onUnarchiveClick }: Pro
 
   return (
     <Card className={`relative transition-all duration-200 ${isArchived ? "opacity-60" : ""}`}>
-      <CardContent className="p-6">
-        <div className="absolute top-4 right-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
-                <MoreVertical className="w-4 h-4 text-muted-foreground" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onEditClick}>
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </DropdownMenuItem>
-              {isArchived ? (
-                <DropdownMenuItem onClick={onUnarchiveClick}>
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Unarchive
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem onClick={onArchiveClick}>
-                  <Archive className="w-4 h-4 mr-2" />
-                  Archive
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
+      <CardContent>
         {isArchived && (
           <div className="absolute top-4 left-4">
             <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-1 rounded-full">
@@ -71,8 +38,13 @@ function EventItem({ event, onEditClick, onArchiveClick, onUnarchiveClick }: Pro
 
         <div className="space-y-4">
           <div>
-            <h3 className="text-xl font-bold mb-2">{event.title}</h3>
-            {event.description && <p className="text-sm text-muted-foreground mb-3">{event.description}</p>}
+            <Link
+              to={`/events/list/$eventId`}
+              params={{ eventId: event.id }}
+              className="text-xl font-bold mb-2 hover:underline"
+            >
+              {event.title}
+            </Link>
           </div>
 
           <div className="space-y-2">

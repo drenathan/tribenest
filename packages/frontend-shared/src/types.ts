@@ -403,4 +403,12 @@ export interface IEvent {
   archivedAt?: string;
   createdAt: string;
   updatedAt: string;
+  tickets: {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    quantity: number;
+    order: number;
+  };
 }

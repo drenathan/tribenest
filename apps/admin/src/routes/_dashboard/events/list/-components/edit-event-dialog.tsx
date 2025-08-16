@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -12,13 +12,14 @@ import {
   Button,
   Input,
   Label,
-  Textarea,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   type ApiError,
+  Editor,
+  FormError,
 } from "@tribe-nest/frontend-shared";
 import { useUpdateEvent } from "@/hooks/mutations/useEvent";
 import { useAuth } from "@/hooks/useAuth";
@@ -138,7 +139,7 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
           <DialogDescription>Update the details of your event.</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
           {/* Basic Information */}
           <div className="space-y-3">
             <h4 className="font-medium">Basic Information</h4>
@@ -150,16 +151,17 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
                 <div className="text-sm text-red-600 dark:text-red-400">{methods.formState.errors.title.message}</div>
               )}
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                {...methods.register("description")}
-                placeholder="Enter event description (optional)"
-                rows={2}
-              />
-            </div>
+            <Controller
+              control={methods.control}
+              name="description"
+              render={({ field, fieldState }) => (
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  {fieldState.error && <FormError message={fieldState.error.message as string} />}
+                  <Editor initHtml={field.value ?? ""} onHtmlChange={(html) => field.onChange(html)} height="200px" />
+                </div>
+              )}
+            />
 
             <div className="space-y-2">
               <Label htmlFor="dateTime">Date & Time</Label>
@@ -285,7 +287,7 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" onClick={onSubmit} disabled={isPending}>
               {isPending ? "Updating..." : "Update Event"}
             </Button>
           </DialogFooter>

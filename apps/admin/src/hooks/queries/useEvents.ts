@@ -25,3 +25,14 @@ export const useEvents = (profileId?: string, filter?: EventFilters, page?: numb
     enabled: !!profileId,
   });
 };
+
+export const useEvent = (eventId?: string, profileId?: string) => {
+  return useQuery<IEvent>({
+    queryKey: ["event", eventId, profileId],
+    queryFn: async () => {
+      const response = await httpClient.get(`/events/${eventId}`, { params: { profileId } });
+      return response.data;
+    },
+    enabled: !!profileId && !!eventId,
+  });
+};

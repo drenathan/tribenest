@@ -150,7 +150,7 @@ function RouteComponent() {
         action={
           !isEmpty && (
             <Button>
-              <Link to="/events/create">Create New</Link>
+              <Link to="/events/list/create">Create New</Link>
             </Button>
           )
         }
@@ -263,7 +263,7 @@ function RouteComponent() {
           description={hasActiveFilters ? "No events match your search criteria" : "Create an event to get started"}
           action={
             <Button>
-              <Link to="/events/create">Create New</Link>
+              <Link to="/events/list/create">Create New</Link>
             </Button>
           }
         />
@@ -292,8 +292,6 @@ function RouteComponent() {
           onPageChange={handlePageChange}
         />
       )}
-
-      <EditEventDialog event={selectedEvent} isOpen={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} />
     </div>
   );
 }

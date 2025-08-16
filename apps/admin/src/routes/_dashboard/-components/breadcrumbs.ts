@@ -87,4 +87,22 @@ export const breadcrumbs: Record<
     links: [{ label: "Home", href: "/" }],
     currentPage: "Smart Link Templates",
   },
+  "/events/list": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Events",
+  },
+  "/events/list/create": {
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Events", goBack: true },
+    ],
+    currentPage: "Create Event",
+  },
+  "/events/list/$eventId": {
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Events", goBack: true },
+    ],
+    currentPage: "Event",
+  },
 };

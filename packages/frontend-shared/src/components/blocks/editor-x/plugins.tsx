@@ -100,8 +100,9 @@ import { Separator } from "../../ui/separator";
 const placeholder = "Press / for commands...";
 const maxLength = 500;
 
-export function Plugins({}) {
+export function Plugins({ height = "500px" }: { height?: string }) {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+  const heightClass = `h-[${height}]`;
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -172,7 +173,7 @@ export function Plugins({}) {
               <div className="" ref={onRef}>
                 <ContentEditable
                   placeholder={placeholder}
-                  className="ContentEditable__root relative block h-[500px] overflow-auto px-8 py-4 focus:outline-none"
+                  className={`ContentEditable__root relative block overflow-auto px-8 py-4 focus:outline-none ${heightClass}`}
                 />
               </div>
             </div>

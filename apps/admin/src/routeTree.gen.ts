@@ -32,7 +32,6 @@ import { Route as DashboardSocialMediaConnectionsIndexRouteImport } from './rout
 import { Route as DashboardSmartLinksTemplatesIndexRouteImport } from './routes/_dashboard/smart-links/templates/index'
 import { Route as DashboardSmartLinksLinksIndexRouteImport } from './routes/_dashboard/smart-links/links/index'
 import { Route as DashboardEventsListIndexRouteImport } from './routes/_dashboard/events/list/index'
-import { Route as DashboardEventsCreateIndexRouteImport } from './routes/_dashboard/events/create/index'
 import { Route as DashboardEmailsTemplatesIndexRouteImport } from './routes/_dashboard/emails/templates/index'
 import { Route as DashboardEmailsListsIndexRouteImport } from './routes/_dashboard/emails/lists/index'
 import { Route as DashboardEmailsEmailsIndexRouteImport } from './routes/_dashboard/emails/emails/index'
@@ -42,7 +41,9 @@ import { Route as DashboardStoreProductsCeateRouteImport } from './routes/_dashb
 import { Route as DashboardStoreOrdersOrderIdRouteImport } from './routes/_dashboard/store/orders/$orderId'
 import { Route as DashboardStoreMusicCreateRouteImport } from './routes/_dashboard/store/music/create'
 import { Route as DashboardSmartLinksLinksCreateRouteImport } from './routes/_dashboard/smart-links/links/create'
+import { Route as DashboardEventsListEventIdRouteImport } from './routes/_dashboard/events/list/$eventId'
 import { Route as DashboardEmailsEmailsCreateRouteImport } from './routes/_dashboard/emails/emails/create'
+import { Route as DashboardEventsListCreateIndexRouteImport } from './routes/_dashboard/events/list/create/index'
 import { Route as DashboardWebsiteThemesSlugPreviewRouteImport } from './routes/_dashboard/website/themes/$slug.preview'
 import { Route as DashboardWebsiteHomeVersionIdEditRouteImport } from './routes/_dashboard/website/home/$versionId.edit'
 import { Route as DashboardTribePostsPostIdEditRouteImport } from './routes/_dashboard/tribe/posts/$postId.edit'
@@ -181,12 +182,6 @@ const DashboardEventsListIndexRoute =
     path: '/events/list/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
-const DashboardEventsCreateIndexRoute =
-  DashboardEventsCreateIndexRouteImport.update({
-    id: '/events/create/',
-    path: '/events/create/',
-    getParentRoute: () => DashboardRouteRoute,
-  } as any)
 const DashboardEmailsTemplatesIndexRoute =
   DashboardEmailsTemplatesIndexRouteImport.update({
     id: '/emails/templates/',
@@ -241,10 +236,22 @@ const DashboardSmartLinksLinksCreateRoute =
     path: '/smart-links/links/create',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardEventsListEventIdRoute =
+  DashboardEventsListEventIdRouteImport.update({
+    id: '/events/list/$eventId',
+    path: '/events/list/$eventId',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardEmailsEmailsCreateRoute =
   DashboardEmailsEmailsCreateRouteImport.update({
     id: '/emails/emails/create',
     path: '/emails/emails/create',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardEventsListCreateIndexRoute =
+  DashboardEventsListCreateIndexRouteImport.update({
+    id: '/events/list/create/',
+    path: '/events/list/create/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardWebsiteThemesSlugPreviewRoute =
@@ -311,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
+  '/events/list/$eventId': typeof DashboardEventsListEventIdRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
@@ -320,7 +328,6 @@ export interface FileRoutesByFullPath {
   '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
-  '/events/create': typeof DashboardEventsCreateIndexRoute
   '/events/list': typeof DashboardEventsListIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
   '/smart-links/templates': typeof DashboardSmartLinksTemplatesIndexRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByFullPath {
   '/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
+  '/events/list/create': typeof DashboardEventsListCreateIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof AuthForgotPasswordRoute
@@ -354,6 +362,7 @@ export interface FileRoutesByTo {
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
   '/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
+  '/events/list/$eventId': typeof DashboardEventsListEventIdRoute
   '/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
@@ -363,7 +372,6 @@ export interface FileRoutesByTo {
   '/emails/emails': typeof DashboardEmailsEmailsIndexRoute
   '/emails/lists': typeof DashboardEmailsListsIndexRoute
   '/emails/templates': typeof DashboardEmailsTemplatesIndexRoute
-  '/events/create': typeof DashboardEventsCreateIndexRoute
   '/events/list': typeof DashboardEventsListIndexRoute
   '/smart-links/links': typeof DashboardSmartLinksLinksIndexRoute
   '/smart-links/templates': typeof DashboardSmartLinksTemplatesIndexRoute
@@ -387,6 +395,7 @@ export interface FileRoutesByTo {
   '/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
+  '/events/list/create': typeof DashboardEventsListCreateIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -400,6 +409,7 @@ export interface FileRoutesById {
   '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_dashboard/tribe/': typeof DashboardTribeIndexRoute
   '/_dashboard/emails/emails/create': typeof DashboardEmailsEmailsCreateRoute
+  '/_dashboard/events/list/$eventId': typeof DashboardEventsListEventIdRoute
   '/_dashboard/smart-links/links/create': typeof DashboardSmartLinksLinksCreateRoute
   '/_dashboard/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/_dashboard/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
@@ -409,7 +419,6 @@ export interface FileRoutesById {
   '/_dashboard/emails/emails/': typeof DashboardEmailsEmailsIndexRoute
   '/_dashboard/emails/lists/': typeof DashboardEmailsListsIndexRoute
   '/_dashboard/emails/templates/': typeof DashboardEmailsTemplatesIndexRoute
-  '/_dashboard/events/create/': typeof DashboardEventsCreateIndexRoute
   '/_dashboard/events/list/': typeof DashboardEventsListIndexRoute
   '/_dashboard/smart-links/links/': typeof DashboardSmartLinksLinksIndexRoute
   '/_dashboard/smart-links/templates/': typeof DashboardSmartLinksTemplatesIndexRoute
@@ -433,6 +442,7 @@ export interface FileRoutesById {
   '/_dashboard/tribe/posts/$postId/edit': typeof DashboardTribePostsPostIdEditRoute
   '/_dashboard/website/home/$versionId/edit': typeof DashboardWebsiteHomeVersionIdEditRoute
   '/_dashboard/website/themes/$slug/preview': typeof DashboardWebsiteThemesSlugPreviewRoute
+  '/_dashboard/events/list/create/': typeof DashboardEventsListCreateIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -445,6 +455,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tribe'
     | '/emails/emails/create'
+    | '/events/list/$eventId'
     | '/smart-links/links/create'
     | '/store/music/create'
     | '/store/orders/$orderId'
@@ -454,7 +465,6 @@ export interface FileRouteTypes {
     | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
-    | '/events/create'
     | '/events/list'
     | '/smart-links/links'
     | '/smart-links/templates'
@@ -478,6 +488,7 @@ export interface FileRouteTypes {
     | '/tribe/posts/$postId/edit'
     | '/website/home/$versionId/edit'
     | '/website/themes/$slug/preview'
+    | '/events/list/create'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -488,6 +499,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tribe'
     | '/emails/emails/create'
+    | '/events/list/$eventId'
     | '/smart-links/links/create'
     | '/store/music/create'
     | '/store/orders/$orderId'
@@ -497,7 +509,6 @@ export interface FileRouteTypes {
     | '/emails/emails'
     | '/emails/lists'
     | '/emails/templates'
-    | '/events/create'
     | '/events/list'
     | '/smart-links/links'
     | '/smart-links/templates'
@@ -521,6 +532,7 @@ export interface FileRouteTypes {
     | '/tribe/posts/$postId/edit'
     | '/website/home/$versionId/edit'
     | '/website/themes/$slug/preview'
+    | '/events/list/create'
   id:
     | '__root__'
     | '/_auth'
@@ -533,6 +545,7 @@ export interface FileRouteTypes {
     | '/_dashboard/settings/'
     | '/_dashboard/tribe/'
     | '/_dashboard/emails/emails/create'
+    | '/_dashboard/events/list/$eventId'
     | '/_dashboard/smart-links/links/create'
     | '/_dashboard/store/music/create'
     | '/_dashboard/store/orders/$orderId'
@@ -542,7 +555,6 @@ export interface FileRouteTypes {
     | '/_dashboard/emails/emails/'
     | '/_dashboard/emails/lists/'
     | '/_dashboard/emails/templates/'
-    | '/_dashboard/events/create/'
     | '/_dashboard/events/list/'
     | '/_dashboard/smart-links/links/'
     | '/_dashboard/smart-links/templates/'
@@ -566,6 +578,7 @@ export interface FileRouteTypes {
     | '/_dashboard/tribe/posts/$postId/edit'
     | '/_dashboard/website/home/$versionId/edit'
     | '/_dashboard/website/themes/$slug/preview'
+    | '/_dashboard/events/list/create/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -736,13 +749,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardEventsListIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/_dashboard/events/create/': {
-      id: '/_dashboard/events/create/'
-      path: '/events/create'
-      fullPath: '/events/create'
-      preLoaderRoute: typeof DashboardEventsCreateIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
     '/_dashboard/emails/templates/': {
       id: '/_dashboard/emails/templates/'
       path: '/emails/templates'
@@ -806,11 +812,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSmartLinksLinksCreateRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/events/list/$eventId': {
+      id: '/_dashboard/events/list/$eventId'
+      path: '/events/list/$eventId'
+      fullPath: '/events/list/$eventId'
+      preLoaderRoute: typeof DashboardEventsListEventIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/emails/emails/create': {
       id: '/_dashboard/emails/emails/create'
       path: '/emails/emails/create'
       fullPath: '/emails/emails/create'
       preLoaderRoute: typeof DashboardEmailsEmailsCreateRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/events/list/create/': {
+      id: '/_dashboard/events/list/create/'
+      path: '/events/list/create'
+      fullPath: '/events/list/create'
+      preLoaderRoute: typeof DashboardEventsListCreateIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/website/themes/$slug/preview': {
@@ -901,6 +921,7 @@ interface DashboardRouteRouteChildren {
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardTribeIndexRoute: typeof DashboardTribeIndexRoute
   DashboardEmailsEmailsCreateRoute: typeof DashboardEmailsEmailsCreateRoute
+  DashboardEventsListEventIdRoute: typeof DashboardEventsListEventIdRoute
   DashboardSmartLinksLinksCreateRoute: typeof DashboardSmartLinksLinksCreateRoute
   DashboardStoreMusicCreateRoute: typeof DashboardStoreMusicCreateRoute
   DashboardStoreOrdersOrderIdRoute: typeof DashboardStoreOrdersOrderIdRoute
@@ -910,7 +931,6 @@ interface DashboardRouteRouteChildren {
   DashboardEmailsEmailsIndexRoute: typeof DashboardEmailsEmailsIndexRoute
   DashboardEmailsListsIndexRoute: typeof DashboardEmailsListsIndexRoute
   DashboardEmailsTemplatesIndexRoute: typeof DashboardEmailsTemplatesIndexRoute
-  DashboardEventsCreateIndexRoute: typeof DashboardEventsCreateIndexRoute
   DashboardEventsListIndexRoute: typeof DashboardEventsListIndexRoute
   DashboardSmartLinksLinksIndexRoute: typeof DashboardSmartLinksLinksIndexRoute
   DashboardSmartLinksTemplatesIndexRoute: typeof DashboardSmartLinksTemplatesIndexRoute
@@ -934,6 +954,7 @@ interface DashboardRouteRouteChildren {
   DashboardTribePostsPostIdEditRoute: typeof DashboardTribePostsPostIdEditRoute
   DashboardWebsiteHomeVersionIdEditRoute: typeof DashboardWebsiteHomeVersionIdEditRoute
   DashboardWebsiteThemesSlugPreviewRoute: typeof DashboardWebsiteThemesSlugPreviewRoute
+  DashboardEventsListCreateIndexRoute: typeof DashboardEventsListCreateIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
@@ -942,6 +963,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardTribeIndexRoute: DashboardTribeIndexRoute,
   DashboardEmailsEmailsCreateRoute: DashboardEmailsEmailsCreateRoute,
+  DashboardEventsListEventIdRoute: DashboardEventsListEventIdRoute,
   DashboardSmartLinksLinksCreateRoute: DashboardSmartLinksLinksCreateRoute,
   DashboardStoreMusicCreateRoute: DashboardStoreMusicCreateRoute,
   DashboardStoreOrdersOrderIdRoute: DashboardStoreOrdersOrderIdRoute,
@@ -952,7 +974,6 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardEmailsEmailsIndexRoute: DashboardEmailsEmailsIndexRoute,
   DashboardEmailsListsIndexRoute: DashboardEmailsListsIndexRoute,
   DashboardEmailsTemplatesIndexRoute: DashboardEmailsTemplatesIndexRoute,
-  DashboardEventsCreateIndexRoute: DashboardEventsCreateIndexRoute,
   DashboardEventsListIndexRoute: DashboardEventsListIndexRoute,
   DashboardSmartLinksLinksIndexRoute: DashboardSmartLinksLinksIndexRoute,
   DashboardSmartLinksTemplatesIndexRoute:
@@ -986,6 +1007,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
     DashboardWebsiteHomeVersionIdEditRoute,
   DashboardWebsiteThemesSlugPreviewRoute:
     DashboardWebsiteThemesSlugPreviewRoute,
+  DashboardEventsListCreateIndexRoute: DashboardEventsListCreateIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(

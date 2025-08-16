@@ -7,6 +7,20 @@ export class EventService extends BaseService {
     return this.models.Event.getMany(input);
   }
 
+  public async getEvent(input: { eventId: string; profileId: string }) {
+    const result = await this.models.Event.getMany({
+      filter: {
+        eventId: input.eventId,
+        profileId: input.profileId,
+      },
+      page: 1,
+      limit: 1,
+      profileId: input.profileId,
+    });
+
+    return result.data[0];
+  }
+
   public async createEvent(input: CreateEventInput) {
     // Validate address fields
     this.validateAddress(input.address);

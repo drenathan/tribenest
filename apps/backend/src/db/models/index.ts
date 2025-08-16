@@ -2,6 +2,13 @@ import { Kysely } from "kysely";
 import { AccountModel } from "./account.model";
 import { SessionModel } from "./session.model";
 import { DB } from "../types";
+import { EmailModel } from "./email/email.model";
+import { EmailRecipientModel } from "./email/emailRecipient.model";
+import { EmailVariableModel } from "./email/emailVariable.model";
+import { EventModel } from "./event/event.model";
+import { EventTicketModel } from "./event/eventTicket.mode";
+import { EventTicketOrderModel } from "./event/eventTicketOrder.model";
+import { EventTicketOrderItemModel } from "./event/eventTicketOrderItem.model";
 import { ProfileModel } from "./profile/profile.model";
 import { ProfileAuthorizationModel } from "./profile/profileAuthorization.model";
 import { MembershipModel } from "./membership/membership.model";
@@ -40,10 +47,6 @@ import { EmailTemplateModel } from "./email/emailTemplate.model";
 import { SmartLinkModel } from "./smartLink/smartLink.model";
 import { SmartLinkViewModel } from "./smartLink/smartLinkView.model";
 import { SmartLinkClickModel } from "./smartLink/smartLinkClickModel";
-import { EmailModel } from "./email/email.model";
-import { EmailRecipientModel } from "./email/emailRecipient.model";
-import { EmailVariableModel } from "./email/emailVariable.model";
-import { EventModel } from "./event/event.model";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
@@ -54,6 +57,10 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     EmailListSubscriber: new EmailListSubscriberModel(client),
     EmailTemplate: new EmailTemplateModel(client),
     EmailVariable: new EmailVariableModel(client),
+    Event: new EventModel(client),
+    EventTicket: new EventTicketModel(client),
+    EventTicketOrder: new EventTicketOrderModel(client),
+    EventTicketOrderItem: new EventTicketOrderItemModel(client),
     Comment: new CommentModel(client),
     Like: new LikeModel(client),
     Saved: new SavedModel(client),
@@ -90,6 +97,5 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     SmartLinkClick: new SmartLinkClickModel(client),
     WebsiteVersion: new WebsiteVersionModel(client),
     WebsiteVersionPage: new WebsiteVersionPageModel(client),
-    Event: new EventModel(client),
   };
 };
