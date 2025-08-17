@@ -27,7 +27,6 @@ export class EventsService extends BaseService {
       tickets.reduce((acc, ticket) => acc + Number(ticket.price) * input.items[ticket.id], 0),
       2,
     );
-    console.log(amount, "amount");
 
     const paymentProvider = await this.apis.getPaymentProvider(input.profileId);
     const payment = await paymentProvider.startCharge({

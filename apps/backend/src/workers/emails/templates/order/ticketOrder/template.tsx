@@ -4,34 +4,36 @@ import { Html, Head, Body, Container, Section, Heading, Text, Button, Hr, Img, L
 import type { IVariables } from "./index";
 
 export function Template(props: IVariables) {
-  const { senderName, recipientMessage, orderId, items, archive, isGift, recipientName, totalAmount, date } = props;
-
-  const formatFileSize = (bytes?: number) => {
-    if (!bytes) return "N/A";
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    if (bytes === 0) return "0 Bytes";
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
-  };
+  const { orderId, items, recipientName, totalAmount, date, event } = props;
 
   return (
     <Html lang="en">
       <Head>
-        <title>Your Music is Ready!</title>
+        <title>Your Tickets are Ready!</title>
       </Head>
       <Body style={main}>
         <Container style={container}>
           {/* Header */}
           <Section style={header}>
             <Heading style={h1}>Hi {recipientName},</Heading>
-            {isGift ? (
-              <Text style={giftMessage}>
-                🎁 You have received a musical gift from <strong>{senderName}</strong>
+            <Text style={giftMessage}>Thank you for your purchase!</Text>
+          </Section>
+
+          {/* Event Details */}
+          <Section style={section}>
+            <Heading style={h2}>Event Details</Heading>
+            <Text style={text}>
+              <strong>Event:</strong> {event.title}
+            </Text>
+            <Text style={text}>
+              <strong>Date & Time:</strong> {new Date(event.dateTime).toLocaleString()}
+            </Text>
+            {event.address && (
+              <Text style={text}>
+                <strong>Location:</strong> {event.address.name}, {event.address.street}, {event.address.city},{" "}
+                {event.address.country} {event.address.zipCode}
               </Text>
-            ) : (
-              <Text style={giftMessage}>Thank you for your purchase!</Text>
             )}
-            {recipientMessage && <Text style={giftMessage}>{recipientMessage}</Text>}
           </Section>
 
           {/* Order Details */}
@@ -43,24 +45,22 @@ export function Template(props: IVariables) {
             <Text style={text}>
               <strong>Order Date:</strong> {date}
             </Text>
-            {!isGift && (
-              <Text style={text}>
-                <strong>Total Amount:</strong> ${totalAmount}
-              </Text>
-            )}
+            <Text style={text}>
+              <strong>Total Amount:</strong> ${totalAmount}
+            </Text>
           </Section>
 
-          {/* Order Items */}
+          {/* Ticket Details */}
           <Section style={section}>
-            <Heading style={h2}>{isGift ? "What You Received" : "What You Ordered"}</Heading>
+            <Heading style={h2}>Your Tickets</Heading>
 
             {/* Table Header */}
             <div style={tableHeader}>
               <div style={headerRow}>
-                <div style={headerCell}>Item</div>
-                <div style={headerCell}>Type</div>
+                <div style={headerCell}>Ticket Type</div>
                 <div style={headerCell}>Quantity</div>
                 <div style={headerCell}>Price</div>
+                <div style={headerCell}>Ticket ID</div>
               </div>
             </div>
 
@@ -69,59 +69,30 @@ export function Template(props: IVariables) {
               <div key={index} style={tableRow}>
                 <div style={cell}>
                   <Text style={itemTitle}>{item.title}</Text>
-                  {item.isGift && (
-                    <Text style={giftInfo}>
-                      {item.recipientMessage && <div style={message}>"{item.recipientMessage}"</div>}
-                    </Text>
-                  )}
-                </div>
-                <div style={cell}>
-                  {item.isGift ? (
-                    <span style={giftBadge}>🎁 Gift</span>
-                  ) : (
-                    <span style={purchaseBadge}>💿 Purchase</span>
-                  )}
                 </div>
                 <div style={cell}>{item.quantity}</div>
                 <div style={cell}>${item.price}</div>
+                <div style={cell}>
+                  <Text style={ticketId}>{item.eventTicketId}</Text>
+                </div>
               </div>
             ))}
           </Section>
 
           <Hr style={hr} />
 
-          {/* Download Section */}
-          <Section style={section}>
-            <Heading style={h2}>Download Your Music</Heading>
-            <Text style={text}>
-              Your music has been prepared and is ready for download. Click the link below to get your files:
-            </Text>
-
-            <Section style={downloadSection}>
-              <Text style={archiveTitle}>{archive.filename}</Text>
-              {archive.size && <Text style={archiveInfo}>Size: {formatFileSize(archive.size)}</Text>}
-              <Button style={button} href={archive.url}>
-                📥 Download Now
-              </Button>
-            </Section>
-          </Section>
-
           {/* Instructions */}
-          <Section style={section}>
-            <Heading style={h2}>How to Use Your Files</Heading>
-            <Text style={text}>• Download the ZIP files to your computer</Text>
-            <Text style={text}>• Extract the ZIP files using your computer's built-in tools</Text>
-            <Text style={text}>• Enjoy your music on any device that supports wav or flac files</Text>
-            <Text style={text}>• You can also listen to the music directly on the artist's website</Text>
-            <Text style={text}>• You can download the files again anytime</Text>
-          </Section>
+          {event.description && (
+            <Section style={section}>
+              <Heading style={h2}>Event Details</Heading>
+              <Text dangerouslySetInnerHTML={{ __html: event.description }} style={text} />
+            </Section>
+          )}
 
           {/* Footer */}
           <Section style={footer}>
-            <Text style={footerText}>
-              Thank you for your purchase! If you have any questions, please don't hesitate to contact us.
-            </Text>
-            <Text style={footerText}>Happy listening! 🎶</Text>
+            <Text style={footerText}>Thank you for your purchase! We hope you enjoy the event.</Text>
+            <Text style={footerText}>Have a great time! 🎉</Text>
           </Section>
         </Container>
       </Body>
@@ -224,35 +195,11 @@ const itemTitle = {
   margin: "0",
 };
 
-const giftInfo = {
+const ticketId = {
   fontSize: "12px",
   color: "#666666",
-  margin: "4px 0 0 0",
-  fontStyle: "italic",
-};
-
-const message = {
-  color: "#667eea",
-  fontStyle: "italic",
-  marginTop: "4px",
-};
-
-const giftBadge = {
-  backgroundColor: "#ff6b6b",
-  color: "#ffffff",
-  padding: "4px 8px",
-  borderRadius: "12px",
-  fontSize: "12px",
-  fontWeight: "bold",
-};
-
-const purchaseBadge = {
-  backgroundColor: "#51cf66",
-  color: "#ffffff",
-  padding: "4px 8px",
-  borderRadius: "12px",
-  fontSize: "12px",
-  fontWeight: "bold",
+  fontFamily: "monospace",
+  margin: "0",
 };
 
 const hr = {

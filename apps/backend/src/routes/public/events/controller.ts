@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { NotFoundError } from "@src/utils/app_error";
 import { profileIdQuerySchema } from "@src/routes/schema";
 import { CreateOrderInput, createOrderSchema, FinalizeOrderInput, finalizeOrderSchema } from "./schema";
+import { OrderStatus } from "@src/db/types/product";
 
 export class PublicEvents extends BaseController {
   @RouteHandler()
@@ -49,6 +50,14 @@ export class PublicEvents extends BaseController {
     next: NextFunction,
     @Body body?: FinalizeOrderInput,
   ): Promise<any> {
-    return this.services.public.events.finalizeOrder(body!);
+    const order = await this.services.public.events.finalizeOrder(body!);
+
+    if (order.status === OrderStatus.Paid) {
+      await this.workers.jobs.order.processTicketOrder.now({
+        profileId: req.body.profileId,
+        orderId: order.id!,
+      });
+    }
+    return order;
   }
 }
