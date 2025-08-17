@@ -255,6 +255,7 @@ function RouteComponent() {
                     <div>
                       <h3 className="text-lg font-bold">{ticket.title}</h3>
                       {!!ticket.archivedAt && <Badge variant="outline">Archived</Badge>}
+                      {ticket.sold === ticket.quantity && <Badge>Sold Out</Badge>}
                       <p dangerouslySetInnerHTML={{ __html: ticket.description || "" }}></p>
                       <p className="text-sm text-muted-foreground">${ticket.price.toFixed(2)}</p>
                       <p className="text-sm text-muted-foreground">Total: {ticket.quantity}</p>

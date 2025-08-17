@@ -75,6 +75,7 @@ export class EventTicketOrderModel extends BaseModel<"eventTicketOrders", "id"> 
     const data = await filterQuery
       .orderBy("eto.createdAt", "desc")
       .selectAll("eto")
+      .select("e.title as eventTitle")
       .select((eb) => [
         sql`eto.first_name || ' ' || eto.last_name`.as("customerName"),
         eb.ref("eto.email").as("customerEmail"),

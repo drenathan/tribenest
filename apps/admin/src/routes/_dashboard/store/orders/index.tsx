@@ -32,18 +32,7 @@ import EmptyState from "@/components/empty-state";
 import { AdminPagination } from "@/components/pagination";
 import { z } from "zod";
 import { debounce } from "lodash";
-import {
-  FilterIcon,
-  XIcon,
-  ShoppingBag,
-  CreditCard,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Truck,
-  Package,
-  AlertCircle,
-} from "lucide-react";
+import { FilterIcon, XIcon, CreditCard, CheckCircle, XCircle, Clock, Truck, Package, AlertCircle } from "lucide-react";
 import { OrderStatus } from "@tribe-nest/frontend-shared";
 
 const routeParams = z.object({
@@ -184,14 +173,14 @@ function RouteComponent() {
       <PageHeader
         title="Orders"
         description="Manage and track customer orders"
-        action={
-          !isEmpty && (
-            <Button>
-              <ShoppingBag className="h-4 w-4 mr-2" />
-              Export Orders
-            </Button>
-          )
-        }
+        // action={
+        //   !isEmpty && (
+        //     <Button>
+        //       <ShoppingBag className="h-4 w-4 mr-2" />
+        //       Export Orders
+        //     </Button>
+        //   )
+        // }
       />
 
       {/* Search and Filter Bar */}
@@ -199,7 +188,7 @@ function RouteComponent() {
         <div className="flex gap-4 items-center">
           <div className="flex-1">
             <Input
-              placeholder="Search orders by ID, product, or recipient..."
+              placeholder="Search orders by event title, customer name, or email..."
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
             />

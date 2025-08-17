@@ -12,6 +12,7 @@ import {
 } from "@tribe-nest/frontend-shared";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "next/navigation";
+import { round } from "lodash";
 
 export function FinalizeContent() {
   const { httpClient, profile, themeSettings } = useEditorContext();
@@ -112,7 +113,7 @@ export function FinalizeContent() {
             borderColor: themeSettings?.colors.primary + "30",
           }}
         >
-          <div>Customer Details</div>
+          <div className="text-lg font-semibold mb-4">Customer Details</div>
 
           <div className="space-y-3">
             <div className="flex justify-between">
@@ -124,6 +125,10 @@ export function FinalizeContent() {
             <div className="flex justify-between">
               <span className="font-medium">Email:</span>
               <span>{data.email}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="font-medium">Event:</span>
+              <span>{data.eventTitle}</span>
             </div>
           </div>
         </div>
@@ -147,7 +152,7 @@ export function FinalizeContent() {
                     <p className="font-medium">
                       {formatCurrency(item.price)} × {item.quantity}
                     </p>
-                    <p className="text-lg font-bold">{formatCurrency(item.price * item.quantity)}</p>
+                    <p className="text-lg font-bold">{formatCurrency(round(item.price * item.quantity, 2))}</p>
                   </div>
                 </div>
                 {index < data.items.length - 1 && <Separator className="mt-4" />}

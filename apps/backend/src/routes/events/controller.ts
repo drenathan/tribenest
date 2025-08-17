@@ -15,6 +15,8 @@ import {
   UpdateTicketInput,
   reorderTicketsSchema,
   ReorderTicketsInput,
+  getOrdersSchema,
+  GetOrdersInput,
 } from "./schema";
 import * as policy from "./policy";
 
@@ -75,6 +77,7 @@ export class EventsController extends BaseController {
 
   @RouteHandler()
   @ValidateSchema(profileIdQuerySchema)
+  @isAuthorized(policy.getAll)
   public async getTickets(req: Request, res: Response, next: NextFunction): Promise<any> {
     const { id } = req.params;
     return this.services.admin.event.getTickets({ eventId: id, profileId: req.query.profileId as string });
@@ -134,6 +137,7 @@ export class EventsController extends BaseController {
 
   @RouteHandler()
   @ValidateSchema(profileIdQuerySchema)
+  @isAuthorized(policy.getAll)
   public async archiveTicket(req: Request, res: Response, next: NextFunction): Promise<any> {
     const { id, ticketId } = req.params;
 
@@ -146,6 +150,7 @@ export class EventsController extends BaseController {
 
   @RouteHandler()
   @ValidateSchema(profileIdQuerySchema)
+  @isAuthorized(policy.getAll)
   public async unarchiveTicket(req: Request, res: Response, next: NextFunction): Promise<any> {
     const { id, ticketId } = req.params;
 
@@ -154,5 +159,12 @@ export class EventsController extends BaseController {
       ticketId,
       profileId: req.query.profileId as string,
     });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(getOrdersSchema)
+  @isAuthorized(policy.getAll)
+  public async getOrders(req: Request, res: Response, next: NextFunction, @Query query?: GetOrdersInput): Promise<any> {
+    return this.services.admin.event.getOrders(query!);
   }
 }

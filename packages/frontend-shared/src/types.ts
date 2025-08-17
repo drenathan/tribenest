@@ -425,6 +425,11 @@ export type ITicketOrder = {
   email: string;
   totalAmount: number;
   status: OrderStatus;
+  customerName: string;
+  customerEmail: string;
+  createdAt: string;
+  updatedAt: string;
+  eventTitle: string;
 };
 
 export type ITicketOrderItem = {

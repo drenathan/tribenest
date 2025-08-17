@@ -132,3 +132,12 @@ export const reorderTicketsSchema = z.object({
 });
 
 export type ReorderTicketsInput = z.infer<typeof reorderTicketsSchema>["body"];
+
+export const getOrdersSchema = z.object({
+  query: z.object({
+    profileId: z.string(),
+    ...paginationSchema.shape,
+  }),
+});
+
+export type GetOrdersInput = z.infer<typeof getOrdersSchema>["query"];

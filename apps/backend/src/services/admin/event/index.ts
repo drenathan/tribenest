@@ -7,6 +7,7 @@ import { reorderTickets } from "./commands/reorderTickets";
 import { unarchiveTicket } from "./commands/unarchiveTicket";
 import { archiveTicket } from "./commands/archiveTicket";
 import { getTickets } from "./queries/getTickets";
+import { getOrders } from "./queries/getOrders";
 
 export class EventService extends BaseService {
   public readonly updateTicket: typeof updateTicket;
@@ -15,6 +16,7 @@ export class EventService extends BaseService {
   public readonly unarchiveTicket: typeof unarchiveTicket;
   public readonly archiveTicket: typeof archiveTicket;
   public readonly getTickets: typeof getTickets;
+  public readonly getOrders: typeof getOrders;
 
   constructor(args: BaseServiceArgs) {
     super(args);
@@ -24,6 +26,7 @@ export class EventService extends BaseService {
     this.unarchiveTicket = unarchiveTicket.bind(this);
     this.archiveTicket = archiveTicket.bind(this);
     this.getTickets = getTickets.bind(this);
+    this.getOrders = getOrders.bind(this);
   }
 
   public async getEvents(input: GetEventsInput) {
