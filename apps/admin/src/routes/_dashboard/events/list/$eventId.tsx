@@ -1,6 +1,6 @@
 import { useArchiveEvent, useUnarchiveEvent } from "@/hooks/mutations/useEvent";
 import { useAuth } from "@/hooks/useAuth";
-import { Edit, Archive, RotateCcw, MoreHorizontal } from "lucide-react";
+import { Edit, Archive, RotateCcw, MoreHorizontal, Ticket } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent } from "@tribe-nest/frontend-shared";
 import { Calendar, MapPin, ExternalLink } from "lucide-react";
@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import PageHeader from "../../-components/layout/page-header";
 import { useEvent } from "@/hooks/queries/useEvents";
 import { EditEventDialog } from "./-components/edit-event-dialog";
+import { CreateTicketDialog } from "./-components/create-ticket-dialog";
 import { formatDateTimeLocale } from "@/utils/date";
 
 export const Route = createFileRoute("/_dashboard/events/list/$eventId")({
@@ -30,12 +31,17 @@ function RouteComponent() {
   const { mutateAsync: unarchiveEvent } = useUnarchiveEvent();
   const { currentProfileAuthorization } = useAuth();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCreateTicketDialogOpen, setIsCreateTicketDialogOpen] = useState(false);
   const { eventId } = Route.useParams();
   const { data: event } = useEvent(eventId, currentProfileAuthorization?.profileId);
   const isArchived = !!event?.archivedAt;
 
   const handleEditClick = () => {
     setIsEditDialogOpen(true);
+  };
+
+  const handleCreateTicketClick = () => {
+    setIsCreateTicketDialogOpen(true);
   };
 
   const handleArchiveClick = async () => {
@@ -77,6 +83,10 @@ function RouteComponent() {
                 <DropdownMenuItem onClick={handleEditClick}>
                   <Edit className="w-4 h-4 mr-2" />
                   Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCreateTicketClick}>
+                  <Ticket className="w-4 h-4 mr-2" />
+                  Create Ticket
                 </DropdownMenuItem>
                 {isArchived ? (
                   <DropdownMenuItem onClick={handleUnarchiveClick}>
@@ -160,6 +170,13 @@ function RouteComponent() {
       )}
 
       {event && <EditEventDialog event={event} isOpen={isEditDialogOpen} onOpenChange={setIsEditDialogOpen} />}
+      {event && (
+        <CreateTicketDialog
+          eventId={event.id}
+          isOpen={isCreateTicketDialogOpen}
+          onOpenChange={setIsCreateTicketDialogOpen}
+        />
+      )}
     </div>
   );
 }

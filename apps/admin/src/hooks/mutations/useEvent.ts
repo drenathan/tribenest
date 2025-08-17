@@ -3,6 +3,18 @@ import { useMutation } from "@tanstack/react-query";
 import httpClient from "@/services/httpClient";
 import type { CreateEventInput, UpdateEventInput } from "@/types/event";
 
+export interface CreateTicketInput {
+  title: string;
+  description: string;
+  price: number;
+  quantity: number;
+  profileId: string;
+}
+
+export interface UpdateTicketInput extends CreateTicketInput {
+  id: string;
+}
+
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -49,6 +61,31 @@ export const useUnarchiveEvent = () => {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+};
+
+// Ticket mutations
+export const useCreateTicket = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateTicketInput & { eventId: string }) =>
+      httpClient.post(`/events/${data.eventId}/tickets`, data),
+    onSuccess: (_, { eventId }) => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["tickets", eventId] });
+    },
+  });
+};
+
+export const useUpdateTicket = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UpdateTicketInput & { eventId: string; ticketId: string }) =>
+      httpClient.put(`/events/${data.eventId}/tickets/${data.ticketId}`, data),
+    onSuccess: (_, { eventId }) => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["tickets", eventId] });
     },
   });
 };
