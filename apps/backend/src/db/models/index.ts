@@ -6,7 +6,7 @@ import { EmailModel } from "./email/email.model";
 import { EmailRecipientModel } from "./email/emailRecipient.model";
 import { EmailVariableModel } from "./email/emailVariable.model";
 import { EventModel } from "./event/event.model";
-import { EventTicketModel } from "./event/eventTicket.mode";
+import { EventTicketModel } from "./event/eventTicket.model";
 import { EventTicketOrderModel } from "./event/eventTicketOrder.model";
 import { EventTicketOrderItemModel } from "./event/eventTicketOrderItem.model";
 import { ProfileModel } from "./profile/profile.model";

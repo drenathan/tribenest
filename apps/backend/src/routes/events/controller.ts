@@ -107,9 +107,10 @@ export class EventsController extends BaseController {
     next: NextFunction,
     @Body body?: UpdateTicketInput,
   ): Promise<any> {
-    const { id } = req.params;
+    const { id, ticketId } = req.params;
     return this.services.admin.event.updateTicket({
       eventId: id,
+      ticketId,
       ...body!,
     });
   }
@@ -126,7 +127,7 @@ export class EventsController extends BaseController {
     const { id } = req.params;
     return this.services.admin.event.reorderTickets({
       eventId: id,
-      ticketOrders: body!.ticketOrders,
+      ...body!,
       profileId: req.query.profileId as string,
     });
   }

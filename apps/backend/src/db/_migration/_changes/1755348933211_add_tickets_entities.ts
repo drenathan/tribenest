@@ -12,6 +12,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn("price", "decimal(10, 2)", (col) => col.notNull())
     .addColumn("quantity", "integer", (col) => col.notNull())
     .addColumn("order", "integer", (col) => col.notNull())
+    .addColumn("archived_at", "timestamptz")
+    .addColumn("sold", "integer", (col) => col.notNull().defaultTo(0))
     .$call(addDefaultColumns)
     .execute();
 

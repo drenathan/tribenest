@@ -150,6 +150,7 @@ export interface EventTicketOrders {
 }
 
 export interface EventTickets {
+  archivedAt: Timestamp | null;
   createdAt: Generated<Timestamp>;
   description: string;
   eventId: string;
@@ -157,6 +158,7 @@ export interface EventTickets {
   order: number;
   price: Numeric;
   quantity: number;
+  sold: Generated<number>;
   title: string;
   updatedAt: Generated<Timestamp>;
 }
