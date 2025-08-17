@@ -35,6 +35,7 @@ export class EventService extends BaseService {
       filter: {
         eventId: input.eventId,
         profileId: input.profileId,
+        archivedTickets: "true",
       },
       page: 1,
       limit: 1,
@@ -48,7 +49,44 @@ export class EventService extends BaseService {
     // Validate address fields
     this.validateAddress(input.address);
 
-    return this.models.Event.insertOne(input);
+    return this.database.client.transaction().execute(async (trx) => {
+      const event = await this.models.Event.insertOne(
+        {
+          dateTime: input.dateTime,
+          address: JSON.stringify(input.address),
+          title: input.title,
+          description: input.description,
+          actionText: input.actionText,
+          actionLink: input.actionLink,
+          profileId: input.profileId,
+        },
+        trx,
+      );
+      if (input.coverImage) {
+        const media = await this.models.Media.insertOne(
+          {
+            url: input.coverImage.file,
+            filename: input.coverImage.fileName,
+            size: input.coverImage.fileSize,
+            profileId: input.profileId,
+            parent: "event",
+            type: "image",
+          },
+          trx,
+        );
+        await this.models.MediaMapping.insertOne(
+          {
+            mediaId: media.id,
+            entityId: event.id,
+            entityType: "event",
+            order: 1,
+          },
+          trx,
+        );
+      }
+
+      return event;
+    });
   }
 
   public async updateEvent(input: UpdateEventInput) {
@@ -64,19 +102,44 @@ export class EventService extends BaseService {
     // Validate address fields
     this.validateAddress(input.address);
 
-    await this.models.Event.updateOne(
-      { id: input.id },
-      {
-        dateTime: input.dateTime,
-        address: JSON.stringify(input.address),
-        title: input.title,
-        description: input.description,
-        actionText: input.actionText,
-        actionLink: input.actionLink,
-      },
-    );
-
-    return this.models.Event.findOne({ id: input.id });
+    await this.database.client.transaction().execute(async (trx) => {
+      await this.models.Event.updateOne(
+        { id: input.id },
+        {
+          dateTime: input.dateTime,
+          address: JSON.stringify(input.address),
+          title: input.title,
+          description: input.description,
+          actionText: input.actionText,
+          actionLink: input.actionLink,
+        },
+        trx,
+      );
+      if (input.coverImage) {
+        await this.models.Media.deleteManyForEntity(event.id, "event", trx);
+        const media = await this.models.Media.insertOne(
+          {
+            url: input.coverImage.file,
+            filename: input.coverImage.fileName,
+            size: input.coverImage.fileSize,
+            profileId: input.profileId,
+            parent: "event",
+            type: "image",
+          },
+          trx,
+        );
+        await this.models.MediaMapping.insertOne(
+          {
+            mediaId: media.id,
+            entityId: event.id,
+            entityType: "event",
+            order: 1,
+          },
+          trx,
+        );
+      }
+    });
+    return true;
   }
 
   public async archiveEvent({ id, profileId }: { id: string; profileId: string }) {

@@ -9,6 +9,7 @@ type EventFilters = {
   upcoming?: string;
   archived?: string;
   eventId?: string;
+  archivedTickets?: string;
 };
 
 export type IEvent = DB["events"];
@@ -19,10 +20,11 @@ export class EventModel extends BaseModel<"events", "id"> {
 
   public async getMany(input: GetEventsInput): Promise<PaginatedData<Selectable<IEvent>>> {
     const offset = (input.page - 1) * input.limit;
-    const { query, upcoming, archived, eventId } = input.filter as EventFilters;
+    const { query, upcoming, archived, eventId, archivedTickets = "false" } = input.filter as EventFilters;
     const isUpcoming = upcoming === "upcoming";
     const isPast = upcoming === "past";
     const isArchived = archived === "true";
+    const includeArchivedTickets = archivedTickets === "true";
 
     const filterQuery = this.client.selectFrom("events").where((eb) => {
       const conditions: Expression<SqlBool>[] = [];
@@ -60,8 +62,34 @@ export class EventModel extends BaseModel<"events", "id"> {
       .selectAll()
       .select((eb) => [
         this.jsonArrayFrom(
-          eb.selectFrom("eventTickets").whereRef("eventId", "=", "events.id").orderBy("order", "asc").selectAll(),
+          eb
+            .selectFrom("eventTickets")
+            .whereRef("eventId", "=", "events.id")
+            .where((eb) => {
+              if (!includeArchivedTickets) {
+                return eb("archivedAt", "is", null);
+              }
+              return eb.or([eb("archivedAt", "is", null), eb("archivedAt", "is not", null)]);
+            })
+            .orderBy("order", "asc")
+            .selectAll(),
         ).as("tickets"),
+
+        this.jsonArrayFrom(
+          eb
+            .selectFrom("mediaMappings")
+            .innerJoin("media", "mediaMappings.mediaId", "media.id")
+            .whereRef("entityId", "=", "events.id")
+            .where("entityType", "=", "event")
+            .orderBy("order", "asc")
+            .select((eb) => [
+              eb.ref("media.url").as("url"),
+              eb.ref("media.filename").as("name"),
+              eb.ref("media.size").as("size"),
+              eb.ref("media.type").as("type"),
+              eb.ref("media.id").as("id"),
+            ]),
+        ).as("media"),
       ])
       .orderBy("dateTime", "asc")
       .limit(input.limit)

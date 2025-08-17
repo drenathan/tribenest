@@ -26,11 +26,16 @@ import { useAuth } from "@/hooks/useAuth";
 import type { IEvent } from "@/types/event";
 import { toast } from "sonner";
 import { countryCodes, isUSCountry } from "@/utils/countryCodes";
+import { useUploadFiles } from "@/hooks/useUploadFiles";
 
 const editEventSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
   description: z.string().optional(),
   dateTime: z.string().min(1, "Date and time is required"),
+  coverImage: z.union([
+    z.instanceof(File, { message: "Cover image is required" }),
+    z.string().url("Cover image is required"),
+  ]),
   address: z
     .object({
       name: z.string().min(1, "Location name is required"),
@@ -67,6 +72,7 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { mutateAsync: updateEvent, isPending } = useUpdateEvent();
   const { currentProfileAuthorization } = useAuth();
+  const { uploadFiles } = useUploadFiles();
 
   const methods = useForm<EditEventInput>({
     resolver: zodResolver(editEventSchema),
@@ -83,13 +89,15 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
       },
       actionText: "",
       actionLink: "",
+      coverImage: event?.media[0]?.url ?? undefined,
     },
   });
 
   const selectedCountry = methods.watch("address.country");
+  const coverImage = methods.watch("coverImage");
 
   useEffect(() => {
-    if (event) {
+    if (event && isOpen) {
       // Format date for datetime-local input
       const date = new Date(event.dateTime);
       const formattedDate = date.toISOString().slice(0, 16);
@@ -107,12 +115,26 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
         },
         actionText: event.actionText,
         actionLink: event.actionLink,
+        coverImage: event.media[0]?.url ?? undefined,
       });
     }
-  }, [event, methods]);
+  }, [event, methods, isOpen]);
 
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!event || !currentProfileAuthorization?.profileId) return;
+
+    const newCoverImageFile = data.coverImage instanceof File ? data.coverImage : null;
+
+    let coverImageResult = null;
+
+    if (newCoverImageFile) {
+      const filesToUpload = [newCoverImageFile].filter(Boolean);
+      const uploadResults = await uploadFiles(filesToUpload as File[]);
+
+      if (newCoverImageFile) {
+        coverImageResult = uploadResults[0];
+      }
+    }
 
     try {
       setErrorMessage(null);
@@ -121,6 +143,13 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
         profileId: currentProfileAuthorization.profileId,
         ...data,
         dateTime: new Date(data.dateTime).toISOString(),
+        coverImage: coverImageResult
+          ? {
+              file: coverImageResult.url,
+              fileSize: coverImageResult.size,
+              fileName: coverImageResult.name,
+            }
+          : undefined,
       });
       toast.success("Event updated successfully");
       onOpenChange(false);
@@ -139,9 +168,9 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
           <DialogDescription>Update the details of your event.</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-8">
           {/* Basic Information */}
-          <div className="space-y-3">
+          <div className="space-y-8">
             <h4 className="font-medium">Basic Information</h4>
 
             <div className="space-y-2">
@@ -162,6 +191,32 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
                 </div>
               )}
             />
+
+            <div className="flex flex-col gap-2">
+              <Label>Cover Image</Label>
+              {methods.formState.errors.coverImage && (
+                <FormError message={methods.formState.errors.coverImage.message as string} />
+              )}
+              <Input
+                placeholder="Upload file"
+                type="file"
+                accept={".jpg,.jpeg,.png"}
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    methods.setValue("coverImage", e.target.files[0]);
+                    methods.trigger("coverImage");
+                  }
+                }}
+              />
+
+              {coverImage && (
+                <img
+                  src={coverImage instanceof File ? URL.createObjectURL(coverImage) : coverImage}
+                  alt="Cover Image"
+                  className="w-30 h-30 object-cover"
+                />
+              )}
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="dateTime">Date & Time</Label>
@@ -250,10 +305,10 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
 
           {/* Action Information */}
           <div className="space-y-3">
-            <h4 className="font-medium">Action Details</h4>
+            <h4 className="font-medium">Action Details (Leave empty if you are selling tickets with tribenest)</h4>
 
             <div className="space-y-2">
-              <Label htmlFor="actionText">Action Text</Label>
+              <Label htmlFor="actionText">Action Text (Optional)</Label>
               <Input
                 id="actionText"
                 {...methods.register("actionText")}
@@ -267,7 +322,7 @@ export function EditEventDialog({ event, isOpen, onOpenChange }: Props) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="actionLink">Action Link</Label>
+              <Label htmlFor="actionLink">Action Link (Optional)</Label>
               <Input id="actionLink" {...methods.register("actionLink")} placeholder="https://example.com/register" />
               {methods.formState.errors.actionLink && (
                 <div className="text-sm text-red-600 dark:text-red-400">

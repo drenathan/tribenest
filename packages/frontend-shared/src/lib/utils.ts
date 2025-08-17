@@ -14,3 +14,14 @@ export const alphaToHexCode = (alpha: number) => {
 export const addAlphaToHexCode = (hexCode: string, alpha: number) => {
   return `${hexCode}${alphaToHexCode(alpha)}`;
 };
+
+export const formatDateTime = (dateTime: string) => {
+  const date = new Date(dateTime);
+  return date.toLocaleDateString("en", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};

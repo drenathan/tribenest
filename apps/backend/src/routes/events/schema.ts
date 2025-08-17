@@ -14,7 +14,13 @@ export const createEventSchema = z.object({
   body: z.object({
     profileId: z.string().uuid(),
     dateTime: z.string().datetime(),
-    coverImage: z.string().url("Cover image must be a valid URL").optional(),
+    coverImage: z
+      .object({
+        file: z.string().url("Cover image must be a valid URL"),
+        fileSize: z.number(),
+        fileName: z.string().min(1, "Name is required"),
+      })
+      .optional(),
     address: z
       .object({
         name: z.string().min(1, "Name is required"),
@@ -53,7 +59,13 @@ export const updateEventSchema = z.object({
     id: z.string().uuid(),
     profileId: z.string().uuid(),
     dateTime: z.string().datetime(),
-    coverImage: z.string().url("Cover image must be a valid URL").optional(),
+    coverImage: z
+      .object({
+        file: z.string().url("Cover image must be a valid URL"),
+        fileSize: z.number(),
+        fileName: z.string().min(1, "Name is required"),
+      })
+      .optional(),
     address: z
       .object({
         name: z.string().min(1, "Name is required"),

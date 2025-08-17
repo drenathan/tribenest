@@ -1,3 +1,5 @@
+import type { IMedia } from "@tribe-nest/frontend-shared";
+
 export interface IEvent {
   id: string;
   profileId: string;
@@ -17,6 +19,7 @@ export interface IEvent {
   createdAt: string;
   updatedAt: string;
   tickets: ITicket[];
+  media: IMedia[];
 }
 
 export interface ITicket {
@@ -43,6 +46,11 @@ export interface CreateEventInput {
   description?: string;
   actionText: string;
   actionLink: string;
+  coverImage?: {
+    file: string;
+    fileSize: number;
+    fileName: string;
+  };
 }
 
 export interface UpdateEventInput {
@@ -60,4 +68,9 @@ export interface UpdateEventInput {
   description?: string;
   actionText?: string;
   actionLink?: string;
+  coverImage?: {
+    file: string;
+    fileSize: number;
+    fileName: string;
+  };
 }

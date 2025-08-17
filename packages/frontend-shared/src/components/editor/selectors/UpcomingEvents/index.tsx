@@ -72,19 +72,27 @@ export const UpcomingEvents: UserComponent<UpcomingEventsProps> = ({ title }: Up
 
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2 text-sm">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <Calendar className="w-4 h-4" />
                 <span>{formatDateTime(event.dateTime)}</span>
               </div>
 
               <div className="flex items-start gap-2 text-sm">
-                <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                <MapPin className="w-4 h-4 mt-0.5" />
                 <div>
                   <div className="font-medium">{event.address.name}</div>
-                  <div className="text-muted-foreground">
+                  <div
+                    style={{
+                      color: addAlphaToHexCode(themeSettings.colors.text, 0.7),
+                    }}
+                  >
                     {event.address.street}
                     {event.address.zipCode && `, ${event.address.zipCode}`}
                   </div>
-                  <div className="text-muted-foreground">
+                  <div
+                    style={{
+                      color: addAlphaToHexCode(themeSettings.colors.text, 0.7),
+                    }}
+                  >
                     {event.address.city}, {event.address.country}
                   </div>
                 </div>

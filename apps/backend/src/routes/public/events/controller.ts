@@ -19,4 +19,13 @@ export class PublicEvents extends BaseController {
 
     return events.data;
   }
+
+  @RouteHandler()
+  @ValidateSchema(profileIdQuerySchema)
+  public async getEventById(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.services.public.events.getEventById({
+      eventId: req.params.id,
+      profileId: req.query.profileId as string,
+    });
+  }
 }

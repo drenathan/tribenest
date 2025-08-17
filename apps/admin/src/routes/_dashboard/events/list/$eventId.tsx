@@ -2,7 +2,19 @@ import { useArchiveEvent, useArchiveTicket, useUnarchiveEvent, useUnarchiveTicke
 import { useAuth } from "@/hooks/useAuth";
 import { Edit, Archive, RotateCcw, MoreHorizontal, Ticket, Plus } from "lucide-react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@tribe-nest/frontend-shared";
+import {
+  AccordionContent,
+  AccordionTrigger,
+  Accordion,
+  AccordionItem,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@tribe-nest/frontend-shared";
 import { Calendar, MapPin, ExternalLink } from "lucide-react";
 import { getCountryName } from "@/utils/countryCodes";
 import { Link } from "@tanstack/react-router";
@@ -157,53 +169,65 @@ function RouteComponent() {
               )}
 
               <div className="space-y-4">
-                <div>
-                  <Link
-                    to={`/events/list/$eventId`}
-                    params={{ eventId: event.id }}
-                    className="text-xl font-bold mb-2 hover:underline"
-                  >
-                    {event.title}
-                  </Link>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                    <span>{formatDateTimeLocale(event.dateTime)}</span>
+                <div className="flex gap-4 md:flex-row flex-col">
+                  <div className="md:w-1/2">
+                    <img src={event.media[0]?.url} alt={event.title} className="w-full object-cover" />
                   </div>
-
-                  <div className="flex items-start gap-2 text-sm">
-                    <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                  <div className="md:w-1/2 space-y-4">
                     <div>
-                      <div className="font-medium">{event.address.name}</div>
-                      <div className="text-muted-foreground">
-                        {event.address.street}
-                        {event.address.zipCode && `, ${event.address.zipCode}`}
+                      <Link
+                        to={`/events/list/$eventId`}
+                        params={{ eventId: event.id }}
+                        className="text-xl font-bold mb-2 hover:underline"
+                      >
+                        {event.title}
+                      </Link>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <span>{formatDateTimeLocale(event.dateTime)}</span>
                       </div>
-                      <div className="text-muted-foreground">
-                        {event.address.city}, {getCountryName(event.address.country)}
+
+                      <div className="flex items-start gap-2 text-sm">
+                        <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                        <div>
+                          <div className="font-medium">{event.address.name}</div>
+                          <div className="text-muted-foreground">
+                            {event.address.street}
+                            {event.address.zipCode && `, ${event.address.zipCode}`}
+                          </div>
+                          <div className="text-muted-foreground">
+                            {event.address.city}, {getCountryName(event.address.country)}
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <AccordionTrigger>Description</AccordionTrigger>
+                        <AccordionContent>
+                          <p dangerouslySetInnerHTML={{ __html: event.description || "" }}></p>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+
+                    {event.actionText && event.actionLink && (
+                      <div className="pt-4 border-t">
+                        <a
+                          href={event.actionLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                        >
+                          {event.actionText}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
-
-                <p>Details:</p>
-                <p dangerouslySetInnerHTML={{ __html: event.description || "" }}></p>
-
-                {event.actionText && event.actionLink && (
-                  <div className="pt-4 border-t">
-                    <a
-                      href={event.actionLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-                    >
-                      {event.actionText}
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>

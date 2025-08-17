@@ -404,6 +404,7 @@ export interface IEvent {
   createdAt: string;
   updatedAt: string;
   tickets: ITicket[];
+  media: IMedia[];
 }
 
 export type ITicket = {
