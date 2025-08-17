@@ -7,7 +7,6 @@ import EmptyState from "@/components/empty-state";
 import {
   Button,
   Input,
-  type ApiError,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -19,11 +18,7 @@ import {
   Badge,
 } from "@tribe-nest/frontend-shared";
 import EventItem from "./-components/event-item";
-import { EditEventDialog } from "./-components/edit-event-dialog";
-import type { IEvent } from "@/types/event";
 import { useState, useMemo, useCallback } from "react";
-import { useArchiveEvent, useUnarchiveEvent } from "@/hooks/mutations/useEvent";
-import { toast } from "sonner";
 import { Search, Filter, X } from "lucide-react";
 import { z } from "zod";
 import { debounce } from "lodash";
@@ -49,8 +44,6 @@ function RouteComponent() {
   // Local state for search input and dialog
   const [searchQuery, setSearchQuery] = useState(search.search);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<IEvent>();
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Update URL search params when filters change
   const updateURLParams = useCallback(
@@ -113,34 +106,6 @@ function RouteComponent() {
 
   const hasActiveFilters = search.search || search.upcoming || search.archived;
   const isEmpty = !isLoading && !events?.data?.length;
-
-  const { mutateAsync: archiveEvent } = useArchiveEvent();
-  const { mutateAsync: unarchiveEvent } = useUnarchiveEvent();
-
-  const handleEditClick = (event: IEvent) => {
-    setSelectedEvent(event);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleArchiveClick = async (event: IEvent) => {
-    try {
-      await archiveEvent({ id: event.id, profileId: currentProfileAuthorization!.profileId });
-      toast.success("Event archived successfully");
-    } catch (error) {
-      const message = (error as ApiError).response?.data?.message;
-      toast.error(message || "Failed to archive event");
-    }
-  };
-
-  const handleUnarchiveClick = async (event: IEvent) => {
-    try {
-      await unarchiveEvent({ id: event.id, profileId: currentProfileAuthorization!.profileId });
-      toast.success("Event unarchived successfully");
-    } catch (error) {
-      const message = (error as ApiError).response?.data?.message;
-      toast.error(message || "Failed to unarchive event");
-    }
-  };
 
   return (
     <div>
@@ -272,13 +237,7 @@ function RouteComponent() {
       {!isEmpty && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {events?.data?.map((event) => (
-            <EventItem
-              key={event.id}
-              event={event}
-              onEditClick={() => handleEditClick(event)}
-              onArchiveClick={() => handleArchiveClick(event)}
-              onUnarchiveClick={() => handleUnarchiveClick(event)}
-            />
+            <EventItem key={event.id} event={event} />
           ))}
         </div>
       )}

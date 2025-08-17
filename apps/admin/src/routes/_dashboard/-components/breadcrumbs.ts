@@ -105,4 +105,11 @@ export const breadcrumbs: Record<
     ],
     currentPage: "Event",
   },
+  "/events/sales": {
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Events", href: "/events/list" },
+    ],
+    currentPage: "Sales Report",
+  },
 };

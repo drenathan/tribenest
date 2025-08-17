@@ -51,8 +51,8 @@ const editEventSchema = z.object({
         path: ["zipCode"],
       },
     ),
-  actionText: z.string().min(1, "Action text is required").max(100, "Action text must be less than 100 characters"),
-  actionLink: z.string().url("Action link must be a valid URL"),
+  actionText: z.string().max(100, "Action text must be less than 100 characters").optional(),
+  actionLink: z.string().optional(),
 });
 
 type EditEventInput = z.infer<typeof editEventSchema>;

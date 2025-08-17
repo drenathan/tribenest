@@ -6,9 +6,6 @@ import { Link } from "@tanstack/react-router";
 
 type Props = {
   event: IEvent;
-  onEditClick: VoidFunction;
-  onArchiveClick: VoidFunction;
-  onUnarchiveClick: VoidFunction;
 };
 
 function EventItem({ event }: Props) {
@@ -68,17 +65,19 @@ function EventItem({ event }: Props) {
             </div>
           </div>
 
-          <div className="pt-4 border-t">
-            <a
-              href={event.actionLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-            >
-              {event.actionText}
-              <ExternalLink className="w-3 h-3" />
-            </a>
-          </div>
+          {event.actionText && event.actionLink && (
+            <div className="pt-4 border-t">
+              <a
+                href={event.actionLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+              >
+                {event.actionText}
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

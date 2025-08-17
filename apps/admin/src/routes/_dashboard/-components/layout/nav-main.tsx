@@ -34,6 +34,10 @@ const items: NavItem[] = [
         title: "Themes",
         path: "/website/themes",
       },
+      {
+        title: "Messages",
+        path: "/website/messages",
+      },
     ],
   },
   {
@@ -124,6 +128,10 @@ const items: NavItem[] = [
       {
         title: "My Events",
         path: "/events/list",
+      },
+      {
+        title: "Sales Report",
+        path: "/events/sales",
       },
     ],
   },

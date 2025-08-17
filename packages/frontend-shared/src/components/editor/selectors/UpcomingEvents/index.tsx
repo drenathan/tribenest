@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { UpcomingEventsSettings } from "./Settings";
 import { Calendar, ExternalLink, MapPin } from "lucide-react";
 import { addAlphaToHexCode } from "../../../../lib/utils";
+import { EditorButtonWithoutEditor } from "../Button";
 
 type UpcomingEventsProps = {
   title: string;
@@ -13,7 +14,7 @@ type UpcomingEventsProps = {
 
 export const UpcomingEvents: UserComponent<UpcomingEventsProps> = ({ title }: UpcomingEventsProps) => {
   const [events, setEvents] = useState<IEvent[]>([]);
-  const { httpClient, themeSettings, profile } = useEditorContext();
+  const { httpClient, themeSettings, profile, navigate } = useEditorContext();
 
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
@@ -90,23 +91,37 @@ export const UpcomingEvents: UserComponent<UpcomingEventsProps> = ({ title }: Up
               </div>
             </div>
 
-            <div className="pt-4">
-              <a
-                href={event.actionLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm hover:underline"
-                style={{
-                  border: `1px solid ${addAlphaToHexCode(themeSettings.colors.primary, 0.7)}`,
-                  borderRadius: `${themeSettings.cornerRadius}px`,
-                  padding: "8px 16px",
-                  color: themeSettings.colors.text,
-                }}
-              >
-                {event.actionText}
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            </div>
+            {event.actionText && event.actionLink && event.tickets.length < 1 && (
+              <div className="pt-4">
+                <a
+                  href={event.actionLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm hover:underline"
+                  style={{
+                    border: `1px solid ${addAlphaToHexCode(themeSettings.colors.primary, 0.7)}`,
+                    borderRadius: `${themeSettings.cornerRadius}px`,
+                    padding: "8px 16px",
+                    color: themeSettings.colors.text,
+                  }}
+                >
+                  {event.actionText}
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            )}
+
+            {event.tickets.length > 0 && (
+              <div className="pt-4">
+                <EditorButtonWithoutEditor
+                  variant="secondary"
+                  onClick={() => {
+                    navigate(`/events/${event.id}`);
+                  }}
+                  text="Details"
+                />
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,9 +16,10 @@ import {
   FormError,
   FormInput,
 } from "@tribe-nest/frontend-shared";
-import { useCreateTicket } from "@/hooks/mutations/useEvent";
+import { useCreateTicket, useUpdateTicket } from "@/hooks/mutations/useEvent";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import type { ITicket } from "@/types/event";
 
 const createTicketSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
@@ -31,13 +32,15 @@ type CreateTicketFormInput = z.infer<typeof createTicketSchema>;
 
 type Props = {
   eventId: string;
+  ticket?: ITicket;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
-export function CreateTicketDialog({ eventId, isOpen, onOpenChange }: Props) {
+export function CreateTicketDialog({ eventId, ticket, isOpen, onOpenChange }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { mutateAsync: createTicket, isPending } = useCreateTicket();
+  const { mutateAsync: updateTicket, isPending: isUpdating } = useUpdateTicket();
   const { currentProfileAuthorization } = useAuth();
 
   const methods = useForm<CreateTicketFormInput>({
@@ -50,21 +53,40 @@ export function CreateTicketDialog({ eventId, isOpen, onOpenChange }: Props) {
     },
   });
 
+  useEffect(() => {
+    if (ticket) {
+      methods.reset({
+        title: ticket.title,
+        description: ticket.description,
+        price: ticket.price,
+        quantity: ticket.quantity,
+      });
+    }
+  }, [ticket, methods]);
+
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!currentProfileAuthorization?.profileId) return;
 
     try {
       setErrorMessage(null);
-      await createTicket({
-        ...data,
-        eventId,
-        profileId: currentProfileAuthorization.profileId,
-      });
-      toast.success("Ticket created successfully");
+      await (ticket
+        ? updateTicket({
+            ...data,
+            eventId,
+            ticketId: ticket.id,
+            profileId: currentProfileAuthorization.profileId,
+          })
+        : createTicket({
+            ...data,
+            eventId,
+            profileId: currentProfileAuthorization.profileId,
+          }));
+      toast.success(ticket ? "Ticket updated successfully" : "Ticket created successfully");
       onOpenChange(false);
       methods.reset();
     } catch (error) {
-      const message = (error as ApiError).response?.data?.message || "Failed to create ticket";
+      const message =
+        (error as ApiError).response?.data?.message || (ticket ? "Failed to update ticket" : "Failed to create ticket");
       setErrorMessage(message);
     }
   });
@@ -81,8 +103,8 @@ export function CreateTicketDialog({ eventId, isOpen, onOpenChange }: Props) {
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Ticket</DialogTitle>
-          <DialogDescription>Create a new ticket for this event.</DialogDescription>
+          <DialogTitle>{ticket ? "Edit Ticket" : "Create Ticket"}</DialogTitle>
+          <DialogDescription>{ticket ? "" : "Create a new ticket for this event."}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
@@ -117,7 +139,7 @@ export function CreateTicketDialog({ eventId, isOpen, onOpenChange }: Props) {
 
             <FormInput<CreateTicketFormInput>
               name="quantity"
-              label="Quantity Available"
+              label="Total Quantity"
               control={methods.control}
               type="number"
               placeholder="Enter the ticket quantity"
@@ -135,8 +157,8 @@ export function CreateTicketDialog({ eventId, isOpen, onOpenChange }: Props) {
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isPending}>
               Cancel
             </Button>
-            <Button type="submit" onClick={onSubmit} disabled={isPending}>
-              {isPending ? "Creating..." : "Create Ticket"}
+            <Button type="submit" onClick={onSubmit} disabled={isPending || isUpdating}>
+              {ticket ? "Update Ticket" : "Create Ticket"}
             </Button>
           </DialogFooter>
         </form>

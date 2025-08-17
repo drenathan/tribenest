@@ -16,6 +16,17 @@ export interface IEvent {
   archivedAt?: string;
   createdAt: string;
   updatedAt: string;
+  tickets: ITicket[];
+}
+
+export interface ITicket {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  quantity: number;
+  archivedAt?: string;
+  sold: number;
 }
 
 export interface CreateEventInput {
@@ -47,6 +58,6 @@ export interface UpdateEventInput {
   };
   title: string;
   description?: string;
-  actionText: string;
-  actionLink: string;
+  actionText?: string;
+  actionLink?: string;
 }

@@ -76,12 +76,8 @@ export const updateEventSchema = z.object({
       ),
     title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
     description: z.string().optional(),
-    actionText: z
-      .string()
-      .min(1, "Action text is required")
-      .max(100, "Action text must be less than 100 characters")
-      .optional(),
-    actionLink: z.string().url("Action link must be a valid URL").optional(),
+    actionText: z.string().max(100, "Action text must be less than 100 characters").optional(),
+    actionLink: z.string().optional(),
   }),
 });
 

@@ -11,10 +11,6 @@ export interface CreateTicketInput {
   profileId: string;
 }
 
-export interface UpdateTicketInput extends CreateTicketInput {
-  id: string;
-}
-
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -73,7 +69,6 @@ export const useCreateTicket = () => {
       httpClient.post(`/events/${data.eventId}/tickets`, data),
     onSuccess: (_, { eventId }) => {
       queryClient.invalidateQueries({ queryKey: ["event", eventId] });
-      queryClient.invalidateQueries({ queryKey: ["tickets", eventId] });
     },
   });
 };
@@ -81,11 +76,40 @@ export const useCreateTicket = () => {
 export const useUpdateTicket = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: UpdateTicketInput & { eventId: string; ticketId: string }) =>
+    mutationFn: (data: CreateTicketInput & { eventId: string; ticketId: string }) =>
       httpClient.put(`/events/${data.eventId}/tickets/${data.ticketId}`, data),
     onSuccess: (_, { eventId }) => {
       queryClient.invalidateQueries({ queryKey: ["event", eventId] });
-      queryClient.invalidateQueries({ queryKey: ["tickets", eventId] });
     },
+  });
+};
+
+export const useArchiveTicket = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    onSuccess: (_, { eventId }) => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+    },
+    mutationFn: (data: { eventId: string; ticketId: string; profileId: string }) =>
+      httpClient.post(`/events/${data.eventId}/tickets/${data.ticketId}/archive`, data, {
+        params: {
+          profileId: data.profileId,
+        },
+      }),
+  });
+};
+
+export const useUnarchiveTicket = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    onSuccess: (_, { eventId }) => {
+      queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+    },
+    mutationFn: (data: { eventId: string; ticketId: string; profileId: string }) =>
+      httpClient.post(`/events/${data.eventId}/tickets/${data.ticketId}/unarchive`, data, {
+        params: {
+          profileId: data.profileId,
+        },
+      }),
   });
 };

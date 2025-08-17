@@ -403,12 +403,14 @@ export interface IEvent {
   archivedAt?: string;
   createdAt: string;
   updatedAt: string;
-  tickets: {
-    id: string;
-    title: string;
-    description: string;
-    price: number;
-    quantity: number;
-    order: number;
-  };
+  tickets: ITicket[];
 }
+
+export type ITicket = {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  quantity: number;
+  order: number;
+};

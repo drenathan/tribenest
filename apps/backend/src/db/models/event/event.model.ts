@@ -59,9 +59,9 @@ export class EventModel extends BaseModel<"events", "id"> {
     const data = await filterQuery
       .selectAll()
       .select((eb) => [
-        this.jsonArrayFrom(eb.selectFrom("eventTickets").whereRef("eventId", "=", "events.id").selectAll()).as(
-          "tickets",
-        ),
+        this.jsonArrayFrom(
+          eb.selectFrom("eventTickets").whereRef("eventId", "=", "events.id").orderBy("order", "asc").selectAll(),
+        ).as("tickets"),
       ])
       .orderBy("dateTime", "asc")
       .limit(input.limit)
