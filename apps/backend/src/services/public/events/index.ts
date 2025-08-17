@@ -1,4 +1,9 @@
+import { OrderStatus } from "@src/db/types/product";
+import { CreateOrderInput, FinalizeOrderInput } from "@src/routes/public/events/schema";
 import { BaseService } from "@src/services/baseService";
+import { PaymentStatus } from "@src/services/paymentProvider/PaymentProvider";
+import { BadRequestError, NotFoundError } from "@src/utils/app_error";
+import { round } from "lodash";
 
 export class EventsService extends BaseService {
   public async getEventById({ eventId, profileId }: { eventId: string; profileId: string }) {
@@ -12,5 +17,95 @@ export class EventsService extends BaseService {
     });
 
     return event.data[0];
+  }
+
+  public async createOrder(input: CreateOrderInput & { eventId: string }) {
+    const ticketIds = Object.keys(input.items);
+    const tickets = await this.models.EventTicket.find({ id: ticketIds });
+
+    const amount = round(
+      tickets.reduce((acc, ticket) => acc + Number(ticket.price) * input.items[ticket.id], 0),
+      2,
+    );
+    console.log(amount, "amount");
+
+    const paymentProvider = await this.apis.getPaymentProvider(input.profileId);
+    const payment = await paymentProvider.startCharge({
+      amount,
+      currency: "usd",
+      email: input.email,
+      returnUrl: "http://drenathan1.localhost:3001/checkout",
+    });
+
+    return this.database.client.transaction().execute(async (trx) => {
+      const order = await this.models.EventTicketOrder.insertOne(
+        {
+          totalAmount: amount,
+          eventId: input.eventId,
+          status: OrderStatus.InitiatedPayment,
+          paymentProviderName: paymentProvider.name,
+          paymentId: payment.paymentId,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+        },
+        trx,
+      );
+
+      await this.models.EventTicketOrderItem.insertMany(
+        tickets.map((ticket) => ({
+          eventTicketId: ticket.id,
+          eventTicketOrderId: order.id,
+          quantity: input.items[ticket.id],
+          price: ticket.price,
+        })),
+        trx,
+      );
+
+      return {
+        ...payment,
+        orderId: order.id,
+        totalAmount: amount,
+      };
+    });
+  }
+
+  public async finalizeOrder(input: FinalizeOrderInput) {
+    const order = await this.models.EventTicketOrder.findOne({
+      id: input.orderId,
+    });
+
+    if (!order) {
+      throw new NotFoundError("Order not found");
+    }
+
+    if (order.status !== OrderStatus.InitiatedPayment) {
+      return order;
+    }
+
+    if (!order.paymentId) {
+      throw new BadRequestError("Invalid order");
+    }
+
+    const paymentProvider = await this.apis.getPaymentProvider(input.profileId);
+    const paymentStatus = await paymentProvider.getPaymentStatus(order.paymentId);
+    const status = this.getOrderStatus(paymentStatus);
+
+    await this.database.client.transaction().execute(async (trx) => {
+      await this.models.EventTicketOrder.updateOne({ id: order.id }, { status }, trx);
+    });
+
+    return this.models.EventTicketOrder.getOrderById({ orderId: order.id, profileId: input.profileId });
+  }
+
+  private getOrderStatus(paymentStatus: PaymentStatus) {
+    switch (paymentStatus) {
+      case PaymentStatus.Succeeded:
+        return OrderStatus.Paid;
+      case PaymentStatus.Pending:
+        return OrderStatus.InitiatedPayment;
+      default:
+        return OrderStatus.PaymentFailed;
+    }
   }
 }

@@ -11,8 +11,10 @@ export interface ModalProps {
   title: string;
   content: React.ReactNode;
   footer?: React.ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   closeOnOverlayClick?: boolean;
+  promptBeforeClose?: boolean;
+  promptMessage?: string;
 }
 
 export const EditorModal: UserComponent<ModalProps> = ({
@@ -23,12 +25,20 @@ export const EditorModal: UserComponent<ModalProps> = ({
   footer,
   size = "md",
   closeOnOverlayClick = true,
+  promptBeforeClose = false,
+  promptMessage = "Are you sure you want to close this modal?",
 }) => {
   const { themeSettings } = useEditorContext();
 
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (closeOnOverlayClick && e.target === e.currentTarget) {
-      onClose();
+      if (promptBeforeClose) {
+        if (confirm(promptMessage)) {
+          onClose();
+        }
+      } else {
+        onClose();
+      }
     }
   };
 
@@ -47,6 +57,7 @@ export const EditorModal: UserComponent<ModalProps> = ({
     md: "max-w-md",
     lg: "max-w-lg",
     xl: "max-w-xl",
+    "2xl": "max-w-2xl",
   };
 
   return (
@@ -58,7 +69,10 @@ export const EditorModal: UserComponent<ModalProps> = ({
       onClick={handleOverlayClick}
     >
       <div
-        className={cn("relative w-full mx-4 rounded-lg shadow-lg flex flex-col", sizeClasses[size])}
+        className={cn(
+          "relative w-full md:mx-4 rounded-lg shadow-lg flex flex-col max-h-full md:max-h-[90vh] overflow-y-auto",
+          sizeClasses[size],
+        )}
         style={{
           backgroundColor: themeSettings.colors.background,
           color: themeSettings.colors.text,
@@ -68,7 +82,7 @@ export const EditorModal: UserComponent<ModalProps> = ({
       >
         {/* Header */}
         <div
-          className="flex items-center justify-between p-6 border-b"
+          className="flex items-center justify-between md:p-6 p-4 border-b"
           style={{
             borderColor: `${themeSettings.colors.primary}${alphaToHexCode(0.2)}`,
           }}
@@ -82,7 +96,15 @@ export const EditorModal: UserComponent<ModalProps> = ({
             {title}
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => {
+              if (promptBeforeClose) {
+                if (confirm(promptMessage)) {
+                  onClose();
+                }
+              } else {
+                onClose();
+              }
+            }}
             className="p-1 rounded-full hover:bg-opacity-10 transition-colors"
             style={{
               color: themeSettings.colors.text,
@@ -96,7 +118,7 @@ export const EditorModal: UserComponent<ModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-6 overflow-y-auto">{content}</div>
+        <div className="flex-1 md:p-6 p-4 overflow-y-auto">{content}</div>
 
         {/* Footer */}
         {footer && (

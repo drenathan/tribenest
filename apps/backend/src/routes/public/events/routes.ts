@@ -10,6 +10,8 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.use((req, _, next) => publicAuthentication(req, next, services));
   router.get("/", (...args) => controller.getMany(...args));
   router.get("/:id", (...args) => controller.getEventById(...args));
+  router.post("/:id/checkout", (...args) => controller.createOrder(...args));
+  router.post("/:id/finalize", (...args) => controller.finalizeOrder(...args));
   return router;
 };
 

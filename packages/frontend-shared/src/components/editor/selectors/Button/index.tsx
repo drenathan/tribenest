@@ -54,6 +54,10 @@ const buttonStyles = (themeSettings: EditorTheme, fullWidth?: boolean, variant: 
       backgroundColor:
         variant === "primary" ? themeSettings.colors.primary + alphaToHexCode(0.5) : themeSettings.colors.background,
       cursor: "not-allowed",
+      opacity: 0.5,
+    },
+    "&:disabled:hover": {
+      pointerEvents: "none",
     },
   });
 

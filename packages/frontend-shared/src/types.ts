@@ -414,4 +414,23 @@ export type ITicket = {
   price: number;
   quantity: number;
   order: number;
+  sold: number;
+};
+
+export type ITicketOrder = {
+  id: string;
+  items: ITicketOrderItem[];
+  firstName: string;
+  lastName: string;
+  email: string;
+  totalAmount: number;
+  status: OrderStatus;
+};
+
+export type ITicketOrderItem = {
+  id: string;
+  eventTicketId: string;
+  quantity: number;
+  price: number;
+  title: string;
 };

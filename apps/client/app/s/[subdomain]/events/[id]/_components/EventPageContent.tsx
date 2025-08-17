@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { InternalPageRenderer } from "../../../_components/internal-page-renderer";
 import {
   addAlphaToHexCode,
   EditorButtonWithoutEditor,
+  EditorModal,
   formatDateTime,
   IEvent,
   LoadingState,
@@ -13,10 +14,12 @@ import {
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, MapPin } from "lucide-react";
+import { EventTickets } from "./EventTickets";
 
 function EventPageContent() {
   const { themeSettings, navigate, httpClient, profile } = useEditorContext();
   const { id } = useParams();
+  const [isTicketsModalOpen, setIsTicketsModalOpen] = useState(false);
 
   const { data: event, isLoading } = useQuery<IEvent>({
     queryKey: ["event", id, profile?.id],
@@ -47,6 +50,15 @@ function EventPageContent() {
           }}
           className="w-full max-w-5xl mx-auto p-6"
         >
+          <EditorModal
+            isOpen={isTicketsModalOpen}
+            onClose={() => setIsTicketsModalOpen(false)}
+            title={event.title}
+            size="2xl"
+            content={<EventTickets event={event} />}
+            promptBeforeClose={true}
+            promptMessage="Are you sure you want to leave checkout?"
+          />
           <div className="w-full mb-30">
             <img src={event.media[0]?.url} alt={event.title} className="aspect-[16/4] h-[400px] object-cover" />
             <div className="flex gap-4 mt-4 items-start">
@@ -86,7 +98,7 @@ function EventPageContent() {
                 }}
               >
                 <p>From ${minPrice}</p>
-                <EditorButtonWithoutEditor fullWidth text="Buy tickets" />
+                <EditorButtonWithoutEditor onClick={() => setIsTicketsModalOpen(true)} fullWidth text="Buy tickets" />
               </div>
             </div>
           </div>

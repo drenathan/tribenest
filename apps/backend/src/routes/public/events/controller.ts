@@ -1,8 +1,9 @@
-import { RouteHandler, ValidateSchema } from "@src/decorators";
+import { Body, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
 import { NotFoundError } from "@src/utils/app_error";
 import { profileIdQuerySchema } from "@src/routes/schema";
+import { CreateOrderInput, createOrderSchema, FinalizeOrderInput, finalizeOrderSchema } from "./schema";
 
 export class PublicEvents extends BaseController {
   @RouteHandler()
@@ -27,5 +28,27 @@ export class PublicEvents extends BaseController {
       eventId: req.params.id,
       profileId: req.query.profileId as string,
     });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(createOrderSchema)
+  public async createOrder(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: CreateOrderInput,
+  ): Promise<any> {
+    return this.services.public.events.createOrder({ ...body!, eventId: req.params.id as string });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(finalizeOrderSchema)
+  public async finalizeOrder(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: FinalizeOrderInput,
+  ): Promise<any> {
+    return this.services.public.events.finalizeOrder(body!);
   }
 }
