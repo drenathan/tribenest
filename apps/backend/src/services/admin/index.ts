@@ -1,5 +1,6 @@
 import { BaseService, BaseServiceArgs } from "../baseService";
 import { EmailService } from "./email";
+import { EventService } from "./event";
 import { OrderService } from "./order";
 import { PostService } from "./posts";
 import { ProductService } from "./product";
@@ -11,6 +12,7 @@ export class AdminService extends BaseService {
   public readonly orders: OrderService;
   public readonly smartLink: SmartLinkService;
   public readonly emails: EmailService;
+  public readonly event: EventService;
 
   constructor(args: BaseServiceArgs) {
     super(args);
@@ -19,5 +21,6 @@ export class AdminService extends BaseService {
     this.orders = new OrderService(args);
     this.smartLink = new SmartLinkService(args);
     this.emails = new EmailService(args);
+    this.event = new EventService(args);
   }
 }

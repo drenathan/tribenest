@@ -1,8 +1,31 @@
-import { BaseService } from "../baseService";
+import { BaseService, BaseServiceArgs } from "../../baseService";
 import { BadRequestError } from "@src/utils/app_error";
 import { CreateEventInput, GetEventsInput, UpdateEventInput } from "@src/routes/events/schema";
+import { updateTicket } from "./commands/updateTicket";
+import { createTicket } from "./commands/createTicket";
+import { reorderTickets } from "./commands/reorderTickets";
+import { unarchiveTicket } from "./commands/unarchiveTicket";
+import { archiveTicket } from "./commands/archiveTicket";
+import { getTickets } from "./queries/getTickets";
 
 export class EventService extends BaseService {
+  public readonly updateTicket: typeof updateTicket;
+  public readonly createTicket: typeof createTicket;
+  public readonly reorderTickets: typeof reorderTickets;
+  public readonly unarchiveTicket: typeof unarchiveTicket;
+  public readonly archiveTicket: typeof archiveTicket;
+  public readonly getTickets: typeof getTickets;
+
+  constructor(args: BaseServiceArgs) {
+    super(args);
+    this.updateTicket = updateTicket.bind(this);
+    this.createTicket = createTicket.bind(this);
+    this.reorderTickets = reorderTickets.bind(this);
+    this.unarchiveTicket = unarchiveTicket.bind(this);
+    this.archiveTicket = archiveTicket.bind(this);
+    this.getTickets = getTickets.bind(this);
+  }
+
   public async getEvents(input: GetEventsInput) {
     return this.models.Event.getMany(input);
   }

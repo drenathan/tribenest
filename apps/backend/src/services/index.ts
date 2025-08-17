@@ -6,7 +6,6 @@ import { ProfileService } from "./profile";
 import { MembershipService } from "./membership";
 import { ProfileAuthorizationService } from "./profileAuthorization";
 import { WebsiteService } from "./website";
-import { EventService } from "./event";
 import ApiServices from "./_apis";
 import { AdminService } from "./admin";
 import { PublicService } from "./public";
@@ -19,7 +18,6 @@ export class Services {
   public readonly session: SessionService;
   public readonly membership: MembershipService;
   public readonly website: WebsiteService;
-  public readonly event: EventService;
   public readonly emitter: EventEmitter;
   public readonly apis: ApiServices;
   public readonly public: PublicService;
@@ -35,7 +33,6 @@ export class Services {
     this.membership = new MembershipService(args);
     this.profile = new ProfileService(args);
     this.profileAuthorization = new ProfileAuthorizationService(args);
-    this.event = new EventService(args);
     this.public = new PublicService(args);
     this.session = new SessionService(args);
     this.website = new WebsiteService(args);

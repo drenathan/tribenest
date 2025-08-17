@@ -8,7 +8,7 @@ export class PublicEvents extends BaseController {
   @RouteHandler()
   @ValidateSchema(profileIdQuerySchema)
   public async getMany(req: Request, res: Response, next: NextFunction): Promise<any> {
-    const events = await this.services.event.getEvents({
+    const events = await this.services.admin.event.getEvents({
       profileId: req.query.profileId as string,
       filter: {
         upcoming: "upcoming",

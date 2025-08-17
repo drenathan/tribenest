@@ -92,3 +92,35 @@ export const profileIdQuerySchema = z.object({
     profileId: z.string().uuid(),
   }),
 });
+
+export const createTicketSchema = z.object({
+  body: z.object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string(),
+    price: z.number().min(0, "Price must be greater than 0"),
+    quantity: z.number().min(1, "Quantity must be greater than 0"),
+    profileId: z.string().uuid(),
+  }),
+});
+
+export type CreateTicketInput = z.infer<typeof createTicketSchema>["body"];
+
+export const updateTicketSchema = z.object({
+  body: z.object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string(),
+    price: z.number().min(0, "Price must be greater than 0"),
+    quantity: z.number().min(1, "Quantity must be greater than 0"),
+    profileId: z.string().uuid(),
+  }),
+});
+
+export type UpdateTicketInput = z.infer<typeof updateTicketSchema>["body"];
+
+export const reorderTicketsSchema = z.object({
+  body: z.object({
+    ticketOrders: z.array(z.object({ id: z.string().uuid(), order: z.number() })),
+  }),
+});
+
+export type ReorderTicketsInput = z.infer<typeof reorderTicketsSchema>["body"];

@@ -15,6 +15,14 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.post("/:id/archive", (...args) => controller.archiveEvent(...args));
   router.post("/:id/unarchive", (...args) => controller.unarchiveEvent(...args));
 
+  // Tickets
+  router.get("/:id/tickets", (...args) => controller.getTickets(...args));
+  router.post("/:id/tickets", (...args) => controller.createTicket(...args));
+  router.put("/:id/tickets/:ticketId", (...args) => controller.updateTicket(...args));
+  router.post("/:id/tickets/:ticketId/archive", (...args) => controller.archiveTicket(...args));
+  router.post("/:id/tickets/:ticketId/unarchive", (...args) => controller.unarchiveTicket(...args));
+  router.post("/:id/tickets/reorder", (...args) => controller.reorderTickets(...args));
+
   return router;
 };
 
