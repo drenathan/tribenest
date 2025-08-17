@@ -9,6 +9,7 @@ import { EventModel } from "./event/event.model";
 import { EventTicketModel } from "./event/eventTicket.model";
 import { EventTicketOrderModel } from "./event/eventTicketOrder.model";
 import { EventTicketOrderItemModel } from "./event/eventTicketOrderItem.model";
+import { EventPassModel } from "./event/eventPass.model";
 import { ProfileModel } from "./profile/profile.model";
 import { ProfileAuthorizationModel } from "./profile/profileAuthorization.model";
 import { MembershipModel } from "./membership/membership.model";
@@ -61,6 +62,7 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     EventTicket: new EventTicketModel(client),
     EventTicketOrder: new EventTicketOrderModel(client),
     EventTicketOrderItem: new EventTicketOrderItemModel(client),
+    EventPass: new EventPassModel(client),
     Comment: new CommentModel(client),
     Like: new LikeModel(client),
     Saved: new SavedModel(client),

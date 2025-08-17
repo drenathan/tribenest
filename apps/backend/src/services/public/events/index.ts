@@ -100,6 +100,16 @@ export class EventsService extends BaseService {
           const ticket = tickets.find((ticket) => ticket.id === item.eventTicketId);
           if (ticket) {
             await this.models.EventTicket.updateOne({ id: ticket.id }, { sold: ticket.sold + item.quantity! }, trx);
+
+            await this.models.EventPass.insertMany(
+              Array.from({ length: item.quantity! }, () => ({
+                eventTicketOrderItemId: item.id!,
+                eventTicketId: ticket.id,
+                eventId: order.eventId!,
+                ownerName: order.firstName + " " + order.lastName,
+                ownerEmail: order.email!,
+              })),
+            );
           }
         }
       }

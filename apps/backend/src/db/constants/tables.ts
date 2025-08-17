@@ -10,6 +10,7 @@ export const tables = {
   event_tickets: "event_tickets",
   event_ticket_orders: "event_ticket_orders",
   event_ticket_order_items: "event_ticket_order_items",
+  event_passes: "event_passes",
   sessions: "sessions",
   profiles: "profiles",
   profile_configurations: "profile_configurations",

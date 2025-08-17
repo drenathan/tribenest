@@ -111,6 +111,18 @@ export interface EmailVariables {
   value: string;
 }
 
+export interface EventPasses {
+  checkedInAt: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  eventId: string;
+  eventTicketId: string;
+  eventTicketOrderItemId: string;
+  id: Generated<string>;
+  ownerEmail: string;
+  ownerName: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface Events {
   actionLink: string | null;
   actionText: string | null;
@@ -594,6 +606,7 @@ export interface DB {
   emails: Emails;
   emailTemplates: EmailTemplates;
   emailVariables: EmailVariables;
+  eventPasses: EventPasses;
   events: Events;
   eventTicketOrderItems: EventTicketOrderItems;
   eventTicketOrders: EventTicketOrders;
