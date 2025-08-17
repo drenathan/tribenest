@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { TicketSelection } from "./TicketSelection";
 import { BuyerDetails } from "./BuyerDetails";
 import { PaymentStep } from "./PaymentStep";
-import { SuccessStep } from "./SuccessStep";
 
 type Props = {
   event: IEvent;
@@ -58,17 +57,6 @@ export function EventTickets({ event }: Props) {
       ...prev,
       [field]: value,
     }));
-  };
-
-  const resetForm = () => {
-    setCurrentStep(Step.Tickets);
-    setSelectedTickets({});
-    setBuyerData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      confirmEmail: "",
-    });
   };
 
   const steps: Step[] = [Step.Tickets, Step.Details, Step.Payment, Step.Success];
@@ -142,16 +130,6 @@ export function EventTickets({ event }: Props) {
             buyerData={buyerData}
             selectedTickets={selectedTickets}
             event={event}
-          />
-        )}
-
-        {currentStep === Step.Success && (
-          <SuccessStep
-            event={event}
-            selectedTickets={selectedTickets}
-            buyerData={buyerData}
-            totalAmount={totalAmount}
-            onStartOver={resetForm}
           />
         )}
       </div>

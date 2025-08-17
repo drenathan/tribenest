@@ -71,8 +71,9 @@ export class EventsService extends BaseService {
   }
 
   public async finalizeOrder(input: FinalizeOrderInput) {
-    const order = await this.models.EventTicketOrder.findOne({
-      id: input.orderId,
+    const order = await this.models.EventTicketOrder.getOrderById({
+      orderId: input.orderId,
+      profileId: input.profileId,
     });
 
     if (!order) {
@@ -90,12 +91,22 @@ export class EventsService extends BaseService {
     const paymentProvider = await this.apis.getPaymentProvider(input.profileId);
     const paymentStatus = await paymentProvider.getPaymentStatus(order.paymentId);
     const status = this.getOrderStatus(paymentStatus);
+    const tickets = await this.models.EventTicket.find({ id: order.items.map((item) => item.eventTicketId!) });
 
     await this.database.client.transaction().execute(async (trx) => {
-      await this.models.EventTicketOrder.updateOne({ id: order.id }, { status }, trx);
+      await this.models.EventTicketOrder.updateOne({ id: order.id! }, { status }, trx);
+
+      if (status === OrderStatus.Paid) {
+        for (const item of order.items) {
+          const ticket = tickets.find((ticket) => ticket.id === item.eventTicketId);
+          if (ticket) {
+            await this.models.EventTicket.updateOne({ id: ticket.id }, { sold: ticket.sold + item.quantity! }, trx);
+          }
+        }
+      }
     });
 
-    return this.models.EventTicketOrder.getOrderById({ orderId: order.id, profileId: input.profileId });
+    return this.models.EventTicketOrder.getOrderById({ orderId: order.id!, profileId: input.profileId });
   }
 
   private getOrderStatus(paymentStatus: PaymentStatus) {

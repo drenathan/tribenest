@@ -31,7 +31,7 @@ export class EventTicketOrderModel extends BaseModel<"eventTicketOrders", "id"> 
     return result.data[0];
   }
 
-  public async getProfileOrders(input: GetOrdersInput): Promise<PaginatedData<{}>> {
+  public async getProfileOrders(input: GetOrdersInput) {
     const { profileId, page, limit } = input;
     const offset = (page - 1) * limit;
 
@@ -44,7 +44,9 @@ export class EventTicketOrderModel extends BaseModel<"eventTicketOrders", "id"> 
         const conditions: Expression<SqlBool>[] = [];
 
         conditions.push(eb("e.profileId", "=", profileId));
-        conditions.push(eb("eto.status", "!=", OrderStatus.InitiatedPayment));
+        if (!orderId) {
+          conditions.push(eb("eto.status", "!=", OrderStatus.InitiatedPayment));
+        }
 
         if (orderId) {
           conditions.push(eb("eto.id", "=", orderId));
@@ -83,10 +85,11 @@ export class EventTicketOrderModel extends BaseModel<"eventTicketOrders", "id"> 
             .fullJoin("eventTickets as et", "etoi.eventTicketId", "et.id")
             .select((eb) => [
               eb.ref("et.title").as("title"),
-              eb.ref("et.price").as("price"),
               eb.ref("etoi.quantity").as("quantity"),
-            ])
-            .selectAll(),
+              eb.ref("etoi.price").as("price"),
+              eb.ref("et.id").as("eventTicketId"),
+              eb.ref("etoi.id").as("id"),
+            ]),
         ).as("items"),
       ])
       .limit(input.limit)

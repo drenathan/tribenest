@@ -230,7 +230,7 @@ export default function CheckoutForm({
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form id="payment-form" onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-4">
       <PaymentElement id="payment-element" options={paymentElementOptions} />
 
       {/* Show any error or success messages */}
@@ -238,6 +238,7 @@ export default function CheckoutForm({
       <EditorButtonWithoutEditor
         disabled={isLoading || !stripe || !elements}
         fullWidth
+        onClick={handleSubmit}
         text={isLoading ? "loading" : `Pay $${amount} Now`}
       />
     </form>

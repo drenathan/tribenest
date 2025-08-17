@@ -7,14 +7,14 @@ export async function GET(request: NextRequest) {
 
   if (subdomain && subdomain === "links") {
     // Block PWA installation for "links" subdomain by returning 404
-    return new NextResponse(null, { status: 404 });
+    return NextResponse.json({});
   }
 
   const apiUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const isMultiTenant = process.env.MULTI_TENANT === "true";
 
   if (isMultiTenant && !subdomain) {
-    return new NextResponse(null, { status: 404 });
+    return NextResponse.json({});
   }
 
   const response = await fetch(
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   const webPage = (await response.json()) as WebPage;
 
   if (!webPage || !webPage.profile?.pwaConfig || !webPage.profile.pwaConfig.name) {
-    return new NextResponse(null, { status: 404 });
+    return NextResponse.json({});
   }
   if (webPage) {
     try {
@@ -130,5 +130,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return new NextResponse(null, { status: 404 });
+  return NextResponse.json({});
 }
