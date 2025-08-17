@@ -130,7 +130,7 @@ const items: NavItem[] = [
         path: "/events/list",
       },
       {
-        title: "Sales Report",
+        title: "Orders",
         path: "/events/sales",
       },
     ],
