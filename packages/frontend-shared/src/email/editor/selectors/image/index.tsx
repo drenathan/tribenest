@@ -7,6 +7,8 @@ EmailImage.craft = {
   displayName: "Image",
   props: {
     src: "",
+    width: "100%",
+    height: "200px",
   },
   related: {
     toolbar: EmailImageSettings,

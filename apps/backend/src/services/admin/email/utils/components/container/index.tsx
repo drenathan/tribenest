@@ -27,7 +27,7 @@ export const EmailContainer: UserComponent<EmailContainerProps> = ({ children, w
       cellPadding="0"
       cellSpacing="0"
       role="presentation"
-      style={{ maxWidth: "37.5em", width, height: "100%", fontFamily: "Arial, Helvetica, sans-serif" }}
+      style={{ maxWidth: "600px", width, height: "100%", fontFamily: "Arial, Helvetica, sans-serif" }}
     >
       <tbody>
         <tr style={{ width: "100%", verticalAlign: "top" }}>

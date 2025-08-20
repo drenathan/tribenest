@@ -15,8 +15,8 @@ export const ImageSettings = () => {
           return `${width || 0}px  ${height || 0}px`;
         }}
       >
-        <ToolbarItem propKey="height" index={0} type="slider" label="Height" />
-        <ToolbarItem propKey="width" index={1} type="slider" label="Width" />
+        <ToolbarItem propKey="height" index={0} type="slider" label="Height" min={10} max={1000} />
+        <ToolbarItem propKey="width" index={1} type="slider" label="Width" min={10} max={1000} />
       </ToolbarSection>
       <ToolbarSection
         title="Margin"

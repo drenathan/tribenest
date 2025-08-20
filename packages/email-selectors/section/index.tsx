@@ -11,7 +11,7 @@ export type EmailSectionProps = {
 
 export const SingleSection: UserComponent<EmailSectionProps> = ({ children }) => {
   return (
-    <Section style={{ padding: "16px", width: "100%" }}>
+    <Section style={{ width: "100%" }}>
       <Row style={{ width: "100%" }}>{children}</Row>
     </Section>
   );

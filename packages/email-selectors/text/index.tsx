@@ -18,7 +18,6 @@ export const EmailText: UserComponent<EmailTextProps> = ({ text = "" }) => {
         connect(dom);
       }}
       dangerouslySetInnerHTML={{ __html: text }}
-      style={{ fontSize: "18px" }}
     ></p>
   );
 };

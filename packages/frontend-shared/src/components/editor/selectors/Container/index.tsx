@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import { ContainerSettings } from "./ContainerSettings";
-import { useNode } from "@craftjs/core";
+import { useEditor, useNode } from "@craftjs/core";
 import { useEditorContext } from "../../context";
 import { round } from "lodash";
 
@@ -49,7 +49,13 @@ export const Container = (props: Partial<ContainerProps>) => {
   const {
     actions: { setProp },
     connectors: { connect },
-  } = useNode();
+    nodes,
+  } = useNode((node) => ({
+    nodes: node.data.nodes,
+  }));
+  const { enabled } = useEditor((state) => ({
+    enabled: state.options.enabled,
+  }));
 
   props = {
     ...defaultProps,
@@ -62,6 +68,8 @@ export const Container = (props: Partial<ContainerProps>) => {
       prop.background = themeSettings.colors.background;
     });
   }, [themeSettings, setProp]);
+
+  const hasChildren = nodes.length > 0;
 
   const {
     flexDirection,
@@ -106,7 +114,8 @@ export const Container = (props: Partial<ContainerProps>) => {
         boxShadow: shadow === 0 ? "none" : `0px 3px 100px ${shadow}px rgba(0, 0, 0, 0.13)`,
         borderRadius: `${radius}px`,
         flex: fillSpace === "yes" ? 1 : "unset",
-        height,
+        minHeight: height,
+        height: height.includes("%") ? height : "auto",
         width,
         ...(style ? style : {}),
       }}
@@ -148,6 +157,11 @@ export const Container = (props: Partial<ContainerProps>) => {
         </div>
       )}
       {children}
+      {!hasChildren && enabled && (
+        <div className="w-full text-sm text-muted-foreground flex items-center justify-center">
+          Drag and drop content here
+        </div>
+      )}
     </div>
   );
 };

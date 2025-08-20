@@ -52,13 +52,13 @@ export const UpcomingEvents: UserComponent<UpcomingEventsProps> = ({ title }: Up
       }}
       className="w-full @md:p-8 p-4 flex flex-col items-center"
     >
-      <h1 className="text-2xl font-bold text-center @md:text-left mb-6">{title}</h1>
+      <h1 className="text-2xl font-bold text-center @md:text-left mb-10">{title}</h1>
 
-      <div className="flex gap-4 flex-col @md:flex-row w-full flex-wrap items-center @md:items-start">
+      <div className="flex gap-4 w-full flex-wrap items-center justify-center">
         {events.map((event) => (
           <div
+            className="w-full @md:w-[400px]"
             style={{
-              width: "300px",
               border: `1px solid ${addAlphaToHexCode(themeSettings.colors.text, 0.1)}`,
               borderRadius: `${themeSettings.cornerRadius}px`,
               padding: "16px",

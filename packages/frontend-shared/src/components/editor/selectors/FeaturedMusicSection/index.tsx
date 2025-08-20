@@ -46,7 +46,7 @@ export const FeaturedMusicSection: UserComponent<FeaturedMusicSectionProps> = ({
     >
       <h1 className="text-2xl font-bold text-center @md:text-left mb-6">{title}</h1>
 
-      <div className="flex gap-6 w-full overflow-x-auto pb-8">
+      <div className="flex gap-6 w-full overflow-x-auto pb-8 justify-start">
         {products.map((product) => {
           const defaultVariant = product.variants.find((variant) => variant.isDefault);
           const isSingle = defaultVariant?.tracks?.length === 1;
@@ -55,7 +55,7 @@ export const FeaturedMusicSection: UserComponent<FeaturedMusicSectionProps> = ({
             defaultVariant?.media.find((m) => m.type === "image")?.url;
 
           return (
-            <div className="w-40 shrink-0" key={product.id}>
+            <div className="w-70 shrink-0" key={product.id}>
               <div
                 className="overflow-hidden shadow-lg"
                 style={{
@@ -77,12 +77,12 @@ export const FeaturedMusicSection: UserComponent<FeaturedMusicSectionProps> = ({
                   navigate(`/music/${product.id}`);
                 }}
               >
-                <p className="text-sm font-bold">{product.title}</p>
+                <p className="font-bold">{product.title}</p>
                 <p
                   style={{
                     color: addAlphaToHexCode(themeSettings.colors.text, 0.4),
                   }}
-                  className="text-xs"
+                  className="text-sm"
                 >
                   {product.artist ?? profile?.name}
                 </p>

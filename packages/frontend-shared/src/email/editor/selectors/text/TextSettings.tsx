@@ -27,6 +27,7 @@ export const TextSettings = () => {
               if (!nodes[nodeId]) {
                 return;
               }
+              console.log(html);
               setProp((props: { text: string }) => {
                 props.text = html;
               });

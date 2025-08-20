@@ -1,5 +1,5 @@
 import { useEditorContext } from "../../context";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../../../ui/button";
 import { Input } from "../../../ui/input";
 import { Label } from "../../../ui/label";
@@ -82,10 +82,18 @@ const SortableSocialItem = ({
 
 export const SocialIconsSettings = () => {
   const { themeSettings, setThemeSettings } = useEditorContext();
-  const [newLink, setNewLink] = useState<SocialLink>({ href: "", icon: "instagram" });
+  const [newLink, setNewLink] = useState<SocialLink>({ href: "", icon: "" });
   const [showForm, setShowForm] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingHref, setEditingHref] = useState("");
+  const [currentLink, setCurrentLink] = useState<SocialLink>();
+  const [currentLinkHref, setCurrentLinkHref] = useState("");
+
+  // useEffect(() => {
+  //   if (currentLink) {
+  //     setCurrentLinkHref(currentLink.href);
+  //   }
+  // }, [currentLink]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -116,34 +124,29 @@ export const SocialIconsSettings = () => {
   };
 
   const handleEditLink = (link: SocialLink, index: number) => {
-    setEditingHref(link.href);
-    setEditingIndex(index);
+    setCurrentLink(link);
+    setCurrentLinkHref(link.href);
     setShowForm(true);
   };
 
   const handleUpdateHref = () => {
-    if (!editingHref) return;
-
-    if (!editingHref.trim() || !editingIndex) return;
-
-    const updatedLinks = [...themeSettings.socialLinks];
-    if (!updatedLinks[editingIndex]) return;
-
-    updatedLinks[editingIndex] = { ...updatedLinks[editingIndex], href: editingHref.trim() };
+    if (!currentLinkHref.trim() || !currentLink) return;
 
     setThemeSettings({
       ...themeSettings,
-      socialLinks: updatedLinks,
+      socialLinks: themeSettings.socialLinks.map((link) =>
+        link.icon === currentLink.icon ? { ...link, href: currentLinkHref.trim() } : link,
+      ),
     });
 
-    setEditingHref("");
-    setEditingIndex(null);
+    setCurrentLink(null);
+    setCurrentLinkHref("");
     setShowForm(false);
   };
 
   const handleCancelEdit = () => {
-    setEditingHref("");
-    setEditingIndex(null);
+    setCurrentLink(null);
+    setCurrentLinkHref("");
     setShowForm(false);
   };
 
@@ -161,6 +164,11 @@ export const SocialIconsSettings = () => {
       });
     }
   };
+  const IconComponent = socialIcons[currentLink?.icon as keyof typeof socialIcons]?.icon || Globe;
+
+  const remainingLinks = useMemo(() => {
+    return Object.entries(socialIcons).filter(([key]) => !themeSettings.socialLinks.some((l) => l.icon === key));
+  }, [themeSettings.socialLinks]);
 
   return (
     <div className="space-y-4">
@@ -169,7 +177,7 @@ export const SocialIconsSettings = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-lg">Social Links</CardTitle>
-          {!showForm && (
+          {!showForm && remainingLinks.length > 0 && (
             <Button onClick={() => setShowForm(true)} size="sm" variant="outline">
               <Plus className="h-4 w-4 mr-1" />
             </Button>
@@ -186,28 +194,20 @@ export const SocialIconsSettings = () => {
                 </Button>
               </div>
 
-              {editingIndex !== null ? (
+              {currentLink ? (
                 // Edit form - only URL
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    {(() => {
-                      const currentLink = themeSettings.socialLinks[editingIndex];
-                      const IconComponent = socialIcons[currentLink?.icon as keyof typeof socialIcons]?.icon || Globe;
-                      return (
-                        <>
-                          <IconComponent className="h-5 w-5 text-muted-foreground" />
-                          <Label className="text-sm font-medium">URL</Label>
-                        </>
-                      );
-                    })()}
+                    <IconComponent className="h-5 w-5 text-muted-foreground" />
+                    <Label className="text-sm font-medium">URL</Label>
                   </div>
                   <Input
                     placeholder="https://example.com"
-                    value={editingHref}
-                    onChange={(e) => setEditingHref(e.target.value)}
+                    value={currentLinkHref}
+                    onChange={(e) => setCurrentLinkHref(e.target.value)}
                   />
                   <div className="flex gap-2">
-                    <Button onClick={handleUpdateHref} disabled={!editingHref.trim()} size="sm">
+                    <Button onClick={handleUpdateHref} disabled={!currentLinkHref?.trim()} size="sm">
                       Save
                     </Button>
                   </div>
@@ -218,11 +218,11 @@ export const SocialIconsSettings = () => {
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Platform</Label>
                     <Select value={newLink.icon} onValueChange={(value) => setNewLink({ ...newLink, icon: value })}>
-                      <SelectTrigger>
+                      <SelectTrigger className="min-w-30">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.entries(socialIcons).map(([key, { icon: IconComponent, label }]) => (
+                        {remainingLinks.map(([key, { icon: IconComponent, label }]) => (
                           <SelectItem key={key} value={key}>
                             <div className="flex items-center gap-2">
                               <IconComponent className="h-4 w-4" />
@@ -244,7 +244,7 @@ export const SocialIconsSettings = () => {
                   </div>
 
                   <Button onClick={handleAddLink} disabled={!newLink.href.trim()} size="sm">
-                    Add Social Link
+                    Add Link
                   </Button>
                 </>
               )}

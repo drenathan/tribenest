@@ -12,18 +12,18 @@ export const EmailImage: UserComponent<ImageProps> = ({ src }: ImageProps) => {
 
   return (
     <div
+      ref={(dom) => {
+        if (!dom) return;
+
+        connect(dom);
+      }}
       style={{
         width: "100%",
-        height: "100%",
+        height: "200px",
         overflow: "hidden",
       }}
     >
       <img
-        ref={(dom) => {
-          if (!dom) return;
-
-          connect(dom);
-        }}
         src={src || undefined}
         style={{
           width: "100%",
