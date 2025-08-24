@@ -16,6 +16,7 @@ type InputProps = {
   min?: number;
   max?: number;
   className?: string;
+  isTextArea?: boolean;
 };
 
 export const EditorInput: UserComponent<InputProps> = ({
@@ -26,6 +27,7 @@ export const EditorInput: UserComponent<InputProps> = ({
   widthMobile,
   type,
   value,
+  isTextArea,
 }: InputProps) => {
   return (
     <Input
@@ -36,6 +38,7 @@ export const EditorInput: UserComponent<InputProps> = ({
       widthMobile={widthMobile}
       type={type}
       value={value}
+      isTextArea={isTextArea}
     />
   );
 };
@@ -61,6 +64,7 @@ export const EditorInputWithoutEditor = ({
   value,
   min,
   max,
+  isTextArea,
 }: InputProps) => {
   return (
     <Input
@@ -73,6 +77,7 @@ export const EditorInputWithoutEditor = ({
       widthMobile={widthMobile}
       type={type}
       value={value}
+      isTextArea={isTextArea}
     />
   );
 };
@@ -87,15 +92,43 @@ const Input = ({
   value,
   min,
   max,
-}: InputProps & { ref?: React.RefObject<HTMLInputElement> }) => {
+  isTextArea,
+}: InputProps & { ref?: React.RefObject<HTMLInputElement | HTMLTextAreaElement> }) => {
   const { themeSettings } = useEditorContext();
   const {
     matches: { isMobile },
   } = useContainerQueryContext();
 
-  return (
+  return isTextArea ? (
+    <textarea
+      ref={ref as React.RefObject<HTMLTextAreaElement>}
+      placeholder={placeholder}
+      onChange={(e) => onChange?.(e.target.value)}
+      value={value}
+      rows={4}
+      className={css`
+        background-color: ${themeSettings.colors.background};
+        color: ${themeSettings.colors.text};
+        border: 2px solid ${themeSettings.colors.primary}${alphaToHexCode(0.65)};
+        border-radius: ${themeSettings.cornerRadius}px;
+        padding: 10px;
+        width: ${isMobile && widthMobile ? widthMobile : width};
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          border-color: ${themeSettings.colors.primary};
+        }
+
+        &::placeholder {
+          color: ${themeSettings.colors.text}${alphaToHexCode(0.45)};
+        }
+      `}
+    />
+  ) : (
     <input
-      ref={ref}
+      ref={ref as React.RefObject<HTMLInputElement>}
       placeholder={placeholder}
       onChange={(e) => onChange?.(e.target.value)}
       type={type}

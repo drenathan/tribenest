@@ -1,12 +1,6 @@
 import * as React from "react";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@tribe-nest/frontend-shared";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@tribe-nest/frontend-shared";
 import { ProfileSwitcher } from "./profile-switcher";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";

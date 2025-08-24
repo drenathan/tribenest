@@ -19,3 +19,12 @@ export type WebsiteVersionPage = {
   title: string;
   description?: string;
 };
+
+export type IWebsiteMessage = {
+  id: string;
+  profileId: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+};

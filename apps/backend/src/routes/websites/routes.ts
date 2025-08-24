@@ -8,6 +8,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   const controller = new WebsitesController(services, workers);
   router.use((req, _, next) => requireAuthentication(req, next, services));
   router.post("/activate", (...args) => controller.activateTheme(...args));
+  router.get("/messages", (...args) => controller.getMessages(...args));
   router.get("/", (...args) => controller.getMany(...args));
   router.get("/:id", (...args) => controller.getOne(...args));
   router.put("/:id", (...args) => controller.updateWebsiteVersion(...args));

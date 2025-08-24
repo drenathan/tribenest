@@ -9,4 +9,15 @@ const getWebsiteSchema = z.object({
 
 export type GetWebsiteInput = z.infer<typeof getWebsiteSchema>["query"];
 
-export { getWebsiteSchema };
+const contactSchema = z.object({
+  body: z.object({
+    profileId: z.string().min(1, "Profile ID is required"),
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    message: z.string().min(10, "Message must be at least 10 characters"),
+  }),
+});
+
+export type ContactInput = z.infer<typeof contactSchema>["body"];
+
+export { getWebsiteSchema, contactSchema };

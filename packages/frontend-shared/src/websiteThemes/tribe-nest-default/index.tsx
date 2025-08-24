@@ -13,6 +13,8 @@ import { Pagination } from "./components/Pagination";
 import { ProductItem } from "./components/ProductItem";
 import { MusicItemDetails } from "./components/MusicItemDetails";
 import { ProductDetails } from "./components/ProductDetails";
+import ContactPage from "./contact";
+import { ContactPageContent } from "./components/ContactPageContent";
 
 export default {
   name: "TribeNest Default",
@@ -35,6 +37,7 @@ export default {
     headerLinks: [
       { href: "/members", label: "Members" },
       { href: "/products?category=Music", label: "Store" },
+      { href: "/contact", label: "Contact" },
     ],
     socialLinks: [
       { href: "https://www.instagram.com", icon: "instagram" },
@@ -53,6 +56,11 @@ export default {
       pathname: "/privacy-policy",
       title: "Privacy Policy",
       Component: PrivacyPolicyPage,
+    },
+    {
+      pathname: "/contact",
+      title: "Contact",
+      Component: ContactPage,
     },
     {
       pathname: "/members",
@@ -95,5 +103,6 @@ export default {
     ProductItem,
     MusicItemDetails,
     ProductDetails,
+    ContactPageContent,
   },
 } as ThemeConfig;

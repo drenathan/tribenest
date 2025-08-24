@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { paginationSchema } from "../schema";
 
 const themePageSchema = z.object({
   pathname: z.string(),
@@ -43,8 +44,15 @@ const getManySchema = z.object({
   }),
 });
 
+const getMessagesSchema = z.object({
+  query: z.object({
+    profileId: z.string().uuid("Invalid profile ID"),
+    ...paginationSchema.shape,
+  }),
+});
+
 export type ActivateThemeInput = z.infer<typeof activateThemeSchema>["body"];
 export type GetManyWebsitesInput = z.infer<typeof getManySchema>["query"];
 export type UpdateWebsiteVersionInput = z.infer<typeof updateWebsiteVersionSchema>["body"];
-
-export { activateThemeSchema, getManySchema, updateWebsiteVersionSchema };
+export type GetMessagesInput = z.infer<typeof getMessagesSchema>["query"];
+export { activateThemeSchema, getManySchema, updateWebsiteVersionSchema, getMessagesSchema };

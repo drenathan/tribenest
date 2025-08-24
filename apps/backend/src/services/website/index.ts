@@ -1,8 +1,9 @@
 import { BadRequestError } from "@src/utils/app_error";
 import { BaseService } from "../baseService";
-import { ActivateThemeInput, UpdateWebsiteVersionInput } from "@src/routes/websites/schema";
+import { ActivateThemeInput, GetMessagesInput, UpdateWebsiteVersionInput } from "@src/routes/websites/schema";
 import { EncryptionService } from "@src/utils/encryption";
 import { ProfileOnboardingStepId } from "@src/db/types/profile";
+import { ContactInput } from "@src/routes/public/websites/schema";
 
 export class WebsiteService extends BaseService {
   async getWebsitesForProfile(profileId: string) {
@@ -131,5 +132,16 @@ export class WebsiteService extends BaseService {
           : null,
       },
     };
+  }
+
+  async contact(input: ContactInput) {
+    const { profileId, name, email, message } = input;
+
+    await this.models.WebsiteMessage.insertOne({ profileId, name, email, message });
+    return true;
+  }
+
+  async getMessages(input: GetMessagesInput) {
+    return this.models.WebsiteMessage.getMany(input);
   }
 }

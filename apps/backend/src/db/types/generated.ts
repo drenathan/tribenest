@@ -573,6 +573,16 @@ export interface SmartLinkViews {
   userAgent: Json;
 }
 
+export interface WebsiteMessages {
+  createdAt: Generated<Timestamp>;
+  email: string;
+  id: Generated<string>;
+  message: string;
+  name: string;
+  profileId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface WebsiteVersionPages {
   content: Generated<Json>;
   createdAt: Generated<Timestamp>;
@@ -642,6 +652,7 @@ export interface DB {
   smartLinkClicks: SmartLinkClicks;
   smartLinks: SmartLinks;
   smartLinkViews: SmartLinkViews;
+  websiteMessages: WebsiteMessages;
   websiteVersionPages: WebsiteVersionPages;
   websiteVersions: WebsiteVersions;
 }

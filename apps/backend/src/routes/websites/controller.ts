@@ -7,6 +7,8 @@ import {
   getManySchema,
   UpdateWebsiteVersionInput,
   updateWebsiteVersionSchema,
+  GetMessagesInput,
+  getMessagesSchema,
 } from "./schema";
 import { BaseController } from "../baseController";
 import { NextFunction, Request, Response } from "express";
@@ -75,5 +77,17 @@ export class WebsitesController extends BaseController {
   ): Promise<any> {
     const websiteVersionId = req.params.id as string;
     return this.services.website.publishWebsiteVersion(websiteVersionId, query!.profileId);
+  }
+
+  @RouteHandler()
+  @ValidateSchema(getMessagesSchema)
+  @isAuthorized(policy.getMany)
+  public async getMessages(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Query query?: GetMessagesInput,
+  ): Promise<any> {
+    return this.services.website.getMessages(query!);
   }
 }

@@ -53,6 +53,7 @@ export class WebsiteVersionModel extends BaseModel<"websiteVersions", "id"> {
         ).as("pages"),
       ])
       .orderBy("wv.isActive", "desc")
+      .orderBy("wv.createdAt", "desc")
       .execute();
     return themes;
   }

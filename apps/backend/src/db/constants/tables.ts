@@ -50,4 +50,5 @@ export const tables = {
   saves: "saves",
   website_versions: "website_versions",
   website_version_pages: "website_version_pages",
+  website_messages: "website_messages",
 };

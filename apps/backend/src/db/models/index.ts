@@ -21,15 +21,12 @@ import { PostCollectionPostModel } from "./post/postCollectionPost.model";
 import { PostModel } from "./post/post.model";
 import { CommentModel } from "./comment/comment.model";
 import { LikeModel } from "./likes/likes.model";
-import { WebsiteVersionModel } from "./website/websiteVersion.model";
-import { WebsiteVersionPageModel } from "./website/websiteVersionPage.model";
 import { MediaModel } from "./media/media.model";
 import { MediaMappingModel } from "./media/mediaMapping.model";
 import { ProductCategoryModel } from "./product/productCategory.model";
 import { ProductModel } from "./product/product.model";
 import { ProductStoreModel } from "./product/productStore.model";
 import { ProductVariantModel } from "./product/productVariant.model";
-
 import { ProductVariantTrackModel } from "./product/productVariantTrack.model";
 import { OrderModel } from "./order/order.model";
 import { OrderItemModel } from "./order/orderItem.model";
@@ -46,6 +43,9 @@ import { EmailTemplateModel } from "./email/emailTemplate.model";
 import { SmartLinkModel } from "./smartLink/smartLink.model";
 import { SmartLinkViewModel } from "./smartLink/smartLinkView.model";
 import { SmartLinkClickModel } from "./smartLink/smartLinkClickModel";
+import { WebsiteVersionModel } from "./website/websiteVersion.model";
+import { WebsiteVersionPageModel } from "./website/websiteVersionPage.model";
+import { WebsiteMessageModel } from "./website/websiteMessage.model";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
@@ -94,5 +94,6 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     SmartLinkClick: new SmartLinkClickModel(client),
     WebsiteVersion: new WebsiteVersionModel(client),
     WebsiteVersionPage: new WebsiteVersionPageModel(client),
+    WebsiteMessage: new WebsiteMessageModel(client),
   };
 };
