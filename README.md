@@ -1,15 +1,51 @@
-# TribeNest
+# [TribeNest](https://tribenest.co)
 
 The Complete artist platform
 
 # Features
 
-- Website builder
-- Sell memberships
-- Sell music
-- Mobile App (PWA)
-- Build Email Lists and Send Emails
-- Smartlinks (linktree, toneden)
+## Website builder
+
+![Website builder](https://assets-dev.coumo.com/tribenest_screenshots/website_buider.png)
+
+## Sell memberships
+
+![Sell memberships](https://assets-dev.coumo.com/tribenest_screenshots/memberships.png)
+
+## Upload premium content
+
+![Upload premium content](https://assets-dev.coumo.com/tribenest_screenshots/premium_content.png)
+
+## Sell music
+
+![Sell music](https://assets-dev.coumo.com/tribenest_screenshots/sell_music.png)
+
+## Sell merch (printful print on demand integration)
+
+![Sell merch](https://assets-dev.coumo.com/tribenest_screenshots/sell_merch.png)
+
+## Sell tickets
+
+![Sell tickets](https://assets-dev.coumo.com/tribenest_screenshots/sell_tickets.png)
+
+## Mobile App (PWA)
+
+![Mobile App](https://assets-dev.coumo.com/tribenest_screenshots/pwa.png)
+
+## Build Email Lists and Send Emails with Customizable email editor
+
+![Email editor](https://assets-dev.coumo.com/tribenest_screenshots/email_editor.png)
+
+## Smartlinks (linktree, toneden)
+
+![Smartlinks](https://assets-dev.coumo.com/tribenest_screenshots/linktree.png)
+
+# Features In Progress
+
+- [ ] Social Media Management
+- [ ] Social Media Chatbot
+- [ ] Meta Ads
+- [ ] Live Streaming and Re-streaming to other platforms
 
 ## What's inside?
 
