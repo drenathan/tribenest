@@ -13,6 +13,7 @@ import { EmailList } from "./EmailList";
 import { UpcomingEvents } from "./UpcomingEvents";
 import { FeaturedMusicSection } from "./FeaturedMusicSection";
 import { EditorFooter } from "./Footer";
+import { EditorRichText } from "./RichText";
 
 export * from "./Container";
 export * from "./Text";
@@ -29,6 +30,7 @@ export * from "./EmailList";
 export * from "./UpcomingEvents";
 export * from "./FeaturedMusicSection";
 export * from "./Footer";
+export * from "./RichText";
 
 export const editorResolver = {
   Container,
@@ -46,4 +48,5 @@ export const editorResolver = {
   UpcomingEvents,
   FeaturedMusicSection,
   EditorFooter,
+  EditorRichText,
 };

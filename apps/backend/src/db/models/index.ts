@@ -29,9 +29,7 @@ import { ProductCategoryModel } from "./product/productCategory.model";
 import { ProductModel } from "./product/product.model";
 import { ProductStoreModel } from "./product/productStore.model";
 import { ProductVariantModel } from "./product/productVariant.model";
-import { ProductVariantOptionModel } from "./product/productVariantOption.model";
-import { ProductVariantOptionValueModel } from "./product/productVariantOptionValue.model";
-import { ProductVariantConfigurationModel } from "./product/productVariantConfiguration.model";
+
 import { ProductVariantTrackModel } from "./product/productVariantTrack.model";
 import { OrderModel } from "./order/order.model";
 import { OrderItemModel } from "./order/orderItem.model";
@@ -89,9 +87,6 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     Product: new ProductModel(client),
     ProductStore: new ProductStoreModel(client),
     ProductVariant: new ProductVariantModel(client),
-    ProductVariantOption: new ProductVariantOptionModel(client),
-    ProductVariantOptionValue: new ProductVariantOptionValueModel(client),
-    ProductVariantConfiguration: new ProductVariantConfigurationModel(client),
     ProductVariantTrack: new ProductVariantTrackModel(client),
     Session: new SessionModel(client),
     SmartLink: new SmartLinkModel(client),

@@ -11,13 +11,14 @@ import {
   Image as ImageSvg,
   Calendar,
   Music,
+  TypeOutline,
 } from "lucide-react";
 import { EditorButton } from "../selectors/Button";
 import { Container } from "../selectors/Container";
 import { MembershipSection } from "../selectors/MembershipSection";
 import { EditorText } from "../selectors/Text";
 import { EditorSocialIcons } from "../selectors/SocialIcons";
-import { EditorImage, EmailList, FeaturedMusicSection } from "../selectors";
+import { EditorImage, EditorRichText, EmailList, FeaturedMusicSection } from "../selectors";
 import { UpcomingEvents } from "../selectors/UpcomingEvents";
 
 const Label = ({ children }: { children: React.ReactNode }) => {
@@ -73,6 +74,20 @@ export const Toolbox = () => {
             <Item>
               <TypeSvg />
               <Label>Text</Label>
+            </Item>
+          </Tooltip>
+        </div>
+        <div
+          ref={(ref) => {
+            if (ref) {
+              create(ref, <EditorRichText />);
+            }
+          }}
+        >
+          <Tooltip title="Rich Text" placement="right">
+            <Item>
+              <TypeOutline />
+              <Label>Rich Text</Label>
             </Item>
           </Tooltip>
         </div>

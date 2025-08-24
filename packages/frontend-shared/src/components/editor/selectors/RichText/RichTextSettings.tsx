@@ -5,7 +5,7 @@ import { Editor } from "../../../../components/blocks/editor-x/editor";
 
 import { useEditor, useNode } from "@craftjs/core";
 
-export const TextSettings = () => {
+export const RichTextSettings = () => {
   const {
     value,
     actions: { setProp },

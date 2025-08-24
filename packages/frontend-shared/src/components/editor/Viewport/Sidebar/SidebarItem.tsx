@@ -7,6 +7,7 @@ const SidebarItemDiv = styled.div<{ $visible?: boolean; $height?: string }>`
   flex: ${(props) => (props.$visible && props.$height && props.$height === "full" ? `1` : "unset")};
   border-bottom: 1px solid transparent;
   border-color: ${(props) => (props.$visible ? "#eee" : "transparent")};
+  transition: height 1s ease-in-out;
 `;
 
 export type SidebarItemProps = {
@@ -19,12 +20,25 @@ export type SidebarItemProps = {
   className?: string;
 };
 
-export const SidebarItem: React.FC<SidebarItemProps> = ({ icon, title, children, height, className }) => {
+export const SidebarItem: React.FC<SidebarItemProps> = ({
+  icon,
+  title,
+  children,
+  height,
+  className,
+  onChange,
+  visible,
+}) => {
   return (
-    <SidebarItemDiv $visible={true} $height={height} className={classNames("flex flex-col", className)}>
-      <div className="w-full flex-1 overflow-auto">
-        <div className={`cursor-pointer flex items-center px-2 border-b border-border py-4`}>
-          <div className="flex-1 flex items-center gap-2">
+    <SidebarItemDiv $visible={visible} $height={height} className={classNames("flex flex-col", className)}>
+      <div className="w-full overflow-auto">
+        <div className={`cursor-pointer flex items-center px-2 border-b border-t border-border py-4`}>
+          <div
+            onClick={() => {
+              if (onChange) onChange(!visible);
+            }}
+            className="flex-1 flex items-center gap-2"
+          >
             {icon}
             <h2 className="text-xs uppercase">{title}</h2>
           </div>
