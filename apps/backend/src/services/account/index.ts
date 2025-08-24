@@ -2,9 +2,10 @@ import { CreateAccountInput } from "@src/routes/accounts/schema";
 import { BaseService } from "../baseService";
 import bcrypt from "bcryptjs";
 import { Details, UserAgent } from "express-useragent";
-import { NotFoundError, UnauthenticatedError } from "@src/utils/app_error";
+import { BadRequestError, NotFoundError, UnauthenticatedError } from "@src/utils/app_error";
 import { signToken } from "@src/utils/jwt";
 import { UpdatePublicAccountInput, UpdatePublicAccountPasswordInput } from "@src/routes/public/accounts/schema";
+import { MULTI_TENANT } from "@src/configuration/secrets";
 
 export class AccountService extends BaseService {
   public async findById(id: string) {
@@ -17,6 +18,16 @@ export class AccountService extends BaseService {
   }
 
   public async createAccount(input: CreateAccountInput, userAgent?: Details) {
+    if (!MULTI_TENANT) {
+      const profile = await this.database.models.Profile.findOne({
+        subdomain: "default-site",
+      });
+
+      if (profile) {
+        throw new BadRequestError("Account creation is not allowed");
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(input.password, 10);
 
     const account = await this.database.models.Account.insertOne({
