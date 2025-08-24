@@ -24,7 +24,7 @@ import {
   TableRow,
   defaultSmartLinkThemeSettings,
 } from "@tribe-nest/frontend-shared";
-import { Plus, Filter, X, MoreHorizontal, Edit, Archive, ArchiveRestore, BarChart3 } from "lucide-react";
+import { Plus, Filter, X, MoreHorizontal, Edit, Archive, ArchiveRestore, Copy } from "lucide-react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import PageHeader from "../../-components/layout/page-header";
 import Loading from "@/components/loading";
@@ -37,6 +37,8 @@ import { CreateSmartLinkDialog } from "./-components/CreateSmartLinkDialog";
 import { useArchiveSmartLink, useUnarchiveSmartLink } from "@/hooks/mutations/useSmartLink";
 import { formatDistanceToNow } from "date-fns";
 import type { SmartLink } from "@tribe-nest/frontend-shared";
+import { getLinksUrl } from "@/services/httpClient";
+import { toast } from "sonner";
 
 const routeParams = z.object({
   page: z.number().default(1),
@@ -288,9 +290,9 @@ const SmartLinkTableRow = ({ smartLink }: { smartLink: SmartLink }) => {
     navigate({ to: `/smart-links/links/${smartLink.id}/edit` });
   };
 
-  const handleViewStats = () => {
-    navigate({ to: `/smart-links/links/${smartLink.id}/stats` });
-  };
+  // const handleViewStats = () => {
+  //   navigate({ to: `/smart-links/links/${smartLink.id}/stats` });
+  // };
 
   return (
     <TableRow>
@@ -309,6 +311,14 @@ const SmartLinkTableRow = ({ smartLink }: { smartLink: SmartLink }) => {
       <TableCell>{formatDistanceToNow(new Date(smartLink.updatedAt), { addSuffix: true })}</TableCell>
       <TableCell className="text-right">
         <div className="flex items-center justify-end gap-2">
+          <Copy
+            className="h-4 w-4 mr-2 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigator.clipboard.writeText(getLinksUrl() + "/" + smartLink.path);
+              toast.success("Copied to clipboard");
+            }}
+          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
@@ -320,10 +330,10 @@ const SmartLinkTableRow = ({ smartLink }: { smartLink: SmartLink }) => {
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleViewStats}>
+              {/* <DropdownMenuItem onClick={handleViewStats}>
                 <BarChart3 className="h-4 w-4 mr-2" />
                 View Stats
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem onClick={handleArchive} disabled={isArchiving}>
                 {isArchived ? (
                   <>

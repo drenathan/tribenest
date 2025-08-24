@@ -1,6 +1,13 @@
 "use client";
 
-import { editorResolver, RenderNode, SmartLink, smartLinkTemplates, usePublicAuth } from "@tribe-nest/frontend-shared";
+import {
+  editorResolver,
+  RenderNode,
+  SmartLink,
+  smartLinkTemplates,
+  useEditorContext,
+  usePublicAuth,
+} from "@tribe-nest/frontend-shared";
 
 import { Editor, Frame } from "@craftjs/core";
 
@@ -27,8 +34,15 @@ export const LinkRenderer = ({ smartLink }: { smartLink: SmartLink }) => {
 };
 
 const PageContent = ({ smartLink }: { smartLink: SmartLink }) => {
+  const { themeSettings } = useEditorContext();
   return (
-    <div className="w-full h-full">
+    <div
+      className="w-full h-full"
+      style={{
+        backgroundColor: themeSettings?.colors?.background,
+        color: themeSettings?.colors?.text,
+      }}
+    >
       <Frame data={smartLink.content}></Frame>
     </div>
   );

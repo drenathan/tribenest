@@ -29,10 +29,11 @@ export default function LinkTreeComponent() {
         is={Container}
         height="100%"
         id="page-container"
+        width=""
         paddingHorizontal="10"
         paddingVertical="10"
         custom={{ displayName: "Page", preventDelete: true }}
-        className="w-full @md:w-[500px] min-h-full"
+        className="w-full @md:w-[500px] min-h-screen"
         alignItems="center"
       >
         <EditorImage

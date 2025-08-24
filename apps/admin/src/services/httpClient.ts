@@ -19,6 +19,16 @@ export const getApiUrl = () => {
   return "http://localhost:8000";
 };
 
+export const getLinksUrl = () => {
+  if (import.meta.env.DEV) {
+    return "http://links.localhost:3001";
+  }
+
+  const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
+  return `${protocol}//links.${hostname.substring(6)}`; // remove admin. from host name and replace with links
+};
+
 const httpClient = axios.create({
   baseURL: getApiUrl(),
 });
