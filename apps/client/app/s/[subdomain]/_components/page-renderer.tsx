@@ -22,6 +22,7 @@ export const PageRenderer = ({ webPage, paramId }: { webPage: WebPage; paramId?:
     if (paramId) {
       switch (webPage.page.pathname) {
         case "/music/:id":
+        case "/products/:id":
           setCurrentProductId!(paramId);
           break;
         default:

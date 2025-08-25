@@ -332,7 +332,10 @@ export function ThemeAudioPlayer() {
             )}
           </div>
 
-          <div className="cursor-pointer hover:underline" onClick={() => navigate(`/music/${currentTrack.productId}`)}>
+          <div
+            className="cursor-pointer hover:underline"
+            onClick={() => navigate(`/products/${currentTrack.productId}`)}
+          >
             <h4
               className={css({
                 fontSize: "14px",

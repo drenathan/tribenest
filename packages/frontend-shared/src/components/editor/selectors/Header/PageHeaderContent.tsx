@@ -283,7 +283,7 @@ function PageHeaderContent({
                     <div className="flex-1 min-w-0 pr-8">
                       <div
                         onClick={() => {
-                          navigate(`/music/${item.productId}`);
+                          navigate(`/products/${item.productId}`);
                         }}
                         className="font-semibold truncate cursor-pointer hover:underline"
                       >

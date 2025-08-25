@@ -41,7 +41,7 @@ export const MusicItem: UserComponent<PostItemProps> = ({ product }) => {
         className="inline-flex flex-col mt-2 cursor-pointer hover:underline w-auto"
         role="link"
         onClick={() => {
-          navigate(`/music/${product.id}`);
+          navigate(`/products/${product.id}`);
         }}
       >
         <EditorText preventEdit text={product.title} fontSize="20" fontSizeMobile="16" fontWeight="bold" />

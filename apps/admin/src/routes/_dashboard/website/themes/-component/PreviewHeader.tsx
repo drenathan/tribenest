@@ -126,7 +126,7 @@ export const PreviewHeader = ({
   };
 
   const getSelectProductDetails = () => {
-    if (intendedPage?.pathname === "/music/:id") {
+    if (intendedPage?.pathname === "/products/:id") {
       return {
         title: "Select Music",
         description: "This music will be used to render the page",

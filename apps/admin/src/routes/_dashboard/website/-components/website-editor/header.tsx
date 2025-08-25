@@ -44,7 +44,7 @@ export const WebsiteEditorHeader = ({
     return null;
   }
   const getSelectProductDetails = () => {
-    if (intendedPage?.pathname === "/music/:id") {
+    if (intendedPage?.pathname === "/products/:id") {
       return {
         title: "Select Music",
         description: "This music will be used to render the page",
@@ -93,7 +93,7 @@ export const WebsiteEditorHeader = ({
   };
 
   const handlePageChange = (page: WebsiteVersionPage) => {
-    if (page.pathname === "/music/:id") {
+    if (page.pathname === "/products/:id") {
       setIntendedPage(page);
       setIsSelectProductModalOpen(true);
       return;

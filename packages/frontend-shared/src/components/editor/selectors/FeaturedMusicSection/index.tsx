@@ -74,7 +74,7 @@ export const FeaturedMusicSection: UserComponent<FeaturedMusicSectionProps> = ({
                 className="inline-flex flex-col mt-2 cursor-pointer hover:underline w-auto"
                 role="link"
                 onClick={() => {
-                  navigate(`/music/${product.id}`);
+                  navigate(`/products/${product.id}`);
                 }}
               >
                 <p className="font-bold">{product.title}</p>
