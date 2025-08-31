@@ -10,13 +10,14 @@ import {
 import { WebPage } from "../_api";
 
 import { Editor, Frame } from "@craftjs/core";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export const PageRenderer = ({ webPage, paramId }: { webPage: WebPage; paramId?: string }) => {
   const theme = websiteThemes.find((theme) => theme.slug === webPage.themeName);
   const currentPage = theme?.pages.find((page) => page.pathname === webPage.page.pathname);
   const { isInitialized } = usePublicAuth();
   const { setCurrentProductId, trackEvent } = useEditorContext();
+  const isPageViewTracked = useRef(false);
 
   useEffect(() => {
     if (paramId) {
@@ -32,10 +33,16 @@ export const PageRenderer = ({ webPage, paramId }: { webPage: WebPage; paramId?:
   }, [paramId, webPage.page.pathname, setCurrentProductId]);
 
   useEffect(() => {
-    trackEvent?.("page_view", {
-      pathname: webPage.page.pathname,
-      pageTitle: webPage.page.title,
-    });
+    if (isPageViewTracked.current) {
+      return;
+    }
+    if (webPage) {
+      isPageViewTracked.current = true;
+      trackEvent?.("page_view", {
+        pathname: webPage.page.pathname,
+        pageTitle: webPage.page.title,
+      });
+    }
   }, [trackEvent, webPage]);
 
   if (!isInitialized) {

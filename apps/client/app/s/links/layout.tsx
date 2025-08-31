@@ -75,9 +75,10 @@ const Content = ({ children }: { children: React.ReactNode }) => {
 
   const trackEvent = (eventType: string, eventData: Record<string, unknown> = {}) => {
     const key = `tribe_nest_smart_${smartLink.path}_session_id`;
-    const sessionId = sessionStorage.getItem(key);
+    let sessionId = sessionStorage.getItem(key);
     if (!sessionId) {
-      sessionStorage.setItem(key, `${smartLink.path}_${Date.now()}`);
+      sessionId = `${smartLink.path}_${Date.now()}`;
+      sessionStorage.setItem(key, sessionId);
     }
 
     httpClient?.post(`/public/smart-links/track-event`, {

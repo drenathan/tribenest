@@ -134,12 +134,26 @@ EditorButton.craft = {
   },
 };
 
-export const EditorButtonWithoutEditor = ({ text, onClick, fullWidth, type, disabled, variant }: ButtonProps) => {
-  const { themeSettings } = useEditorContext();
+export const EditorButtonWithoutEditor = ({
+  text,
+  onClick,
+  fullWidth,
+  type,
+  disabled,
+  variant,
+  buttonId,
+}: ButtonProps) => {
+  const { themeSettings, trackEvent } = useEditorContext();
 
   return (
     <button
-      onClick={onClick}
+      onClick={() => {
+        onClick?.();
+        trackEvent?.("click", {
+          buttonId,
+          text,
+        });
+      }}
       className={buttonStyles(themeSettings, fullWidth, variant)}
       type={type}
       disabled={disabled}

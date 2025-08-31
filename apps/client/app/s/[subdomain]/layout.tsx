@@ -82,9 +82,10 @@ const Content = ({ children }: { children: React.ReactNode }) => {
 
   const trackEvent = (eventType: string, eventData: Record<string, unknown> = {}) => {
     const key = `tribe_nest_website_${params.subdomain}_session_id`;
-    const sessionId = sessionStorage.getItem(key);
+    let sessionId = sessionStorage.getItem(key);
     if (!sessionId) {
-      sessionStorage.setItem(key, `${params.subdomain}_${Date.now()}`);
+      sessionId = `${params.subdomain}_${Date.now()}`;
+      sessionStorage.setItem(key, sessionId);
     }
 
     httpClient?.post(`/public/websites/track-event`, {
