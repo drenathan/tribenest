@@ -1,7 +1,8 @@
-import { RouteHandler } from "@src/decorators";
+import { RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
 import { NotFoundError } from "@src/utils/app_error";
+import { trackEventSchema } from "./schema";
 
 export class PublicSmartLinks extends BaseController {
   @RouteHandler()
@@ -14,5 +15,16 @@ export class PublicSmartLinks extends BaseController {
       throw new NotFoundError("Link not found");
     }
     return link;
+  }
+
+  @RouteHandler()
+  @ValidateSchema(trackEventSchema)
+  public async trackEvent(req: Request, res: Response, next: NextFunction): Promise<any> {
+    return this.services.admin.smartLink.trackEvent({
+      path: req.body.path,
+      eventType: req.body.eventType,
+      eventData: { ...req.body.eventData, userAgent: req.useragent },
+      ip: req.ip,
+    });
   }
 }

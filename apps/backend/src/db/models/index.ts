@@ -41,11 +41,11 @@ import { EmailListModel } from "./emailList/emailList.model";
 import { EmailListSubscriberModel } from "./emailList/emailListSubscriber.model";
 import { EmailTemplateModel } from "./email/emailTemplate.model";
 import { SmartLinkModel } from "./smartLink/smartLink.model";
-import { SmartLinkViewModel } from "./smartLink/smartLinkView.model";
-import { SmartLinkClickModel } from "./smartLink/smartLinkClickModel";
+import { SmartLinkEventModel } from "./smartLink/smartLinkEvent.model";
 import { WebsiteVersionModel } from "./website/websiteVersion.model";
 import { WebsiteVersionPageModel } from "./website/websiteVersionPage.model";
 import { WebsiteMessageModel } from "./website/websiteMessage.model";
+import { WebsiteEventModel } from "./website/websiteEvent.model";
 
 export const bootstrapModels = (client: Kysely<DB>) => {
   return {
@@ -90,10 +90,10 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     ProductVariantTrack: new ProductVariantTrackModel(client),
     Session: new SessionModel(client),
     SmartLink: new SmartLinkModel(client),
-    SmartLinkView: new SmartLinkViewModel(client),
-    SmartLinkClick: new SmartLinkClickModel(client),
+    SmartLinkEvent: new SmartLinkEventModel(client),
     WebsiteVersion: new WebsiteVersionModel(client),
     WebsiteVersionPage: new WebsiteVersionPageModel(client),
     WebsiteMessage: new WebsiteMessageModel(client),
+    WebsiteEvent: new WebsiteEventModel(client),
   };
 };

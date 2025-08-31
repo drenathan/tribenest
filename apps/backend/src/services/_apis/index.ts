@@ -8,11 +8,15 @@ import { getConfig } from "@src/configuration";
 import { ExternalStoreFactory } from "./store/ExternalStoreFactory";
 import { ExternalStoreProvider } from "./store/ExternalStore";
 import { EncryptionService } from "@src/utils/encryption";
+import { ipLookup } from "./funcs/ipLookup";
 
 export default class ApiServices {
   public readonly encryption: EncryptionService;
+  public readonly ipLookup: typeof ipLookup;
+
   constructor(private database: Database) {
     this.encryption = new EncryptionService();
+    this.ipLookup = ipLookup;
   }
 
   public async getEmailClient(profileId: string) {

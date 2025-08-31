@@ -1,6 +1,8 @@
 import { CreateSmartLinkInput, GetManySmartLinksInput, UpdateSmartLinkInput } from "@src/routes/smartLinks/schema";
 import { BaseService } from "@src/services/baseService";
 import { BadRequestError, NotFoundError } from "@src/utils/app_error";
+import { TrackEventInput } from "./types";
+import { logger } from "@src/utils/logger";
 
 export class SmartLinkService extends BaseService {
   public async createSmartLink(input: CreateSmartLinkInput) {
@@ -55,5 +57,30 @@ export class SmartLinkService extends BaseService {
 
   public async getSmartLink(input: { smartLinkId?: string; path?: string }) {
     return this.models.SmartLink.getOneById(input);
+  }
+
+  async trackEvent(input: TrackEventInput) {
+    const { ip, eventType, eventData } = input;
+    let geoLookup = {};
+    if (ip) {
+      try {
+        geoLookup = await this.apis.ipLookup(ip);
+      } catch (error) {
+        logger.error(`Error looking up IP ${ip}: ${error}`);
+      }
+    }
+    const link = await this.models.SmartLink.getOneById({ path: input.path });
+    if (!link) {
+      throw new BadRequestError("Smart link not found");
+    }
+
+    await this.models.SmartLinkEvent.insertOne({
+      smartLinkId: link.id,
+      eventType,
+      eventData: {
+        ...geoLookup,
+        ...eventData,
+      },
+    });
   }
 }

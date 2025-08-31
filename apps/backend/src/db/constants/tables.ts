@@ -43,6 +43,7 @@ export const tables = {
   product_variant_configurations: "product_variant_configurations",
   product_variant_tracks: "product_variant_tracks",
   smart_links: "smart_links",
+  smart_link_events: "smart_link_events",
   smart_link_views: "smart_link_views",
   smart_link_clicks: "smart_link_clicks",
   comments: "comments",
@@ -51,4 +52,5 @@ export const tables = {
   website_versions: "website_versions",
   website_version_pages: "website_version_pages",
   website_messages: "website_messages",
+  website_events: "website_events",
 };

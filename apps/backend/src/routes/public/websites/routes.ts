@@ -7,6 +7,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   const controller = new PublicWebsiteController(services, workers);
   router.get("/", (...args) => controller.getWebsite(...args));
   router.post("/contact", (...args) => controller.contact(...args));
+  router.post("/track-event", (...args) => controller.trackEvent(...args));
   return router;
 };
 

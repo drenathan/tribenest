@@ -539,14 +539,13 @@ export interface Sessions {
   userAgent: Json | null;
 }
 
-export interface SmartLinkClicks {
-  buttonId: string;
+export interface SmartLinkEvents {
   createdAt: Generated<Timestamp>;
+  eventData: Json;
+  eventType: string;
   id: Generated<string>;
   smartLinkId: string;
-  uniqueId: string;
   updatedAt: Generated<Timestamp>;
-  userAgent: Json;
 }
 
 export interface SmartLinks {
@@ -564,13 +563,13 @@ export interface SmartLinks {
   updatedAt: Generated<Timestamp>;
 }
 
-export interface SmartLinkViews {
+export interface WebsiteEvents {
   createdAt: Generated<Timestamp>;
+  eventData: Json;
+  eventType: string;
   id: Generated<string>;
-  smartLinkId: string;
-  uniqueId: string;
+  profileId: string;
   updatedAt: Generated<Timestamp>;
-  userAgent: Json;
 }
 
 export interface WebsiteMessages {
@@ -649,9 +648,9 @@ export interface DB {
   profiles: Profiles;
   saves: Saves;
   sessions: Sessions;
-  smartLinkClicks: SmartLinkClicks;
+  smartLinkEvents: SmartLinkEvents;
   smartLinks: SmartLinks;
-  smartLinkViews: SmartLinkViews;
+  websiteEvents: WebsiteEvents;
   websiteMessages: WebsiteMessages;
   websiteVersionPages: WebsiteVersionPages;
   websiteVersions: WebsiteVersions;

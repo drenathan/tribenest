@@ -24,3 +24,10 @@ export const DEFAULT_THEME_PAGES = [
     pathname: "/cookie-policy",
   },
 ];
+
+export type TrackEventInput = {
+  subdomain: string;
+  eventType: string;
+  eventData: Record<string, any>;
+  ip?: string;
+};

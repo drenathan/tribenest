@@ -18,6 +18,15 @@ const contactSchema = z.object({
   }),
 });
 
+const trackEventSchema = z.object({
+  body: z.object({
+    subdomain: z.string().min(1, "Subdomain is required"),
+    eventType: z.string().min(1, "Event type is required"),
+    eventData: z.record(z.any()),
+  }),
+});
+
+export type TrackEventInput = z.infer<typeof trackEventSchema>["body"];
 export type ContactInput = z.infer<typeof contactSchema>["body"];
 
-export { getWebsiteSchema, contactSchema };
+export { getWebsiteSchema, contactSchema, trackEventSchema };

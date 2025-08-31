@@ -4,6 +4,8 @@ import { ActivateThemeInput, GetMessagesInput, UpdateWebsiteVersionInput } from 
 import { EncryptionService } from "@src/utils/encryption";
 import { ProfileOnboardingStepId } from "@src/db/types/profile";
 import { ContactInput } from "@src/routes/public/websites/schema";
+import { TrackEventInput } from "./types";
+import { logger } from "@src/utils/logger";
 
 export class WebsiteService extends BaseService {
   async getWebsitesForProfile(profileId: string) {
@@ -143,5 +145,32 @@ export class WebsiteService extends BaseService {
 
   async getMessages(input: GetMessagesInput) {
     return this.models.WebsiteMessage.getMany(input);
+  }
+
+  async trackEvent(input: TrackEventInput) {
+    const { ip, eventType, eventData } = input;
+    let geoLookup = {};
+
+    if (ip) {
+      try {
+        geoLookup = await this.apis.ipLookup(ip);
+      } catch (error) {
+        logger.error(`Error looking up IP ${ip}: ${error}`);
+      }
+    }
+
+    const profile = await this.models.Profile.findOne({ subdomain: input.subdomain });
+    if (!profile) {
+      throw new BadRequestError("Profile not found");
+    }
+
+    await this.models.WebsiteEvent.insertOne({
+      profileId: profile.id,
+      eventType,
+      eventData: {
+        ...geoLookup,
+        ...eventData,
+      },
+    });
   }
 }
