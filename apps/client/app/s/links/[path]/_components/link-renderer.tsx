@@ -10,6 +10,7 @@ import {
 } from "@tribe-nest/frontend-shared";
 
 import { Editor, Frame } from "@craftjs/core";
+import { useEffect } from "react";
 
 export const LinkRenderer = ({ smartLink }: { smartLink: SmartLink }) => {
   const { isInitialized } = usePublicAuth();
@@ -34,7 +35,12 @@ export const LinkRenderer = ({ smartLink }: { smartLink: SmartLink }) => {
 };
 
 const PageContent = ({ smartLink }: { smartLink: SmartLink }) => {
-  const { themeSettings } = useEditorContext();
+  const { themeSettings, trackEvent } = useEditorContext();
+
+  useEffect(() => {
+    trackEvent?.("page_view");
+  }, [trackEvent]);
+
   return (
     <div
       className="w-full h-full"

@@ -105,6 +105,7 @@ export type EditorContextType = {
   themeName?: string;
   currentProductId?: string;
   setCurrentProductId?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  trackEvent?: (eventType: string, eventData?: Record<string, unknown>) => void;
 };
 
 export type EditorTheme = {

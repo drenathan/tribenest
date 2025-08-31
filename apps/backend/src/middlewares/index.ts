@@ -5,7 +5,7 @@ import morgan from "morgan";
 import userAgent from "express-useragent";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
-import { IS_TEST, IS_DEVELOPMENT } from "@config/secrets";
+import { IS_TEST } from "@config/secrets";
 import { AppError } from "@src/utils/app_error";
 import { verifyToken } from "@src/utils/jwt";
 import { get } from "lodash";
@@ -23,6 +23,9 @@ const limiter = rateLimit({
   max: 200,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: {
+    trustProxy: false,
+  },
 });
 
 const loadMiddlewares = (app: Application) => {
@@ -111,7 +114,7 @@ const loadMiddlewares = (app: Application) => {
   app.use(compression());
   if (!IS_TEST) app.use(morgan("common"));
   app.use(userAgent.express());
-  app.set("trust proxy", 1);
+  app.set("trust proxy", true);
   app.use(limiter);
   logger.info("loaded middlewares");
 };

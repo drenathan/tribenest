@@ -80,6 +80,23 @@ const Content = ({ children }: { children: React.ReactNode }) => {
     return <div>404</div>;
   }
 
+  const trackEvent = (eventType: string, eventData: Record<string, unknown> = {}) => {
+    const key = `tribe_nest_website_${params.subdomain}_session_id`;
+    const sessionId = sessionStorage.getItem(key);
+    if (!sessionId) {
+      sessionStorage.setItem(key, `${params.subdomain}_${Date.now()}`);
+    }
+
+    httpClient?.post(`/public/websites/track-event`, {
+      subdomain: params.subdomain,
+      eventType,
+      eventData: {
+        ...eventData,
+        sessionId,
+      },
+    });
+  };
+
   return (
     <>
       <PWAHead
@@ -104,6 +121,7 @@ const Content = ({ children }: { children: React.ReactNode }) => {
             themeSettings={webPage.themeSettings}
             themeName={webPage.themeName}
             pages={theme.pages}
+            trackEvent={trackEvent}
             navigate={(path, options) => {
               if (options?.replace) {
                 router.replace(path);

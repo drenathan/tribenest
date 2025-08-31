@@ -74,7 +74,7 @@ export const EditorButton: UserComponent<ButtonProps> = ({
   link,
   buttonId,
 }: ButtonProps) => {
-  const { themeSettings, navigate } = useEditorContext();
+  const { themeSettings, navigate, trackEvent } = useEditorContext();
   const {
     connectors: { connect },
     actions: { setProp },
@@ -96,6 +96,11 @@ export const EditorButton: UserComponent<ButtonProps> = ({
     } else {
       onClick?.();
     }
+
+    trackEvent?.("click", {
+      buttonId,
+      text,
+    });
   };
 
   return (

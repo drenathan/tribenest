@@ -73,6 +73,23 @@ const Content = ({ children }: { children: React.ReactNode }) => {
     return <div>404</div>;
   }
 
+  const trackEvent = (eventType: string, eventData: Record<string, unknown> = {}) => {
+    const key = `tribe_nest_smart_${smartLink.path}_session_id`;
+    const sessionId = sessionStorage.getItem(key);
+    if (!sessionId) {
+      sessionStorage.setItem(key, `${smartLink.path}_${Date.now()}`);
+    }
+
+    httpClient?.post(`/public/smart-links/track-event`, {
+      path: smartLink.path,
+      eventType,
+      eventData: {
+        ...eventData,
+        sessionId,
+      },
+    });
+  };
+
   return (
     <div
       ref={ref}
@@ -87,6 +104,7 @@ const Content = ({ children }: { children: React.ReactNode }) => {
           isAdminView={false}
           httpClient={httpClient}
           themeSettings={smartLink.themeSettings}
+          trackEvent={trackEvent}
           pages={[]}
           navigate={(path, options) => {
             if (options?.replace) {

@@ -19,7 +19,7 @@ export const ProductItem: UserComponent<PostItemProps> = ({ product }) => {
     product.media.find((m) => m.type === "image")?.url || defaultVariant?.media.find((m) => m.type === "image")?.url;
   const isMusic = product.category === ProductCategory.Music;
 
-  const { priceLabel, variantCount } = useMemo(() => {
+  const { priceLabel } = useMemo(() => {
     const prices = (product.variants || []).map((v) => v.price).filter((p): p is number => typeof p === "number");
     const min = Math.min(...(prices.length ? prices : [0]));
     const max = Math.max(...(prices.length ? prices : [0]));

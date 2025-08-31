@@ -12,6 +12,7 @@ export const EditorContext = createContext<EditorContextType>({
   setThemeSettings: () => {},
   currentProductId: undefined,
   setCurrentProductId: undefined,
+  trackEvent: undefined,
   pages: [],
   themeSettings: {
     colors: {
@@ -37,6 +38,7 @@ export const EditorContextProvider = ({
   navigate,
   pages,
   themeName,
+  trackEvent,
 }: {
   children: React.ReactNode;
   profile?: Profile;
@@ -46,6 +48,7 @@ export const EditorContextProvider = ({
   navigate: (href: string, options?: { replace?: boolean; buttonId?: string }) => void;
   themeName?: string;
   pages: ThemePage[];
+  trackEvent?: (eventType: string, eventData?: Record<string, unknown>) => void;
 }) => {
   const [themeSettings, setThemeSettings] = useState<EditorTheme>(themeSettingsProps);
   const [currentProductId, setCurrentProductId] = useState<string | undefined>("");
@@ -63,6 +66,7 @@ export const EditorContextProvider = ({
         themeName,
         currentProductId,
         setCurrentProductId,
+        trackEvent,
       }}
     >
       {children}

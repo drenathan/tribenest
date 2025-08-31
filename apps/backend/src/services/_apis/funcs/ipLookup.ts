@@ -8,5 +8,11 @@ export const ipLookup = async (ip: string) => {
     region: string;
   };
 
-  return data;
+  return {
+    country: data.country,
+    countryCode: data.country_code,
+    continentCode: data.continent_code,
+    city: data.city,
+    region: data.region,
+  };
 };

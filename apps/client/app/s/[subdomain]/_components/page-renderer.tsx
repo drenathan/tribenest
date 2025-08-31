@@ -16,7 +16,7 @@ export const PageRenderer = ({ webPage, paramId }: { webPage: WebPage; paramId?:
   const theme = websiteThemes.find((theme) => theme.slug === webPage.themeName);
   const currentPage = theme?.pages.find((page) => page.pathname === webPage.page.pathname);
   const { isInitialized } = usePublicAuth();
-  const { setCurrentProductId } = useEditorContext();
+  const { setCurrentProductId, trackEvent } = useEditorContext();
 
   useEffect(() => {
     if (paramId) {
@@ -30,6 +30,13 @@ export const PageRenderer = ({ webPage, paramId }: { webPage: WebPage; paramId?:
       }
     }
   }, [paramId, webPage.page.pathname, setCurrentProductId]);
+
+  useEffect(() => {
+    trackEvent?.("page_view", {
+      pathname: webPage.page.pathname,
+      pageTitle: webPage.page.title,
+    });
+  }, [trackEvent, webPage]);
 
   if (!isInitialized) {
     return null;
