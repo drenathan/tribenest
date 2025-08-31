@@ -39,7 +39,7 @@ function EventPageContent() {
   }, Infinity);
 
   return (
-    <InternalPageRenderer>
+    <InternalPageRenderer pagePathname={`/events/:id`} pageTitle={event?.title}>
       {isLoading && <LoadingState />}
       {!isLoading && !event && <div>404</div>}
 

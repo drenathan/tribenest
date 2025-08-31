@@ -1,7 +1,9 @@
 import httpClient from "@/services/httpClient";
 import { useQuery } from "@tanstack/react-query";
-import type { IWebsiteMessage, WebsiteVersion } from "@/types/website";
+import type { IWebsiteAnalytics, IWebsiteMessage, WebsiteVersion } from "@/types/website";
 import type { PaginatedData } from "@tribe-nest/frontend-shared";
+import type { DateRange } from "react-day-picker";
+import { format } from "date-fns";
 
 export const useGetWebsites = (profileId?: string) => {
   return useQuery<WebsiteVersion[]>({
@@ -43,5 +45,21 @@ export const useWebsitesMessages = (profileId?: string, filter?: Filter) => {
       return response.data;
     },
     enabled: !!profileId,
+  });
+};
+
+export const useGetWebsiteAnalytics = (profileId?: string, date?: DateRange | undefined) => {
+  const startDate = date?.from ? format(date.from, "yyyy-MM-dd") : undefined;
+  const endDate = date?.to ? format(date.to, "yyyy-MM-dd") : undefined;
+
+  return useQuery<IWebsiteAnalytics>({
+    queryKey: ["smart-links", profileId, "analytics", startDate, endDate],
+    queryFn: async () => {
+      const response = await httpClient.get(`/websites/analytics`, {
+        params: { profileId, startDate, endDate },
+      });
+      return response.data;
+    },
+    enabled: !!profileId && !!date?.from && !!date?.to,
   });
 };

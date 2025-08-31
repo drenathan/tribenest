@@ -87,7 +87,7 @@ export default function Page() {
 
   if (isLoading) {
     return (
-      <InternalPageRenderer>
+      <InternalPageRenderer pagePathname="/checkout/finalise">
         <div className="w-full max-w-4xl mx-auto p-6">
           <div className="animate-pulse">
             <div

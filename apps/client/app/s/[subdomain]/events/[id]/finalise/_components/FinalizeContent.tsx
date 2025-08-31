@@ -55,7 +55,7 @@ export function FinalizeContent() {
 
   if (isLoading) {
     return (
-      <InternalPageRenderer>
+      <InternalPageRenderer pagePathname={`/events/:id/finalise`} pageTitle="Finalise">
         <LoadingState />
       </InternalPageRenderer>
     );

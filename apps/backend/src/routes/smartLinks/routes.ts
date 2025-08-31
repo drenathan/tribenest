@@ -13,6 +13,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.put("/:id", (...args) => controller.updateSmartLink(...args));
   router.delete("/:id", (...args) => controller.archiveSmartLink(...args));
   router.post("/:id/unarchive", (...args) => controller.unarchiveSmartLink(...args));
+  router.get("/:id/analytics", (...args) => controller.getSmartLinkAnalytics(...args));
   return router;
 };
 

@@ -9,6 +9,8 @@ import {
   updateWebsiteVersionSchema,
   GetMessagesInput,
   getMessagesSchema,
+  GetWebsiteAnalyticsInput,
+  getWebsiteAnalyticsSchema,
 } from "./schema";
 import { BaseController } from "../baseController";
 import { NextFunction, Request, Response } from "express";
@@ -89,5 +91,17 @@ export class WebsitesController extends BaseController {
     @Query query?: GetMessagesInput,
   ): Promise<any> {
     return this.services.website.getMessages(query!);
+  }
+
+  @RouteHandler()
+  @ValidateSchema(getWebsiteAnalyticsSchema)
+  @isAuthorized(policy.getMany)
+  public async getWebsiteAnalytics(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Query query?: GetWebsiteAnalyticsInput,
+  ): Promise<any> {
+    return this.services.website.getWebsiteAnalytics(query!);
   }
 }

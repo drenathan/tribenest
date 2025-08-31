@@ -51,8 +51,17 @@ const getMessagesSchema = z.object({
   }),
 });
 
+const getWebsiteAnalyticsSchema = z.object({
+  query: z.object({
+    profileId: z.string().uuid("Invalid profile ID"),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().min(1, "End date is required"),
+  }),
+});
+
 export type ActivateThemeInput = z.infer<typeof activateThemeSchema>["body"];
 export type GetManyWebsitesInput = z.infer<typeof getManySchema>["query"];
 export type UpdateWebsiteVersionInput = z.infer<typeof updateWebsiteVersionSchema>["body"];
 export type GetMessagesInput = z.infer<typeof getMessagesSchema>["query"];
-export { activateThemeSchema, getManySchema, updateWebsiteVersionSchema, getMessagesSchema };
+export type GetWebsiteAnalyticsInput = z.infer<typeof getWebsiteAnalyticsSchema>["query"];
+export { activateThemeSchema, getManySchema, updateWebsiteVersionSchema, getMessagesSchema, getWebsiteAnalyticsSchema };

@@ -1,4 +1,9 @@
-import { CreateSmartLinkInput, GetManySmartLinksInput, UpdateSmartLinkInput } from "@src/routes/smartLinks/schema";
+import {
+  CreateSmartLinkInput,
+  GetManySmartLinksInput,
+  GetSmartLinkAnalyticsInput,
+  UpdateSmartLinkInput,
+} from "@src/routes/smartLinks/schema";
 import { BaseService } from "@src/services/baseService";
 import { BadRequestError, NotFoundError } from "@src/utils/app_error";
 import { TrackEventInput } from "./types";
@@ -82,5 +87,22 @@ export class SmartLinkService extends BaseService {
         ...eventData,
       },
     });
+  }
+
+  public async getSmartLinkAnalytics(input: GetSmartLinkAnalyticsInput & { smartLinkId: string }) {
+    return this.models.SmartLinkEvent.getMany(input);
+  }
+
+  public async archiveSmartLink(input: { smartLinkId: string; profileId: string }) {
+    await this.models.SmartLink.updateOne(
+      { id: input.smartLinkId, profileId: input.profileId },
+      { archivedAt: new Date() },
+    );
+    return true;
+  }
+
+  public async unarchiveSmartLink(input: { smartLinkId: string; profileId: string }) {
+    await this.models.SmartLink.updateOne({ id: input.smartLinkId, profileId: input.profileId }, { archivedAt: null });
+    return true;
   }
 }

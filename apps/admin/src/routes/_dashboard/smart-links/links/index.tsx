@@ -24,7 +24,7 @@ import {
   TableRow,
   defaultSmartLinkThemeSettings,
 } from "@tribe-nest/frontend-shared";
-import { Plus, Filter, X, MoreHorizontal, Edit, Archive, ArchiveRestore, Copy } from "lucide-react";
+import { Plus, Filter, X, MoreHorizontal, Edit, Archive, ArchiveRestore, Copy, BarChart3 } from "lucide-react";
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import PageHeader from "../../-components/layout/page-header";
 import Loading from "@/components/loading";
@@ -270,16 +270,27 @@ const SmartLinkTableRow = ({ smartLink }: { smartLink: SmartLink }) => {
   const navigate = useNavigate();
   const archiveSmartLink = useArchiveSmartLink();
   const unarchiveSmartLink = useUnarchiveSmartLink();
+  const { currentProfileAuthorization } = useAuth();
 
   const isArchived = !!smartLink.archivedAt;
   const isArchiving = archiveSmartLink.isPending || unarchiveSmartLink.isPending;
 
+  if (!currentProfileAuthorization?.profile.id) {
+    return null;
+  }
+
   const handleArchive = async () => {
     try {
       if (isArchived) {
-        await unarchiveSmartLink.mutateAsync(smartLink.id);
+        await unarchiveSmartLink.mutateAsync({
+          smartLinkId: smartLink.id,
+          profileId: currentProfileAuthorization?.profile.id,
+        });
       } else {
-        await archiveSmartLink.mutateAsync(smartLink.id);
+        await archiveSmartLink.mutateAsync({
+          smartLinkId: smartLink.id,
+          profileId: currentProfileAuthorization?.profile.id,
+        });
       }
     } catch (error) {
       console.error("Failed to archive/unarchive smart link:", error);
@@ -290,9 +301,9 @@ const SmartLinkTableRow = ({ smartLink }: { smartLink: SmartLink }) => {
     navigate({ to: `/smart-links/links/${smartLink.id}/edit` });
   };
 
-  // const handleViewStats = () => {
-  //   navigate({ to: `/smart-links/links/${smartLink.id}/stats` });
-  // };
+  const handleViewStats = () => {
+    navigate({ to: `/smart-links/links/$smartLinkId/analytics`, params: { smartLinkId: smartLink.id } });
+  };
 
   return (
     <TableRow>
@@ -330,10 +341,10 @@ const SmartLinkTableRow = ({ smartLink }: { smartLink: SmartLink }) => {
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
               </DropdownMenuItem>
-              {/* <DropdownMenuItem onClick={handleViewStats}>
+              <DropdownMenuItem onClick={handleViewStats}>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                View Stats
-              </DropdownMenuItem> */}
+                View Analytics
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleArchive} disabled={isArchiving}>
                 {isArchived ? (
                   <>

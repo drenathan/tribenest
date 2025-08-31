@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ subdomain
 
 export default async function Page() {
   return (
-    <InternalPageRenderer>
+    <InternalPageRenderer pagePathname="/signup" pageTitle="Signup">
       <SignupContent />
     </InternalPageRenderer>
   );

@@ -17,6 +17,7 @@ export * from "./components/molecules/form-multi-select";
 export * from "./components/molecules/form-checkbox";
 export * from "./components/molecules/theme-audio-player";
 export * from "./lib/utils";
+export * from "./components/ui/date-picker";
 export * from "./components/ui/tabs";
 export * from "./components/ui/select";
 export * from "./components/ui/slider";

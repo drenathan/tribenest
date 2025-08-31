@@ -33,7 +33,7 @@ type ShippingData = {
 
 export function CheckoutPageContent() {
   return (
-    <InternalPageRenderer>
+    <InternalPageRenderer pagePathname="/checkout">
       <Content />
     </InternalPageRenderer>
   );

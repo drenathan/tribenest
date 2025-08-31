@@ -1,6 +1,11 @@
 import { BadRequestError } from "@src/utils/app_error";
 import { BaseService } from "../baseService";
-import { ActivateThemeInput, GetMessagesInput, UpdateWebsiteVersionInput } from "@src/routes/websites/schema";
+import {
+  ActivateThemeInput,
+  GetMessagesInput,
+  GetWebsiteAnalyticsInput,
+  UpdateWebsiteVersionInput,
+} from "@src/routes/websites/schema";
 import { EncryptionService } from "@src/utils/encryption";
 import { ProfileOnboardingStepId } from "@src/db/types/profile";
 import { ContactInput } from "@src/routes/public/websites/schema";
@@ -172,5 +177,9 @@ export class WebsiteService extends BaseService {
         ...eventData,
       },
     });
+  }
+
+  async getWebsiteAnalytics(input: GetWebsiteAnalyticsInput) {
+    return this.models.WebsiteEvent.getMany(input);
   }
 }

@@ -32,7 +32,7 @@ export function AccountPageContent() {
 
   return (
     <ProtectedRoute>
-      <InternalPageRenderer>
+      <InternalPageRenderer pagePathname="/account">
         <div className="w-full max-w-6xl mx-auto p-4 @md:p-6 @lg:p-8">
           <div className="mb-8">
             <h1

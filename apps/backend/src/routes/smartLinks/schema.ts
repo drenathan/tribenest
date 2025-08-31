@@ -34,6 +34,15 @@ export const getManySmartLinksSchema = z.object({
   }),
 });
 
+export const getSmartLinkAnalyticsSchema = z.object({
+  query: z.object({
+    startDate: z.string(),
+    endDate: z.string(),
+    profileId: z.string().uuid("Invalid profile ID"),
+  }),
+});
+
 export type CreateSmartLinkInput = z.infer<typeof createSmartLinkSchema>["body"];
 export type UpdateSmartLinkInput = z.infer<typeof updateSmartLinkSchema>["body"];
 export type GetManySmartLinksInput = z.infer<typeof getManySmartLinksSchema>["query"];
+export type GetSmartLinkAnalyticsInput = z.infer<typeof getSmartLinkAnalyticsSchema>["query"];

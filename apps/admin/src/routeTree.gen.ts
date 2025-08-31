@@ -21,6 +21,7 @@ import { Route as DashboardTribeCollectionsRouteImport } from './routes/_dashboa
 import { Route as DashboardWebsiteThemesIndexRouteImport } from './routes/_dashboard/website/themes/index'
 import { Route as DashboardWebsiteMessagesIndexRouteImport } from './routes/_dashboard/website/messages/index'
 import { Route as DashboardWebsiteHomeIndexRouteImport } from './routes/_dashboard/website/home/index'
+import { Route as DashboardWebsiteAnalyticsIndexRouteImport } from './routes/_dashboard/website/analytics/index'
 import { Route as DashboardTribePostsIndexRouteImport } from './routes/_dashboard/tribe/posts/index'
 import { Route as DashboardTribeMessagesIndexRouteImport } from './routes/_dashboard/tribe/messages/index'
 import { Route as DashboardTribeMembershipTiersIndexRouteImport } from './routes/_dashboard/tribe/membership-tiers/index'
@@ -53,6 +54,7 @@ import { Route as DashboardStoreProductsProductIdEditRouteImport } from './route
 import { Route as DashboardStoreMusicProductIdEditRouteImport } from './routes/_dashboard/store/music/$productId.edit'
 import { Route as DashboardSmartLinksTemplatesSlugPreviewRouteImport } from './routes/_dashboard/smart-links/templates/$slug.preview'
 import { Route as DashboardSmartLinksLinksSmartLinkIdEditRouteImport } from './routes/_dashboard/smart-links/links/$smartLinkId.edit'
+import { Route as DashboardSmartLinksLinksSmartLinkIdAnalyticsRouteImport } from './routes/_dashboard/smart-links/links/$smartLinkId.analytics'
 import { Route as DashboardEmailsTemplatesTemplateIdEditRouteImport } from './routes/_dashboard/emails/templates/$templateId.edit'
 import { Route as DashboardEmailsEmailsEmailIdReportRouteImport } from './routes/_dashboard/emails/emails/$emailId.report'
 
@@ -116,6 +118,12 @@ const DashboardWebsiteHomeIndexRoute =
   DashboardWebsiteHomeIndexRouteImport.update({
     id: '/website/home/',
     path: '/website/home/',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardWebsiteAnalyticsIndexRoute =
+  DashboardWebsiteAnalyticsIndexRouteImport.update({
+    id: '/website/analytics/',
+    path: '/website/analytics/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
 const DashboardTribePostsIndexRoute =
@@ -310,6 +318,12 @@ const DashboardSmartLinksLinksSmartLinkIdEditRoute =
     path: '/smart-links/links/$smartLinkId/edit',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute =
+  DashboardSmartLinksLinksSmartLinkIdAnalyticsRouteImport.update({
+    id: '/smart-links/links/$smartLinkId/analytics',
+    path: '/smart-links/links/$smartLinkId/analytics',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardEmailsTemplatesTemplateIdEditRoute =
   DashboardEmailsTemplatesTemplateIdEditRouteImport.update({
     id: '/emails/templates/$templateId/edit',
@@ -355,11 +369,13 @@ export interface FileRoutesByFullPath {
   '/tribe/membership-tiers': typeof DashboardTribeMembershipTiersIndexRoute
   '/tribe/messages': typeof DashboardTribeMessagesIndexRoute
   '/tribe/posts': typeof DashboardTribePostsIndexRoute
+  '/website/analytics': typeof DashboardWebsiteAnalyticsIndexRoute
   '/website/home': typeof DashboardWebsiteHomeIndexRoute
   '/website/messages': typeof DashboardWebsiteMessagesIndexRoute
   '/website/themes': typeof DashboardWebsiteThemesIndexRoute
   '/emails/emails/$emailId/report': typeof DashboardEmailsEmailsEmailIdReportRoute
   '/emails/templates/$templateId/edit': typeof DashboardEmailsTemplatesTemplateIdEditRoute
+  '/smart-links/links/$smartLinkId/analytics': typeof DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute
   '/smart-links/links/$smartLinkId/edit': typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   '/smart-links/templates/$slug/preview': typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   '/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
@@ -401,11 +417,13 @@ export interface FileRoutesByTo {
   '/tribe/membership-tiers': typeof DashboardTribeMembershipTiersIndexRoute
   '/tribe/messages': typeof DashboardTribeMessagesIndexRoute
   '/tribe/posts': typeof DashboardTribePostsIndexRoute
+  '/website/analytics': typeof DashboardWebsiteAnalyticsIndexRoute
   '/website/home': typeof DashboardWebsiteHomeIndexRoute
   '/website/messages': typeof DashboardWebsiteMessagesIndexRoute
   '/website/themes': typeof DashboardWebsiteThemesIndexRoute
   '/emails/emails/$emailId/report': typeof DashboardEmailsEmailsEmailIdReportRoute
   '/emails/templates/$templateId/edit': typeof DashboardEmailsTemplatesTemplateIdEditRoute
+  '/smart-links/links/$smartLinkId/analytics': typeof DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute
   '/smart-links/links/$smartLinkId/edit': typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   '/smart-links/templates/$slug/preview': typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   '/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
@@ -450,11 +468,13 @@ export interface FileRoutesById {
   '/_dashboard/tribe/membership-tiers/': typeof DashboardTribeMembershipTiersIndexRoute
   '/_dashboard/tribe/messages/': typeof DashboardTribeMessagesIndexRoute
   '/_dashboard/tribe/posts/': typeof DashboardTribePostsIndexRoute
+  '/_dashboard/website/analytics/': typeof DashboardWebsiteAnalyticsIndexRoute
   '/_dashboard/website/home/': typeof DashboardWebsiteHomeIndexRoute
   '/_dashboard/website/messages/': typeof DashboardWebsiteMessagesIndexRoute
   '/_dashboard/website/themes/': typeof DashboardWebsiteThemesIndexRoute
   '/_dashboard/emails/emails/$emailId/report': typeof DashboardEmailsEmailsEmailIdReportRoute
   '/_dashboard/emails/templates/$templateId/edit': typeof DashboardEmailsTemplatesTemplateIdEditRoute
+  '/_dashboard/smart-links/links/$smartLinkId/analytics': typeof DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute
   '/_dashboard/smart-links/links/$smartLinkId/edit': typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   '/_dashboard/smart-links/templates/$slug/preview': typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   '/_dashboard/store/music/$productId/edit': typeof DashboardStoreMusicProductIdEditRoute
@@ -498,11 +518,13 @@ export interface FileRouteTypes {
     | '/tribe/membership-tiers'
     | '/tribe/messages'
     | '/tribe/posts'
+    | '/website/analytics'
     | '/website/home'
     | '/website/messages'
     | '/website/themes'
     | '/emails/emails/$emailId/report'
     | '/emails/templates/$templateId/edit'
+    | '/smart-links/links/$smartLinkId/analytics'
     | '/smart-links/links/$smartLinkId/edit'
     | '/smart-links/templates/$slug/preview'
     | '/store/music/$productId/edit'
@@ -544,11 +566,13 @@ export interface FileRouteTypes {
     | '/tribe/membership-tiers'
     | '/tribe/messages'
     | '/tribe/posts'
+    | '/website/analytics'
     | '/website/home'
     | '/website/messages'
     | '/website/themes'
     | '/emails/emails/$emailId/report'
     | '/emails/templates/$templateId/edit'
+    | '/smart-links/links/$smartLinkId/analytics'
     | '/smart-links/links/$smartLinkId/edit'
     | '/smart-links/templates/$slug/preview'
     | '/store/music/$productId/edit'
@@ -592,11 +616,13 @@ export interface FileRouteTypes {
     | '/_dashboard/tribe/membership-tiers/'
     | '/_dashboard/tribe/messages/'
     | '/_dashboard/tribe/posts/'
+    | '/_dashboard/website/analytics/'
     | '/_dashboard/website/home/'
     | '/_dashboard/website/messages/'
     | '/_dashboard/website/themes/'
     | '/_dashboard/emails/emails/$emailId/report'
     | '/_dashboard/emails/templates/$templateId/edit'
+    | '/_dashboard/smart-links/links/$smartLinkId/analytics'
     | '/_dashboard/smart-links/links/$smartLinkId/edit'
     | '/_dashboard/smart-links/templates/$slug/preview'
     | '/_dashboard/store/music/$productId/edit'
@@ -696,6 +722,13 @@ declare module '@tanstack/react-router' {
       path: '/website/home'
       fullPath: '/website/home'
       preLoaderRoute: typeof DashboardWebsiteHomeIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/website/analytics/': {
+      id: '/_dashboard/website/analytics/'
+      path: '/website/analytics'
+      fullPath: '/website/analytics'
+      preLoaderRoute: typeof DashboardWebsiteAnalyticsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/tribe/posts/': {
@@ -922,6 +955,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSmartLinksLinksSmartLinkIdEditRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/smart-links/links/$smartLinkId/analytics': {
+      id: '/_dashboard/smart-links/links/$smartLinkId/analytics'
+      path: '/smart-links/links/$smartLinkId/analytics'
+      fullPath: '/smart-links/links/$smartLinkId/analytics'
+      preLoaderRoute: typeof DashboardSmartLinksLinksSmartLinkIdAnalyticsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/emails/templates/$templateId/edit': {
       id: '/_dashboard/emails/templates/$templateId/edit'
       path: '/emails/templates/$templateId/edit'
@@ -984,11 +1024,13 @@ interface DashboardRouteRouteChildren {
   DashboardTribeMembershipTiersIndexRoute: typeof DashboardTribeMembershipTiersIndexRoute
   DashboardTribeMessagesIndexRoute: typeof DashboardTribeMessagesIndexRoute
   DashboardTribePostsIndexRoute: typeof DashboardTribePostsIndexRoute
+  DashboardWebsiteAnalyticsIndexRoute: typeof DashboardWebsiteAnalyticsIndexRoute
   DashboardWebsiteHomeIndexRoute: typeof DashboardWebsiteHomeIndexRoute
   DashboardWebsiteMessagesIndexRoute: typeof DashboardWebsiteMessagesIndexRoute
   DashboardWebsiteThemesIndexRoute: typeof DashboardWebsiteThemesIndexRoute
   DashboardEmailsEmailsEmailIdReportRoute: typeof DashboardEmailsEmailsEmailIdReportRoute
   DashboardEmailsTemplatesTemplateIdEditRoute: typeof DashboardEmailsTemplatesTemplateIdEditRoute
+  DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute: typeof DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute
   DashboardSmartLinksLinksSmartLinkIdEditRoute: typeof DashboardSmartLinksLinksSmartLinkIdEditRoute
   DashboardSmartLinksTemplatesSlugPreviewRoute: typeof DashboardSmartLinksTemplatesSlugPreviewRoute
   DashboardStoreMusicProductIdEditRoute: typeof DashboardStoreMusicProductIdEditRoute
@@ -1032,6 +1074,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
     DashboardTribeMembershipTiersIndexRoute,
   DashboardTribeMessagesIndexRoute: DashboardTribeMessagesIndexRoute,
   DashboardTribePostsIndexRoute: DashboardTribePostsIndexRoute,
+  DashboardWebsiteAnalyticsIndexRoute: DashboardWebsiteAnalyticsIndexRoute,
   DashboardWebsiteHomeIndexRoute: DashboardWebsiteHomeIndexRoute,
   DashboardWebsiteMessagesIndexRoute: DashboardWebsiteMessagesIndexRoute,
   DashboardWebsiteThemesIndexRoute: DashboardWebsiteThemesIndexRoute,
@@ -1039,6 +1082,8 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
     DashboardEmailsEmailsEmailIdReportRoute,
   DashboardEmailsTemplatesTemplateIdEditRoute:
     DashboardEmailsTemplatesTemplateIdEditRoute,
+  DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute:
+    DashboardSmartLinksLinksSmartLinkIdAnalyticsRoute,
   DashboardSmartLinksLinksSmartLinkIdEditRoute:
     DashboardSmartLinksLinksSmartLinkIdEditRoute,
   DashboardSmartLinksTemplatesSlugPreviewRoute:

@@ -10,7 +10,7 @@ import {
 } from "@tribe-nest/frontend-shared";
 
 import { Editor, Frame } from "@craftjs/core";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export const LinkRenderer = ({ smartLink }: { smartLink: SmartLink }) => {
   const { isInitialized } = usePublicAuth();
@@ -36,9 +36,16 @@ export const LinkRenderer = ({ smartLink }: { smartLink: SmartLink }) => {
 
 const PageContent = ({ smartLink }: { smartLink: SmartLink }) => {
   const { themeSettings, trackEvent } = useEditorContext();
+  const isPageViewTracked = useRef(false);
 
   useEffect(() => {
-    trackEvent?.("page_view");
+    if (isPageViewTracked.current) {
+      return;
+    }
+    if (trackEvent) {
+      isPageViewTracked.current = true;
+      trackEvent?.("page_view");
+    }
   }, [trackEvent]);
 
   return (

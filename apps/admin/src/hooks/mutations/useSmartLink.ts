@@ -56,8 +56,8 @@ export const useUpdateSmartLink = () => {
 export const useArchiveSmartLink = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (smartLinkId: string) => {
-      const { data } = await httpClient.post(`/smart-links/${smartLinkId}/archive`);
+    mutationFn: async ({ smartLinkId, profileId }: { smartLinkId: string; profileId: string }) => {
+      const { data } = await httpClient.delete(`/smart-links/${smartLinkId}`, { params: { profileId } });
       return data as SmartLink;
     },
     onSuccess: () => {
@@ -71,8 +71,8 @@ export const useArchiveSmartLink = () => {
 export const useUnarchiveSmartLink = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (smartLinkId: string) => {
-      const { data } = await httpClient.post(`/smart-links/${smartLinkId}/unarchive`);
+    mutationFn: async ({ smartLinkId, profileId }: { smartLinkId: string; profileId: string }) => {
+      const { data } = await httpClient.post(`/smart-links/${smartLinkId}/unarchive`, {}, { params: { profileId } });
       return data as SmartLink;
     },
     onSuccess: () => {

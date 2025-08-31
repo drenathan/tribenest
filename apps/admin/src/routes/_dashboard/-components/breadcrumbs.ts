@@ -64,6 +64,14 @@ export const breadcrumbs: Record<
     links: [{ label: "Website", href: "/website/home" }],
     currentPage: "Themes",
   },
+  "/website/analytics": {
+    links: [{ label: "Website", href: "/website/home" }],
+    currentPage: "Analytics",
+  },
+  "/website/home": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Website Home",
+  },
   "/website/themes/create": {
     links: [
       { label: "Website", href: "/website/home" },
@@ -82,6 +90,13 @@ export const breadcrumbs: Record<
   "/smart-links/links": {
     links: [{ label: "Home", href: "/" }],
     currentPage: "Smart Links",
+  },
+  "/smart-links/links/$smartLinkId/analytics": {
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Smart Links", goBack: true },
+    ],
+    currentPage: "Analytics",
   },
   "/smart-links/templates": {
     links: [{ label: "Home", href: "/" }],

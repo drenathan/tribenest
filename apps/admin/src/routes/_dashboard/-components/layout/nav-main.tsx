@@ -31,6 +31,10 @@ const items: NavItem[] = [
         path: "/website/home",
       },
       {
+        title: "Analytics",
+        path: "/website/analytics",
+      },
+      {
         title: "Themes",
         path: "/website/themes",
       },

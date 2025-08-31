@@ -2,7 +2,7 @@ import { useGetWebsites } from "@/hooks/queries/useWebsite";
 
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import PageHeader from "../../-components/layout/page-header";
-import { Badge, Button, Card, CardContent } from "@tribe-nest/frontend-shared";
+import { Badge, Button, Card, CardContent, cn } from "@tribe-nest/frontend-shared";
 import { useAuth } from "@/hooks/useAuth";
 import EmptyState from "@/components/empty-state";
 
@@ -29,9 +29,13 @@ function RouteComponent() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
         {websiteVersions?.map((version) => (
-          <Card key={version.id} className="relative">
+          <Card key={version.id} className={cn("relative", version.isActive && "md:col-span-2 lg:col-span-3")}>
             {version.isActive && <Badge className="absolute top-2 right-2">Active</Badge>}
-            <img src={version.themeThumbnail} alt={version.themeName} className="w-full h-50 object-cover" />
+            <img
+              src={version.themeThumbnail}
+              alt={version.themeName}
+              className={cn("w-full h-50 object-cover", version.isActive && "h-100")}
+            />
             <CardContent className="text-center flex flex-col gap-2">
               <h3 className="text-lg font-bold">Version: {version.version}</h3>
               <Button

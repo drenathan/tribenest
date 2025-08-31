@@ -19,7 +19,7 @@ import InternalPageRenderer from "../../_components/internal-page-renderer";
 
 export function LoginContent() {
   return (
-    <InternalPageRenderer>
+    <InternalPageRenderer pagePathname="/login" pageTitle="Login">
       <Content />
     </InternalPageRenderer>
   );
