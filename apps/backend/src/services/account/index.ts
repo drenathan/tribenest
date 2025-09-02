@@ -17,8 +17,8 @@ export class AccountService extends BaseService {
     return account;
   }
 
-  public async createAccount(input: CreateAccountInput, userAgent?: Details) {
-    if (!MULTI_TENANT) {
+  public async createAccount(input: CreateAccountInput, userAgent?: Details, isPublic?: boolean) {
+    if (!MULTI_TENANT && !isPublic) {
       const profile = await this.database.models.Profile.findOne({
         subdomain: "default-site",
       });

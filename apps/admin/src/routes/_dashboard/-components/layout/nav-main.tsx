@@ -8,9 +8,10 @@ import {
   Link2Icon,
   Mails,
   Settings,
-  Share2,
+  // Share2,
   ShoppingBag,
   Users,
+  Video,
 } from "lucide-react";
 
 type NavItem = {
@@ -140,16 +141,27 @@ const items: NavItem[] = [
     ],
   },
   {
-    title: "Social Media",
-    path: "/social-media",
-    icon: Share2,
+    title: "Live Stream",
+    path: "/stream",
+    icon: Video,
     items: [
       {
-        title: "Connections",
-        path: "/social-media/connections",
+        title: "Studio",
+        path: "/stream/studio",
       },
     ],
   },
+  // {
+  //   title: "Social Media",
+  //   path: "/social-media",
+  //   icon: Share2,
+  //   items: [
+  //     {
+  //       title: "Connections",
+  //       path: "/social-media/connections",
+  //     },
+  //   ],
+  // },
 ];
 
 import {

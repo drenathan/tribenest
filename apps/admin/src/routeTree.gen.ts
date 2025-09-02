@@ -18,6 +18,7 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-pa
 import { Route as DashboardTribeIndexRouteImport } from './routes/_dashboard/tribe/index'
 import { Route as DashboardSettingsIndexRouteImport } from './routes/_dashboard/settings/index'
 import { Route as DashboardTribeCollectionsRouteImport } from './routes/_dashboard/tribe/collections'
+import { Route as DashboardStreamStudioRouteImport } from './routes/_dashboard/stream/studio'
 import { Route as DashboardWebsiteThemesIndexRouteImport } from './routes/_dashboard/website/themes/index'
 import { Route as DashboardWebsiteMessagesIndexRouteImport } from './routes/_dashboard/website/messages/index'
 import { Route as DashboardWebsiteHomeIndexRouteImport } from './routes/_dashboard/website/home/index'
@@ -102,6 +103,11 @@ const DashboardTribeCollectionsRoute =
     path: '/tribe/collections',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardStreamStudioRoute = DashboardStreamStudioRouteImport.update({
+  id: '/stream/studio',
+  path: '/stream/studio',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardWebsiteThemesIndexRoute =
   DashboardWebsiteThemesIndexRouteImport.update({
     id: '/website/themes/',
@@ -342,6 +348,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
+  '/stream/studio': typeof DashboardStreamStudioRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
@@ -390,6 +397,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
+  '/stream/studio': typeof DashboardStreamStudioRoute
   '/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
@@ -441,6 +449,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/stream/studio': typeof DashboardStreamStudioRoute
   '/_dashboard/tribe/collections': typeof DashboardTribeCollectionsRoute
   '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_dashboard/tribe/': typeof DashboardTribeIndexRoute
@@ -491,6 +500,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/'
+    | '/stream/studio'
     | '/tribe/collections'
     | '/settings'
     | '/tribe'
@@ -539,6 +549,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/'
+    | '/stream/studio'
     | '/tribe/collections'
     | '/settings'
     | '/tribe'
@@ -589,6 +600,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/signup'
     | '/_dashboard/'
+    | '/_dashboard/stream/studio'
     | '/_dashboard/tribe/collections'
     | '/_dashboard/settings/'
     | '/_dashboard/tribe/'
@@ -701,6 +713,13 @@ declare module '@tanstack/react-router' {
       path: '/tribe/collections'
       fullPath: '/tribe/collections'
       preLoaderRoute: typeof DashboardTribeCollectionsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/stream/studio': {
+      id: '/_dashboard/stream/studio'
+      path: '/stream/studio'
+      fullPath: '/stream/studio'
+      preLoaderRoute: typeof DashboardStreamStudioRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/website/themes/': {
@@ -997,6 +1016,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardStreamStudioRoute: typeof DashboardStreamStudioRoute
   DashboardTribeCollectionsRoute: typeof DashboardTribeCollectionsRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardTribeIndexRoute: typeof DashboardTribeIndexRoute
@@ -1043,6 +1063,7 @@ interface DashboardRouteRouteChildren {
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardStreamStudioRoute: DashboardStreamStudioRoute,
   DashboardTribeCollectionsRoute: DashboardTribeCollectionsRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardTribeIndexRoute: DashboardTribeIndexRoute,

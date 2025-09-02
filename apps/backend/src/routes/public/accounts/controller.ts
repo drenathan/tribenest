@@ -19,7 +19,8 @@ export class PublicAccountsController extends BaseController {
     __: NextFunction,
     @Body body?: CreatePublicAccountInput,
   ): Promise<any> {
-    const { account, token } = await this.services.account.createAccount(body!, req.useragent);
+    const isPublic = true;
+    const { account, token } = await this.services.account.createAccount(body!, req.useragent, isPublic);
     await this.services.membership.createMembership({
       profileId: body!.profileId,
       accountId: account.id,
