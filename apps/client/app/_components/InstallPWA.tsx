@@ -1,6 +1,6 @@
 "use client";
 
-import { EditorButtonWithoutEditor, useEditorContext } from "@tribe-nest/frontend-shared";
+import { EditorButtonWithoutEditor, FontFamily, useEditorContext } from "@tribe-nest/frontend-shared";
 import { usePWA } from "../../lib/hooks/usePWA";
 import { useState } from "react";
 import { X } from "lucide-react";
@@ -31,7 +31,12 @@ export function InstallPWABanner() {
   }
 
   return (
-    <div className={`fixed bottom-4 right-4 z-100`}>
+    <div
+      className={`fixed bottom-4 right-4 z-100`}
+      style={{
+        fontFamily: themeSettings?.fontFamily || FontFamily.Inter,
+      }}
+    >
       <div
         className="border rounded-lg shadow-lg p-3 max-w-sm"
         style={{

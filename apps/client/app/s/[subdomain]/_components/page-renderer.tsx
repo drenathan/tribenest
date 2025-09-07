@@ -2,6 +2,7 @@
 
 import {
   editorResolver,
+  FontFamily,
   RenderNode,
   useEditorContext,
   usePublicAuth,
@@ -11,6 +12,7 @@ import { WebPage } from "../_api";
 
 import { Editor, Frame } from "@craftjs/core";
 import { useEffect, useRef } from "react";
+import { fontMap } from "./fonts";
 
 export const PageRenderer = ({ webPage, paramId }: { webPage: WebPage; paramId?: string }) => {
   const theme = websiteThemes.find((theme) => theme.slug === webPage.themeName);
@@ -65,8 +67,11 @@ export const PageRenderer = ({ webPage, paramId }: { webPage: WebPage; paramId?:
 };
 
 const PageContent = ({ webPage }: { webPage: WebPage }) => {
+  const selectedFont = webPage.themeSettings.fontFamily;
+  const font = fontMap[selectedFont as keyof typeof fontMap];
+
   return (
-    <div className="w-full h-full">
+    <div className={`w-full h-full`} style={{ fontFamily: font.style.fontFamily || FontFamily.Inter }}>
       <Frame data={webPage.page.content}></Frame>
     </div>
   );

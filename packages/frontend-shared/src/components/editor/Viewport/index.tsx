@@ -5,7 +5,7 @@ import React, { useRef } from "react";
 import { Sidebar } from "./Sidebar";
 import { Toolbox } from "./Toolbox";
 import { cn } from "../../../lib/utils";
-import { ContainerQueryProvider } from "../context";
+import { ContainerQueryProvider, useEditorContext } from "../context";
 
 export const Viewport: React.FC<{ children?: React.ReactNode; isMobile: boolean; isPreview?: boolean }> = ({
   children,
@@ -17,6 +17,7 @@ export const Viewport: React.FC<{ children?: React.ReactNode; isMobile: boolean;
   const { enabled, connectors } = useEditor((state) => ({
     enabled: state.options.enabled,
   }));
+  const { themeSettings } = useEditorContext();
 
   return (
     <ContainerQueryProvider ref={ref}>
@@ -45,6 +46,9 @@ export const Viewport: React.FC<{ children?: React.ReactNode; isMobile: boolean;
                   "w-[375px]": isMobile,
                   "w-full": !isMobile,
                 })}
+                style={{
+                  fontFamily: themeSettings.fontFamily || "Plus Jakarta Sans, sans-serif",
+                }}
               >
                 {children}
               </div>

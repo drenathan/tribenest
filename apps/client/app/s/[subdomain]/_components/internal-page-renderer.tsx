@@ -1,5 +1,6 @@
 "use client";
-import { PageHeaderWithoutEditor, useEditorContext, usePublicAuth } from "@tribe-nest/frontend-shared";
+import { FontFamily, PageHeaderWithoutEditor, useEditorContext, usePublicAuth } from "@tribe-nest/frontend-shared";
+import { fontMap } from "./fonts";
 import { useEffect, useRef } from "react";
 
 type Props = {
@@ -12,6 +13,7 @@ export function InternalPageRenderer({ children, pageTitle, pagePathname }: Prop
   const { themeSettings, trackEvent } = useEditorContext();
   const { isInitialized } = usePublicAuth();
   const isPageViewTracked = useRef(false);
+  const font = fontMap[themeSettings.fontFamily as keyof typeof fontMap];
 
   useEffect(() => {
     if (isPageViewTracked.current) {
@@ -31,7 +33,13 @@ export function InternalPageRenderer({ children, pageTitle, pagePathname }: Prop
   }
 
   return (
-    <div className="w-full min-h-screen h-auto" style={{ backgroundColor: themeSettings.colors.background }}>
+    <div
+      className="w-full min-h-screen h-auto"
+      style={{
+        backgroundColor: themeSettings.colors.background,
+        fontFamily: font.style.fontFamily || FontFamily.Inter,
+      }}
+    >
       <PageHeaderWithoutEditor hasBorder={true} />
       {children}
     </div>

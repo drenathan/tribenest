@@ -440,3 +440,31 @@ export type ITicketOrderItem = {
   price: number;
   title: string;
 };
+
+export enum FontFamily {
+  // Modern Sans-Serif Fonts
+  Inter = "Inter, sans-serif",
+  Poppins = "Poppins, sans-serif",
+  Montserrat = "Montserrat, sans-serif",
+  OpenSans = "Open Sans, sans-serif",
+  Roboto = "Roboto, sans-serif",
+  Lato = "Lato, sans-serif",
+  SourceSansPro = "Source Sans Pro, sans-serif",
+  Nunito = "Nunito, sans-serif",
+  Raleway = "Raleway, sans-serif",
+  Ubuntu = "Ubuntu, sans-serif",
+
+  // Elegant Serif Fonts
+  PlayfairDisplay = "Playfair Display, serif",
+  Merriweather = "Merriweather, serif",
+  Lora = "Lora, serif",
+  CrimsonText = "Crimson Text, serif",
+  LibreBaskerville = "Libre Baskerville, serif",
+
+  // Bold Display Fonts
+  Oswald = "Oswald, sans-serif",
+  BebasNeue = "Bebas Neue, sans-serif",
+  FjallaOne = "Fjalla One, sans-serif",
+  Anton = "Anton, sans-serif",
+  Righteous = "Righteous, sans-serif",
+}
