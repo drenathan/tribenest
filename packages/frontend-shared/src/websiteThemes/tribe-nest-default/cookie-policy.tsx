@@ -3,7 +3,7 @@
 import { Element } from "@craftjs/core";
 import { Container, EditorFooter, EditorRichText, PageHeader } from "../../components/editor/selectors";
 
-export default function PrivacyPolicyPage() {
+export default function CookiePolicyPage() {
   return (
     <Element
       canvas
@@ -16,15 +16,15 @@ export default function PrivacyPolicyPage() {
     >
       <PageHeader logo={""} background={""} hasBorder={true} />
       <Container height="100%">
-        <EditorRichText text="Privacy Policy Content" />
+        <EditorRichText text="Cookie Policy Content" />
       </Container>
       <EditorFooter />
     </Element>
   );
 }
 
-PrivacyPolicyPage.craft = {
-  name: "PrivacyPolicyPage",
+CookiePolicyPage.craft = {
+  name: "CookiePolicyPage",
   custom: {
     preventDelete: true,
   },

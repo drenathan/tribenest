@@ -8,7 +8,7 @@ import { EditorSocialIcons } from "../SocialIcons";
 type EditorFooterProps = {};
 
 export const EditorFooter: UserComponent<EditorFooterProps> = () => {
-  const { profile, themeSettings } = useEditorContext();
+  const { profile, themeSettings, navigate } = useEditorContext();
 
   const {
     connectors: { connect },
@@ -34,6 +34,29 @@ export const EditorFooter: UserComponent<EditorFooterProps> = () => {
         </p>
         <EditorSocialIcons />
       </div>
+      <ul className="flex items-center gap-4 justify-center">
+        <li
+          role="link"
+          onClick={() => navigate("/privacy-policy")}
+          className="cursor-pointer hover:opacity-80 transition-opacity hover:underline"
+        >
+          Privacy Policy
+        </li>
+        <li
+          role="link"
+          onClick={() => navigate("/terms-of-service")}
+          className="cursor-pointer hover:opacity-80 transition-opacity hover:underline"
+        >
+          Terms of Service
+        </li>
+        <li
+          role="link"
+          onClick={() => navigate("/cookie-policy")}
+          className="cursor-pointer hover:opacity-80 transition-opacity hover:underline"
+        >
+          Cookie Policy
+        </li>
+      </ul>
 
       <div
         className="flex justify-center items-center mt-6"

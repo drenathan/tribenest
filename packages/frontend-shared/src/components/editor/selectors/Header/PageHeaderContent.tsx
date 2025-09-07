@@ -62,7 +62,7 @@ function PageHeaderContent({
 
         <ul className="items-center gap-4 hidden @md:flex">
           {themeSettings.headerLinks.map((link) => (
-            <li className="cursor-pointer" key={link.href} onClick={() => navigate(link.href)}>
+            <li role="link" className="cursor-pointer" key={link.href} onClick={() => navigate(link.href)}>
               {link.label}
             </li>
           ))}

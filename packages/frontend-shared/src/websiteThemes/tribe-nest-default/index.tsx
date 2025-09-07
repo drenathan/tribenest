@@ -1,7 +1,7 @@
 import IndexPage from "./index.page";
 import PrivacyPolicyPage from "./privacy-policy";
 import MembersPage from "./members.page";
-import type { ThemeConfig } from "@tribe-nest/frontend-shared";
+import { FontFamily, type ThemeConfig } from "@tribe-nest/frontend-shared";
 import { PostsPage } from "./components/PostsPage";
 import { ActionButton, PollContent, PostItem, PostMedia } from "./components/PostItem";
 import { MusicPageContent } from "./components/MusicPageContent";
@@ -15,6 +15,8 @@ import { MusicItemDetails } from "./components/MusicItemDetails";
 import { ProductDetails } from "./components/ProductDetails";
 import ContactPage from "./contact";
 import { ContactPageContent } from "./components/ContactPageContent";
+import TermsOfServicePage from "./terms-of-service";
+import CookiePolicyPage from "./cookie-policy";
 
 export default {
   name: "TribeNest Default",
@@ -32,7 +34,7 @@ export default {
       textPrimary: "#160404",
     },
     cornerRadius: "10",
-    fontFamily: "Arial",
+    fontFamily: FontFamily.Inter,
     logo: "https://assets-dev.coumo.com/default_theme_screenshot.png",
     headerLinks: [
       { href: "/members", label: "Members" },
@@ -51,16 +53,6 @@ export default {
       pathname: "/",
       title: "Home",
       Component: IndexPage,
-    },
-    {
-      pathname: "/privacy-policy",
-      title: "Privacy Policy",
-      Component: PrivacyPolicyPage,
-    },
-    {
-      pathname: "/contact",
-      title: "Contact",
-      Component: ContactPage,
     },
     {
       pathname: "/members",
@@ -88,6 +80,26 @@ export default {
       title: "Store Item",
       Component: MusicDetailsPage,
       deprecated: true,
+    },
+    {
+      pathname: "/terms-of-service",
+      title: "Terms of Service",
+      Component: TermsOfServicePage,
+    },
+    {
+      pathname: "/cookie-policy",
+      title: "Cookie Policy",
+      Component: CookiePolicyPage,
+    },
+    {
+      pathname: "/privacy-policy",
+      title: "Privacy Policy",
+      Component: PrivacyPolicyPage,
+    },
+    {
+      pathname: "/contact",
+      title: "Contact",
+      Component: ContactPage,
     },
   ],
   editorResolver: {
