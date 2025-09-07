@@ -37,7 +37,7 @@ export function InternalPageRenderer({ children, pageTitle, pagePathname }: Prop
       className="w-full min-h-screen h-auto"
       style={{
         backgroundColor: themeSettings.colors.background,
-        fontFamily: font.style.fontFamily || FontFamily.Inter,
+        fontFamily: font?.style?.fontFamily || FontFamily.Inter,
       }}
     >
       <PageHeaderWithoutEditor hasBorder={true} />
