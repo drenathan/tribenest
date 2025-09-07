@@ -43,6 +43,43 @@ services:
     networks:
       - tribenest-dev-network
 
+  livekit:
+    image: livekit/livekit-server:latest
+    command: --config /etc/livekit.yaml
+    restart: unless-stopped
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "50000-50100:50000-50100/udp"
+    volumes:
+      - ./livekit/livekit.yaml:/etc/livekit.yaml
+  livekit-redis:
+    image: redis:7-alpine
+    command: redis-server /etc/redis.conf
+    restart: unless-stopped
+    ports:
+      - "6378:6378"
+    volumes:
+      - ./livekit/redis.conf:/etc/redis.conf
+  egress:
+    image: livekit/egress:latest
+    restart: unless-stopped
+    environment:
+      - EGRESS_CONFIG_FILE=/etc/egress.yaml
+    network_mode: "host"
+    volumes:
+      - ./livekit/egress.yaml:/etc/egress.yaml
+    cap_add:
+      - CAP_SYS_ADMIN
+  ingress:
+    image: livekit/ingress:latest
+    restart: unless-stopped
+    environment:
+      - INGRESS_CONFIG_FILE=/etc/ingress.yaml
+    network_mode: "host"
+    volumes:
+      - ./livekit/ingress.yaml:/etc/ingress.yaml
+
   # Minio storage
   minio:
     image: minio/minio:latest

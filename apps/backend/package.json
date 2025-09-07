@@ -85,6 +85,7 @@
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.2",
     "kysely-codegen": "^0.18.3",
+    "livekit-server-sdk": "^2.13.3",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "next": "^15.0.0",

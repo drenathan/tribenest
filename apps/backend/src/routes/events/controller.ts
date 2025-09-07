@@ -19,6 +19,8 @@ import {
   GetOrdersInput,
 } from "./schema";
 import * as policy from "./policy";
+import { AccessToken, EgressClient, StreamOutput, StreamProtocol, RoomServiceClient } from "livekit-server-sdk";
+import { LIVEKIT_API_KEY, LIVEKIT_API_SECRET, LIVEKIT_URL } from "@src/configuration/secrets";
 
 export class EventsController extends BaseController {
   @RouteHandler()
@@ -166,5 +168,77 @@ export class EventsController extends BaseController {
   @isAuthorized(policy.getAll)
   public async getOrders(req: Request, res: Response, next: NextFunction, @Query query?: GetOrdersInput): Promise<any> {
     return this.services.admin.event.getOrders(query!);
+  }
+
+  @RouteHandler()
+  @ValidateSchema(profileIdQuerySchema)
+  @isAuthorized(policy.create)
+  public async createRoom(req: Request, res: Response, next: NextFunction): Promise<any> {
+    const roomId = "test-room";
+    const name = req.account?.firstName + " " + req.account?.lastName;
+    const at = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
+      identity: name + Date.now().toString(),
+    });
+    at.addGrant({ room: roomId, roomJoin: true });
+
+    const token = await at.toJwt();
+    return { roomId, token };
+  }
+
+  @RouteHandler()
+  // @ValidateSchema(profileIdQuerySchema)
+  // @isAuthorized(policy.create)
+  public async goLive(req: Request, res: Response, next: NextFunction): Promise<any> {
+    const roomId = "egress-testing";
+    const name = req.account?.firstName + " " + req.account?.lastName;
+    const at = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
+      identity: name,
+    });
+    at.addGrant({ room: roomId, roomJoin: true });
+
+    const token = await at.toJwt();
+
+    return { roomId, token };
+  }
+
+  @RouteHandler()
+  // @ValidateSchema(profileIdQuerySchema)
+  // @isAuthorized(policy.create)
+  public async startEgress(req: Request, res: Response, next: NextFunction): Promise<any> {
+    const roomId = "egress-testing";
+
+    // const roomService = new RoomServiceClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET);
+
+    // const [participant] = await roomService.listParticipants(roomId);
+    // console.log(JSON.stringify(participant.tracks, null, 2));
+
+    const egressClient = new EgressClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET);
+    // console.log("starting egress");
+
+    const egress = await egressClient.startRoomCompositeEgress(roomId, {
+      stream: new StreamOutput({
+        protocol: StreamProtocol.RTMP,
+        urls: [
+          "rtmp://x.rtmp.youtube.com/live2/c4tt-8aat-8zxt-ewm0-2dsk",
+          "rtmp://live.twitch.tv/app/live_540201758_BwgFeAeY0IrKJZaBrh6Yxa9uZ5WadM",
+        ],
+      }),
+    });
+    // const egress = await egressClient.startTrackCompositeEgress(
+    //   roomId,
+    //   {
+    //     stream: new StreamOutput({
+    //       protocol: StreamProtocol.RTMP,
+    //       urls: [
+    //         "rtmp://x.rtmp.youtube.com/live2/c4tt-8aat-8zxt-ewm0-2dsk",
+    //         "rtmp://live.twitch.tv/app/live_540201758_BwgFeAeY0IrKJZaBrh6Yxa9uZ5WadM",
+    //       ],
+    //     }),
+    //   },
+    //   { videoTrackId: participant.tracks[0].sid },
+    // );
+
+    console.log(egress, "egressId");
+    // const name = req.account?.firstName + " " + req.account?.lastName;
   }
 }

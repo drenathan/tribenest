@@ -9,10 +9,7 @@ import {
 } from "@/types/auth";
 import httpClient, { setHttpClientToken } from "@/services/httpClient";
 import { type ApiError } from "@tribe-nest/frontend-shared";
-import {
-  type CreateAccountInput,
-  type LoginInput,
-} from "@/routes/_auth/-components/schema";
+import { type CreateAccountInput, type LoginInput } from "@/routes/_auth/-components/schema";
 
 enum Types {
   Initial = "INITIALIZE",
@@ -23,7 +20,7 @@ enum Types {
   UpdateUser = "UPDATE_USER",
   UpdateErrorMessage = "UPDATE_ERROR_MESSAGE",
 }
-const ACCESS_TOKEN_KEY = "accessToken";
+export const ACCESS_TOKEN_KEY = "accessToken";
 
 type AuthPayload = {
   [Types.Initial]: { isAuthenticated: boolean; user: AuthUser | null };
@@ -107,8 +104,7 @@ type AuthProviderProps = {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(AuthReducer, initialState);
-  const [currentProfileAuthorization, setCurrentProfileAuthorization] =
-    useState<ProfileAuthorization | null>(null);
+  const [currentProfileAuthorization, setCurrentProfileAuthorization] = useState<ProfileAuthorization | null>(null);
 
   const initialize = async () => {
     try {

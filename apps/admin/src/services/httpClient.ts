@@ -19,6 +19,23 @@ export const getApiUrl = () => {
   return "http://localhost:8000";
 };
 
+export const getMediaServerUrl = () => {
+  // In development, use the environment variable
+  if (import.meta.env.DEV) {
+    return "ws://localhost:4000";
+  }
+
+  // In production, use the same domain but different subdomain
+  const hostname = window.location.hostname;
+
+  // If we're on admin subdomain, use api subdomain
+  if (hostname.startsWith("admin.")) {
+    return `wss//media_server.${hostname.substring(6)}`;
+  }
+
+  return "ws://localhost:4000";
+};
+
 export const getLinksUrl = () => {
   if (import.meta.env.DEV) {
     return "http://links.localhost:3001";

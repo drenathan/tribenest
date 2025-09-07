@@ -1,0 +1,26 @@
+redis:
+  address: 5.78.67.114:6379
+  username: "default"
+  password: "GZXOdc7m7V3fjJEJmrc9ytgaZNf5Y5IVZDZDJJ1f7auslMzDwtrXeYEBJ9TH4mmq"
+  db: 0
+  use_tls: false
+  sentinel_master_name: ""
+  sentinel_username: ""
+  sentinel_password: ""
+  sentinel_addresses: []
+  cluster_addresses: []
+  max_redirects: null
+api_key: APIoNoBVAngZQRk
+api_secret: w1DMtHH6A22Ag3yKdc21iMEz3kd8ZW27BJafEOLI5KV
+ws_url: ws://localhost:7880
+rtmp_port: 1935
+whip_port: 8080
+http_relay_port: 9090
+logging:
+  json: false
+  level: ""
+development: false
+rtc_config:
+  udp_port: 7885
+  use_external_ip: true
+  enable_loopback_candidate: false

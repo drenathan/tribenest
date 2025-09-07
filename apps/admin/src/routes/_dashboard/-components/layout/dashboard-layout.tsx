@@ -24,13 +24,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const fullPath = routerState.matches.slice(-1)[0].fullPath;
   const breadcrumb = breadcrumbs[fullPath.endsWith("/") ? fullPath.slice(0, -1) : fullPath];
 
-  const isEditingTheme = !!routerState.matches.find((match) =>
+  const shouldRemoveSideBar = !!routerState.matches.find((match) =>
     [
       "/website/themes/$slug/preview",
       "/website/home/$versionId/edit",
       "/smart-links/templates/$slug/preview",
       "/smart-links/links/$smartLinkId/edit",
       "/emails/templates/$templateId/edit",
+      "/stream/studio",
     ].includes(match.fullPath),
   );
 
@@ -46,7 +47,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     }
   }, [profileAuthorizations, currentProfileAuthorization, setCurrentProfileAuthorization]);
 
-  return isEditingTheme ? (
+  return shouldRemoveSideBar ? (
     <div>{children}</div>
   ) : (
     <AudioPlayerProvider>

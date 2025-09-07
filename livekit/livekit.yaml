@@ -1,0 +1,32 @@
+port: 7880
+bind_addresses:
+  - ""
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 60000
+  use_external_ip: false #true in cloud environment
+  enable_loopback_candidate: false
+# turn:
+#     enabled: true
+#     domain: fake-turn.fake.com
+#     tls_port: 5349
+#     udp_port: 3478
+#     external_tls: true
+ingress:
+  rtmp_base_url: rtmp://localhost:1935/x
+  whip_base_url: http://localhost:8080/w
+keys:
+  APIoNoBVAngZQRk: w1DMtHH6A22Ag3yKdc21iMEz3kd8ZW27BJafEOLI5KV
+redis:
+  address: 5.78.67.114:6379
+  username: "default"
+  password: "GZXOdc7m7V3fjJEJmrc9ytgaZNf5Y5IVZDZDJJ1f7auslMzDwtrXeYEBJ9TH4mmq"
+  db: 0
+  use_tls: false
+  sentinel_master_name: ""
+  sentinel_username: ""
+  sentinel_password: ""
+  sentinel_addresses: []
+  cluster_addresses: []
+  max_redirects: null

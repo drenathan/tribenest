@@ -35,3 +35,6 @@ export const MINIO_BUCKET = process.env.MINIO_BUCKET as string;
 export const MINIO_URL = process.env.MINIO_URL as string;
 export const MINIO_BUCKET_URL = process.env.MINIO_BUCKET_URL as string;
 export const API_URL = process.env.API_URL as string;
+export const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY as string;
+export const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET as string;
+export const LIVEKIT_URL = process.env.LIVEKIT_URL as string;

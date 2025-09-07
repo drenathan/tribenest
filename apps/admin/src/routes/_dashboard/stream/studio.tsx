@@ -1,14 +1,24 @@
+import { useAuth } from "@/hooks/useAuth";
+import httpClient, { getMediaServerUrl } from "@/services/httpClient";
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { LocalVideoTrack, Room, Track } from "livekit-client";
+import { PreJoin, RoomContext, type TrackReference } from "@livekit/components-react";
+import { ControlBar } from "@livekit/components-react";
+import "@livekit/components-styles";
+import { VideoTrack } from "@livekit/components-react";
+import { useTracks } from "@livekit/components-react";
 import { css } from "@emotion/css";
-
-import { useEffect, useRef, useState, type JSX } from "react";
+import { Button, cn } from "@tribe-nest/frontend-shared";
+import { io, Socket } from "socket.io-client";
+import { ACCESS_TOKEN_KEY } from "@/contexts/AuthContext";
 
 export const Route = createFileRoute("/_dashboard/stream/studio")({
   component: RouteComponent,
 });
 
-const OUTPUT_WIDTH = 1280;
-const OUTPUT_HEIGHT = 720;
+const OUTPUT_WIDTH = 1920;
+const OUTPUT_HEIGHT = 1080;
 
 function drawVideoCover(
   ctx: CanvasRenderingContext2D,
@@ -49,47 +59,69 @@ function drawVideoCover(
   ctx.restore();
 }
 
-// VideoTile component: renders a video element and a name tag
+function RouteComponent() {
+  const { currentProfileAuthorization } = useAuth();
+  const [room] = useState(() => new Room({}));
+  const [isPrejoined, setIsPrejoined] = useState(false);
+
+  useEffect(() => {
+    if (!currentProfileAuthorization?.profileId) return;
+    httpClient
+      .post("/events/rooms", {}, { params: { profileId: currentProfileAuthorization?.profileId } })
+      .then(({ data }) => {
+        const { token } = data;
+        room.connect(import.meta.env.VITE_LIVEKIT_API_URL, token);
+
+        return () => {
+          room.disconnect();
+        };
+      });
+  }, [currentProfileAuthorization?.profileId, room]);
+
+  return (
+    <div data-lk-theme="default">
+      {!isPrejoined && (
+        <PreJoin
+          onSubmit={(values) => {
+            console.log(values);
+            setIsPrejoined(true);
+          }}
+        />
+      )}
+
+      {isPrejoined && (
+        <RoomContext.Provider value={room}>
+          <Content room={room} />
+        </RoomContext.Provider>
+      )}
+    </div>
+  );
+}
+
 function VideoTile({
-  stream,
+  track,
   name,
   id,
   className,
 }: {
-  stream: MediaStream | null;
+  track: TrackReference;
   name: string;
   id: string;
   className?: string;
 }) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    if (stream) {
-      // Use clone to avoid track ownership issues
-      el.srcObject = stream;
-      const playPromise = el.play();
-      if (playPromise && typeof playPromise.then === "function") {
-        playPromise.catch(() => {
-          // Autoplay might be blocked if not muted; keep muted in demo
-        });
-      }
-    }
-  }, [stream]);
+  // const videoRef = useRef<HTMLVideoElement | null>(null);
 
   return (
     <div
-      className={`${className || ""} w-full h-full  overflow-hidden relative transition-all duration-1000`}
+      className={`${className || ""} w-full h-full overflow-hidden relative transition-all duration-1000 ease-in-out`}
       data-id={id}
+      style={{
+        transitionProperty: "width, height, transform",
+        transitionDuration: "1000ms",
+        transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
     >
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        playsInline
-        className={"w-full h-full object-cover rounded-lg transition-all duration-300"}
-      />
+      <VideoTrack trackRef={track} id="video-track" />
       <div
         className={css`
           position: absolute;
@@ -108,143 +140,178 @@ function VideoTile({
     </div>
   );
 }
+const animationSpeed = 0.1;
 
-export default function RouteComponent(): JSX.Element {
+const stageWrapStyles = css`
+  display: flex;
+  gap: 20px;
+  align-items: start;
+  flex-direction: column;
+  padding: 12px;
+`;
+
+const overlayTitleStyles = css`
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 6px 12px;
+  font-weight: 600;
+  border-radius: 6px;
+`;
+
+const tickerStyles = css`
+  position: absolute;
+  bottom: 14px;
+  left: 100%;
+  white-space: nowrap;
+  pointer-events: none;
+  font-size: 18px;
+  color: #fff;
+  animation: ticker-scroll 10s linear infinite;
+
+  @keyframes ticker-scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-350%);
+    }
+  }
+`;
+
+const canvasPreviewStyles = css`
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 6px;
+  overflow: hidden;
+`;
+
+const rightColumnStyles = css`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+`;
+
+const previewTitleStyles = css`
+  color: #fff;
+  margin-bottom: 6px;
+`;
+
+const videoStyles = css`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+let videoPositions = new Map<string, { x: number; y: number; w: number; h: number }>();
+const Content = ({ room }: { room: Room }) => {
+  const { currentProfileAuthorization } = useAuth();
   const stageRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const outputVideoRef = useRef<HTMLVideoElement | null>(null);
-
-  const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
-  const [running, setRunning] = useState(false);
-
-  // Ticker state (shared for DOM + canvas)
   const tickerText = useRef<string>("Breaking: This is a demo ticker — welcome to the show!  ");
   const tickerX = useRef<number>(0);
   const tickerSpeed = 1.5; // pixels per frame at preview scale
+  const [currentBackground] = useState<string | null>("https://studio.restream.io/backgrounds/2025/9_purple_pink.jpg");
+  const [overlayImageUrl] = useState<string | null>(
+    "https://studio-assets.restream.io/defaults/overlays/2025/3_breaking_news.png",
+  );
+  const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
+  const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
+  const [overlayImage, setOverlayImage] = useState<HTMLImageElement | null>(null);
+  const [isOverlayLoaded, setIsOverlayLoaded] = useState(false);
+  const canvasStream = useRef<MediaStream | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
-  // Emotion CSS styles
-  const containerStyles = css`
-    font-family: Inter, Roboto, system-ui;
-    padding: 12px;
-  `;
+  // Helper function for smooth interpolation
+  const lerp = (start: number, end: number, factor: number): number => {
+    return start + (end - start) * factor;
+  };
 
-  const controlsStyles = css`
-    margin-bottom: 12px;
-  `;
-
-  const stageWrapStyles = css`
-    display: flex;
-    gap: 20px;
-    align-items: start;
-    flex-direction: column;
-  `;
-
-  const overlayTitleStyles = css`
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 6px 12px;
-    font-weight: 600;
-    border-radius: 6px;
-  `;
-
-  const tickerStyles = css`
-    position: absolute;
-    bottom: 14px;
-    left: 100%;
-    white-space: nowrap;
-    pointer-events: none;
-    font-size: 18px;
-    color: #fff;
-    animation: ticker-scroll 10s linear infinite;
-
-    @keyframes ticker-scroll {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-350%);
-      }
-    }
-  `;
-
-  const rightColumnStyles = css`
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-  `;
-
-  const canvasPreviewStyles = css`
-    width: 100%;
-    aspect-ratio: 16/9;
-    border-radius: 6px;
-    overflow: hidden;
-  `;
-
-  const buttonWithMarginStyles = css`
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: #16a34a;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    margin-left: 8px;
-  `;
-
-  const previewTitleStyles = css`
-    color: #fff;
-    margin-bottom: 6px;
-  `;
-
-  const videoStyles = css`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  `;
-
-  const hiddenCanvasStyles = css`
-    display: none;
-  `;
-
-  const secondaryButtonStyles = css`
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: #0ea5e9;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  `;
+  const cameraTracks = useTracks([Track.Source.Camera]);
 
   useEffect(() => {
-    // Acquire camera once when component mounts
-    let mounted = true;
-    async function getCamera() {
-      try {
-        const s = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 }, audio: false });
-        if (!mounted) return;
-        setMediaStream(s);
-      } catch (err) {
-        console.error("getUserMedia error:", err);
-      }
-    }
-    getCamera();
+    if (!currentProfileAuthorization?.profileId) return;
+
+    const socket = io(getMediaServerUrl(), {
+      auth: {
+        token: localStorage.getItem(ACCESS_TOKEN_KEY),
+        profileId: currentProfileAuthorization?.profileId,
+      },
+      transports: ["websocket"],
+    });
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      console.log("connected to media server");
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("error connecting to media server", error);
+    });
+
     return () => {
-      mounted = false;
-      // don't stop stream here; let user keep it while page active
+      socket.disconnect();
     };
+  }, [currentProfileAuthorization?.profileId]);
+
+  useEffect(() => {
+    // Hook to pipe canvas stream to preview output video element for testing
+    const canvas = canvasRef.current;
+    const out = outputVideoRef.current;
+    if (!canvas || !out) return;
+    const s = canvas.captureStream(30);
+    canvasStream.current = s;
+    outputVideoRef.current!.srcObject = s;
+    outputVideoRef.current!.play().catch(() => {});
   }, []);
 
+  // Load background image
   useEffect(() => {
-    // initialize ticker starting x at right edge of preview
-    const stageEl = stageRef.current;
-    if (!stageEl) return;
-    const stageRect = stageEl.getBoundingClientRect();
-    tickerX.current = stageRect.width;
-  }, [mediaStream]);
+    if (!overlayImageUrl) {
+      setOverlayImage(null);
+      setIsOverlayLoaded(false);
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Enable CORS for external images
+    img.onload = () => {
+      setOverlayImage(img);
+      setIsOverlayLoaded(true);
+    };
+    img.onerror = () => {
+      console.error("Failed to load background image:", overlayImageUrl);
+      setOverlayImage(null);
+      setIsOverlayLoaded(false);
+    };
+    img.src = overlayImageUrl;
+  }, [overlayImageUrl]);
+
+  useEffect(() => {
+    if (!currentBackground) {
+      setBackgroundImage(null);
+      setIsBackgroundLoaded(false);
+      return;
+    }
+
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Enable CORS for external images
+    img.onload = () => {
+      setBackgroundImage(img);
+      setIsBackgroundLoaded(true);
+    };
+    img.onerror = () => {
+      console.error("Failed to load background image:", currentBackground);
+      setBackgroundImage(null);
+      setIsBackgroundLoaded(false);
+    };
+    img.src = currentBackground;
+  }, [currentBackground]);
 
   useEffect(() => {
     let raf = 0;
@@ -270,7 +337,7 @@ export default function RouteComponent(): JSX.Element {
       lastTs = ts;
 
       // update ticker position in preview-space pixels
-      tickerX.current -= tickerSpeed * (dt / (1000 / 60)); // normalize to 60fps baseline
+      tickerX.current -= tickerSpeed * (dt / (1000 / 30)); // normalize to 60fps baseline
       const tickerEl = stage.querySelector("[data-ticker]") as HTMLElement | null;
       const tickerWidth = tickerEl ? tickerEl.offsetWidth : 0;
       if (tickerX.current < -tickerWidth) tickerX.current = stageRect.width;
@@ -278,27 +345,55 @@ export default function RouteComponent(): JSX.Element {
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // draw a background (solid + optional image)
-      ctx.fillStyle = "#0b0b0b";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Draw background image or solid color
+      if (backgroundImage && isBackgroundLoaded) {
+        // Draw background image to cover the entire canvas
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      } else {
+        // Fallback to solid background color
+        ctx.fillStyle = "#0b0b0b";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
 
-      // Draw each video element by reading its DOM position relative to stage
+      // Draw each video element with smooth animation
       const videos = stage.querySelectorAll("video");
-      videos.forEach((video) => {
+      const newTargetPositions = new Map<string, { x: number; y: number; w: number; h: number }>();
+      const newVideoPositions = new Map<string, { x: number; y: number; w: number; h: number }>();
+
+      videos.forEach((video, index) => {
         const rect = video.getBoundingClientRect();
-        const x = (rect.left - stageRect.left) * scaleX;
-        const y = (rect.top - stageRect.top) * scaleY;
-        const w = rect.width * scaleX;
-        const h = rect.height * scaleY;
+        const videoId = `video-${index}`;
+        const targetX = (rect.left - stageRect.left) * scaleX;
+        const targetY = (rect.top - stageRect.top) * scaleY;
+        const targetW = rect.width * scaleX;
+        const targetH = rect.height * scaleY;
+
+        newTargetPositions.set(videoId, { x: targetX, y: targetY, w: targetW, h: targetH });
+
+        // Get current animated position or use target if not set
+        const currentPos = videoPositions.get(videoId) || { x: targetX, y: targetY, w: targetW, h: targetH };
+        const targetPos = newTargetPositions.get(videoId)!;
+
+        // Interpolate towards target position
+        const animatedX = lerp(currentPos.x, targetPos.x, animationSpeed);
+        const animatedY = lerp(currentPos.y, targetPos.y, animationSpeed);
+        const animatedW = lerp(currentPos.w, targetPos.w, animationSpeed);
+        const animatedH = lerp(currentPos.h, targetPos.h, animationSpeed);
+
+        // Store animated position for next frame
+        newVideoPositions.set(videoId, { x: animatedX, y: animatedY, w: animatedW, h: animatedH });
 
         try {
-          drawVideoCover(ctx, video as HTMLVideoElement, x, y, w, h);
+          drawVideoCover(ctx, video as HTMLVideoElement, animatedX, animatedY, animatedW, animatedH);
         } catch (err) {
           console.error("drawImage error:", err);
         }
       });
 
-      // Draw name tags (matching DOM lower-left)
+      // Update positions for next frame
+      videoPositions = newVideoPositions;
+
+      // Draw name tags with smooth animation (matching video positions)
       const tags = stage.querySelectorAll("[data-name-tag]");
       ctx.textBaseline = "alphabetic";
       tags.forEach((tag) => {
@@ -340,103 +435,214 @@ export default function RouteComponent(): JSX.Element {
       const tickerY = (stageRect.height - 14) * scaleY;
       ctx.fillText(tickerText.current, tickerX.current * scaleX, tickerY);
 
+      if (overlayImage && isOverlayLoaded) {
+        ctx.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
+      }
       raf = requestAnimationFrame(drawLoop);
     }
-
-    if (running) raf = requestAnimationFrame(drawLoop);
+    raf = requestAnimationFrame(drawLoop);
+    // const interval = setInterval(() => {
+    //   drawLoop(performance.now());
+    // }, 1000 / 30);
 
     return () => {
       cancelAnimationFrame(raf);
+      // clearInterval(interval);
     };
-  }, [running]);
+  }, [backgroundImage, isBackgroundLoaded, overlayImage, isOverlayLoaded]);
 
-  useEffect(() => {
-    // Hook to pipe canvas stream to preview output video element for testing
-    const canvas = canvasRef.current;
-    const out = outputVideoRef.current;
-    if (!canvas || !out) return;
-    const s = canvas.captureStream(30);
-    out.srcObject = s;
-    out.play().catch(() => {});
-  }, []);
-  const [guestNumber, setGuestNumber] = useState(1);
-  // Start/stop the composer
-  async function startComposer() {
-    if (!mediaStream) {
-      alert("Camera not ready or permission denied");
+  // Calculate grid columns based on layout mode
+  const getGridCols = () => {
+    return !cameraTracks.length || cameraTracks.length === 1
+      ? 1
+      : Math.max(2, Math.ceil((cameraTracks.length + 1) / 2));
+  };
+
+  const gridCols = getGridCols();
+
+  const handleGoLive = async () => {
+    if (!canvasStream.current) return;
+    const stream = canvasStream.current;
+    console.log(stream);
+    const videoTracks = stream.getVideoTracks();
+    if (!videoTracks.length) {
       return;
     }
 
-    // Assign clones: host gets original, guests get clones
-    // (this simulates separate participants for the demo)
-    // We won't manage audio here to keep autoplay friendly.
+    const { data } = await httpClient.post("/events/go-live");
+    const room = new Room({});
+    await room.connect(import.meta.env.VITE_LIVEKIT_API_URL, data.token);
 
-    // Show preview DOM videos by appending components to the stage
-    // But React renders them below via mediaStream clones
+    const localTrack = new LocalVideoTrack(videoTracks[0], {
+      width: OUTPUT_WIDTH,
+      height: OUTPUT_HEIGHT,
+      frameRate: 30,
+      aspectRatio: 16 / 9,
+    });
 
-    // Setup canvas resolution: 1280x720
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.width = 1280;
-    canvas.height = 720;
+    await room.localParticipant.publishTrack(localTrack, {
+      name: "egress-video",
+      source: Track.Source.Camera,
+      simulcast: false,
+    });
 
-    setRunning(true);
-  }
+    // room.on("trackPublished", (publication) => {
+    //   console.log(publication);
+    // });
+    // room.on("connected", () => {
+    //   console.log("room connected");
 
-  function stopComposer() {
-    setRunning(false);
-  }
+    // });
 
-  // Demo: create cloned streams for tiles
-  const hostStream = mediaStream ?? null;
-  const guest1Stream = mediaStream ? mediaStream.clone() : null;
+    await httpClient.post("/events/start-egress");
+  };
+  // const handleGoLive = async () => {
+  //   if (!socketRef.current || !canvasRef.current) return;
 
-  const gridCols = !guestNumber ? 1 : Math.max(2, Math.ceil((guestNumber + 1) / 2));
+  //   const stream = canvasRef.current.captureStream(30);
+
+  //   const mediaRecorder = new MediaRecorder(stream, {
+  //     mimeType: "video/webm",
+  //     // audioBitsPerSecond: 128000,
+  //     videoBitsPerSecond: 6_000_000,
+  //   });
+
+  //   mediaRecorder.start(1000);
+
+  //   mediaRecorder.ondataavailable = (event) => {
+  //     console.log("dataavailable", event.data);
+  //     socketRef.current?.emit("binaryStream", event.data);
+  //   };
+
+  //   mediaRecorder.onstop = () => {
+  //     console.log("mediaRecorder stopped");
+  //   };
+
+  //   mediaRecorder.onerror = (event) => {
+  //     console.error("mediaRecorder error", event);
+  //   };
+
+  //   // navigator.mediaDevices
+  //   //   .getUserMedia({
+  //   //     video: {
+  //   //       width: 1920,
+  //   //       height: 1080,
+  //   //       frameRate: 30,
+  //   //     },
+  //   //     audio: true,
+  //   //   })
+  //   //   .then((stream) => {
+  //   //     const mediaRecorder = new MediaRecorder(stream, {});
+
+  //   //     mediaRecorder.start(1000);
+
+  //   //     mediaRecorder.ondataavailable = (event) => {
+  //   //       console.log("dataavailable", event.data);
+  //   //       socketRef.current?.emit("binaryStream", event.data);
+  //   //     };
+
+  //   //     mediaRecorder.onstop = () => {
+  //   //       console.log("mediaRecorder stopped");
+  //   //     };
+
+  //   //     mediaRecorder.onerror = (event) => {
+  //   //       console.error("mediaRecorder error", event);
+  //   //     };
+  //   //   });
+  // };
+  const handleAddCanvasVideo = async () => {
+    if (!canvasStream.current) return;
+    const stream = canvasStream.current;
+
+    const videoTracks = stream.getVideoTracks();
+    if (!videoTracks.length) {
+      return;
+    }
+
+    videoTracks[0].contentHint = "motion";
+
+    const localTrack = new LocalVideoTrack(videoTracks[0], {
+      width: OUTPUT_WIDTH,
+      height: OUTPUT_HEIGHT,
+      frameRate: 30,
+      aspectRatio: 16 / 9,
+    });
+
+    room.localParticipant.publishTrack(localTrack, {
+      name: "egress-video1",
+      source: Track.Source.Camera,
+      videoEncoding: {
+        maxBitrate: 2500_000, // 2.5 Mbps
+        maxFramerate: 30,
+      },
+    });
+
+    // room.localParticipant.publishTrack(localTrack, {
+    //   name: "egress-video2",
+    //   source: Track.Source.Camera,
+    //   videoEncoding: {
+    //     maxBitrate: 2500_000, // 2.5 Mbps
+    //     maxFramerate: 30,
+    //   },
+    // });
+  };
 
   return (
-    <div className={containerStyles}>
-      <div className={controlsStyles}>
-        <button onClick={() => setGuestNumber((g) => g + 1)} className={secondaryButtonStyles}>
-          Add Guest
-        </button>
-        <button onClick={() => setGuestNumber((g) => g - 1)} className={secondaryButtonStyles}>
-          Remove Guest
-        </button>
-        <button onClick={() => (running ? stopComposer() : startComposer())} className={buttonWithMarginStyles}>
-          {running ? "Stop" : "Start Composer"}
-        </button>
-      </div>
+    <>
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4 z-[100000] bg-background">
+        <div className="flex gap-2 flex-wrap items-center">
+          <Button onClick={() => setIsOverlayLoaded(!isOverlayLoaded)}>Toggle Overlay</Button>
+          <Button onClick={() => setIsBackgroundLoaded(!isBackgroundLoaded)}>Toggle Background</Button>
+          <Button onClick={handleGoLive}>Go Live</Button>
+          <Button onClick={handleAddCanvasVideo}>Add Canvas Video</Button>
+        </div>
+      </header>
 
-      <div className={stageWrapStyles}>
-        {/* Visible preview: CSS-controlled layout */}
-        <div
-          ref={stageRef}
-          className={`grid grid-cols-${gridCols} gap-2 w-full aspect-[16/9] relative overflow-hidden`}
-        >
-          <VideoTile stream={hostStream} name="Host" id="host" />
-          {Array.from({ length: guestNumber }).map((_, index) => (
-            <VideoTile key={index} stream={guest1Stream} name={`Guest ${index + 1}`} id={`guest${index + 1}`} />
-          ))}
+      <div className="flex">
+        <div className="w-[200px] border-r border-border shrink-0 h-vh"></div>
 
-          <div className={overlayTitleStyles} data-overlay-title>
-            My Program Title
+        <div className={stageWrapStyles}>
+          {/* Visible preview: CSS-controlled layout */}
+          <div className={rightColumnStyles}>
+            <div className={previewTitleStyles}>Canvas Output Preview</div>
+            <div className={canvasPreviewStyles}>
+              <video ref={outputVideoRef} autoPlay muted playsInline className={videoStyles} />
+            </div>
           </div>
+          <div
+            style={{
+              backgroundImage: isBackgroundLoaded ? `url(${currentBackground})` : "none",
+              backgroundSize: "cover",
+              backgroundPosition: "top",
+              backgroundRepeat: "no-repeat",
+            }}
+            ref={stageRef}
+            className={cn(`grid grid-cols-${gridCols} gap-2 w-full aspect-[16/9] relative overflow-hidden flex-1`, {
+              "p-4": !!isBackgroundLoaded,
+            })}
+          >
+            {overlayImage && isOverlayLoaded && (
+              <img src={overlayImage.src} alt="Overlay" className="absolute top-0 left-0 w-full h-full z-50" />
+            )}
 
-          <div className={tickerStyles} data-ticker>
-            {tickerText.current}
+            {cameraTracks.map((track, index) => (
+              <VideoTile key={index} track={track} name={`Guest ${index + 1}`} id={`guest${index + 1}`} />
+            ))}
+
+            <div className={overlayTitleStyles} data-overlay-title>
+              My Program Title
+            </div>
+
+            <div className={tickerStyles} data-ticker>
+              {tickerText.current}
+            </div>
           </div>
+          <ControlBar />
         </div>
 
-        <div className={rightColumnStyles}>
-          <div className={previewTitleStyles}>Canvas Output Preview</div>
-          <div className={canvasPreviewStyles}>
-            <video ref={outputVideoRef} autoPlay muted playsInline className={videoStyles} />
-          </div>
-        </div>
+        <div className="w-[200px] border-l border-border shrink-0 h-vh"></div>
       </div>
-
-      {/* Hidden canvas used for broadcast capture */}
-      <canvas ref={canvasRef} className={hiddenCanvasStyles} />
-    </div>
+      <canvas width={OUTPUT_WIDTH} height={OUTPUT_HEIGHT} ref={canvasRef} className="hidden" />
+    </>
   );
-}
+};
