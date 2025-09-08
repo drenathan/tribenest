@@ -52,7 +52,6 @@ function RouteComponent() {
   // Populate form with existing product data
 
   const [tags, setTags] = useState<string[]>([]);
-  console.log(tags);
   const handleAddTag = () => {
     const newTag = methods.getValues("tagInput");
     if (newTag && !tags?.includes(newTag)) {
