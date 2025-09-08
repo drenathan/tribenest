@@ -31,6 +31,7 @@ export const createProductSchema = z.object({
         .string()
         .min(5, "Description must be at least 5 characters")
         .max(1000, "Description must be less than 1000 characters"),
+      tags: z.array(z.string()).optional(),
       deliveryType: z.nativeEnum(ProductDeliveryType),
       price: z.number().min(0, "Price must be at least 0"),
       category: z.nativeEnum(ProductCategory),
@@ -81,6 +82,7 @@ export const updateProductSchema = z.object({
       .string()
       .min(5, "Description must be at least 5 characters")
       .max(1000, "Description must be less than 1000 characters"),
+    tags: z.array(z.string()).optional(),
     price: z.number().min(0, "Price must be at least 0").optional(),
     publishedAt: z.string().optional(),
     payWhatYouWant: z.boolean().optional(),

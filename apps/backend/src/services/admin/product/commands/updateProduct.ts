@@ -6,7 +6,6 @@ import { isUndefined, omitBy } from "lodash";
 export async function updateProduct(this: ProductService, input: UpdateProductInput & { productId: string }) {
   const trx = await this.database.client.startTransaction().execute();
   const product = await this.database.models.Product.getOne({ productId: input.productId, profileId: input.profileId });
-
   if (!product) {
     throw new BadRequestError("Product not found");
   }
@@ -22,6 +21,7 @@ export async function updateProduct(this: ProductService, input: UpdateProductIn
         {
           title: input.title,
           description: input.description,
+          tags: input.tags,
           publishedAt: input.publishedAt ? new Date(input.publishedAt) : undefined,
           credits: input.credits,
           artist: input.artist,

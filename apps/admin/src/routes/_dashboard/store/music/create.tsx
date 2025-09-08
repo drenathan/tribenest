@@ -19,6 +19,7 @@ import {
   Input,
   Label,
   Checkbox,
+  Badge,
 } from "@tribe-nest/frontend-shared";
 import { useState, useEffect } from "react";
 import { v4 as uuid } from "uuid";
@@ -55,6 +56,8 @@ function RouteComponent() {
     defaultValues: {
       title: "",
       description: "",
+      tagInput: "",
+      tags: [],
       artist: currentProfileAuthorization?.profile.name ?? "",
       deliveryType: ProductDeliveryType.Digital,
       payWhatYouWant: false,
@@ -169,6 +172,7 @@ function RouteComponent() {
       // Create product with uploaded files
       await createProduct({
         ...data,
+        tags,
         coverImage: {
           file: coverImageResult.url,
           fileSize: coverImageResult.size,
@@ -201,6 +205,19 @@ function RouteComponent() {
     }
   }, [isPending, isUploading]);
 
+  const [tags, setTags] = useState<string[]>([]);
+
+  const handleAddTag = () => {
+    const newTag = methods.getValues("tagInput");
+    if (newTag && !tags?.includes(newTag)) {
+      setTags([...tags, newTag]);
+      methods.setValue("tagInput", "");
+    }
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
   return (
     <div className="pb-[200px]">
       <PageHeader title={type === "album" ? "Create Album" : "Create Single"} />
@@ -236,6 +253,27 @@ function RouteComponent() {
           textArea={true}
           placeholder="Enter the description of the product"
         />
+        <FormInput<CreateProductInput>
+          name="tagInput"
+          label={"Tag"}
+          control={methods.control}
+          textArea={false}
+          placeholder="Soul RnB"
+        />
+        <Button type="button" variant={"outline"} onClick={handleAddTag}>
+          Enter
+        </Button>
+        <div className="flex flex-wrap gap-2 ">
+          {tags?.map((tag) => (
+            <Badge key={tag} variant={"outline"} className="flex items-center gap-2 px-4 py-2">
+              {tag}
+              <button onClick={() => handleRemoveTag(tag)} className=" bg-amber-700 rounded-full text-white px-2 py-1">
+                X
+              </button>
+            </Badge>
+          ))}
+        </div>
+
         <div className="flex flex-col gap-2">
           <Label>Cover Image</Label>
           <Input

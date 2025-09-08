@@ -18,6 +18,7 @@ import {
   Input,
   Label,
   Checkbox,
+  Badge,
 } from "@tribe-nest/frontend-shared";
 import { useState, useEffect } from "react";
 import { useUpdateProduct } from "@/hooks/mutations/useProduct";
@@ -49,11 +50,27 @@ function RouteComponent() {
   });
 
   // Populate form with existing product data
+
+  const [tags, setTags] = useState<string[]>([]);
+  console.log(tags);
+  const handleAddTag = () => {
+    const newTag = methods.getValues("tagInput");
+    if (newTag && !tags?.includes(newTag)) {
+      setTags([...tags, newTag]);
+      methods.setValue("tagInput", "");
+    }
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
   useEffect(() => {
     if (product) {
+      setTags(product.tags || []);
       methods.reset({
         title: product.title,
         description: product.description,
+        tags: product.tags,
         artist: product.artist ?? "",
         payWhatYouWant: defaultVariant?.payWhatYouWant || false,
         credits: product?.credits || "",
@@ -140,6 +157,7 @@ function RouteComponent() {
       // Prepare update data
       const updateData = {
         ...data,
+        tags,
         coverImage: coverImageResult
           ? {
               file: coverImageResult.url,
@@ -239,7 +257,27 @@ function RouteComponent() {
           textArea={true}
           placeholder="Enter the description of the product"
         />
+        <FormInput<EditProductInput>
+          name="tagInput"
+          label={"Tag"}
+          control={methods.control}
+          textArea={true}
+          placeholder="Soul RnB"
+        />
 
+        <Button type="button" variant={"outline"} onClick={handleAddTag}>
+          Enter
+        </Button>
+        <div className="flex flex-wrap gap-2 ">
+          {tags?.map((tag) => (
+            <Badge key={tag} variant={"outline"} className="flex items-center gap-2 px-4 py-2">
+              {tag}
+              <button onClick={() => handleRemoveTag(tag)} className=" bg-amber-700 rounded-full text-white px-2 py-1">
+                X
+              </button>
+            </Badge>
+          ))}
+        </div>
         <div className="flex flex-col gap-2">
           <Label>Cover Image</Label>
           <Input
