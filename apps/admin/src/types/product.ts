@@ -18,6 +18,7 @@ export type IProduct = {
   id: string;
   title: string;
   description: string;
+  tags: string[];
   category: ProductCategory;
   profileId: string;
   media: IMedia[];

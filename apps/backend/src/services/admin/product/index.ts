@@ -29,7 +29,9 @@ export class ProductService extends BaseService {
 
   public async getProducts(input: GetProductsInput): Promise<PaginatedData<{}>> {
     const result = await this.database.models.Product.getMany(input);
+
     const hasNextPage = result.data.length === input.limit;
+
     return {
       data: result.data,
       total: result.total as number,
