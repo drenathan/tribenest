@@ -7,6 +7,8 @@ export const createProductSchema = z
   .object({
     title: z.string().min(5, "Title must be at least 5 characters").max(100, "Title must be less than 100 characters"),
     description: z.string(),
+    tagInput: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     deliveryType: z.nativeEnum(ProductDeliveryType),
     price: z.coerce.number().min(0, "Price must be at least 0"),
     artist: z.string().optional(),
@@ -74,6 +76,8 @@ export const editProductSchema = z
   .object({
     title: z.string().min(5, "Title must be at least 5 characters").max(100, "Title must be less than 100 characters"),
     description: z.string(),
+    tagInput: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     price: z.coerce.number().min(0, "Price must be at least 0").optional(),
     artist: z.string().optional(),
     credits: z.string().optional(),
