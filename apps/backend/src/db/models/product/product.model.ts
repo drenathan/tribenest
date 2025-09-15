@@ -1,4 +1,4 @@
-import { Expression, Kysely, Selectable, SqlBool } from "kysely";
+import { Expression, Kysely, Selectable, sql, SqlBool } from "kysely";
 import BaseModel from "../baseModel";
 import { DB } from "../../types";
 import { GetProductInput, type GetProductsInput } from "@src/routes/product/schema";
@@ -65,7 +65,18 @@ export class ProductModel extends BaseModel<"products", "id"> {
         }
 
         if (query) {
-          conditions.push(eb("p.title", "ilike", `%${query}%`));
+          const q = `%${query}%`;
+
+          conditions.push(
+            eb.or([
+              eb("p.title", "ilike", q),
+              sql<boolean>`exists (
+                select 1
+                from unnest(coalesce(${sql.ref("p.tags")}, ARRAY[]::text[])) as tag
+                where tag ilike ${q}
+              )`,
+            ]),
+          );
         }
 
         if (isArchived) {
