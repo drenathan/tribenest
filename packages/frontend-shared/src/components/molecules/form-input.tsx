@@ -13,6 +13,7 @@ type Props = {
   placeholder?: string;
   textArea?: boolean;
   min?: number;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export function FormInput<T extends FieldValues>(props: UseControllerProps<T> & Props) {
@@ -46,6 +47,7 @@ export function FormInput<T extends FieldValues>(props: UseControllerProps<T> & 
           }}
           step="any"
           min={props.min}
+          onKeyDown={props.onKeyDown}
         />
       )}
 
