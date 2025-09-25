@@ -59,10 +59,6 @@ const items: NavItem[] = [
         path: "/tribe/posts",
       },
       {
-        title: "Collections",
-        path: "/tribe/collections",
-      },
-      {
         title: "Members",
         path: "/tribe/members",
       },
