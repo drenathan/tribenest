@@ -46,6 +46,8 @@ export const tables = {
   smart_link_events: "smart_link_events",
   smart_link_views: "smart_link_views",
   smart_link_clicks: "smart_link_clicks",
+  stream_templates: "stream_templates",
+  stream_channels: "stream_channels",
   comments: "comments",
   likes: "likes",
   saves: "saves",

@@ -27,7 +27,6 @@ export const getMediaServerUrl = () => {
 
   // In production, use the same domain but different subdomain
   const hostname = window.location.hostname;
-
   // If we're on admin subdomain, use api subdomain
   if (hostname.startsWith("admin.")) {
     return `wss//media_server.${hostname.substring(6)}`;

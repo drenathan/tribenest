@@ -127,4 +127,13 @@ export const breadcrumbs: Record<
     ],
     currentPage: "Sales Report",
   },
+
+  "/stream/list": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Live Stream Templates",
+  },
+  "/stream/channels": {
+    links: [{ label: "Home", href: "/" }],
+    currentPage: "Live Stream Channels",
+  },
 };

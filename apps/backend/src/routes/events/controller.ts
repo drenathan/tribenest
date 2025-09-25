@@ -19,7 +19,14 @@ import {
   GetOrdersInput,
 } from "./schema";
 import * as policy from "./policy";
-import { AccessToken, EgressClient, StreamOutput, StreamProtocol, RoomServiceClient } from "livekit-server-sdk";
+import {
+  AccessToken,
+  EgressClient,
+  StreamOutput,
+  StreamProtocol,
+  RoomServiceClient,
+  EncodingOptionsPreset,
+} from "livekit-server-sdk";
 import { LIVEKIT_API_KEY, LIVEKIT_API_SECRET, LIVEKIT_URL } from "@src/configuration/secrets";
 
 export class EventsController extends BaseController {
@@ -215,15 +222,19 @@ export class EventsController extends BaseController {
     const egressClient = new EgressClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET);
     // console.log("starting egress");
 
-    const egress = await egressClient.startRoomCompositeEgress(roomId, {
-      stream: new StreamOutput({
-        protocol: StreamProtocol.RTMP,
-        urls: [
-          "rtmp://x.rtmp.youtube.com/live2/c4tt-8aat-8zxt-ewm0-2dsk",
-          "rtmp://live.twitch.tv/app/live_540201758_BwgFeAeY0IrKJZaBrh6Yxa9uZ5WadM",
-        ],
-      }),
-    });
+    const egress = await egressClient.startRoomCompositeEgress(
+      roomId,
+      {
+        stream: new StreamOutput({
+          protocol: StreamProtocol.RTMP,
+          urls: [
+            "rtmp://x.rtmp.youtube.com/live2/c4tt-8aat-8zxt-ewm0-2dsk",
+            "rtmp://live.twitch.tv/app/live_540201758_BwgFeAeY0IrKJZaBrh6Yxa9uZ5WadM",
+          ],
+        }),
+      },
+      { encodingOptions: EncodingOptionsPreset.H264_1080P_30 },
+    );
     // const egress = await egressClient.startTrackCompositeEgress(
     //   roomId,
     //   {

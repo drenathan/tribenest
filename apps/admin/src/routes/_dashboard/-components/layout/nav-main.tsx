@@ -143,7 +143,11 @@ const items: NavItem[] = [
     items: [
       {
         title: "Studio",
-        path: "/stream/studio",
+        path: "/stream/list",
+      },
+      {
+        title: "Channels",
+        path: "/stream/channels",
       },
     ],
   },

@@ -1,8 +1,9 @@
+import "hacktimer";
 import { useAuth } from "@/hooks/useAuth";
 import httpClient, { getMediaServerUrl } from "@/services/httpClient";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { LocalVideoTrack, Room, Track } from "livekit-client";
+import { LocalVideoTrack, Room, Track, VideoPresets } from "livekit-client";
 import { PreJoin, RoomContext, type TrackReference } from "@livekit/components-react";
 import { ControlBar } from "@livekit/components-react";
 import "@livekit/components-styles";
@@ -314,7 +315,7 @@ const Content = ({ room }: { room: Room }) => {
   }, [currentBackground]);
 
   useEffect(() => {
-    let raf = 0;
+    // let raf = 0;
     let lastTs = performance.now();
 
     // canvas composition loop
@@ -322,7 +323,7 @@ const Content = ({ room }: { room: Room }) => {
       const canvas = canvasRef.current;
       const stage = stageRef.current;
       if (!canvas || !stage) {
-        raf = requestAnimationFrame(drawLoop);
+        // raf = requestAnimationFrame(drawLoop);
         return;
       }
       const ctx = canvas.getContext("2d");
@@ -438,16 +439,16 @@ const Content = ({ room }: { room: Room }) => {
       if (overlayImage && isOverlayLoaded) {
         ctx.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
       }
-      raf = requestAnimationFrame(drawLoop);
+      // raf = requestAnimationFrame(drawLoop);
     }
-    raf = requestAnimationFrame(drawLoop);
-    // const interval = setInterval(() => {
-    //   drawLoop(performance.now());
-    // }, 1000 / 30);
+    // raf = requestAnimationFrame(drawLoop);
+    const interval = setInterval(() => {
+      drawLoop(performance.now());
+    }, 1000 / 30);
 
     return () => {
-      cancelAnimationFrame(raf);
-      // clearInterval(interval);
+      // cancelAnimationFrame(raf);
+      clearInterval(interval);
     };
   }, [backgroundImage, isBackgroundLoaded, overlayImage, isOverlayLoaded]);
 
@@ -461,26 +462,27 @@ const Content = ({ room }: { room: Room }) => {
   const gridCols = getGridCols();
 
   const handleGoLive = async () => {
-    if (!canvasStream.current) return;
-    const stream = canvasStream.current;
-    console.log(stream);
+    if (!canvasRef.current) return;
+    const stream = canvasRef.current.captureStream(30);
+
     const videoTracks = stream.getVideoTracks();
     if (!videoTracks.length) {
       return;
     }
+    console.log(videoTracks[0]);
 
     const { data } = await httpClient.post("/events/go-live");
-    const room = new Room({});
+    const room = new Room({
+      videoCaptureDefaults: {
+        resolution: VideoPresets.h1080.resolution,
+      },
+      publishDefaults: {
+        videoEncoding: VideoPresets.h1080.encoding,
+      },
+    });
     await room.connect(import.meta.env.VITE_LIVEKIT_API_URL, data.token);
 
-    const localTrack = new LocalVideoTrack(videoTracks[0], {
-      width: OUTPUT_WIDTH,
-      height: OUTPUT_HEIGHT,
-      frameRate: 30,
-      aspectRatio: 16 / 9,
-    });
-
-    await room.localParticipant.publishTrack(localTrack, {
+    await room.localParticipant.publishTrack(videoTracks[0], {
       name: "egress-video",
       source: Track.Source.Camera,
       simulcast: false,
