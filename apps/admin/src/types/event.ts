@@ -74,3 +74,74 @@ export interface UpdateEventInput {
     fileName: string;
   };
 }
+
+export enum SceneLayout {
+  Solo = "solo",
+  Grid = "grid",
+  SideBySide = "side-by-side",
+  PictureInPicture = "picture-in-picture",
+  Spotlight = "spotlight",
+}
+
+export enum SceneType {
+  Camera = "camera",
+  Media = "media",
+  Countdown = "countdown",
+}
+
+export interface IScene {
+  id: string;
+  title: string;
+  type: SceneType;
+  layout: SceneLayout;
+  logo?: {
+    id: string;
+    url: string;
+  };
+  background?: {
+    type: "image" | "video";
+    url: string;
+    id: string;
+  };
+  overlay?: {
+    type: "image" | "video";
+    url: string;
+    id: string;
+  };
+  currentTickerId?: string;
+  currentBannerId?: string;
+}
+
+export interface ITicker {
+  id: string;
+  title: string;
+}
+
+export interface IBanner {
+  id: string;
+  title: string;
+  subtitle: string;
+}
+
+export interface MediaDevice {
+  deviceId: string;
+  label: string;
+  kind: MediaDeviceKind;
+}
+
+export interface IStreamTemplate {
+  id: string;
+  profileId: string;
+  title: string;
+  description: string;
+  config: {
+    primaryColor: string;
+    fontFamily: string;
+    tickers: ITicker[];
+    banners: IBanner[];
+    selectedSceneId: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  scenes: IScene[];
+}

@@ -318,7 +318,7 @@ export interface PostCollectionPosts {
   id: Generated<string>;
   order: number;
   postCollectionId: string;
-  postId: string;
+  "postId ": string;
   updatedAt: Generated<Timestamp>;
 }
 
@@ -327,9 +327,9 @@ export interface PostCollections {
   createdAt: Generated<Timestamp>;
   description: string | null;
   id: Generated<string>;
-  name: string;
   postType: string;
   profileId: string;
+  title: string;
   updatedAt: Generated<Timestamp>;
 }
 
@@ -563,6 +563,17 @@ export interface SmartLinks {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface StreamTemplates {
+  config: Json | null;
+  createdAt: Generated<Timestamp>;
+  description: string | null;
+  id: Generated<string>;
+  profileId: string;
+  scenes: Json;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface WebsiteEvents {
   createdAt: Generated<Timestamp>;
   eventData: Json;
@@ -650,6 +661,7 @@ export interface DB {
   sessions: Sessions;
   smartLinkEvents: SmartLinkEvents;
   smartLinks: SmartLinks;
+  streamTemplates: StreamTemplates;
   websiteEvents: WebsiteEvents;
   websiteMessages: WebsiteMessages;
   websiteVersionPages: WebsiteVersionPages;

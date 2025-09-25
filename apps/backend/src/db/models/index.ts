@@ -42,6 +42,7 @@ import { EmailListSubscriberModel } from "./emailList/emailListSubscriber.model"
 import { EmailTemplateModel } from "./email/emailTemplate.model";
 import { SmartLinkModel } from "./smartLink/smartLink.model";
 import { SmartLinkEventModel } from "./smartLink/smartLinkEvent.model";
+import { StreamTemplateModel } from "./stream/streamTemplate.model";
 import { WebsiteVersionModel } from "./website/websiteVersion.model";
 import { WebsiteVersionPageModel } from "./website/websiteVersionPage.model";
 import { WebsiteMessageModel } from "./website/websiteMessage.model";
@@ -91,6 +92,7 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     Session: new SessionModel(client),
     SmartLink: new SmartLinkModel(client),
     SmartLinkEvent: new SmartLinkEventModel(client),
+    StreamTemplate: new StreamTemplateModel(client),
     WebsiteVersion: new WebsiteVersionModel(client),
     WebsiteVersionPage: new WebsiteVersionPageModel(client),
     WebsiteMessage: new WebsiteMessageModel(client),

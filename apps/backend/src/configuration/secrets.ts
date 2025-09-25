@@ -38,3 +38,6 @@ export const API_URL = process.env.API_URL as string;
 export const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY as string;
 export const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET as string;
 export const LIVEKIT_URL = process.env.LIVEKIT_URL as string;
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID as string;
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET as string;
+export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI as string;

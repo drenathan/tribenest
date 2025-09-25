@@ -31,7 +31,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       "/smart-links/templates/$slug/preview",
       "/smart-links/links/$smartLinkId/edit",
       "/emails/templates/$templateId/edit",
-      "/stream/studio",
+      "/stream/$templateId/studio",
     ].includes(match.fullPath),
   );
 

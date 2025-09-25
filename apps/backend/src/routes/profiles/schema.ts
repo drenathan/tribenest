@@ -24,7 +24,7 @@ const uploadMediaSchema = z.object({
   body: z.object({
     url: z.string().url(),
     type: z.enum(["image", "video", "audio", "document"]),
-    parent: z.enum(["posts", "website"]),
+    parent: z.enum(["posts", "website", "stream_background", "stream_overlay", "stream_logo"]),
     name: z.string().optional(),
     size: z.number(),
   }),
@@ -32,7 +32,7 @@ const uploadMediaSchema = z.object({
 
 const getMediaSchema = z.object({
   query: z.object({
-    parent: z.enum(["posts", "website"]),
+    parent: z.enum(["posts", "website", "stream_background", "stream_overlay", "stream_logo"]),
     type: z.enum(["image", "video", "audio", "document"]),
   }),
 });

@@ -18,6 +18,7 @@ export async function migrateToLatest() {
 
   const migrator = new Migrator({
     db,
+    allowUnorderedMigrations: true,
     provider: new FileMigrationProvider({
       fs,
       path,
@@ -64,6 +65,7 @@ export async function migrateDown() {
 
   const migrator = new Migrator({
     db,
+    allowUnorderedMigrations: true,
     provider: new FileMigrationProvider({
       fs,
       path,
@@ -100,6 +102,7 @@ export async function migrationStatus() {
 
   const migrator = new Migrator({
     db,
+    allowUnorderedMigrations: true,
     provider: new FileMigrationProvider({
       fs,
       path,

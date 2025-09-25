@@ -23,6 +23,7 @@ type Props = {
   onRemove?: () => void;
   type?: "image" | "video";
 };
+
 export function SelectImageDialog({ onImageSelect, value, onRemove, type = "image" }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const { profile, httpClient } = useEditorContext();

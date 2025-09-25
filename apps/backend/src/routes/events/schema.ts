@@ -8,6 +8,15 @@ export const getEventsSchema = z.object({
   }),
 });
 
+export const createRoomSchema = z.object({
+  body: z.object({
+    profileId: z.string().uuid(),
+    username: z.string().min(1, "Username is required"),
+    userTitle: z.string().optional(),
+  }),
+});
+
+export type CreateRoomInput = z.infer<typeof createRoomSchema>["body"];
 export type GetEventsInput = z.infer<typeof getEventsSchema>["query"];
 
 export const createEventSchema = z.object({
