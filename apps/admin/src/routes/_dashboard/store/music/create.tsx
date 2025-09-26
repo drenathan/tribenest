@@ -172,7 +172,7 @@ function RouteComponent() {
       // Create product with uploaded files
       await createProduct({
         ...data,
-        tags,
+
         coverImage: {
           file: coverImageResult.url,
           fileSize: coverImageResult.size,
@@ -205,19 +205,30 @@ function RouteComponent() {
     }
   }, [isPending, isUploading]);
 
-  const [tags, setTags] = useState<string[]>([]);
+  const tags = methods.watch("tags") || [];
 
   const handleAddTag = () => {
     const newTag = methods.getValues("tagInput");
-    if (newTag && !tags?.includes(newTag)) {
-      setTags([...tags, newTag]);
-      methods.setValue("tagInput", "");
+    if (!newTag) return;
+    const curTags = methods.getValues("tags") || [];
+    if (curTags?.includes(newTag)) return;
+
+    methods.setValue("tags", [...curTags, newTag]);
+    methods.setValue("tagInput", "");
+  };
+  const handleRemoveTag = (tag: string) => {
+    const currentTags = methods.getValues("tags");
+    const newTags = currentTags?.filter((t) => t !== tag);
+    methods.setValue("tags", newTags);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
     }
   };
 
-  const handleRemoveTag = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
-  };
   return (
     <div className="pb-[200px]">
       <PageHeader title={type === "album" ? "Create Album" : "Create Single"} />
@@ -259,13 +270,14 @@ function RouteComponent() {
           control={methods.control}
           textArea={false}
           placeholder="Soul RnB"
+          onKeyDown={handleKeyDown}
         />
         <Button type="button" variant={"outline"} onClick={handleAddTag}>
-          Enter
+          Add
         </Button>
         <div className="flex flex-wrap gap-2 ">
-          {tags?.map((tag) => (
-            <Badge key={tag} variant={"outline"} className="flex items-center gap-2 px-4 py-2">
+          {tags?.map((tag, index) => (
+            <Badge key={index} variant={"outline"} className="flex items-center gap-2 px-4 py-2">
               {tag}
               <button onClick={() => handleRemoveTag(tag)} className=" bg-amber-700 rounded-full text-white px-2 py-1">
                 X
