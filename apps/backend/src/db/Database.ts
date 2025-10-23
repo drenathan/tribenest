@@ -44,7 +44,7 @@ export default class Database {
       dialect: this.dialect,
       plugins: [
         new MyCamelCasePlugin({
-          excludeColumns: ["content", "theme_settings", "permissions", "user_agent", "membership_tiers"],
+          excludeColumns: ["content", "theme_settings", "permissions", "user_agent", "membership_tiers", "credentials"],
         }),
       ],
       log: (event) => {

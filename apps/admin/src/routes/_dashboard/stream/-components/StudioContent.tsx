@@ -5,12 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import { LocalTrackPublication, Room, Track, VideoPresets } from "livekit-client";
 import { useRoomContext, RoomAudioRenderer } from "@livekit/components-react";
 import "@livekit/components-styles";
-import { Button, cn, FontFamily, getContrastColor, sleep, Tooltip2 } from "@tribe-nest/frontend-shared";
+import { Button, cn, FontFamily, getContrastColor, sleep, Tooltip2, type ApiError } from "@tribe-nest/frontend-shared";
 import { io, Socket } from "socket.io-client";
 import { ACCESS_TOKEN_KEY } from "@/contexts/AuthContext";
-
+import { toast } from "sonner";
 import { useParticipantStore } from "./store";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, Plus } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import Scenes from "./Scenes";
 import { OUTPUT_HEIGHT, OUTPUT_WIDTH, useComposer } from "./useComposer";
@@ -19,6 +19,9 @@ import Controls from "./Controls";
 import { VideoTile } from "./VideoTile";
 import { COLORS } from "@/services/contants";
 import { useCanvasAudio } from "./hooks/useCanvasAudio";
+import SelectChannel from "./SelectChannel";
+import { useGetTemplateChannels } from "@/hooks/queries/useStreams";
+import { LiveIcon } from "./assets/LiveIcon";
 
 export const StudioContent = () => {
   const { currentProfileAuthorization } = useAuth();
@@ -28,13 +31,17 @@ export const StudioContent = () => {
   const outputVideoRef = useRef<HTMLVideoElement | null>(null);
   const [isLive, setIsLive] = useState(false);
   const [isLoadingLive, setIsLoadingLive] = useState(false);
+  const [isSelectChannelOpen, setIsSelectChannelOpen] = useState(false);
+  const [broadcastId, setBroadcastId] = useState<string>();
 
   const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   const canvasStream = useRef<MediaStream | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
-  const { videoDeviceId, videoEnabled, sceneTracks, localTemplate } = useParticipantStore();
+  const { videoDeviceId, videoEnabled, sceneTracks, localTemplate, comments, setComments } = useParticipantStore();
+  const { data: templateChannels } = useGetTemplateChannels(localTemplate?.id, currentProfileAuthorization?.profileId);
+
   const localVideoTrackRef = useRef<LocalTrackPublication | null>(null);
   const { combinedAudioStream } = useCanvasAudio();
   const isDefaultVideoInitiated = useRef(false);
@@ -49,6 +56,9 @@ export const StudioContent = () => {
     ? localTemplate?.config.banners.find((banner) => banner.id === selectedScene?.currentBannerId)
     : undefined;
   const contrastColor = getContrastColor(localTemplate?.config.primaryColor ?? COLORS.primary);
+  const currentComment = selectedScene?.currentComment
+    ? comments.find((comment) => comment.id === selectedScene.currentComment?.id)
+    : undefined;
 
   useComposer({
     canvasRef,
@@ -203,19 +213,27 @@ export const StudioContent = () => {
   const gridCols = getGridCols();
 
   const handleStopLive = async () => {
-    if (!isLive) return;
+    if (!isLive || !currentProfileAuthorization?.profileId || !localTemplate?.id) return;
     try {
       setIsLoadingLive(true);
-      await httpClient.post("/events/stop-egress");
+      await httpClient.post(`/streams/templates/${localTemplate.id}/stop-egress`, {
+        broadcastId,
+        profileId: currentProfileAuthorization.profileId,
+      });
       setIsLive(false);
       setIsLoadingLive(false);
+      setBroadcastId(undefined);
+      setComments([]);
     } catch (error) {
+      const errorMessage = (error as ApiError).response?.data?.message || "Error stopping live";
+      toast.error(errorMessage);
       console.error("error stopping live", error);
       setIsLoadingLive(false);
     }
   };
 
   const handleGoLive = async () => {
+    if (!localTemplate?.id || !currentProfileAuthorization?.profileId) return;
     try {
       setIsLoadingLive(true);
       if (!canvasRef.current) return;
@@ -226,7 +244,11 @@ export const StudioContent = () => {
         return;
       }
 
-      const { data } = await httpClient.post("/events/go-live");
+      const { data } = await httpClient.post(
+        `/streams/templates/${localTemplate.id}/go-live`,
+        {},
+        { params: { profileId: currentProfileAuthorization.profileId } },
+      );
       const room = new Room({
         videoCaptureDefaults: {
           resolution: VideoPresets.h1080.resolution,
@@ -251,11 +273,18 @@ export const StudioContent = () => {
 
       await sleep(1000);
 
-      await httpClient.post("/events/start-egress");
+      const res = await httpClient.post(
+        `/streams/templates/${localTemplate.id}/start-egress`,
+        {},
+        { params: { profileId: currentProfileAuthorization.profileId } },
+      );
       setIsLive(true);
       setIsLoadingLive(false);
+      setBroadcastId(res.data);
     } catch (error) {
       console.error("error going live", error);
+      const errorMessage = (error as ApiError).response?.data?.message || "Error going live";
+      toast.error(errorMessage);
       setIsLoadingLive(false);
     }
   };
@@ -271,10 +300,16 @@ export const StudioContent = () => {
           </Tooltip2>
         </div>
         <div className="flex gap-2 flex-wrap items-center">
+          <Button variant="outline" onClick={() => setIsSelectChannelOpen(true)} disabled={isLive || isLoadingLive}>
+            <Plus /> Channels
+            <sup className="text-xs border border-foreground rounded-full px-2 py-1">{templateChannels?.length}</sup>
+          </Button>
+          {isLive && <LiveIcon />}
           <Button onClick={isLive ? handleStopLive : handleGoLive} disabled={isLoadingLive}>
             {isLive ? "Stop Live" : "Go Live"}
           </Button>
         </div>
+        <SelectChannel open={isSelectChannelOpen} onOpenChange={setIsSelectChannelOpen} />
       </header>
 
       <div className="flex">
@@ -332,7 +367,7 @@ export const StudioContent = () => {
               />
             )}
 
-            {currentBanner && (
+            {currentBanner && !currentComment && (
               <div
                 style={{
                   position: "absolute",
@@ -365,6 +400,43 @@ export const StudioContent = () => {
                     }}
                   >
                     {currentBanner.subtitle}
+                  </p>
+                )}
+              </div>
+            )}
+            {currentComment && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: tickerText ? "60px" : "10px",
+                  left: "30px",
+                }}
+              >
+                <p
+                  style={{
+                    color: contrastColor,
+                    backgroundColor: localTemplate?.config.primaryColor,
+                    padding: "4px 12px",
+                    borderRadius: "4px",
+                    fontSize: "18px",
+                  }}
+                  data-comment-name
+                >
+                  {currentComment.name}
+                </p>
+                {currentComment.content && (
+                  <p
+                    data-comment-content
+                    style={{
+                      color: contrastColor === "#000000" ? "#FFFFFF" : "#000000",
+                      backgroundColor: contrastColor === "#000000" ? "#000000" : "#FFFFFF",
+                      padding: "4px 24px",
+                      borderRadius: "4px",
+                      fontSize: "24px",
+                      display: "inline-block",
+                    }}
+                  >
+                    {currentComment.content}
                   </p>
                 )}
               </div>
@@ -402,7 +474,7 @@ export const StudioContent = () => {
 
           <Controls />
         </div>
-        <RightPanel />
+        <RightPanel broadcastId={broadcastId} />
       </div>
       <canvas width={OUTPUT_WIDTH} height={OUTPUT_HEIGHT} ref={canvasRef} className="hidden" />
     </>

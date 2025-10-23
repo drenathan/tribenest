@@ -12,7 +12,10 @@ export function VideoTile({ track, id, className }: { track: TrackReference; id:
   const { localTemplate } = useParticipantStore();
   const selectedSceneId = localTemplate?.config.selectedSceneId || localTemplate?.scenes[0].id;
   const selectedScene = localTemplate?.scenes.find((scene) => scene.id === selectedSceneId);
-  const removeTitle = selectedScene?.currentBannerId || (!selectedScene?.background && selectedScene?.currentTickerId);
+  const removeTitle =
+    selectedScene?.currentBannerId ||
+    selectedScene?.currentComment ||
+    (!selectedScene?.background && selectedScene?.currentTickerId);
 
   track.publication.videoTrack?.on("muted", () => {
     setIsMuted(true);

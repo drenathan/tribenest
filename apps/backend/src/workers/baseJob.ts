@@ -8,7 +8,6 @@ import { Database } from "@src/db";
 
 export default abstract class BaseJob<Payload = {}> {
   abstract name: string;
-  //   protected workers!: Workers;
   public interval?: string;
   abstract tags: string[];
   protected workers!: Workers;
@@ -36,11 +35,6 @@ export default abstract class BaseJob<Payload = {}> {
       },
     });
   }
-
-  //   setWorkers(workers: Workers) {
-  //     this.workers = workers;
-  //   }
-
   // run the job at a specific time
   async schedule(when: Date, payload?: Payload) {
     logger.info({ tags: this.tags }, `Scheduling job ${this.name} for ${when}`);

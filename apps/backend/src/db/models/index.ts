@@ -43,6 +43,11 @@ import { EmailTemplateModel } from "./email/emailTemplate.model";
 import { SmartLinkModel } from "./smartLink/smartLink.model";
 import { SmartLinkEventModel } from "./smartLink/smartLinkEvent.model";
 import { StreamTemplateModel } from "./stream/streamTemplate.model";
+import { StreamChannelModel } from "./stream/streamChannel.model";
+import { StreamTemplateChannelModel } from "./stream/streamTemplateChannel.model";
+import { StreamBroadcastModel } from "./stream/streamBroadcast.model";
+import { StreamBroadcastChannelModel } from "./stream/streamBroadcastChannel.model";
+import { StreamBroadcastCommentModel } from "./stream/streamBroadcastComment.model";
 import { WebsiteVersionModel } from "./website/websiteVersion.model";
 import { WebsiteVersionPageModel } from "./website/websiteVersionPage.model";
 import { WebsiteMessageModel } from "./website/websiteMessage.model";
@@ -93,6 +98,11 @@ export const bootstrapModels = (client: Kysely<DB>) => {
     SmartLink: new SmartLinkModel(client),
     SmartLinkEvent: new SmartLinkEventModel(client),
     StreamTemplate: new StreamTemplateModel(client),
+    StreamChannel: new StreamChannelModel(client),
+    StreamTemplateChannel: new StreamTemplateChannelModel(client),
+    StreamBroadcast: new StreamBroadcastModel(client),
+    StreamBroadcastChannel: new StreamBroadcastChannelModel(client),
+    StreamBroadcastComment: new StreamBroadcastCommentModel(client),
     WebsiteVersion: new WebsiteVersionModel(client),
     WebsiteVersionPage: new WebsiteVersionPageModel(client),
     WebsiteMessage: new WebsiteMessageModel(client),

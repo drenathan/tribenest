@@ -110,6 +110,7 @@ export interface IScene {
   };
   currentTickerId?: string;
   currentBannerId?: string;
+  currentComment?: IStreamBroadcastComment;
 }
 
 export interface ITicker {
@@ -134,6 +135,7 @@ export interface IStreamTemplate {
   profileId: string;
   title: string;
   description: string;
+  channelIds?: string[];
   config: {
     primaryColor: string;
     fontFamily: string;
@@ -144,4 +146,32 @@ export interface IStreamTemplate {
   createdAt: string;
   updatedAt: string;
   scenes: IScene[];
+}
+
+export enum StreamChannelProvider {
+  Youtube = "youtube",
+  Twitch = "twitch",
+  CustomRTMP = "custom_rtmp",
+}
+
+export interface IStreamChannel {
+  id: string;
+  profileId: string;
+  externalId: string;
+  title: string;
+  channelProvider: StreamChannelProvider;
+}
+
+export interface IStreamTemplateChannel {
+  id: string;
+  streamTemplateId: string;
+  streamChannelId: string;
+}
+
+export interface IStreamBroadcastComment {
+  id: string;
+  name: string;
+  content: string;
+  publishedAt: string;
+  channelProvider: StreamChannelProvider;
 }
