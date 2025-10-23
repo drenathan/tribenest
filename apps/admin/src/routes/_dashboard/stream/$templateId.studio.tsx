@@ -32,7 +32,11 @@ function RouteComponent() {
   useEffect(() => {
     if (!currentProfileAuthorization?.profileId || !permissionsLoaded || !username) return;
     httpClient
-      .post("/events/rooms", { username, userTitle, profileId: currentProfileAuthorization?.profileId })
+      .post(`/streams/templates/${templateId}/rooms`, {
+        username,
+        userTitle,
+        profileId: currentProfileAuthorization?.profileId,
+      })
       .then(({ data }) => {
         const { token } = data;
         room.connect(import.meta.env.VITE_LIVEKIT_API_URL, token);
@@ -41,7 +45,7 @@ function RouteComponent() {
           room.disconnect();
         };
       });
-  }, [currentProfileAuthorization?.profileId, room, permissionsLoaded, username, userTitle]);
+  }, [currentProfileAuthorization?.profileId, room, permissionsLoaded, username, userTitle, templateId]);
 
   return (
     <div data-lk-theme="default">

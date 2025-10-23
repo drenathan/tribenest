@@ -18,6 +18,7 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-pa
 import { Route as DashboardTribeIndexRouteImport } from './routes/_dashboard/tribe/index'
 import { Route as DashboardSettingsIndexRouteImport } from './routes/_dashboard/settings/index'
 import { Route as DashboardStreamListRouteImport } from './routes/_dashboard/stream/list'
+import { Route as DashboardStreamChannelsRouteImport } from './routes/_dashboard/stream/channels'
 import { Route as DashboardWebsiteThemesIndexRouteImport } from './routes/_dashboard/website/themes/index'
 import { Route as DashboardWebsiteMessagesIndexRouteImport } from './routes/_dashboard/website/messages/index'
 import { Route as DashboardWebsiteHomeIndexRouteImport } from './routes/_dashboard/website/home/index'
@@ -41,6 +42,7 @@ import { Route as DashboardEmailsEmailsIndexRouteImport } from './routes/_dashbo
 import { Route as DashboardTribePostsCreateRouteImport } from './routes/_dashboard/tribe/posts/create'
 import { Route as DashboardTribeMembershipTiersCreateRouteImport } from './routes/_dashboard/tribe/membership-tiers/create'
 import { Route as DashboardStreamTemplateIdStudioRouteImport } from './routes/_dashboard/stream/$templateId.studio'
+import { Route as DashboardStreamChannelOauthRouteImport } from './routes/_dashboard/stream/$channel.oauth'
 import { Route as DashboardStoreProductsCeateRouteImport } from './routes/_dashboard/store/products/ceate'
 import { Route as DashboardStoreOrdersOrderIdRouteImport } from './routes/_dashboard/store/orders/$orderId'
 import { Route as DashboardStoreMusicCreateRouteImport } from './routes/_dashboard/store/music/create'
@@ -100,6 +102,11 @@ const DashboardSettingsIndexRoute = DashboardSettingsIndexRouteImport.update({
 const DashboardStreamListRoute = DashboardStreamListRouteImport.update({
   id: '/stream/list',
   path: '/stream/list',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardStreamChannelsRoute = DashboardStreamChannelsRouteImport.update({
+  id: '/stream/channels',
+  path: '/stream/channels',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardWebsiteThemesIndexRoute =
@@ -240,6 +247,12 @@ const DashboardStreamTemplateIdStudioRoute =
     path: '/stream/$templateId/studio',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+const DashboardStreamChannelOauthRoute =
+  DashboardStreamChannelOauthRouteImport.update({
+    id: '/stream/$channel/oauth',
+    path: '/stream/$channel/oauth',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
 const DashboardStoreProductsCeateRoute =
   DashboardStoreProductsCeateRouteImport.update({
     id: '/store/products/ceate',
@@ -348,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
+  '/stream/channels': typeof DashboardStreamChannelsRoute
   '/stream/list': typeof DashboardStreamListRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
@@ -357,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
+  '/stream/$channel/oauth': typeof DashboardStreamChannelOauthRoute
   '/stream/$templateId/studio': typeof DashboardStreamTemplateIdStudioRoute
   '/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/tribe/posts/create': typeof DashboardTribePostsCreateRoute
@@ -397,6 +412,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof DashboardIndexRoute
+  '/stream/channels': typeof DashboardStreamChannelsRoute
   '/stream/list': typeof DashboardStreamListRoute
   '/settings': typeof DashboardSettingsIndexRoute
   '/tribe': typeof DashboardTribeIndexRoute
@@ -406,6 +422,7 @@ export interface FileRoutesByTo {
   '/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
   '/store/products/ceate': typeof DashboardStoreProductsCeateRoute
+  '/stream/$channel/oauth': typeof DashboardStreamChannelOauthRoute
   '/stream/$templateId/studio': typeof DashboardStreamTemplateIdStudioRoute
   '/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/tribe/posts/create': typeof DashboardTribePostsCreateRoute
@@ -449,6 +466,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/stream/channels': typeof DashboardStreamChannelsRoute
   '/_dashboard/stream/list': typeof DashboardStreamListRoute
   '/_dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/_dashboard/tribe/': typeof DashboardTribeIndexRoute
@@ -458,6 +476,7 @@ export interface FileRoutesById {
   '/_dashboard/store/music/create': typeof DashboardStoreMusicCreateRoute
   '/_dashboard/store/orders/$orderId': typeof DashboardStoreOrdersOrderIdRoute
   '/_dashboard/store/products/ceate': typeof DashboardStoreProductsCeateRoute
+  '/_dashboard/stream/$channel/oauth': typeof DashboardStreamChannelOauthRoute
   '/_dashboard/stream/$templateId/studio': typeof DashboardStreamTemplateIdStudioRoute
   '/_dashboard/tribe/membership-tiers/create': typeof DashboardTribeMembershipTiersCreateRoute
   '/_dashboard/tribe/posts/create': typeof DashboardTribePostsCreateRoute
@@ -500,6 +519,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/'
+    | '/stream/channels'
     | '/stream/list'
     | '/settings'
     | '/tribe'
@@ -509,6 +529,7 @@ export interface FileRouteTypes {
     | '/store/music/create'
     | '/store/orders/$orderId'
     | '/store/products/ceate'
+    | '/stream/$channel/oauth'
     | '/stream/$templateId/studio'
     | '/tribe/membership-tiers/create'
     | '/tribe/posts/create'
@@ -549,6 +570,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/'
+    | '/stream/channels'
     | '/stream/list'
     | '/settings'
     | '/tribe'
@@ -558,6 +580,7 @@ export interface FileRouteTypes {
     | '/store/music/create'
     | '/store/orders/$orderId'
     | '/store/products/ceate'
+    | '/stream/$channel/oauth'
     | '/stream/$templateId/studio'
     | '/tribe/membership-tiers/create'
     | '/tribe/posts/create'
@@ -600,6 +623,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/signup'
     | '/_dashboard/'
+    | '/_dashboard/stream/channels'
     | '/_dashboard/stream/list'
     | '/_dashboard/settings/'
     | '/_dashboard/tribe/'
@@ -609,6 +633,7 @@ export interface FileRouteTypes {
     | '/_dashboard/store/music/create'
     | '/_dashboard/store/orders/$orderId'
     | '/_dashboard/store/products/ceate'
+    | '/_dashboard/stream/$channel/oauth'
     | '/_dashboard/stream/$templateId/studio'
     | '/_dashboard/tribe/membership-tiers/create'
     | '/_dashboard/tribe/posts/create'
@@ -713,6 +738,13 @@ declare module '@tanstack/react-router' {
       path: '/stream/list'
       fullPath: '/stream/list'
       preLoaderRoute: typeof DashboardStreamListRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/stream/channels': {
+      id: '/_dashboard/stream/channels'
+      path: '/stream/channels'
+      fullPath: '/stream/channels'
+      preLoaderRoute: typeof DashboardStreamChannelsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/_dashboard/website/themes/': {
@@ -876,6 +908,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardStreamTemplateIdStudioRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/_dashboard/stream/$channel/oauth': {
+      id: '/_dashboard/stream/$channel/oauth'
+      path: '/stream/$channel/oauth'
+      fullPath: '/stream/$channel/oauth'
+      preLoaderRoute: typeof DashboardStreamChannelOauthRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/_dashboard/store/products/ceate': {
       id: '/_dashboard/store/products/ceate'
       path: '/store/products/ceate'
@@ -1016,6 +1055,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface DashboardRouteRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardStreamChannelsRoute: typeof DashboardStreamChannelsRoute
   DashboardStreamListRoute: typeof DashboardStreamListRoute
   DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardTribeIndexRoute: typeof DashboardTribeIndexRoute
@@ -1025,6 +1065,7 @@ interface DashboardRouteRouteChildren {
   DashboardStoreMusicCreateRoute: typeof DashboardStoreMusicCreateRoute
   DashboardStoreOrdersOrderIdRoute: typeof DashboardStoreOrdersOrderIdRoute
   DashboardStoreProductsCeateRoute: typeof DashboardStoreProductsCeateRoute
+  DashboardStreamChannelOauthRoute: typeof DashboardStreamChannelOauthRoute
   DashboardStreamTemplateIdStudioRoute: typeof DashboardStreamTemplateIdStudioRoute
   DashboardTribeMembershipTiersCreateRoute: typeof DashboardTribeMembershipTiersCreateRoute
   DashboardTribePostsCreateRoute: typeof DashboardTribePostsCreateRoute
@@ -1063,6 +1104,7 @@ interface DashboardRouteRouteChildren {
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardStreamChannelsRoute: DashboardStreamChannelsRoute,
   DashboardStreamListRoute: DashboardStreamListRoute,
   DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardTribeIndexRoute: DashboardTribeIndexRoute,
@@ -1072,6 +1114,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardStoreMusicCreateRoute: DashboardStoreMusicCreateRoute,
   DashboardStoreOrdersOrderIdRoute: DashboardStoreOrdersOrderIdRoute,
   DashboardStoreProductsCeateRoute: DashboardStoreProductsCeateRoute,
+  DashboardStreamChannelOauthRoute: DashboardStreamChannelOauthRoute,
   DashboardStreamTemplateIdStudioRoute: DashboardStreamTemplateIdStudioRoute,
   DashboardTribeMembershipTiersCreateRoute:
     DashboardTribeMembershipTiersCreateRoute,

@@ -199,6 +199,49 @@ export const useComposer = ({
         ctx.fillStyle = secondaryColor;
         ctx.fillText(text, x + paddingX, y + paddingY + fontSize);
       }
+      const commentName = stage.querySelector("[data-comment-name]");
+      if (commentName) {
+        const rect = commentName.getBoundingClientRect();
+        const x = (rect.left - stageRect.left) * scaleX;
+        const y = (rect.top - stageRect.top) * scaleY; // bottom baseline
+        const width = rect.width * scaleX;
+        const height = rect.height * scaleY;
+        const fontSize = 18 * scaleY;
+        ctx.font = `${fontSize}px ${fontFamily}`;
+        const paddingY = 10 * scaleY;
+        const paddingX = 12 * scaleX;
+        const text = commentName.textContent || "";
+        const borderRadius = 4;
+        ctx.fillStyle = template.config.primaryColor ?? COLORS.primary;
+        ctx.beginPath();
+        ctx.roundRect(x, y, width, height, borderRadius);
+        ctx.fill();
+        ctx.closePath();
+        ctx.fillStyle = contrastColor;
+        ctx.fillText(text, x + paddingX, y + paddingY + fontSize);
+      }
+
+      const commentContent = stage.querySelector("[data-comment-content]");
+      if (commentContent) {
+        const rect = commentContent.getBoundingClientRect();
+        const x = (rect.left - stageRect.left) * scaleX;
+        const y = (rect.top - stageRect.top) * scaleY; // bottom baseline
+        const width = rect.width * scaleX;
+        const height = rect.height * scaleY;
+        const fontSize = 24 * scaleY;
+        ctx.font = `${fontSize}px ${fontFamily}`;
+        const paddingY = 10 * scaleY;
+        const paddingX = 12 * scaleX;
+        const text = commentContent.textContent || "";
+        const borderRadius = 4;
+        ctx.fillStyle = secondaryBackgroundColor;
+        ctx.beginPath();
+        ctx.roundRect(x, y, width, height, borderRadius);
+        ctx.fill();
+        ctx.closePath();
+        ctx.fillStyle = secondaryColor;
+        ctx.fillText(text, x + paddingX, y + paddingY + fontSize);
+      }
 
       const tickerContainer = stage.querySelector("[data-ticker-container]");
 

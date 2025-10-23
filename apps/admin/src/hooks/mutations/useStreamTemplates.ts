@@ -1,6 +1,8 @@
 import httpClient from "@/services/httpClient";
 import type { IStreamTemplate } from "@/types/event";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { ApiError } from "@tribe-nest/frontend-shared";
+import { toast } from "sonner";
 
 export type CreateStreamTemplatePayload = {
   profileId: string;
@@ -42,6 +44,54 @@ export const useUpdateStreamTemplate = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["stream-templates"],
+      });
+    },
+  });
+};
+
+export type UpdateTemplateChannelsPayload = {
+  templateId: string;
+  profileId: string;
+  channelIds: string[];
+};
+
+export const useUpdateTemplateChannels = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: UpdateTemplateChannelsPayload) => {
+      const { data } = await httpClient.put(`/streams/templates/${payload.templateId}/channels`, payload);
+      return data;
+    },
+    onSuccess: (_, payload) => {
+      queryClient.invalidateQueries({
+        queryKey: ["stream-template-channels", payload.templateId],
+      });
+    },
+    onError: (error) => {
+      const errorMessage =
+        (error as unknown as ApiError).response?.data?.message || "Failed to update template channels";
+      toast.error(errorMessage);
+    },
+  });
+};
+
+export type CreateCustomRtmpChannelPayload = {
+  profileId: string;
+  ingestUrl: string;
+  title: string;
+};
+
+export const useCreateCustomRtmpChannel = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: CreateCustomRtmpChannelPayload) => {
+      const { data } = await httpClient.post("/streams/channels/custom-rtmp", payload);
+      return data;
+    },
+    onSuccess: (_, payload) => {
+      queryClient.invalidateQueries({
+        queryKey: ["stream-channels", payload.profileId],
       });
     },
   });

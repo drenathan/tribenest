@@ -1,10 +1,11 @@
 import httpClient from "@/services/httpClient";
 import type { ApiError } from "@tribe-nest/frontend-shared";
-import type { IBanner, IStreamTemplate, ITicker, MediaDevice } from "@/types/event";
+import type { IBanner, IStreamBroadcastComment, IStreamTemplate, ITicker, MediaDevice } from "@/types/event";
 import type { TrackReference } from "@livekit/components-react";
 import type { Participant } from "livekit-client";
 import { create } from "zustand";
 import { toast } from "sonner";
+import { uniqBy } from "lodash";
 
 interface ParticipantStore {
   audioDeviceId: string;
@@ -18,6 +19,7 @@ interface ParticipantStore {
   videoDevices: MediaDevice[];
   sceneTracks: TrackReference[];
   localTemplate: IStreamTemplate | null;
+  comments: IStreamBroadcastComment[];
   sceneParticipants: {
     [key: string]: {
       participant: Participant;
@@ -38,9 +40,10 @@ interface ParticipantStore {
     [key: string]: { tracks: TrackReference[]; participant: Participant };
   }) => void;
   setLocalTemplate: (localTemplate: IStreamTemplate, persist?: boolean) => void;
+  setComments: (comments: IStreamBroadcastComment[]) => void;
 }
 
-export const useParticipantStore = create<ParticipantStore>((set) => ({
+export const useParticipantStore = create<ParticipantStore>((set, get) => ({
   audioDeviceId: "",
   audioEnabled: false,
   videoDeviceId: "",
@@ -52,7 +55,12 @@ export const useParticipantStore = create<ParticipantStore>((set) => ({
   videoDevices: [],
   sceneTracks: [],
   sceneParticipants: {},
+  comments: [],
   localTemplate: null,
+  setComments: (newComments) => {
+    const comments = get().comments;
+    set({ comments: uniqBy([...comments, ...newComments], "id") });
+  },
   setAudioDevices: (audioDevices) => set({ audioDevices }),
   setVideoDevices: (videoDevices) => set({ videoDevices }),
   setAudioDeviceId: (audioDeviceId) => set({ audioDeviceId }),

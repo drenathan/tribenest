@@ -1,9 +1,13 @@
 import { Card } from "@tribe-nest/frontend-shared";
 import { Layers, MessageSquare, MessageSquareLock, Dock, Users, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ParticipantsTab from "./tabs/ParticipantsTab";
 import LayersTab from "./tabs/LayersTab";
 import BannersTab from "./tabs/BannersTab";
+import httpClient from "@/services/httpClient";
+import { useAuth } from "@/hooks/useAuth";
+import { CommentsTab } from "./tabs/CommentsTab";
+import { useParticipantStore } from "./store";
 
 const buttonClass = (active: boolean) =>
   `hover:text-foreground transition-colors cursor-pointer flex flex-col items-center gap-2 pb-4 border-b border-border ${active ? "text-foreground" : "text-muted-foreground"}`;
@@ -16,8 +20,40 @@ const tabHeadings: Record<Tab, string> = {
   comments: "Comments",
   "guests-chat": "Guests Chat",
 };
-function RightPanel() {
+
+type Props = {
+  broadcastId?: string;
+};
+
+function RightPanel({ broadcastId }: Props) {
   const [activeTab, setActiveTab] = useState<Tab | null>("participants");
+  const { comments, setComments } = useParticipantStore();
+  const [commentsCursor, setCommentsCursor] = useState<string>();
+  const { currentProfileAuthorization } = useAuth();
+
+  useEffect(() => {
+    if (!broadcastId || !currentProfileAuthorization?.profileId) return;
+
+    const interval = setInterval(() => {
+      httpClient
+        .get(`/streams/broadcasts/${broadcastId}/comments`, {
+          params: {
+            cursor: commentsCursor,
+            profileId: currentProfileAuthorization?.profileId,
+          },
+        })
+        .then((res) => {
+          setComments(res.data);
+          if (res.data.length > 0) {
+            setCommentsCursor(res.data[res.data.length - 1].id);
+          } else {
+            setCommentsCursor(undefined);
+          }
+        });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [broadcastId, commentsCursor, currentProfileAuthorization?.profileId, setComments]);
 
   return (
     <div className="shrink-0 h-vh flex pt-4 px-2 gap-2">
@@ -32,6 +68,7 @@ function RightPanel() {
             {activeTab === "participants" && <ParticipantsTab />}
             {activeTab === "layers" && <LayersTab />}
             {activeTab === "banners" && <BannersTab />}
+            {activeTab === "comments" && <CommentsTab comments={comments} />}
           </div>
         </Card>
       )}
