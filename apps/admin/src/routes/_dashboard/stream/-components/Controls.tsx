@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
   cn,
 } from "@tribe-nest/frontend-shared";
-import { Mic, MicOff, Video, VideoOff, ChevronDown, MonitorUp } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, ChevronDown, MonitorUp, MonitorOff } from "lucide-react";
 import { Track } from "livekit-client";
 import { SceneLayout } from "@/types/event";
 
@@ -17,10 +17,12 @@ function Controls() {
   const {
     audioEnabled,
     videoEnabled,
+    screenShareEnabled,
     audioDeviceId,
     videoDeviceId,
     setAudioEnabled,
     setVideoEnabled,
+    setScreenShareEnabled,
     audioDevices,
     videoDevices,
     setAudioDeviceId,
@@ -129,6 +131,61 @@ function Controls() {
       }
 
       setVideoEnabled(true);
+    }
+  };
+
+  const handleToggleScreenShare = async () => {
+    const publication = room?.localParticipant?.getTrackPublication(Track.Source.ScreenShare);
+
+    if (screenShareEnabled) {
+      // Stop screen sharing
+      if (publication?.videoTrack) {
+        await room.localParticipant.unpublishTrack(publication.videoTrack);
+      }
+      setScreenShareEnabled(false);
+    } else {
+      try {
+        // Start screen sharing
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: 30 },
+          },
+          audio: true, // Include system audio if available
+        });
+
+        const videoTrack = screenStream.getVideoTracks()[0];
+        const audioTrack = screenStream.getAudioTracks()[0];
+
+        // Handle video track
+        if (videoTrack) {
+          await room.localParticipant.publishTrack(videoTrack, {
+            name: "screen-share-video",
+            source: Track.Source.ScreenShare,
+            simulcast: false,
+          });
+        }
+
+        // Handle audio track if available
+        if (audioTrack) {
+          await room.localParticipant.publishTrack(audioTrack, {
+            name: "screen-share-audio",
+            source: Track.Source.ScreenShareAudio,
+            simulcast: false,
+          });
+        }
+
+        // Listen for when the user stops sharing via browser UI
+        videoTrack.addEventListener("ended", () => {
+          handleToggleScreenShare();
+        });
+
+        setScreenShareEnabled(true);
+      } catch (error) {
+        console.error("Error starting screen share:", error);
+        // User likely cancelled the screen share dialog
+      }
     }
   };
 
@@ -266,9 +323,12 @@ function Controls() {
           </DropdownMenu>
         </div>
 
-        <Button variant="ghost">
-          <MonitorUp className="w-8 h-8" />{" "}
-        </Button>
+        {/* Screen Share Control */}
+        <div className="flex items-center">
+          <Button onClick={handleToggleScreenShare} variant="outline">
+            {screenShareEnabled ? <MonitorOff className="w-8 h-8" /> : <MonitorUp className="w-8 h-8" />}
+          </Button>
+        </div>
       </Card>
     </div>
   );

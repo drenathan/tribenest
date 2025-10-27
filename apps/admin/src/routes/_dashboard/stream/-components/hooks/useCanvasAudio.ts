@@ -21,7 +21,6 @@ export const useCanvasAudio = () => {
   useEffect(() => {
     sceneAudioTracks.forEach((track) => {
       const stream = track.publication.track?.mediaStream;
-      console.log(track.publication);
       if (!stream) return;
 
       const exists = attachedStreams.current.find((s) => stream.id === s.id);

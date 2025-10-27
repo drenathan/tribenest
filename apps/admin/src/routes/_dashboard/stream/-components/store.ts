@@ -12,6 +12,7 @@ interface ParticipantStore {
   audioEnabled: boolean;
   videoDeviceId: string;
   videoEnabled: boolean;
+  screenShareEnabled: boolean;
   username: string;
   userTitle: string;
   permissionsLoaded: boolean;
@@ -30,6 +31,7 @@ interface ParticipantStore {
   setAudioEnabled: (audioEnabled: boolean) => void;
   setVideoDeviceId: (videoDeviceId: string) => void;
   setVideoEnabled: (videoEnabled: boolean) => void;
+  setScreenShareEnabled: (screenShareEnabled: boolean) => void;
   setUsername: (username: string) => void;
   setUserTitle: (userTitle: string) => void;
   setPermissionsLoaded: (permissionsLoaded: boolean) => void;
@@ -48,6 +50,7 @@ export const useParticipantStore = create<ParticipantStore>((set, get) => ({
   audioEnabled: false,
   videoDeviceId: "",
   videoEnabled: true,
+  screenShareEnabled: false,
   username: localStorage.getItem("stream_username") || "",
   userTitle: localStorage.getItem("stream_user_title") || "",
   permissionsLoaded: false,
@@ -67,6 +70,7 @@ export const useParticipantStore = create<ParticipantStore>((set, get) => ({
   setAudioEnabled: (audioEnabled) => set({ audioEnabled }),
   setVideoDeviceId: (videoDeviceId) => set({ videoDeviceId }),
   setVideoEnabled: (videoEnabled) => set({ videoEnabled }),
+  setScreenShareEnabled: (screenShareEnabled) => set({ screenShareEnabled }),
   setUsername: (username) => {
     set({ username });
     localStorage.setItem("stream_username", username);
