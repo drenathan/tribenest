@@ -33,3 +33,33 @@ export type GoogleOAuthData = {
   given_name: string;
   family_name: string;
 };
+
+export type GoogleOAuthCredentials = {
+  access_token: string;
+  refresh_token: string;
+  scope: string;
+  token_type: string;
+  expiry_date: number;
+};
+
+export type TwitchOAuthCredentials = {
+  access_token: string;
+  refresh_token: string;
+  scope: string[];
+  token_type: string;
+  expires_in: number;
+};
+
+export type TwitchUser = {
+  id: string;
+  login: string;
+  display_name: string;
+  type: string;
+  broadcaster_type: string;
+  description: string;
+  profile_image_url: string;
+  offline_image_url: string;
+  view_count: number;
+  created_at: string;
+  email: string;
+};

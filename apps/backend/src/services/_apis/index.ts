@@ -9,14 +9,17 @@ import { ExternalStoreFactory } from "./store/ExternalStoreFactory";
 import { ExternalStoreProvider } from "./store/ExternalStore";
 import { EncryptionService } from "@src/utils/encryption";
 import { ipLookup } from "./funcs/ipLookup";
+import { TwitchApiService } from "./twitch";
 
 export default class ApiServices {
   public readonly encryption: EncryptionService;
   public readonly ipLookup: typeof ipLookup;
+  public readonly twitch: TwitchApiService;
 
   constructor(private database: Database) {
     this.encryption = new EncryptionService();
     this.ipLookup = ipLookup;
+    this.twitch = new TwitchApiService();
   }
 
   public async getEmailClient(profileId: string) {

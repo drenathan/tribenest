@@ -29,6 +29,10 @@ export default class S3Service {
     await this.client.send(command);
   }
 
+  public getS3Config() {
+    return this.s3Config;
+  }
+
   public async getPresignedUrl(key: string) {
     const command = new PutObjectCommand({ Bucket: this.s3Config.bucketName, Key: key });
     const presignedUrl = await getSignedUrl(this.client, command, { expiresIn: 60 * 60 * 30 }); // 30 minutes

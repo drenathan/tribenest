@@ -11,7 +11,7 @@ import {
   // Share2,
   ShoppingBag,
   Users,
-  // Video,
+  Video,
 } from "lucide-react";
 
 type NavItem = {
@@ -136,17 +136,21 @@ const items: NavItem[] = [
       },
     ],
   },
-  // {
-  //   title: "Live Stream",
-  //   path: "/stream",
-  //   icon: Video,
-  //   items: [
-  //     {
-  //       title: "Studio",
-  //       path: "/stream/studio",
-  //     },
-  //   ],
-  // },
+  {
+    title: "Live Stream",
+    path: "/stream",
+    icon: Video,
+    items: [
+      {
+        title: "Studio",
+        path: "/stream/list",
+      },
+      {
+        title: "Channels",
+        path: "/stream/channels",
+      },
+    ],
+  },
   // {
   //   title: "Social Media",
   //   path: "/social-media",

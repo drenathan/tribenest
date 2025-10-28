@@ -150,7 +150,6 @@ export function OrdersTab() {
                             key={`${item.productId}-${item.productVariantId}-${index}`}
                             className="flex gap-4 items-start"
                           >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={item.coverImage || ""}
                               alt={item.title}

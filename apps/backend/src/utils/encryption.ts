@@ -34,6 +34,10 @@ export class EncryptionService {
     return EncryptionService.decrypt(encryptedText);
   }
 
+  public encrypt(text: string): string {
+    return EncryptionService.encrypt(text);
+  }
+
   public encryptObject<T extends Record<string, string | null | Json>>(obj: T, fieldsToEncrypt: (keyof T)[]): T {
     return EncryptionService.encryptObject(obj, fieldsToEncrypt);
   }

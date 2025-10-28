@@ -80,6 +80,7 @@ export class ProfileService extends BaseService {
       name,
       size,
       profileId,
+      filename: name,
     });
     return media;
   }

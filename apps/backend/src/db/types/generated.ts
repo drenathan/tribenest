@@ -318,7 +318,7 @@ export interface PostCollectionPosts {
   id: Generated<string>;
   order: number;
   postCollectionId: string;
-  postId: string;
+  "postId ": string;
   updatedAt: Generated<Timestamp>;
 }
 
@@ -327,9 +327,9 @@ export interface PostCollections {
   createdAt: Generated<Timestamp>;
   description: string | null;
   id: Generated<string>;
-  name: string;
   postType: string;
   profileId: string;
+  title: string;
   updatedAt: Generated<Timestamp>;
 }
 
@@ -563,6 +563,85 @@ export interface SmartLinks {
   updatedAt: Generated<Timestamp>;
 }
 
+export interface StreamBroadcastChannels {
+  createdAt: Generated<Timestamp>;
+  externalBroadcastId: string | null;
+  externalChatId: string | null;
+  externalStreamId: string | null;
+  id: Generated<string>;
+  nextPageToken: string | null;
+  streamBroadcastId: string;
+  streamChannelId: string;
+  updatedAt: Generated<Timestamp>;
+  views: Generated<number>;
+}
+
+export interface StreamBroadcastComments {
+  content: string;
+  createdAt: Generated<Timestamp>;
+  externalId: string | null;
+  id: Generated<string>;
+  isAdmin: Generated<boolean>;
+  name: string;
+  publishedAt: Timestamp | null;
+  streamBroadcastChannelId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface StreamBroadcasts {
+  createdAt: Generated<Timestamp>;
+  egressId: string | null;
+  endedAt: Timestamp | null;
+  eventId: string | null;
+  generatedThumbnailUrl: string | null;
+  id: Generated<string>;
+  liveUrl: string | null;
+  profileId: string;
+  startDate: Timestamp | null;
+  startedAt: Timestamp;
+  streamTemplateId: string;
+  thumbnailUrl: string | null;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+  vodUrl: string | null;
+}
+
+export interface StreamChannels {
+  brandingSettings: Json | null;
+  channelProvider: string;
+  createdAt: Generated<Timestamp>;
+  credentials: Json;
+  currentBroadcastId: string | null;
+  currentEndpoint: string | null;
+  currentStreamId: string | null;
+  externalId: string | null;
+  id: Generated<string>;
+  profileId: string;
+  title: string | null;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface StreamTemplateChannels {
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  streamChannelId: string;
+  streamTemplateId: string;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface StreamTemplates {
+  config: Json | null;
+  createdAt: Generated<Timestamp>;
+  description: string | null;
+  eventId: string | null;
+  id: Generated<string>;
+  isLive: boolean | null;
+  profileId: string;
+  scenes: Json;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+}
+
 export interface WebsiteEvents {
   createdAt: Generated<Timestamp>;
   eventData: Json;
@@ -650,6 +729,12 @@ export interface DB {
   sessions: Sessions;
   smartLinkEvents: SmartLinkEvents;
   smartLinks: SmartLinks;
+  streamBroadcastChannels: StreamBroadcastChannels;
+  streamBroadcastComments: StreamBroadcastComments;
+  streamBroadcasts: StreamBroadcasts;
+  streamChannels: StreamChannels;
+  streamTemplateChannels: StreamTemplateChannels;
+  streamTemplates: StreamTemplates;
   websiteEvents: WebsiteEvents;
   websiteMessages: WebsiteMessages;
   websiteVersionPages: WebsiteVersionPages;

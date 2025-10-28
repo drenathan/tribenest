@@ -7,6 +7,7 @@ import ProcessEmailJob from "./emails/processEmail";
 import SyncExternalProductsJob from "./products/SyncExternalProducts";
 import ResendDigitalDeliveryJob from "./order/resendDigitalDelivery";
 import ProcessTicketOrderJob from "./order/processTicketOrder";
+import FetchCommentsJob from "./broadcast/fetchComments";
 
 export const bootstrapJobs = (queue: Queue, services: Services, database: Database) => {
   return {
@@ -21,6 +22,9 @@ export const bootstrapJobs = (queue: Queue, services: Services, database: Databa
     },
     products: {
       syncExternalProducts: new SyncExternalProductsJob(queue, services, database),
+    },
+    broadcast: {
+      fetchComments: new FetchCommentsJob(queue, services, database),
     },
   };
 };

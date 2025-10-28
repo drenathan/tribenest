@@ -50,9 +50,10 @@ export default class BaseModel<
   async findOne(
     fields: Fields,
     func?: (qb: SelectQueryBuilder<DB, TableName, {}>) => SelectQueryBuilder<DB, TableName, {}>,
+    trx?: Transaction<DB>,
   ): Promise<Selectable<Table> | undefined> {
     return (
-      this.client
+      (trx ?? this.client)
         .selectFrom(`${this.table}`)
         .selectAll()
         // @ts-ignore

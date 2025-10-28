@@ -7,6 +7,7 @@ import { OrderStatus } from "./product";
 import { ProfileAddress, ProfileOnboardingStepId, PWAConfig, StorageType } from "./profile";
 import { EmailRecipientStatus, EmailStatus } from "./email";
 import { ExternalStoreProvider } from "@src/services/_apis/store/ExternalStore";
+import { StreamChannelProvider } from "./stream";
 
 type Media = Omit<GeneratedTypes.Media, "type" | "parent"> & {
   type: MediaType;
@@ -66,6 +67,10 @@ type Event = Omit<GeneratedTypes.Events, "address"> & {
   >;
 };
 
+type StreamChannel = Omit<GeneratedTypes.StreamChannels, "channelProvider"> & {
+  channelProvider: StreamChannelProvider;
+};
+
 export interface DB extends GeneratedTypes.DB {
   media: Media;
   posts: Post;
@@ -78,4 +83,5 @@ export interface DB extends GeneratedTypes.DB {
   emailRecipients: EmailRecipient;
   profileConfigurations: ProfileConfiguration;
   events: Event;
+  streamChannels: StreamChannel;
 }

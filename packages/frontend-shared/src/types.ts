@@ -32,7 +32,7 @@ export type Media = {
   url: string;
   size: number;
   name: string;
-  parent: "website" | "project";
+  parent: "website" | "project" | "stream_background" | "stream_overlay" | "stream_logo";
   type: "image" | "video";
 };
 
