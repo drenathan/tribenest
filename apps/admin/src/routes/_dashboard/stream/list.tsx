@@ -25,7 +25,7 @@ import { formatDistanceToNow } from "date-fns";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 
 const routeParams = z.object({
-  page: z.number().default(1),
+  page: z.coerce.number().default(1),
 });
 
 export const Route = createFileRoute("/_dashboard/stream/list")({

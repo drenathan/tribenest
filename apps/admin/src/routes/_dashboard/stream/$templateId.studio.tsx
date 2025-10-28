@@ -1,6 +1,6 @@
 import "hacktimer";
 import { useAuth } from "@/hooks/useAuth";
-import httpClient from "@/services/httpClient";
+import httpClient, { getLiveKitUrl } from "@/services/httpClient";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Room } from "livekit-client";
@@ -39,7 +39,7 @@ function RouteComponent() {
       })
       .then(({ data }) => {
         const { token } = data;
-        room.connect(import.meta.env.VITE_LIVEKIT_API_URL, token);
+        room.connect(getLiveKitUrl(), token);
 
         return () => {
           room.disconnect();
