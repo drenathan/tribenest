@@ -42,13 +42,14 @@ export function PreJoin() {
 
   // Request permissions and enumerate devices
   useEffect(() => {
+    let stream: MediaStream | null = null;
     const requestPermissions = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
         // Request both audio and video permissions
-        const stream = await navigator.mediaDevices.getUserMedia({
+        stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
           video: true,
         });
@@ -97,6 +98,14 @@ export function PreJoin() {
     };
 
     requestPermissions();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+    };
   }, [setAudioDeviceId, setVideoDeviceId, setAudioDevices, setVideoDevices]);
 
   const handleAudioDeviceChange = (deviceId: string) => {

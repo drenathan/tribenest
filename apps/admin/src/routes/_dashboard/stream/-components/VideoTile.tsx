@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type TrackReference } from "@livekit/components-react";
 import { VideoTrack } from "@livekit/components-react";
 import { User } from "lucide-react";
@@ -6,23 +6,29 @@ import { css } from "@emotion/css";
 import { useParticipantStore } from "./store";
 import { getContrastColor } from "@tribe-nest/frontend-shared";
 import { COLORS } from "@/services/contants";
+import { Track } from "livekit-client";
 
 export function VideoTile({ track, id, className }: { track: TrackReference; id: string; className?: string }) {
   const [isMuted, setIsMuted] = useState(track.publication.videoTrack?.isMuted);
   const { localTemplate } = useParticipantStore();
   const selectedSceneId = localTemplate?.config.selectedSceneId || localTemplate?.scenes[0].id;
   const selectedScene = localTemplate?.scenes.find((scene) => scene.id === selectedSceneId);
+  const isScreenShare = track.source === Track.Source.ScreenShare;
   const removeTitle =
     selectedScene?.currentBannerId ||
     selectedScene?.currentComment ||
-    (!selectedScene?.background && selectedScene?.currentTickerId);
+    (!selectedScene?.background && selectedScene?.currentTickerId) ||
+    isScreenShare;
 
-  track.publication.videoTrack?.on("muted", () => {
-    setIsMuted(true);
-  });
-  track.publication.videoTrack?.on("unmuted", () => {
-    setIsMuted(false);
-  });
+  useEffect(() => {
+    if (!track.publication.videoTrack) return;
+    track.publication.videoTrack?.on("muted", () => {
+      setIsMuted(true);
+    });
+    track.publication.videoTrack?.on("unmuted", () => {
+      setIsMuted(false);
+    });
+  }, [track]);
 
   const contrastColor = getContrastColor(localTemplate?.config.primaryColor ?? COLORS.primary);
 

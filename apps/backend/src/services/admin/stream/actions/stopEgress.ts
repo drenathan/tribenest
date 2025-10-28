@@ -14,22 +14,15 @@ import { google } from "googleapis";
 import { EncryptionService } from "@src/utils/encryption";
 import { StreamChannelProvider } from "@src/db/types/stream";
 
-export async function stopEgress(
-  this: StreamsService,
-  input: { templateId: string; profileId: string; broadcastId: string },
-) {
-  const { templateId, profileId, broadcastId } = input;
-  const template = await this.models.StreamTemplate.findOne({ id: templateId, profileId });
-  if (!template || !template.currentEgressId) {
-    throw new ValidationError("Template not found");
-  }
-  const egressClient = new EgressClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET);
-  await egressClient.stopEgress(template.currentEgressId);
-
+export async function stopEgress(this: StreamsService, input: { profileId: string; broadcastId: string }) {
+  const { profileId, broadcastId } = input;
   const broadcast = await this.models.StreamBroadcast.findWithChannels(broadcastId);
-  if (!broadcast) {
-    throw new ValidationError("Broadcast not found");
+  if (!broadcast || !broadcast.egressId || broadcast.profileId !== profileId) {
+    throw new ValidationError("Broadcast not found or no egress id");
   }
+
+  const egressClient = new EgressClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET);
+  await egressClient.stopEgress(broadcast.egressId);
 
   const youtubeChannels = broadcast.channels.filter(
     (channel) => channel.channelProvider === StreamChannelProvider.Youtube,

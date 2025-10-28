@@ -590,13 +590,20 @@ export interface StreamBroadcastComments {
 
 export interface StreamBroadcasts {
   createdAt: Generated<Timestamp>;
+  egressId: string | null;
   endedAt: Timestamp | null;
+  eventId: string | null;
+  generatedThumbnailUrl: string | null;
   id: Generated<string>;
+  liveUrl: string | null;
   profileId: string;
+  startDate: Timestamp | null;
   startedAt: Timestamp;
   streamTemplateId: string;
+  thumbnailUrl: string | null;
   title: string;
   updatedAt: Generated<Timestamp>;
+  vodUrl: string | null;
 }
 
 export interface StreamChannels {
@@ -625,7 +632,6 @@ export interface StreamTemplateChannels {
 export interface StreamTemplates {
   config: Json | null;
   createdAt: Generated<Timestamp>;
-  currentEgressId: string | null;
   description: string | null;
   eventId: string | null;
   id: Generated<string>;

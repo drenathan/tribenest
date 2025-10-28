@@ -218,8 +218,8 @@ export class StreamsService extends BaseService {
     }
   }
 
-  public async goLive(input: { templateId: string; profileId: string; identity: string }) {
-    const { templateId, profileId, identity } = input;
+  public async goLive(input: { templateId: string; profileId: string }) {
+    const { templateId, profileId } = input;
     const template = await this.models.StreamTemplate.findOne({ id: templateId, profileId });
     if (!template) {
       throw new ValidationError("Template not found");
@@ -233,7 +233,7 @@ export class StreamsService extends BaseService {
     const roomId = templateId + "-egress";
 
     const at = new AccessToken(LIVEKIT_API_KEY, LIVEKIT_API_SECRET, {
-      identity,
+      identity: "egress-user",
     });
 
     at.addGrant({ room: roomId, roomJoin: true });

@@ -1,4 +1,4 @@
-import { Kysely } from "kysely";
+import { Expression, Kysely, SqlBool } from "kysely";
 import BaseModel from "../baseModel";
 import { DB } from "../../types";
 
@@ -7,6 +7,38 @@ export type IStreamBroadcast = DB["streamBroadcasts"];
 export class StreamBroadcastModel extends BaseModel<"streamBroadcasts", "id"> {
   constructor(client: Kysely<DB>) {
     super(client, "streamBroadcasts", "id");
+  }
+
+  public async getPublicBroadcasts({ profileId, broadcastId }: { profileId: string; broadcastId?: string }) {
+    return this.client
+      .selectFrom("streamBroadcasts as sb")
+      .where((eb) => {
+        const conditions: Expression<SqlBool>[] = [];
+        conditions.push(eb("sb.profileId", "=", profileId));
+        if (broadcastId) {
+          conditions.push(eb("sb.id", "=", broadcastId));
+        } else {
+          conditions.push(eb("sb.endedAt", "is", null));
+        }
+        return eb.and(conditions);
+      })
+      .orderBy("sb.startedAt", "desc")
+      .select([
+        "sb.id",
+        "sb.title",
+        "sb.createdAt",
+        "sb.updatedAt",
+        "sb.profileId",
+        "sb.streamTemplateId",
+        "sb.startedAt",
+        "sb.endedAt",
+        "sb.eventId",
+        "sb.generatedThumbnailUrl",
+        "sb.liveUrl",
+        "sb.vodUrl",
+        "sb.thumbnailUrl",
+      ])
+      .execute();
   }
 
   public async findWithChannels(broadcastId: string) {

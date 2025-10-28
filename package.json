@@ -33,12 +33,13 @@
     "@mui/icons-material": "^7.1.2",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.4.0",
+    "hls.js": "^1.6.13",
     "html-to-text": "^9.0.5",
     "lzutf8": "^0.6.3",
     "react": "^19.1.0",
     "react-day-picker": "^9.9.0",
     "react-dom": "^19.1.0",
     "react-h5-audio-player": "^3.10.0",
-    "react-player": "^3.0.0"
+    "react-player": "^3.3.3"
   }
 }

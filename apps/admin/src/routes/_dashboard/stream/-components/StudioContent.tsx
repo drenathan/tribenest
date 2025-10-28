@@ -70,6 +70,17 @@ export const StudioContent = () => {
 
   const cameraTracks = sceneTracks;
 
+  // CANVAS AUDIO TEST PLAYBACK
+  // const isLoadedAudio = useRef(false);
+  // useEffect(() => {
+  //   if (!combinedAudioStream) return;
+  //   if (isLoadedAudio.current) return;
+  //   isLoadedAudio.current = true;
+  //   const audio = new Audio();
+  //   audio.srcObject = combinedAudioStream;
+  //   audio.play().catch(() => {});
+  // }, [combinedAudioStream]);
+
   useEffect(() => {
     if (!currentProfileAuthorization?.profileId) return;
 
@@ -259,6 +270,14 @@ export const StudioContent = () => {
       });
       await room.connect(import.meta.env.VITE_LIVEKIT_API_URL, data.token);
 
+      room.on("connected", () => {
+        console.log("connected to room");
+      });
+
+      room.on("trackPublished", (track) => {
+        console.log("track published", track);
+      });
+
       await room.localParticipant.publishTrack(videoTracks[0], {
         name: "egress-video",
         source: Track.Source.Camera,
@@ -289,9 +308,24 @@ export const StudioContent = () => {
     }
   };
 
+  const handleCleanup = () => {
+    if (combinedAudioStream) {
+      combinedAudioStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+    if (room) {
+      room.localParticipant.trackPublications.forEach((publication) => {
+        publication.track?.stop();
+      });
+
+      room.disconnect();
+    }
+  };
+
   const handleBack = () => {
     if (isLoadingLive || isLive) return;
-    // TODO: clean up stream resources
+    handleCleanup();
 
     navigate({ to: "/stream/list" });
   };

@@ -12,7 +12,6 @@ import { logger } from "./utils/logger";
 import handleProcessEvents from "./utils/process_events";
 import { Workers } from "./workers";
 import { Deployment } from "./types";
-import { EncryptionService } from "./utils/encryption";
 
 const startApp = async () => {
   logger.info("Starting app...");
@@ -20,12 +19,6 @@ const startApp = async () => {
   const services = new Services(database);
   const workers = new Workers(services, database);
   workers.setWorkersInstanceOnJobs();
-
-  console.log(
-    EncryptionService.decrypt(
-      "c0e0deec309ed8634de703e836fa84180030982440f0442525437f0c28513a87925adc479c4dcefa5af96abcbcad1ff888ca5e8f90771c73503b743403e4",
-    ),
-  );
 
   if (IS_DEVELOPMENT || !DEPLOYMENT) {
     logger.info("starting workers in development");

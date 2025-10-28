@@ -1,16 +1,24 @@
 "use client";
-import { FontFamily, PageHeaderWithoutEditor, useEditorContext, usePublicAuth } from "@tribe-nest/frontend-shared";
+import {
+  EditorButtonWithoutEditor,
+  FontFamily,
+  PageHeaderWithoutEditor,
+  useEditorContext,
+  usePublicAuth,
+} from "@tribe-nest/frontend-shared";
 import { fontMap } from "./fonts";
 import { useEffect, useRef } from "react";
+import { ArrowLeftIcon } from "lucide-react";
 
 type Props = {
   children: React.ReactNode;
   pageTitle?: string;
   pagePathname?: string;
+  backPathname?: string;
 };
 
-export function InternalPageRenderer({ children, pageTitle, pagePathname }: Props) {
-  const { themeSettings, trackEvent } = useEditorContext();
+export function InternalPageRenderer({ children, pageTitle, pagePathname, backPathname }: Props) {
+  const { themeSettings, trackEvent, navigate } = useEditorContext();
   const { isInitialized } = usePublicAuth();
   const isPageViewTracked = useRef(false);
   const font = fontMap[themeSettings.fontFamily as keyof typeof fontMap];
@@ -41,6 +49,14 @@ export function InternalPageRenderer({ children, pageTitle, pagePathname }: Prop
       }}
     >
       <PageHeaderWithoutEditor hasBorder={true} />
+      {backPathname && (
+        <div className="p-4 cursor-pointer" onClick={() => navigate(backPathname)}>
+          <ArrowLeftIcon
+            className="w-10 h-10 hover:scale-110 transition-all duration-200"
+            color={themeSettings.colors.primary}
+          />
+        </div>
+      )}
       {children}
     </div>
   );

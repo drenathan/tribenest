@@ -1,3 +1,4 @@
+"use client";
 import { useEffect } from "react";
 import { useNode, type UserComponent } from "@craftjs/core";
 import { Button } from "@react-email/components";

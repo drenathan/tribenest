@@ -4,7 +4,10 @@ import { BadRequestError, ValidationError } from "@src/utils/app_error";
 import {
   EgressClient,
   EncodingOptionsPreset,
+  ImageFileSuffix,
+  ImageOutput,
   RoomServiceClient,
+  SegmentedFileOutput,
   StreamOutput,
   StreamProtocol,
   TrackSource,
@@ -63,22 +66,58 @@ export async function startEgress(this: StreamsService, input: { templateId: str
       }
     }
 
-    const egress = await egressClient.startTrackCompositeEgress(
-      roomId,
-      {
-        stream: new StreamOutput({
-          protocol: StreamProtocol.RTMP,
-          urls: endpoints,
-        }),
-      },
-      {
-        videoTrackId: videoTrack.sid,
-        audioTrackId: audioTrack.sid,
-        encodingOptions: EncodingOptionsPreset.H264_1080P_30,
-      },
-    );
+    const s3Config = (await this.apis.getS3Client(profileId)).getS3Config();
 
-    await this.models.StreamTemplate.updateOne({ id: templateId }, { currentEgressId: egress.egressId });
+    const egress = await egressClient.startParticipantEgress(roomId, "egress-user", {
+      stream: new StreamOutput({
+        protocol: StreamProtocol.RTMP,
+        urls: endpoints,
+      }),
+      segments: new SegmentedFileOutput({
+        filenamePrefix: `streams/${broadcast.id}/segment`,
+        playlistName: `streams/${broadcast.id}/output.m3u8`,
+        livePlaylistName: `streams/${broadcast.id}/output-live.m3u8`,
+        segmentDuration: 2,
+        output: {
+          case: "s3",
+          value: {
+            accessKey: s3Config.accessKeyId,
+            secret: s3Config.secretAccessKey,
+            bucket: s3Config.bucketName,
+            region: s3Config.region,
+            forcePathStyle: true,
+            endpoint: s3Config.url,
+          },
+        },
+      }),
+
+      images: new ImageOutput({
+        filenamePrefix: `streams/${broadcast.id}/thumbnail`,
+        captureInterval: 60,
+        filenameSuffix: ImageFileSuffix.IMAGE_SUFFIX_NONE_OVERWRITE,
+        output: {
+          case: "s3",
+          value: {
+            accessKey: s3Config.accessKeyId,
+            secret: s3Config.secretAccessKey,
+            bucket: s3Config.bucketName,
+            region: s3Config.region,
+            forcePathStyle: true,
+            endpoint: s3Config.url,
+          },
+        },
+      }),
+    });
+
+    const generatedThumbnailUrl = `${s3Config.bucketUrl}/streams/${broadcast.id}/thumbnail.jpeg`;
+    const liveUrl = `${s3Config.bucketUrl}/streams/${broadcast.id}/output-live.m3u8`;
+    const vodUrl = `${s3Config.bucketUrl}/streams/${broadcast.id}/output.m3u8`;
+
+    await this.models.StreamBroadcast.updateOne(
+      { id: broadcast.id },
+      { egressId: egress.egressId, generatedThumbnailUrl, liveUrl, vodUrl },
+      trx,
+    );
     await trx.commit().execute();
     return broadcast.id;
   } catch (error) {

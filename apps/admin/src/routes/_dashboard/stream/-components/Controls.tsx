@@ -12,6 +12,7 @@ import {
 import { Mic, MicOff, Video, VideoOff, ChevronDown, MonitorUp, MonitorOff } from "lucide-react";
 import { Track } from "livekit-client";
 import { SceneLayout } from "@/types/event";
+import { useRef } from "react";
 
 function Controls() {
   const {
@@ -30,6 +31,7 @@ function Controls() {
   } = useParticipantStore();
   const room = useRoomContext();
   const { localTemplate, setLocalTemplate } = useParticipantStore();
+  const screenShareStream = useRef<MediaStream | null>(null);
 
   if (!localTemplate) return null;
   const selectedSceneId = localTemplate.config.selectedSceneId || localTemplate.scenes[0].id;
@@ -143,6 +145,14 @@ function Controls() {
         await room.localParticipant.unpublishTrack(publication.videoTrack);
       }
       setScreenShareEnabled(false);
+      //actually stop the screen share
+
+      if (screenShareStream.current) {
+        screenShareStream.current.getTracks().forEach((track) => {
+          track.stop();
+        });
+        screenShareStream.current = null;
+      }
     } else {
       try {
         // Start screen sharing
@@ -154,7 +164,7 @@ function Controls() {
           },
           audio: true, // Include system audio if available
         });
-
+        screenShareStream.current = screenStream;
         const videoTrack = screenStream.getVideoTracks()[0];
         const audioTrack = screenStream.getAudioTracks()[0];
 

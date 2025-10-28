@@ -1,3 +1,4 @@
+"use client";
 import { useState, useMemo, useEffect } from "react";
 import { type IPublicProduct } from "../../../types";
 import { useEditorContext } from "../../../components/editor/context";

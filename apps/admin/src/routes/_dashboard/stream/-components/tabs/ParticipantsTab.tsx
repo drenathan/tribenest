@@ -3,11 +3,26 @@ import { Button } from "@tribe-nest/frontend-shared";
 import { Track } from "livekit-client";
 import { Mic, PlusIcon, MicOff } from "lucide-react";
 import { useParticipantStore } from "../store";
+import { useEffect } from "react";
 
 function ParticipantsTab() {
   const participants = useParticipants();
   const tracks = useTracks();
   const { setSceneTracks, sceneTracks } = useParticipantStore();
+  const videoTracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare]);
+
+  useEffect(() => {
+    const videosInSceneNotInVideoTracks = sceneTracks.filter(
+      (t) => !videoTracks.some((v) => v.publication.trackSid === t.publication.trackSid),
+    );
+    if (videosInSceneNotInVideoTracks.length > 0) {
+      setSceneTracks(
+        sceneTracks.filter(
+          (t) => !videosInSceneNotInVideoTracks.some((v) => v.publication.trackSid === t.publication.trackSid),
+        ),
+      );
+    }
+  }, [sceneTracks, videoTracks, setSceneTracks]);
 
   const handleAddToScene = (track: TrackReference) => {
     const exists = sceneTracks.some((t) => t.publication.trackSid === track.publication.trackSid);
@@ -40,8 +55,8 @@ function ParticipantsTab() {
             key={participant.identity}
             className="flex flex-col gap-6 border border-border rounded-md p-2 items-center"
           >
-            <div className="grid grid-cols-2 gap-2">
-              <div>
+            <div className="flex w-full gap-2">
+              <div className="w-1/2">
                 <div className="w-full aspect-video">
                   {videoTrack && videoTrack.publication.videoTrack?.isMuted === false && (
                     <VideoTrack
@@ -83,8 +98,8 @@ function ParticipantsTab() {
               </div>
             </div>
             {screenShareVideoTrack && (
-              <div className="grid grid-cols-2 gap-2">
-                <div>
+              <div className="flex w-full gap-2">
+                <div className="w-1/2">
                   <div className="w-full aspect-video">
                     {screenShareVideoTrack && screenShareVideoTrack.publication.videoTrack?.isMuted === false && (
                       <VideoTrack

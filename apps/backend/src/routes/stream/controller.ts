@@ -197,7 +197,6 @@ export class StreamsController extends BaseController {
     return this.services.admin.streams.goLive({
       templateId: req.params.id,
       profileId: req.query.profileId as string,
-      identity: req.account?.firstName + " " + req.account?.lastName,
     });
   }
 
@@ -237,7 +236,6 @@ export class StreamsController extends BaseController {
   @isAuthorized(policy.create)
   public async stopEgress(req: Request, res: Response, next: NextFunction, @Body body?: StopEgressInput): Promise<any> {
     return this.services.admin.streams.stopEgress({
-      templateId: req.params.id,
       ...body!,
     });
   }
