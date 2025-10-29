@@ -4,7 +4,7 @@ import { Html, Head, Body, Container, Section, Heading, Text, Button, Hr, Img, L
 import type { IVariables } from "./index";
 
 export function Template(props: IVariables) {
-  const { orderId, items, recipientName, totalAmount, date, event } = props;
+  const { orderId, items, recipientName, totalAmount, date, event, eventPasses } = props;
 
   return (
     <Html lang="en">
@@ -52,7 +52,7 @@ export function Template(props: IVariables) {
 
           {/* Ticket Details */}
           <Section style={section}>
-            <Heading style={h2}>Your Tickets</Heading>
+            <Heading style={h2}>Order Summary</Heading>
 
             {/* Table Header */}
             <div style={tableHeader}>
@@ -60,7 +60,7 @@ export function Template(props: IVariables) {
                 <div style={headerCell}>Ticket Type</div>
                 <div style={headerCell}>Quantity</div>
                 <div style={headerCell}>Price</div>
-                <div style={headerCell}>Ticket ID</div>
+                <div style={headerCell}>Sub-total</div>
               </div>
             </div>
 
@@ -72,9 +72,32 @@ export function Template(props: IVariables) {
                 </div>
                 <div style={cell}>{item.quantity}</div>
                 <div style={cell}>${item.price}</div>
+                <div style={cell}>${Number(item.price) * item.quantity}</div>
+              </div>
+            ))}
+          </Section>
+
+          <Hr style={hr} />
+          <Section style={section}>
+            <Heading style={h2}>Tickets</Heading>
+
+            {/* Table Header */}
+            <div style={tableHeader}>
+              <div style={headerRow}>
+                <div style={headerCell}>Ticket Type</div>
+                <div style={headerCell}>Ticket ID</div>
+                <div style={headerCell}>Owner Name</div>
+              </div>
+            </div>
+
+            {/* Table Rows */}
+            {eventPasses.map((item, index) => (
+              <div key={index} style={tableRow}>
                 <div style={cell}>
-                  <Text style={ticketId}>{item.eventTicketId}</Text>
+                  <Text style={itemTitle}>{item.ticketTitle}</Text>
                 </div>
+                <div style={cell}>{item.id}</div>
+                <div style={cell}>{item.ownerName}</div>
               </div>
             ))}
           </Section>

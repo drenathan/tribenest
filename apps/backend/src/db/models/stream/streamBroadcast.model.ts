@@ -40,7 +40,7 @@ export class StreamBroadcastModel extends BaseModel<"streamBroadcasts", "id"> {
         "sb.thumbnailUrl",
       ])
       .select((eb) => [
-        this.jsonObjectFrom(
+        this.jsonArrayFrom(
           eb
             .selectFrom("eventTickets as et")
             .whereRef("et.eventId", "=", "sb.eventId")

@@ -18,6 +18,14 @@ export interface IVariables extends BaseTemplateArgs {
   recipientName: string;
   items: { title: string; price: string; quantity: number; eventTicketId: string }[];
   event: Selectable<IEvent>;
+  eventPasses: {
+    id: string;
+    ticketTitle: string;
+    eventTitle: string;
+    ownerName: string;
+    ownerEmail: string;
+    checkedInAt: Date | null;
+  }[];
 }
 
 export class TicketOrderTemplate extends BaseEmailTemplate<IVariables> {
@@ -70,6 +78,24 @@ export class TicketOrderTemplate extends BaseEmailTemplate<IVariables> {
       totalAmount: "12.98",
       date: "January 15, 2024",
       to: ["customer@example.com"],
+      eventPasses: [
+        {
+          id: "TN-123456",
+          ticketTitle: "General Admission",
+          eventTitle: "Event 1",
+          ownerName: "John Doe",
+          ownerEmail: "john.doe@example.com",
+          checkedInAt: null,
+        },
+        {
+          id: "TN-123456",
+          ticketTitle: "General Admission",
+          eventTitle: "Event 1",
+          ownerName: "John Doe",
+          ownerEmail: "john.doe@example.com",
+          checkedInAt: null,
+        },
+      ],
     };
   }
 

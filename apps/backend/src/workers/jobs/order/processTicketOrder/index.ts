@@ -35,6 +35,8 @@ export default class ProcessTicketOrderJob extends BaseJob<Args> {
       return;
     }
 
+    const eventPasses = await this.database.models.EventPass.getPassesByOrderItemId({ orderId });
+
     await this.workers.emails.ticketOrderDelivery.now({
       ...order,
       profileId,
@@ -50,9 +52,10 @@ export default class ProcessTicketOrderJob extends BaseJob<Args> {
         quantity: item.quantity!,
         eventTicketId: item.eventTicketId!,
       })),
+      eventPasses,
     });
 
-    await this.database.models.EventTicketOrder.updateOne({ id: orderId }, { status: OrderStatus.Delivered });
+    // await this.database.models.EventTicketOrder.updateOne({ id: orderId }, { status: OrderStatus.Delivered });
 
     logger.info({ tags: this.tags }, `Order ${orderId} processed`);
   }

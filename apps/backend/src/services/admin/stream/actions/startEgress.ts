@@ -18,7 +18,6 @@ export async function startEgress(
   this: StreamsService,
   input: { templateId: string; profileId: string; eventId?: string; title?: string },
 ) {
-  console.log("startEgress", input);
   const { templateId, profileId, eventId, title } = input;
   const template = await this.models.StreamTemplate.findOne({ id: templateId, profileId });
   if (!template) {
@@ -47,15 +46,18 @@ export async function startEgress(
     throw new BadRequestError("No channels found");
   }
 
-  let liveEvent: Selectable<IEvent> | undefined;
   let broadcastTitle = title || template.title;
+  let eventCoverImage: string | null = null;
   if (eventId) {
-    liveEvent = await this.models.Event.findById(eventId);
+    const result = await this.models.Event.getMany({ filter: { eventId }, profileId, page: 1, limit: 1 });
+    const liveEvent = result.data[0];
 
     if (!liveEvent) {
       throw new ValidationError("Event not found");
     }
+
     broadcastTitle = liveEvent.title;
+    eventCoverImage = liveEvent.media?.[0]?.url;
   }
 
   const endpoints: string[] = [];
@@ -132,7 +134,7 @@ export async function startEgress(
 
     await this.models.StreamBroadcast.updateOne(
       { id: broadcast.id },
-      { egressId: egress.egressId, generatedThumbnailUrl, liveUrl, vodUrl },
+      { egressId: egress.egressId, generatedThumbnailUrl, thumbnailUrl: eventCoverImage, liveUrl, vodUrl },
       trx,
     );
     await trx.commit().execute();

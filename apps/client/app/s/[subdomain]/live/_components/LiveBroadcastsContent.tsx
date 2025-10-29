@@ -123,20 +123,20 @@ export function LiveBroadcastsContent() {
                 >
                   <div className="relative">
                     <div
-                      className="aspect-video flex items-center justify-center"
+                      className="aspect-video flex items-center justify-center relative"
                       style={{
-                        ...(broadcast.thumbnailUrl || broadcast.generatedThumbnailUrl
-                          ? { backgroundImage: `url(${broadcast.thumbnailUrl || broadcast.generatedThumbnailUrl})` }
-                          : {
-                              background: `linear-gradient(135deg, ${themeSettings.colors.primary}20, ${themeSettings.colors.primary}10)`,
-                            }),
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
+                        background: `linear-gradient(135deg, ${themeSettings.colors.primary}20, ${themeSettings.colors.primary}10)`,
                       }}
                     >
+                      {(broadcast.thumbnailUrl || broadcast.generatedThumbnailUrl) && (
+                        <img
+                          src={broadcast.thumbnailUrl || broadcast.generatedThumbnailUrl}
+                          alt={broadcast.title}
+                          className="w-full h-full object-cover absolute top-0 left-0"
+                        />
+                      )}
                       <Play
-                        className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 transition-colors group-hover:scale-110"
+                        className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 transition-colors group-hover:scale-110 z-10"
                         style={{ color: themeSettings.colors.primary }}
                       />
                     </div>

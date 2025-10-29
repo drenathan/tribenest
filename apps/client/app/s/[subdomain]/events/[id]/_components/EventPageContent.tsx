@@ -17,7 +17,7 @@ import { Calendar, MapPin } from "lucide-react";
 import { EventTickets } from "./EventTickets";
 
 function EventPageContent() {
-  const { themeSettings, navigate, httpClient, profile } = useEditorContext();
+  const { themeSettings, httpClient, profile } = useEditorContext();
   const { id } = useParams();
   const [isTicketsModalOpen, setIsTicketsModalOpen] = useState(false);
 

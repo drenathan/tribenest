@@ -9,6 +9,7 @@ export type ILiveEvent = {
 
 export type ILiveBroadcast = {
   id: string;
+  eventId?: string;
   title: string;
   createdAt: string;
   updatedAt: string;

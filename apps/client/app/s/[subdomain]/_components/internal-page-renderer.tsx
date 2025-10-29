@@ -1,11 +1,5 @@
 "use client";
-import {
-  EditorButtonWithoutEditor,
-  FontFamily,
-  PageHeaderWithoutEditor,
-  useEditorContext,
-  usePublicAuth,
-} from "@tribe-nest/frontend-shared";
+import { FontFamily, PageHeaderWithoutEditor, useEditorContext, usePublicAuth } from "@tribe-nest/frontend-shared";
 import { fontMap } from "./fonts";
 import { useEffect, useRef } from "react";
 import { ArrowLeftIcon } from "lucide-react";

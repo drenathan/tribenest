@@ -2,7 +2,7 @@ import { IConfig } from "../types";
 
 const config: Partial<IConfig> = {
   mailCatcher: {
-    enabled: true,
+    enabled: false,
     host: "localhost",
     port: 1025,
   },

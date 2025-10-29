@@ -18,7 +18,7 @@ export class EventModel extends BaseModel<"events", "id"> {
     super(client, "events", "id");
   }
 
-  public async getMany(input: GetEventsInput): Promise<PaginatedData<Selectable<IEvent>>> {
+  public async getMany(input: GetEventsInput) {
     const offset = (input.page - 1) * input.limit;
     const { query, upcoming, archived, eventId, archivedTickets = "false" } = input.filter as EventFilters;
     const isUpcoming = upcoming === "upcoming";
