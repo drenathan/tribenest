@@ -1,13 +1,11 @@
 import "hacktimer";
 import { useAuth } from "@/hooks/useAuth";
-import httpClient, { getMediaServerUrl } from "@/services/httpClient";
+import httpClient, { getLiveKitUrl } from "@/services/httpClient";
 import { useEffect, useRef, useState } from "react";
 import { LocalTrackPublication, Room, Track, VideoPresets } from "livekit-client";
 import { useRoomContext, RoomAudioRenderer } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { Button, cn, FontFamily, getContrastColor, sleep, Tooltip2, type ApiError } from "@tribe-nest/frontend-shared";
-import { io, Socket } from "socket.io-client";
-import { ACCESS_TOKEN_KEY } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useParticipantStore } from "./store";
 import { ArrowLeftIcon, Loader2, Plus } from "lucide-react";
@@ -37,7 +35,7 @@ export const StudioContent = () => {
   const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   const canvasStream = useRef<MediaStream | null>(null);
-  const socketRef = useRef<Socket | null>(null);
+  // const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
   const { videoDeviceId, videoEnabled, sceneTracks, localTemplate, comments, setComments } = useParticipantStore();
   const { data: templateChannels } = useGetTemplateChannels(localTemplate?.id, currentProfileAuthorization?.profileId);
@@ -81,30 +79,30 @@ export const StudioContent = () => {
   //   audio.play().catch(() => {});
   // }, [combinedAudioStream]);
 
-  useEffect(() => {
-    if (!currentProfileAuthorization?.profileId) return;
+  // useEffect(() => {
+  //   if (!currentProfileAuthorization?.profileId) return;
 
-    const socket = io(getMediaServerUrl(), {
-      auth: {
-        token: localStorage.getItem(ACCESS_TOKEN_KEY),
-        profileId: currentProfileAuthorization?.profileId,
-      },
-      transports: ["websocket"],
-    });
-    socketRef.current = socket;
+  //   const socket = io(getMediaServerUrl(), {
+  //     auth: {
+  //       token: localStorage.getItem(ACCESS_TOKEN_KEY),
+  //       profileId: currentProfileAuthorization?.profileId,
+  //     },
+  //     transports: ["websocket"],
+  //   });
+  //   socketRef.current = socket;
 
-    socket.on("connect", () => {
-      console.log("connected to media server");
-    });
+  //   socket.on("connect", () => {
+  //     console.log("connected to media server");
+  //   });
 
-    socket.on("connect_error", (error) => {
-      console.error("error connecting to media server", error);
-    });
+  //   socket.on("connect_error", (error) => {
+  //     console.error("error connecting to media server", error);
+  //   });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [currentProfileAuthorization?.profileId]);
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, [currentProfileAuthorization?.profileId]);
 
   useEffect(() => {
     // Hook to pipe canvas stream to preview output video element for testing
@@ -223,6 +221,8 @@ export const StudioContent = () => {
 
   const gridCols = getGridCols();
 
+  console.log(getLiveKitUrl(), "livekit url");
+
   const handleStopLive = async () => {
     if (!isLive || !currentProfileAuthorization?.profileId || !localTemplate?.id) return;
     try {
@@ -268,7 +268,7 @@ export const StudioContent = () => {
           videoEncoding: VideoPresets.h1080.encoding,
         },
       });
-      await room.connect(import.meta.env.VITE_LIVEKIT_API_URL, data.token);
+      await room.connect(getLiveKitUrl(), data.token);
 
       room.on("connected", () => {
         console.log("connected to room");
