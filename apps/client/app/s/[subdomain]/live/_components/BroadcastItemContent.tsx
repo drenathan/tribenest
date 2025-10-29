@@ -57,8 +57,18 @@ export const BroadcastItemContent = () => {
     localStorage.setItem(`broadcast_${broadcastId}_session_id`, sessionId);
   };
 
+  const handleLeaveBroadcast = () => {
+    httpClient!
+      .post(`/public/broadcasts/${broadcastId}/leave`, {
+        sessionId: localStorage.getItem(`broadcast_${broadcastId}_session_id`) || undefined,
+      })
+      .catch(console.error);
+    localStorage.removeItem(`broadcast_${broadcastId}_session_id`);
+    setHasValidPass(false);
+  };
+
   return (
-    <InternalPageRenderer pagePathname="/live/[id]" backPathname="/live">
+    <InternalPageRenderer pagePathname="/live/[id]" backPathname="/live" onBack={handleLeaveBroadcast}>
       {isBroadcastLoading && <LoadingState />}
       {error && <div>Unable to load broadcast</div>}
       {broadcast && hasEnded && <EndedBroadcast broadcast={broadcast} />}

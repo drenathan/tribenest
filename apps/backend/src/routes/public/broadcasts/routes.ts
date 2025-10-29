@@ -7,6 +7,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   const controller = new PublicWebsiteController(services, workers);
   router.get("/", (...args) => controller.getBroadcasts(...args));
   router.get("/:id", (...args) => controller.getBroadcast(...args));
+  router.post("/:id/leave", (...args) => controller.leaveBroadcast(...args));
   return router;
 };
 

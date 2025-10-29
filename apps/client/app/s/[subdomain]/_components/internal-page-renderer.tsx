@@ -9,9 +9,10 @@ type Props = {
   pageTitle?: string;
   pagePathname?: string;
   backPathname?: string;
+  onBack?: () => void;
 };
 
-export function InternalPageRenderer({ children, pageTitle, pagePathname, backPathname }: Props) {
+export function InternalPageRenderer({ children, pageTitle, pagePathname, backPathname, onBack }: Props) {
   const { themeSettings, trackEvent, navigate } = useEditorContext();
   const { isInitialized } = usePublicAuth();
   const isPageViewTracked = useRef(false);
@@ -43,10 +44,17 @@ export function InternalPageRenderer({ children, pageTitle, pagePathname, backPa
       }}
     >
       <PageHeaderWithoutEditor hasBorder={true} />
-      {backPathname && (
+      {(backPathname || onBack) && (
         <div className="p-4">
           <ArrowLeftIcon
-            onClick={() => navigate(backPathname)}
+            onClick={() => {
+              if (backPathname) {
+                navigate(backPathname);
+              }
+              if (onBack) {
+                onBack();
+              }
+            }}
             className="w-10 h-10 hover:scale-110 transition-all duration-200 cursor-pointer"
             color={themeSettings.colors.primary}
           />

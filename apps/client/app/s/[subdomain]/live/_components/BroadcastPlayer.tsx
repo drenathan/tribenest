@@ -22,11 +22,13 @@ export function BroadcastPlayer({ broadcast }: Props) {
         }}
       >
         <ReactPlayer src={broadcast.liveUrl} width="100%" height="100%" controls autoPlay />
-        <div className="p-4">
-          <p className="text-3xl font-medium">{broadcast.title}</p>
-          <div className="flex items-center gap-6 mt-2">
-            <p>20 watching now </p>
-            {broadcast.startedAt && <p>Started {formatDistanceToNow(new Date(broadcast.startedAt))}</p>}
+        <div className="p-4 flex justify-between items-center">
+          <div>
+            <p className="text-2xl font-medium">{broadcast.title}</p>
+            <div className="flex items-center gap-6 mt-2 text-sm">
+              <p>20 watching now </p>
+              {broadcast.startedAt && <p>Started {formatDistanceToNow(new Date(broadcast.startedAt))}</p>}
+            </div>
           </div>
         </div>
       </div>

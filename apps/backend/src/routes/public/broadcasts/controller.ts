@@ -1,7 +1,8 @@
-import { Query, RouteHandler, ValidateSchema } from "@src/decorators";
+import { Body, Query, RouteHandler, ValidateSchema } from "@src/decorators";
 import { BaseController } from "@src/routes/baseController";
 import { NextFunction, Request, Response } from "express";
 import { ProfileIdInput, profileIdQuerySchema } from "@src/routes/schema";
+import { LeaveBroadcastInput, leaveBroadcastSchema } from "./schema";
 
 export class PublicWebsiteController extends BaseController {
   @RouteHandler()
@@ -27,5 +28,16 @@ export class PublicWebsiteController extends BaseController {
       profileId: query!.profileId,
       broadcastId: req.params.id,
     });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(leaveBroadcastSchema)
+  public async leaveBroadcast(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: LeaveBroadcastInput,
+  ): Promise<any> {
+    return await this.services.public.broadcasts.leaveBroadcast({ ...body!, broadcastId: req.params.id });
   }
 }

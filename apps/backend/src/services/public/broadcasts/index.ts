@@ -14,4 +14,16 @@ export class PublicBroadcastsService extends BaseService {
     }
     return broadcast;
   }
+  async leaveBroadcast(input: { broadcastId: string; sessionId?: string }) {
+    const { broadcastId, sessionId } = input;
+
+    if (sessionId) {
+      const eventPass = await this.models.EventPass.findOne({ sessionId });
+      if (eventPass) {
+        await this.models.EventPass.updateOne({ id: eventPass.id }, { checkedInAt: null, sessionId: null });
+      }
+    }
+
+    return true;
+  }
 }
