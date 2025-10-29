@@ -1,9 +1,10 @@
 import { StreamsService } from "..";
 import { LIVEKIT_API_KEY, LIVEKIT_API_SECRET, LIVEKIT_URL } from "@src/configuration/secrets";
+import { IEvent } from "@src/db/models/event/event.model";
 import { BadRequestError, ValidationError } from "@src/utils/app_error";
+import { Selectable } from "kysely";
 import {
   EgressClient,
-  EncodingOptionsPreset,
   ImageFileSuffix,
   ImageOutput,
   RoomServiceClient,
@@ -13,8 +14,12 @@ import {
   TrackSource,
 } from "livekit-server-sdk";
 
-export async function startEgress(this: StreamsService, input: { templateId: string; profileId: string }) {
-  const { templateId, profileId } = input;
+export async function startEgress(
+  this: StreamsService,
+  input: { templateId: string; profileId: string; eventId?: string; title?: string },
+) {
+  console.log("startEgress", input);
+  const { templateId, profileId, eventId, title } = input;
   const template = await this.models.StreamTemplate.findOne({ id: templateId, profileId });
   if (!template) {
     throw new ValidationError("Template not found");
@@ -38,8 +43,19 @@ export async function startEgress(this: StreamsService, input: { templateId: str
   }
 
   const templateChannels = await this.models.StreamTemplateChannel.findByTemplateId(templateId);
-  if (!templateChannels.length) {
+  if (!templateChannels.length && !eventId) {
     throw new BadRequestError("No channels found");
+  }
+
+  let liveEvent: Selectable<IEvent> | undefined;
+  let broadcastTitle = title || template.title;
+  if (eventId) {
+    liveEvent = await this.models.Event.findById(eventId);
+
+    if (!liveEvent) {
+      throw new ValidationError("Event not found");
+    }
+    broadcastTitle = liveEvent.title;
   }
 
   const endpoints: string[] = [];
@@ -52,13 +68,14 @@ export async function startEgress(this: StreamsService, input: { templateId: str
         profileId,
         streamTemplateId: templateId,
         startedAt: new Date(),
-        title: template.title,
+        title: broadcastTitle,
+        eventId,
       },
       trx,
     );
     for (const channel of templateChannels) {
       const endpoint = await this.startChannelBroadcast(
-        { broadcastId: broadcast.id, channel, title: template.title },
+        { broadcastId: broadcast.id, channel, title: broadcastTitle },
         trx,
       );
       if (endpoint) {
@@ -119,7 +136,7 @@ export async function startEgress(this: StreamsService, input: { templateId: str
       trx,
     );
     await trx.commit().execute();
-    return broadcast.id;
+    return broadcast;
   } catch (error) {
     await trx.rollback().execute();
     throw error;

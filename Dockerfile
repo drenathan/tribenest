@@ -4,8 +4,6 @@ FROM node:23-alpine AS base
 # Install nginx for reverse proxy
 RUN apk add --no-cache nginx
 
-# Install ffmpeg for video processing
-RUN apk add --no-cache ffmpeg
 
 # Install dependencies only when needed
 FROM base AS deps

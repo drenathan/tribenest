@@ -218,15 +218,15 @@ export class StreamsService extends BaseService {
     }
   }
 
-  public async goLive(input: { templateId: string; profileId: string }) {
-    const { templateId, profileId } = input;
+  public async goLive(input: { templateId: string; profileId: string; eventId?: string }) {
+    const { templateId, profileId, eventId } = input;
     const template = await this.models.StreamTemplate.findOne({ id: templateId, profileId });
     if (!template) {
       throw new ValidationError("Template not found");
     }
 
     const templateChannels = await this.models.StreamTemplateChannel.findByTemplateId(templateId);
-    if (!templateChannels.length) {
+    if (!templateChannels.length && !eventId) {
       throw new BadRequestError("No channels found");
     }
 

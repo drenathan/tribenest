@@ -6,9 +6,10 @@ import { Link } from "@tanstack/react-router";
 
 type Props = {
   event: IEvent;
+  onClick?: () => void;
 };
 
-function EventItem({ event }: Props) {
+function EventItem({ event, onClick }: Props) {
   const isArchived = !!event.archivedAt;
 
   const formatDateTime = (dateTime: string) => {
@@ -23,7 +24,11 @@ function EventItem({ event }: Props) {
   };
 
   return (
-    <Card className={`relative transition-all duration-200 ${isArchived ? "opacity-60" : ""}`}>
+    <Card
+      onClick={onClick}
+      className={`relative transition-all p-0 duration-200 pb-4 ${isArchived ? "opacity-60" : ""} ${onClick ? "cursor-pointer" : ""}`}
+    >
+      {event.media[0]?.url && <img src={event.media[0]?.url} alt={event.title} className="w-full object-cover" />}
       <CardContent>
         {isArchived && (
           <div className="absolute top-4 left-4">
@@ -35,13 +40,17 @@ function EventItem({ event }: Props) {
 
         <div className="space-y-4">
           <div>
-            <Link
-              to={`/events/list/$eventId`}
-              params={{ eventId: event.id }}
-              className="text-xl font-bold mb-2 hover:underline"
-            >
-              {event.title}
-            </Link>
+            {onClick ? (
+              <p className="text-xl font-bold mb-2 ">{event.title}</p>
+            ) : (
+              <Link
+                to={`/events/list/$eventId`}
+                params={{ eventId: event.id }}
+                className="text-xl font-bold mb-2 hover:underline"
+              >
+                {event.title}
+              </Link>
+            )}
           </div>
 
           <div className="space-y-2">

@@ -1,6 +1,6 @@
 import httpClient from "@/services/httpClient";
 import type { ApiError } from "@tribe-nest/frontend-shared";
-import type { IBanner, IStreamBroadcastComment, IStreamTemplate, ITicker, MediaDevice } from "@/types/event";
+import type { IBanner, IEvent, IStreamBroadcastComment, IStreamTemplate, ITicker, MediaDevice } from "@/types/event";
 import type { TrackReference } from "@livekit/components-react";
 import type { Participant } from "livekit-client";
 import { create } from "zustand";
@@ -21,6 +21,7 @@ interface ParticipantStore {
   sceneTracks: TrackReference[];
   localTemplate: IStreamTemplate | null;
   comments: IStreamBroadcastComment[];
+  linkedEvent: IEvent | null;
   sceneParticipants: {
     [key: string]: {
       participant: Participant;
@@ -43,6 +44,7 @@ interface ParticipantStore {
   }) => void;
   setLocalTemplate: (localTemplate: IStreamTemplate, persist?: boolean) => void;
   setComments: (comments: IStreamBroadcastComment[]) => void;
+  setLinkedEvent: (linkedEvent: IEvent | null) => void;
 }
 
 export const useParticipantStore = create<ParticipantStore>((set, get) => ({
@@ -50,6 +52,7 @@ export const useParticipantStore = create<ParticipantStore>((set, get) => ({
   audioEnabled: false,
   videoDeviceId: "",
   videoEnabled: true,
+  linkedEvent: null,
   screenShareEnabled: false,
   username: localStorage.getItem("stream_username") || "",
   userTitle: localStorage.getItem("stream_user_title") || "",
@@ -71,6 +74,7 @@ export const useParticipantStore = create<ParticipantStore>((set, get) => ({
   setVideoDeviceId: (videoDeviceId) => set({ videoDeviceId }),
   setVideoEnabled: (videoEnabled) => set({ videoEnabled }),
   setScreenShareEnabled: (screenShareEnabled) => set({ screenShareEnabled }),
+  setLinkedEvent: (linkedEvent) => set({ linkedEvent }),
   setUsername: (username) => {
     set({ username });
     localStorage.setItem("stream_username", username);

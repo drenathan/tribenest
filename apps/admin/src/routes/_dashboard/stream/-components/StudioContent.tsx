@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { LocalTrackPublication, Room, Track, VideoPresets } from "livekit-client";
 import { useRoomContext, RoomAudioRenderer } from "@livekit/components-react";
 import "@livekit/components-styles";
-import { Button, cn, FontFamily, getContrastColor, sleep, Tooltip2, type ApiError } from "@tribe-nest/frontend-shared";
+import { cn, FontFamily, getContrastColor, sleep, type ApiError } from "@tribe-nest/frontend-shared";
 import { toast } from "sonner";
 import { useParticipantStore } from "./store";
-import { ArrowLeftIcon, Loader2, Plus } from "lucide-react";
+
 import { useNavigate } from "@tanstack/react-router";
 import Scenes from "./Scenes";
 import { OUTPUT_HEIGHT, OUTPUT_WIDTH, useComposer } from "./useComposer";
@@ -17,9 +17,9 @@ import Controls from "./Controls";
 import { VideoTile } from "./VideoTile";
 import { COLORS } from "@/services/contants";
 import { useCanvasAudio } from "./hooks/useCanvasAudio";
-import SelectChannel from "./SelectChannel";
 import { useGetTemplateChannels } from "@/hooks/queries/useStreams";
-import { LiveIcon } from "./assets/LiveIcon";
+import type { IStreamBroadcast } from "@/types/event";
+import { StudioHeader } from "./studio/StudioHeader";
 
 export const StudioContent = () => {
   const { currentProfileAuthorization } = useAuth();
@@ -30,14 +30,15 @@ export const StudioContent = () => {
   const [isLive, setIsLive] = useState(false);
   const [isLoadingLive, setIsLoadingLive] = useState(false);
   const [isSelectChannelOpen, setIsSelectChannelOpen] = useState(false);
-  const [broadcastId, setBroadcastId] = useState<string>();
+  const [broadcast, setBroadcast] = useState<IStreamBroadcast | null>(null);
 
   const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   const canvasStream = useRef<MediaStream | null>(null);
   // const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
-  const { videoDeviceId, videoEnabled, sceneTracks, localTemplate, comments, setComments } = useParticipantStore();
+  const { videoDeviceId, videoEnabled, sceneTracks, localTemplate, comments, setComments, linkedEvent } =
+    useParticipantStore();
   const { data: templateChannels } = useGetTemplateChannels(localTemplate?.id, currentProfileAuthorization?.profileId);
 
   const localVideoTrackRef = useRef<LocalTrackPublication | null>(null);
@@ -221,19 +222,17 @@ export const StudioContent = () => {
 
   const gridCols = getGridCols();
 
-  console.log(getLiveKitUrl(), "livekit url");
-
   const handleStopLive = async () => {
-    if (!isLive || !currentProfileAuthorization?.profileId || !localTemplate?.id) return;
+    if (!isLive || !currentProfileAuthorization?.profileId || !localTemplate?.id || !broadcast) return;
     try {
       setIsLoadingLive(true);
       await httpClient.post(`/streams/templates/${localTemplate.id}/stop-egress`, {
-        broadcastId,
+        broadcastId: broadcast?.id,
         profileId: currentProfileAuthorization.profileId,
       });
       setIsLive(false);
       setIsLoadingLive(false);
-      setBroadcastId(undefined);
+      setBroadcast(null);
       setComments([]);
     } catch (error) {
       const errorMessage = (error as ApiError).response?.data?.message || "Error stopping live";
@@ -255,11 +254,10 @@ export const StudioContent = () => {
         return;
       }
 
-      const { data } = await httpClient.post(
-        `/streams/templates/${localTemplate.id}/go-live`,
-        {},
-        { params: { profileId: currentProfileAuthorization.profileId } },
-      );
+      const { data } = await httpClient.post(`/streams/templates/${localTemplate.id}/go-live`, {
+        eventId: linkedEvent?.id,
+        profileId: currentProfileAuthorization.profileId,
+      });
       const room = new Room({
         videoCaptureDefaults: {
           resolution: VideoPresets.h1080.resolution,
@@ -292,14 +290,14 @@ export const StudioContent = () => {
 
       await sleep(1000);
 
-      const res = await httpClient.post(
-        `/streams/templates/${localTemplate.id}/start-egress`,
-        {},
-        { params: { profileId: currentProfileAuthorization.profileId } },
-      );
+      const res = await httpClient.post(`/streams/templates/${localTemplate.id}/start-egress`, {
+        eventId: linkedEvent?.id,
+        profileId: currentProfileAuthorization.profileId,
+        title: linkedEvent?.title || localTemplate?.title,
+      });
       setIsLive(true);
       setIsLoadingLive(false);
-      setBroadcastId(res.data);
+      setBroadcast(res.data);
     } catch (error) {
       console.error("error going live", error);
       const errorMessage = (error as ApiError).response?.data?.message || "Error going live";
@@ -332,26 +330,17 @@ export const StudioContent = () => {
 
   return (
     <>
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4 z-[100000] bg-background">
-        <div className="flex items-center gap-2">
-          <Tooltip2 text="Back">
-            <Button variant="outline" size="icon" onClick={handleBack} disabled={isLoadingLive || isLive}>
-              <ArrowLeftIcon className="w-4 h-4 text-foreground" />
-            </Button>
-          </Tooltip2>
-        </div>
-        <div className="flex gap-2 flex-wrap items-center">
-          <Button variant="outline" onClick={() => setIsSelectChannelOpen(true)} disabled={isLive || isLoadingLive}>
-            <Plus /> Channels
-            <sup className="text-xs border border-foreground rounded-full px-2 py-1">{templateChannels?.length}</sup>
-          </Button>
-          {isLive && <LiveIcon />}
-          <Button onClick={isLive ? handleStopLive : handleGoLive} disabled={isLoadingLive}>
-            {isLive ? "Stop Live" : "Go Live"} {isLoadingLive && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
-          </Button>
-        </div>
-        <SelectChannel open={isSelectChannelOpen} onOpenChange={setIsSelectChannelOpen} />
-      </header>
+      <StudioHeader
+        templateChannels={templateChannels ?? []}
+        handleBack={handleBack}
+        isLoadingLive={isLoadingLive}
+        isLive={isLive}
+        handleStopLive={handleStopLive}
+        handleGoLive={handleGoLive}
+        isSelectChannelOpen={isSelectChannelOpen}
+        setIsSelectChannelOpen={setIsSelectChannelOpen}
+        broadcast={broadcast}
+      />
 
       <div className="flex">
         <Scenes />
@@ -515,7 +504,7 @@ export const StudioContent = () => {
 
           <Controls />
         </div>
-        <RightPanel broadcastId={broadcastId} />
+        <RightPanel broadcastId={broadcast?.id} />
       </div>
       <canvas width={OUTPUT_WIDTH} height={OUTPUT_HEIGHT} ref={canvasRef} className="hidden" />
     </>

@@ -50,8 +50,8 @@ const createEventSchema = z.object({
         path: ["zipCode"],
       },
     ),
-  actionText: z.string().min(1, "Action text is required").max(100, "Action text must be less than 100 characters"),
-  actionLink: z.string().url("Action link must be a valid URL"),
+  actionText: z.string().max(100, "Action text must be less than 100 characters").optional(),
+  actionLink: z.string().optional(),
 });
 
 type CreateEventInput = z.infer<typeof createEventSchema>;
@@ -230,7 +230,7 @@ export function CreateEventForm() {
               </h3>
 
               <div className="space-y-2">
-                <Label htmlFor="actionText">Action Text *</Label>
+                <Label htmlFor="actionText">Action Text (Optional)</Label>
                 <Input
                   id="actionText"
                   {...methods.register("actionText")}
@@ -244,7 +244,7 @@ export function CreateEventForm() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="actionLink">Action Link *</Label>
+                <Label htmlFor="actionLink">Action Link (Optional)</Label>
                 <Input id="actionLink" {...methods.register("actionLink")} placeholder="https://example.com/register" />
                 {methods.formState.errors.actionLink && (
                   <div className="text-sm text-red-600 dark:text-red-400">

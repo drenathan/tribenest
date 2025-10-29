@@ -50,9 +50,10 @@ export function InternalPageRenderer({ children, pageTitle, pagePathname, backPa
     >
       <PageHeaderWithoutEditor hasBorder={true} />
       {backPathname && (
-        <div className="p-4 cursor-pointer" onClick={() => navigate(backPathname)}>
+        <div className="p-4">
           <ArrowLeftIcon
-            className="w-10 h-10 hover:scale-110 transition-all duration-200"
+            onClick={() => navigate(backPathname)}
+            className="w-10 h-10 hover:scale-110 transition-all duration-200 cursor-pointer"
             color={themeSettings.colors.primary}
           />
         </div>

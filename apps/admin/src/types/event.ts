@@ -44,8 +44,8 @@ export interface CreateEventInput {
   };
   title: string;
   description?: string;
-  actionText: string;
-  actionLink: string;
+  actionText?: string;
+  actionLink?: string;
   coverImage?: {
     file: string;
     fileSize: number;
@@ -174,4 +174,13 @@ export interface IStreamBroadcastComment {
   content: string;
   publishedAt: string;
   channelProvider: StreamChannelProvider;
+}
+
+export interface IStreamBroadcast {
+  id: string;
+  profileId: string;
+  templateId: string;
+  startedAt: string;
+  endedAt: string;
+  title: string;
 }

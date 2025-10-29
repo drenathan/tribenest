@@ -24,6 +24,8 @@ import {
   GetCommentsInput,
   createCustomRtmpChannelSchema,
   CreateCustomRtmpChannelInput,
+  startEgressSchema,
+  StartEgressInput,
 } from "./schema";
 import * as policy from "./policy";
 import {
@@ -191,26 +193,32 @@ export class StreamsController extends BaseController {
   }
 
   @RouteHandler()
-  @ValidateSchema(profileIdQuerySchema)
+  @ValidateSchema(startEgressSchema)
   @isAuthorized(policy.create)
-  public async goLive(req: Request, res: Response, next: NextFunction): Promise<any> {
+  public async goLive(req: Request, res: Response, next: NextFunction, @Body body?: StartEgressInput): Promise<any> {
     return this.services.admin.streams.goLive({
       templateId: req.params.id,
-      profileId: req.query.profileId as string,
+      ...body!,
     });
   }
 
   @RouteHandler()
-  @ValidateSchema(profileIdQuerySchema)
+  @ValidateSchema(startEgressSchema)
   @isAuthorized(policy.create)
-  public async startEgress(req: Request, res: Response, next: NextFunction): Promise<any> {
-    const broadcastId = await this.services.admin.streams.startEgress({
+  public async startEgress(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: StartEgressInput,
+  ): Promise<any> {
+    const broadcast = await this.services.admin.streams.startEgress({
       templateId: req.params.id,
-      profileId: req.query.profileId as string,
+      ...body!,
     });
+
     const nextFetchAt = add(new Date(), { seconds: 10 });
-    await this.workers.jobs.broadcast.fetchComments.schedule(nextFetchAt, { broadcastId });
-    return broadcastId;
+    await this.workers.jobs.broadcast.fetchComments.schedule(nextFetchAt, { broadcastId: broadcast.id });
+    return broadcast;
   }
 
   @RouteHandler()

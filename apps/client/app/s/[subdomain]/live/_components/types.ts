@@ -1,3 +1,5 @@
+import { ITicket } from "@tribe-nest/frontend-shared";
+
 export type ILiveEvent = {
   id: string;
   title: string;
@@ -21,4 +23,5 @@ export type ILiveBroadcast = {
   liveUrl?: string;
   vodUrl?: string;
   thumbnailUrl?: string;
+  eventTickets?: ITicket[];
 };

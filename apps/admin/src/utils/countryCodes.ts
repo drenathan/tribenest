@@ -215,7 +215,7 @@ export const countryCodes = [
   { code: "QA", name: "Qatar" },
   { code: "BH", name: "Bahrain" },
   { code: "KW", name: "Kuwait" },
-] as const;
+].sort((a, b) => a.name.localeCompare(b.name));
 
 export const getCountryName = (code: string): string => {
   const country = countryCodes.find((c) => c.code === code?.toUpperCase());

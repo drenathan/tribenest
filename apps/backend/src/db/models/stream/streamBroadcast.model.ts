@@ -23,6 +23,7 @@ export class StreamBroadcastModel extends BaseModel<"streamBroadcasts", "id"> {
         return eb.and(conditions);
       })
       .orderBy("sb.startedAt", "desc")
+      .leftJoin("events as e", "sb.eventId", "e.id")
       .select([
         "sb.id",
         "sb.title",
@@ -37,6 +38,16 @@ export class StreamBroadcastModel extends BaseModel<"streamBroadcasts", "id"> {
         "sb.liveUrl",
         "sb.vodUrl",
         "sb.thumbnailUrl",
+      ])
+      .select((eb) => [
+        this.jsonObjectFrom(
+          eb
+            .selectFrom("eventTickets as et")
+            .whereRef("et.eventId", "=", "sb.eventId")
+            .where("archivedAt", "is", null)
+            .orderBy("order", "asc")
+            .selectAll(),
+        ).as("eventTickets"),
       ])
       .execute();
   }

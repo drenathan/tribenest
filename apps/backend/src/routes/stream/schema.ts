@@ -85,6 +85,16 @@ export const getCommentsSchema = z.object({
   }),
 });
 
+export const startEgressSchema = z.object({
+  body: z.object({
+    profileId: z.string().uuid(),
+    eventId: z.string().uuid().optional(),
+    title: z.string().optional(),
+  }),
+});
+
+export type StartEgressInput = z.infer<typeof startEgressSchema>["body"];
+
 export const createCustomRtmpChannelSchema = z.object({
   body: z.object({
     profileId: z.string().uuid(),
