@@ -11,9 +11,9 @@ type Props = {
 export function BroadcastPlayer({ broadcast }: Props) {
   const { themeSettings } = useEditorContext();
   return (
-    <div className="p-4 flex gap-8 max-w-[1700px] mx-auto">
+    <div className="p-4 flex gap-8 max-w-[1700px] mx-auto flex-col lg:flex-row">
       <div
-        className="flex-1 aspect-video"
+        className="flex-1 "
         style={{
           backgroundColor: themeSettings.colors.background,
           borderRadius: `${themeSettings.cornerRadius}px`,
@@ -21,10 +21,12 @@ export function BroadcastPlayer({ broadcast }: Props) {
           border: `1px solid ${themeSettings.colors.primary}30`,
         }}
       >
-        <ReactPlayer src={broadcast.liveUrl} width="100%" height="100%" controls autoPlay />
+        <div className="aspect-video">
+          <ReactPlayer playsInline src={broadcast.liveUrl} width="100%" height="100%" controls autoPlay />
+        </div>
         <div className="p-4 flex justify-between items-center">
           <div>
-            <p className="text-2xl font-medium">{broadcast.title}</p>
+            <p className="lg:text-2xl text-xl font-medium">{broadcast.title}</p>
             <div className="flex items-center gap-6 mt-2 text-sm">
               <p>20 watching now </p>
               {broadcast.startedAt && <p>Started {formatDistanceToNow(new Date(broadcast.startedAt))}</p>}
@@ -34,7 +36,7 @@ export function BroadcastPlayer({ broadcast }: Props) {
       </div>
 
       <div
-        className="w-[400px]"
+        className="w-[400px] hidden lg:block"
         style={{
           backgroundColor: themeSettings.colors.background,
           borderRadius: `${themeSettings.cornerRadius}px`,
