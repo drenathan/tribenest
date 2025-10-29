@@ -12,6 +12,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.get("/:id", (...args) => controller.getEventById(...args));
   router.post("/:id/checkout", (...args) => controller.createOrder(...args));
   router.post("/:id/finalize", (...args) => controller.finalizeOrder(...args));
+  router.post("/validate-pass", (...args) => controller.validateEventPass(...args));
   return router;
 };
 

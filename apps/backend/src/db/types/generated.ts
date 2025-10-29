@@ -120,6 +120,7 @@ export interface EventPasses {
   id: Generated<string>;
   ownerEmail: string;
   ownerName: string;
+  sessionId: string | null;
   updatedAt: Generated<Timestamp>;
 }
 

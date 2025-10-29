@@ -1,11 +1,19 @@
 import { OrderStatus } from "@src/db/types/product";
 import { CreateOrderInput, FinalizeOrderInput } from "@src/routes/public/events/schema";
-import { BaseService } from "@src/services/baseService";
+import { BaseService, BaseServiceArgs } from "@src/services/baseService";
 import { PaymentStatus } from "@src/services/paymentProvider/PaymentProvider";
 import { BadRequestError, NotFoundError } from "@src/utils/app_error";
 import { round } from "lodash";
+import { validateEventPass } from "./commands/validateEventPass";
 
 export class EventsService extends BaseService {
+  public readonly validateEventPass: typeof validateEventPass;
+
+  constructor(args: BaseServiceArgs) {
+    super(args);
+    this.validateEventPass = validateEventPass.bind(this);
+  }
+
   public async getEventById({ eventId, profileId }: { eventId: string; profileId: string }) {
     const event = await this.models.Event.getMany({
       profileId,

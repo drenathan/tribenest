@@ -20,5 +20,15 @@ export const finalizeOrderSchema = z.object({
   }),
 });
 
+export const validateEventPassSchema = z.object({
+  body: z.object({
+    broadcastId: z.string().uuid("Invalid broadcast ID"),
+    eventPassId: z.string().regex(/^TN-/, "Invalid event pass ID"),
+    sessionId: z.string().optional(),
+  }),
+});
+
+export type ValidateEventPassInput = z.infer<typeof validateEventPassSchema>["body"];
+
 export type CreateOrderInput = z.infer<typeof createOrderSchema>["body"];
 export type FinalizeOrderInput = z.infer<typeof finalizeOrderSchema>["body"];

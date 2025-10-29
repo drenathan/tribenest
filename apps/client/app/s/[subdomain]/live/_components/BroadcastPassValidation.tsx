@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { ILiveBroadcast } from "./types";
 import {
   addAlphaToHexCode,
+  ApiError,
   EditorButtonWithoutEditor,
   EditorInputWithoutEditor,
   EditorModal,
@@ -11,14 +12,17 @@ import {
 } from "@tribe-nest/frontend-shared";
 import { EventTickets } from "../../events/[id]/_components/EventTickets";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type Props = {
   broadcast: ILiveBroadcast;
+  onSuccess: (sessionId: string) => void;
 };
-export function BroadcastPassValidation({ broadcast }: Props) {
+export function BroadcastPassValidation({ broadcast, onSuccess }: Props) {
   const [isTicketsModalOpen, setIsTicketsModalOpen] = useState(false);
   const { themeSettings, httpClient, profile } = useEditorContext();
   const [ticketCode, setTicketCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: event } = useQuery<IEvent>({
     queryKey: ["event", broadcast?.eventId, profile?.id],
@@ -36,6 +40,28 @@ export function BroadcastPassValidation({ broadcast }: Props) {
   const minPrice = broadcast.eventTickets?.reduce((min, ticket) => {
     return Math.min(min, ticket.price);
   }, Infinity);
+
+  const handleValidatePass = async () => {
+    const trimmedTicketCode = ticketCode.trim(); // in case the user copies the ticket code with a space at the end
+    if (!trimmedTicketCode || !broadcast.id || !httpClient) return;
+    setIsLoading(true);
+
+    try {
+      const response = await httpClient!.post(`/public/events/validate-pass`, {
+        broadcastId: broadcast.id,
+        eventPassId: trimmedTicketCode,
+        sessionId: localStorage.getItem(`broadcast_${broadcast.id}_session_id`) || undefined,
+      });
+      onSuccess(response.data);
+    } catch (error) {
+      console.error(error);
+      const message = (error as ApiError)?.response?.data?.message || "An error occurred";
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 items-center px-4">
       {event && (
@@ -89,7 +115,7 @@ export function BroadcastPassValidation({ broadcast }: Props) {
       </div>
 
       <div className="mt-4 max-w-[500px] w-full mx-auto flex flex-col gap-4 items-center">
-        <p>Enter your ticket code to join the broadcast</p>
+        <p>Enter your ticket ID to join the broadcast</p>
         <EditorInputWithoutEditor
           width="100%"
           placeholder="Enter your ticket code"
@@ -98,11 +124,9 @@ export function BroadcastPassValidation({ broadcast }: Props) {
         />
         <EditorButtonWithoutEditor
           fullWidth
-          text="Join Broadcast"
-          disabled={!ticketCode}
-          onClick={() => {
-            console.log("join broadcast");
-          }}
+          text={isLoading ? "Validating..." : "Join Broadcast"}
+          disabled={!ticketCode || isLoading}
+          onClick={handleValidatePass}
         />
         <p className="my-4">OR</p>
 

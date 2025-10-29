@@ -52,6 +52,11 @@ export const BroadcastItemContent = () => {
   const hasEnded = !!updatedBroadcast?.endedAt || !!broadcast?.endedAt;
   const isPassValidated = needsPassValidation ? hasValidPass : true;
 
+  const handlePassValidationSuccess = (sessionId: string) => {
+    setHasValidPass(true);
+    localStorage.setItem(`broadcast_${broadcastId}_session_id`, sessionId);
+  };
+
   return (
     <InternalPageRenderer pagePathname="/live/[id]" backPathname="/live">
       {isBroadcastLoading && <LoadingState />}
@@ -59,7 +64,9 @@ export const BroadcastItemContent = () => {
       {broadcast && hasEnded && <EndedBroadcast broadcast={broadcast} />}
 
       {broadcast && !hasEnded && isPassValidated && <BroadcastPlayer broadcast={broadcast} />}
-      {broadcast && !hasEnded && !isPassValidated && <BroadcastPassValidation broadcast={broadcast} />}
+      {broadcast && !hasEnded && !isPassValidated && (
+        <BroadcastPassValidation broadcast={broadcast} onSuccess={handlePassValidationSuccess} />
+      )}
     </InternalPageRenderer>
   );
 };
