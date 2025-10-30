@@ -31,9 +31,6 @@ export const StudioContent = () => {
   const [isLoadingLive, setIsLoadingLive] = useState(false);
   const [isSelectChannelOpen, setIsSelectChannelOpen] = useState(false);
   const [broadcast, setBroadcast] = useState<IStreamBroadcast | null>(null);
-
-  const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
-  const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   const canvasStream = useRef<MediaStream | null>(null);
   // const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
@@ -62,8 +59,6 @@ export const StudioContent = () => {
   useComposer({
     canvasRef,
     stageRef,
-    backgroundImage,
-    isBackgroundLoaded,
     template: localTemplate,
   });
 
@@ -115,27 +110,6 @@ export const StudioContent = () => {
     outputVideoRef.current!.srcObject = s;
     outputVideoRef.current!.play().catch(() => {});
   }, []);
-
-  useEffect(() => {
-    if (!currentBackground) {
-      setBackgroundImage(null);
-      setIsBackgroundLoaded(false);
-      return;
-    }
-
-    const img = new Image();
-    img.crossOrigin = "anonymous"; // Enable CORS for external images
-    img.onload = () => {
-      setBackgroundImage(img);
-      setIsBackgroundLoaded(true);
-    };
-    img.onerror = () => {
-      console.error("Failed to load background image:", currentBackground);
-      setBackgroundImage(null);
-      setIsBackgroundLoaded(false);
-    };
-    img.src = currentBackground;
-  }, [currentBackground]);
 
   useEffect(() => {
     const processStreams = async () => {
@@ -347,7 +321,7 @@ export const StudioContent = () => {
         <RoomAudioRenderer />
         <div className="flex-1 p-4 flex flex-col  items-center">
           {/* Visible preview: CSS-controlled layout */}
-          {/* <div>
+          <div>
             <div>
               <video
                 ref={outputVideoRef}
@@ -357,22 +331,27 @@ export const StudioContent = () => {
                 className="w-full aspect-video bg-gray-900 object-cover"
               />
             </div>
-          </div> */}
+          </div>
           <div
             style={{
-              backgroundImage: isBackgroundLoaded ? `url(${currentBackground})` : "none",
-              backgroundSize: "cover",
-              backgroundPosition: "top",
-              backgroundRepeat: "no-repeat",
-              backgroundColor: isBackgroundLoaded ? "transparent" : "#0b0b0b",
+              backgroundColor: currentBackground ? "transparent" : "#0b0b0b",
               fontFamily: localTemplate?.config.fontFamily ?? FontFamily.Inter,
             }}
             ref={stageRef}
             className={cn(`grid grid-cols-${gridCols} gap-2 w-full max-w-6xl aspect-[16/9] relative overflow-hidden`, {
-              "p-10": !!isBackgroundLoaded && tickerText,
-              "p-4": !!isBackgroundLoaded && !tickerText,
+              "p-10": !!currentBackground && tickerText,
+              "p-4": !!currentBackground && !tickerText,
             })}
           >
+            {currentBackground && (
+              <img
+                src={currentBackground}
+                alt="Background"
+                crossOrigin="anonymous"
+                data-background-image
+                className="absolute top-0 left-0 w-full h-full -z-50 object-cover"
+              />
+            )}
             {overlayImageUrl && (
               <img
                 src={overlayImageUrl}

@@ -48,14 +48,10 @@ function drawVideoCover(
 export const useComposer = ({
   canvasRef,
   stageRef,
-  backgroundImage,
-  isBackgroundLoaded,
   template,
 }: {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   stageRef: React.RefObject<HTMLDivElement | null>;
-  backgroundImage: HTMLImageElement | null;
-  isBackgroundLoaded: boolean;
   template: IStreamTemplate | null;
 }) => {
   useEffect(() => {
@@ -82,12 +78,25 @@ export const useComposer = ({
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw background image or solid color
-      if (backgroundImage && isBackgroundLoaded) {
-        // Draw background image to cover the entire canvas
-        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      // // Draw background image or solid color
+      // if (backgroundImage && isBackgroundLoaded) {
+      //   // Draw background image to cover the entire canvas
+      //   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      // } else {
+      //   // Fallback to solid background color
+      //   ctx.fillStyle = "#0b0b0b";
+      //   ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // }
+
+      const backgroundImage = stage.querySelector("[data-background-image]");
+      if (backgroundImage) {
+        const rect = backgroundImage.getBoundingClientRect();
+        const x = (rect.left - stageRect.left) * scaleX;
+        const y = (rect.top - stageRect.top) * scaleY;
+        const width = rect.width * scaleX;
+        const height = rect.height * scaleY;
+        ctx.drawImage(backgroundImage as HTMLImageElement, x, y, width, height);
       } else {
-        // Fallback to solid background color
         ctx.fillStyle = "#0b0b0b";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
@@ -300,5 +309,5 @@ export const useComposer = ({
       // cancelAnimationFrame(raf);
       clearInterval(interval);
     };
-  }, [backgroundImage, isBackgroundLoaded, template, canvasRef, stageRef]);
+  }, [template, canvasRef, stageRef]);
 };
