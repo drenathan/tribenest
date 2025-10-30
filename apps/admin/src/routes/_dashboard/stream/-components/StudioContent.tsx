@@ -4,7 +4,6 @@ import httpClient, { getLiveKitUrl } from "@/services/httpClient";
 import { useEffect, useRef, useState } from "react";
 import { LocalTrackPublication, Room, Track, VideoPresets } from "livekit-client";
 import { useRoomContext, RoomAudioRenderer } from "@livekit/components-react";
-import "@livekit/components-styles";
 import { cn, FontFamily, getContrastColor, sleep, type ApiError } from "@tribe-nest/frontend-shared";
 import { toast } from "sonner";
 import { useParticipantStore } from "./store";
@@ -14,12 +13,12 @@ import Scenes from "./Scenes";
 import { OUTPUT_HEIGHT, OUTPUT_WIDTH, useComposer } from "./useComposer";
 import RightPanel from "./RightPanel";
 import Controls from "./Controls";
-import { VideoTile } from "./VideoTile";
 import { COLORS } from "@/services/contants";
 import { useCanvasAudio } from "./hooks/useCanvasAudio";
 import { useGetTemplateChannels } from "@/hooks/queries/useStreams";
-import type { IStreamBroadcast } from "@/types/event";
+import { SceneLayout, type IStreamBroadcast } from "@/types/event";
 import { StudioHeader } from "./studio/StudioHeader";
+import VideosContainer from "./VideosContainer";
 
 export const StudioContent = () => {
   const { currentProfileAuthorization } = useAuth();
@@ -193,8 +192,11 @@ export const StudioContent = () => {
       ? 1
       : Math.max(2, Math.ceil((cameraTracks.length + 1) / 2));
   };
+  const isSolo = selectedScene?.layout === SceneLayout.Solo;
+  const isPictureInPicture = selectedScene?.layout === SceneLayout.PictureInPicture;
 
-  const gridCols = getGridCols();
+  const gridCols = isSolo || isPictureInPicture ? 1 : getGridCols();
+  const containerClassName = `grid grid-cols-${gridCols}`;
 
   const handleStopLive = async () => {
     if (!isLive || !currentProfileAuthorization?.profileId || !localTemplate?.id || !broadcast) return;
@@ -321,7 +323,7 @@ export const StudioContent = () => {
         <RoomAudioRenderer />
         <div className="flex-1 p-4 flex flex-col  items-center">
           {/* Visible preview: CSS-controlled layout */}
-          <div>
+          {/* <div className="mb-8">
             <div>
               <video
                 ref={outputVideoRef}
@@ -331,14 +333,14 @@ export const StudioContent = () => {
                 className="w-full aspect-video bg-gray-900 object-cover"
               />
             </div>
-          </div>
+          </div> */}
           <div
             style={{
               backgroundColor: currentBackground ? "transparent" : "#0b0b0b",
               fontFamily: localTemplate?.config.fontFamily ?? FontFamily.Inter,
             }}
             ref={stageRef}
-            className={cn(`grid grid-cols-${gridCols} gap-2 w-full max-w-6xl aspect-[16/9] relative overflow-hidden`, {
+            className={cn(`${containerClassName} gap-2 w-full max-w-6xl aspect-[16/9] relative overflow-hidden`, {
               "p-10": !!currentBackground && tickerText,
               "p-4": !!currentBackground && !tickerText,
             })}
@@ -362,9 +364,7 @@ export const StudioContent = () => {
               />
             )}
 
-            {cameraTracks.map((track, index) => (
-              <VideoTile key={index} track={track} id={track.publication.trackSid} />
-            ))}
+            <VideosContainer tracks={cameraTracks} />
 
             {selectedScene?.logo && (
               <img

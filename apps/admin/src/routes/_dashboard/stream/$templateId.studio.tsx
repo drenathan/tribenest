@@ -2,7 +2,7 @@ import "hacktimer";
 import { useAuth } from "@/hooks/useAuth";
 import httpClient, { getLiveKitUrl } from "@/services/httpClient";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Room } from "livekit-client";
 import { RoomContext } from "@livekit/components-react";
 import "@livekit/components-styles";
@@ -22,10 +22,28 @@ function RouteComponent() {
   const { permissionsLoaded, username, userTitle, setLocalTemplate } = useParticipantStore();
   const { templateId } = Route.useParams();
   const { data: template } = useGetStreamTemplate(templateId, currentProfileAuthorization?.profileId);
+  const isInitialized = useRef(false);
+
+  useEffect(() => {
+    window.addEventListener("popstate", (event) => {
+      event.preventDefault();
+      window.history.pushState(null, "", window.location.href);
+    });
+
+    return () => {
+      window.removeEventListener("popstate", (event) => {
+        event.preventDefault();
+        window.history.pushState(null, "", window.location.href);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (template) {
-      setLocalTemplate(template, false);
+      if (!isInitialized.current) {
+        setLocalTemplate(template, false);
+        isInitialized.current = true;
+      }
     }
   }, [template, setLocalTemplate]);
 

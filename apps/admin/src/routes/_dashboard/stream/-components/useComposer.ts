@@ -3,6 +3,9 @@ import { COLORS } from "@/services/contants";
 import type { IStreamTemplate } from "@/types/event";
 import { FontFamily, getContrastColor } from "@tribe-nest/frontend-shared";
 import { useEffect } from "react";
+import { useTracks } from "@livekit/components-react";
+import { Track } from "livekit-client";
+import { useParticipantStore } from "./store";
 
 export const OUTPUT_WIDTH = 1920;
 export const OUTPUT_HEIGHT = 1080;
@@ -45,6 +48,46 @@ function drawVideoCover(
 
   ctx.restore();
 }
+
+const drawVideoObjectContain = (
+  ctx: CanvasRenderingContext2D,
+  video: HTMLVideoElement,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+) => {
+  if (video.videoWidth === 0 || video.videoHeight === 0) return; // not ready
+
+  const videoAspect = video.videoWidth / video.videoHeight;
+  const boxAspect = w / h;
+
+  let drawWidth: number, drawHeight: number, offsetX: number, offsetY: number;
+
+  if (videoAspect > boxAspect) {
+    // Video is wider → fit to box width, scale height down, center vertically
+    drawWidth = w;
+    drawHeight = w / videoAspect;
+    offsetX = 0;
+    offsetY = (h - drawHeight) / 2;
+  } else {
+    // Video is taller → fit to box height, scale width down, center horizontally
+    drawHeight = h;
+    drawWidth = h * videoAspect;
+    offsetX = (w - drawWidth) / 2;
+    offsetY = 0;
+  }
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h); // clip to the box
+  ctx.clip();
+
+  ctx.drawImage(video, x + offsetX, y + offsetY, drawWidth, drawHeight);
+
+  ctx.restore();
+};
+
 export const useComposer = ({
   canvasRef,
   stageRef,
@@ -54,6 +97,21 @@ export const useComposer = ({
   stageRef: React.RefObject<HTMLDivElement | null>;
   template: IStreamTemplate | null;
 }) => {
+  const videoTracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare]);
+  const { sceneTracks, setSceneTracks } = useParticipantStore();
+
+  useEffect(() => {
+    const videosInSceneNotInVideoTracks = sceneTracks.filter(
+      (t) => !videoTracks.some((v) => v.publication.trackSid === t.publication.trackSid),
+    );
+    if (videosInSceneNotInVideoTracks.length > 0) {
+      setSceneTracks(
+        sceneTracks.filter(
+          (t) => !videosInSceneNotInVideoTracks.some((v) => v.publication.trackSid === t.publication.trackSid),
+        ),
+      );
+    }
+  }, [sceneTracks, videoTracks, setSceneTracks]);
   useEffect(() => {
     // let raf = 0;
     if (!template) return;
@@ -112,7 +170,12 @@ export const useComposer = ({
         const targetH = rect.height * scaleY;
 
         try {
-          drawVideoCover(ctx, video as HTMLVideoElement, targetX, targetY, targetW, targetH);
+          const objectFit = video.getAttribute("data-object-fit");
+          if (objectFit === "contain") {
+            drawVideoObjectContain(ctx, video as HTMLVideoElement, targetX, targetY, targetW, targetH);
+          } else {
+            drawVideoCover(ctx, video as HTMLVideoElement, targetX, targetY, targetW, targetH);
+          }
         } catch (err) {
           console.error("drawImage error:", err);
         }
@@ -127,7 +190,9 @@ export const useComposer = ({
         const y = (rect.top - stageRect.top) * scaleY; // bottom baseline
         const width = rect.width * scaleX;
         const height = rect.height * scaleY;
-        const fontSize = 16 * scaleY;
+        const fontSize = tag.getAttribute("data-font-size")
+          ? parseInt(tag.getAttribute("data-font-size") || "16") * scaleY
+          : 16 * scaleY;
         ctx.font = `${fontSize}px ${fontFamily}`;
         // background rectangle for readability
         const paddingY = 6 * scaleY;
@@ -150,7 +215,9 @@ export const useComposer = ({
         const y = (rect.top - stageRect.top) * scaleY; // bottom baseline
         const width = rect.width * scaleX;
         const height = rect.height * scaleY;
-        const fontSize = 12 * scaleY;
+        const fontSize = tag.getAttribute("data-font-size")
+          ? parseInt(tag.getAttribute("data-font-size") || "12") * scaleY
+          : 12 * scaleY;
         ctx.font = `${fontSize}px ${fontFamily}`;
         const paddingY = 6 * scaleY;
         const paddingX = 6 * scaleX;

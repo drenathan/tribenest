@@ -78,9 +78,9 @@ export interface UpdateEventInput {
 export enum SceneLayout {
   Solo = "solo",
   Grid = "grid",
-  SideBySide = "side-by-side",
+  // SideBySide = "side-by-side",
   PictureInPicture = "picture-in-picture",
-  Spotlight = "spotlight",
+  // Spotlight = "spotlight",
 }
 
 export enum SceneType {

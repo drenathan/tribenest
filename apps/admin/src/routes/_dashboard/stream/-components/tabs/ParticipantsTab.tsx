@@ -1,28 +1,13 @@
 import { useParticipants, useTracks, VideoTrack, type TrackReference } from "@livekit/components-react";
-import { Button } from "@tribe-nest/frontend-shared";
+import { Switch } from "@tribe-nest/frontend-shared";
 import { Track } from "livekit-client";
-import { Mic, PlusIcon, MicOff } from "lucide-react";
+import { Mic, MicOff } from "lucide-react";
 import { useParticipantStore } from "../store";
-import { useEffect } from "react";
 
 function ParticipantsTab() {
   const participants = useParticipants();
   const tracks = useTracks();
   const { setSceneTracks, sceneTracks } = useParticipantStore();
-  const videoTracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare]);
-
-  useEffect(() => {
-    const videosInSceneNotInVideoTracks = sceneTracks.filter(
-      (t) => !videoTracks.some((v) => v.publication.trackSid === t.publication.trackSid),
-    );
-    if (videosInSceneNotInVideoTracks.length > 0) {
-      setSceneTracks(
-        sceneTracks.filter(
-          (t) => !videosInSceneNotInVideoTracks.some((v) => v.publication.trackSid === t.publication.trackSid),
-        ),
-      );
-    }
-  }, [sceneTracks, videoTracks, setSceneTracks]);
 
   const handleAddToScene = (track: TrackReference) => {
     const exists = sceneTracks.some((t) => t.publication.trackSid === track.publication.trackSid);
@@ -86,14 +71,12 @@ function ParticipantsTab() {
                 <p>{participant.name}</p>
                 {audioTrack ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
                 {videoTrack && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => (isInScene ? handleRemoveFromScene(videoTrack) : handleAddToScene(videoTrack))}
-                  >
-                    {isInScene ? null : <PlusIcon />}
-                    {isInScene ? "Remove" : "Add to scene"}
-                  </Button>
+                  <Switch
+                    checked={isInScene}
+                    onCheckedChange={() =>
+                      isInScene ? handleRemoveFromScene(videoTrack) : handleAddToScene(videoTrack)
+                    }
+                  />
                 )}
               </div>
             </div>
@@ -129,18 +112,14 @@ function ParticipantsTab() {
                   <p>Screen Share</p>
                   {screenShareAudioTrack ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
                   {screenShareVideoTrack && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
+                    <Switch
+                      checked={isScreenShareInScene}
+                      onCheckedChange={() =>
                         isScreenShareInScene
                           ? handleRemoveFromScene(screenShareVideoTrack)
                           : handleAddToScene(screenShareVideoTrack)
                       }
-                    >
-                      {isScreenShareInScene ? null : <PlusIcon />}
-                      {isScreenShareInScene ? "Remove" : "Add to scene"}
-                    </Button>
+                    />
                   )}
                 </div>
               </div>
