@@ -1,4 +1,5 @@
 export * from "./components/ui/button";
+export * from "./components/ui/switch";
 export * from "./components/ui/avatar";
 export * from "./components/ui/sidebar";
 export * from "./components/ui/breadcrumb";

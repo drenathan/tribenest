@@ -1,5 +1,5 @@
 import { Card } from "@tribe-nest/frontend-shared";
-import { Layers, MessageSquare, MessageSquareLock, Dock, Users, X } from "lucide-react";
+import { Layers, MessageSquare, Dock, Users, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import ParticipantsTab from "./tabs/ParticipantsTab";
 import LayersTab from "./tabs/LayersTab";
@@ -89,10 +89,10 @@ function RightPanel({ broadcastId }: Props) {
           <div>Comments</div>
           <MessageSquare size={24} />
         </div>
-        <div className={buttonClass(activeTab === "guests-chat")} onClick={() => setActiveTab("guests-chat")}>
+        {/* <div className={buttonClass(activeTab === "guests-chat")} onClick={() => setActiveTab("guests-chat")}>
           <div>Guests Chat</div>
           <MessageSquareLock size={24} />
-        </div>
+        </div> */}
       </Card>
     </div>
   );

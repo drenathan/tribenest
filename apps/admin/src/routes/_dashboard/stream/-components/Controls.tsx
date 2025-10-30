@@ -232,29 +232,29 @@ function Controls() {
               <div className="bg-gray-700 rounded border border-border"></div>
             </div>
           );
-        case SceneLayout.SideBySide:
-          return (
-            <div className="w-full h-full flex gap-1">
-              <div className="flex-1 bg-gray-700 rounded border border-border"></div>
-              <div className="flex-1 bg-gray-700 rounded border border-border"></div>
-            </div>
-          );
+        // case SceneLayout.SideBySide:
+        //   return (
+        //     <div className="w-full h-full flex gap-1">
+        //       <div className="flex-1 bg-gray-700 rounded border border-border"></div>
+        //       <div className="flex-1 bg-gray-700 rounded border border-border"></div>
+        //     </div>
+        //   );
         case SceneLayout.PictureInPicture:
           return (
             <div className="w-full h-full relative bg-gray-700 rounded">
               <div className="absolute bottom-1 right-1 w-1/3 h-1/3 bg-gray-700 rounded border border-grey-200"></div>
             </div>
           );
-        case SceneLayout.Spotlight:
-          return (
-            <div className="w-full h-full grid grid-cols-2 gap-1">
-              <div className="bg-gray-700 rounded border border-border"></div>
-              <div className="grid grid-cols-1 gap-1">
-                <div className="bg-gray-700"></div>
-                <div className=" bg-gray-700"></div>
-              </div>
-            </div>
-          );
+        // case SceneLayout.Spotlight:
+        //   return (
+        //     <div className="w-full h-full grid grid-cols-2 gap-1">
+        //       <div className="bg-gray-700 rounded border border-border"></div>
+        //       <div className="grid grid-cols-1 gap-1">
+        //         <div className="bg-gray-700"></div>
+        //         <div className=" bg-gray-700"></div>
+        //       </div>
+        //     </div>
+        //   );
         default:
           return null;
       }
