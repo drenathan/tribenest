@@ -15,6 +15,7 @@ export const BroadcastItemContent = () => {
   const { broadcastId } = useParams<{ broadcastId: string }>();
   const [updatedBroadcast, setUpdatedBroadcast] = useState<ILiveBroadcast | null>(null);
   const [hasValidPass, setHasValidPass] = useState(false);
+  const [isLoadingInitialSession, setIsLoadingInitialSession] = useState(true);
 
   const {
     data: broadcast,
@@ -30,6 +31,28 @@ export const BroadcastItemContent = () => {
     },
     enabled: !!profile?.id && !!httpClient && !!broadcastId,
   });
+
+  useEffect(() => {
+    if (!broadcastId || !httpClient) return;
+    const sessionId = localStorage.getItem(`broadcast_${broadcastId}_session_id`);
+    if (!sessionId) {
+      setIsLoadingInitialSession(false);
+      return;
+    }
+    httpClient!
+      .post(`/public/broadcasts/${broadcastId}/validate-session`, {
+        sessionId,
+      })
+      .then(() => {
+        setHasValidPass(true);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setIsLoadingInitialSession(false);
+      });
+  }, [broadcastId, profile?.id, httpClient]);
 
   useEffect(() => {
     if (!broadcastId || !profile?.id || !httpClient) return;
@@ -69,13 +92,18 @@ export const BroadcastItemContent = () => {
 
   return (
     <InternalPageRenderer pagePathname="/live/[id]" backPathname="/live" onBack={handleLeaveBroadcast}>
-      {isBroadcastLoading && <LoadingState />}
-      {error && <div>Unable to load broadcast</div>}
-      {broadcast && hasEnded && <EndedBroadcast broadcast={broadcast} />}
+      {(isBroadcastLoading || isLoadingInitialSession) && <LoadingState />}
 
-      {broadcast && !hasEnded && isPassValidated && <BroadcastPlayer broadcast={broadcast} />}
-      {broadcast && !hasEnded && !isPassValidated && (
-        <BroadcastPassValidation broadcast={broadcast} onSuccess={handlePassValidationSuccess} />
+      {!isLoadingInitialSession && (
+        <>
+          {error && <div>Unable to load broadcast</div>}
+          {broadcast && hasEnded && <EndedBroadcast broadcast={broadcast} />}
+
+          {broadcast && !hasEnded && isPassValidated && <BroadcastPlayer broadcast={broadcast} />}
+          {broadcast && !hasEnded && !isPassValidated && (
+            <BroadcastPassValidation broadcast={broadcast} onSuccess={handlePassValidationSuccess} />
+          )}
+        </>
       )}
     </InternalPageRenderer>
   );
