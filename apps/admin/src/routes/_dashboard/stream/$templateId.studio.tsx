@@ -8,7 +8,7 @@ import { RoomContext } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { useGetStreamTemplate } from "@/hooks/queries/useStreams";
 import { PreJoin } from "./-components/PreJoin";
-import { useParticipantStore } from "./-components/store";
+import { ParticipantStoreProvider, useParticipantStore } from "./-components/store";
 
 import { StudioContent } from "./-components/StudioContent";
 
@@ -17,6 +17,14 @@ export const Route = createFileRoute("/_dashboard/stream/$templateId/studio")({
 });
 
 function RouteComponent() {
+  return (
+    <ParticipantStoreProvider>
+      <RouteComponentInner />
+    </ParticipantStoreProvider>
+  );
+}
+
+function RouteComponentInner() {
   const { currentProfileAuthorization } = useAuth();
   const [room] = useState(() => new Room({}));
   const { permissionsLoaded, username, userTitle, setLocalTemplate } = useParticipantStore();

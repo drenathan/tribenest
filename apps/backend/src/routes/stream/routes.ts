@@ -33,6 +33,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
   router.get("/oauth/twitch/token", (...args) => controller.getTwitchOauthToken(...args));
 
   // Broadcasts
+  router.post("/broadcasts/cleanup", (...args) => controller.cleanupBroadcasts(...args));
   router.get("/broadcasts/:id/comments", (...args) => controller.getBroadcastComments(...args));
   router.put("/broadcasts/:id", (...args) => controller.updateBroadcast(...args));
 

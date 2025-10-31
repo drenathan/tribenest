@@ -9,6 +9,15 @@ export class StreamBroadcastModel extends BaseModel<"streamBroadcasts", "id"> {
     super(client, "streamBroadcasts", "id");
   }
 
+  public async getActiveBroadcasts({ profileId }: { profileId: string }) {
+    return this.client
+      .selectFrom("streamBroadcasts as sb")
+      .where("sb.profileId", "=", profileId)
+      .where("sb.endedAt", "is", null)
+      .selectAll()
+      .execute();
+  }
+
   public async getPublicBroadcasts({ profileId, broadcastId }: { profileId: string; broadcastId?: string }) {
     return this.client
       .selectFrom("streamBroadcasts as sb")

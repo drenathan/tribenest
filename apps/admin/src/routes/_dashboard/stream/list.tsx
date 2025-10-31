@@ -22,7 +22,9 @@ import EmptyState from "@/components/empty-state";
 import { CreateStreamTemplateDialog } from "./-components/CreateStreamTemplateDialog";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, Wrench, TriangleAlert } from "lucide-react";
+import httpClient from "@/services/httpClient";
+import { toast } from "sonner";
 
 const routeParams = z.object({
   page: z.coerce.number().default(1),
@@ -59,12 +61,44 @@ function RouteComponent() {
     console.log("Delete template:", templateId);
   };
 
+  const handleCleanupBroadcasts = async () => {
+    if (!currentProfileAuthorization?.profileId) return;
+
+    try {
+      await httpClient.post(
+        "/streams/broadcasts/cleanup",
+        {},
+        { params: { profileId: currentProfileAuthorization?.profileId } },
+      );
+      toast.success("Broadcasts cleaned up successfully");
+    } catch {
+      toast.error("Failed to cleanup broadcasts");
+    }
+  };
+
   return (
     <div>
       <PageHeader
         title="Stream Templates"
         description="Manage your stream templates"
-        action={<Button onClick={handleCreateTemplate}>New Template</Button>}
+        action={
+          <div className="flex gap-2">
+            <Button onClick={handleCreateTemplate}>New Template</Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Wrench />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleCleanupBroadcasts} className="text-red-600">
+                  <TriangleAlert className="mr-2 h-4 w-4" />
+                  Cleanup Broadcasts
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        }
       />
 
       {isLoading && <Loading />}

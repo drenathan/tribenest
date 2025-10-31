@@ -276,4 +276,18 @@ export class StreamsController extends BaseController {
       ...body!,
     });
   }
+
+  @RouteHandler()
+  @ValidateSchema(profileIdQuerySchema)
+  @isAuthorized(policy.getAll)
+  public async cleanupBroadcasts(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Query query?: ProfileIdInput,
+  ): Promise<any> {
+    return this.services.admin.streams.cleanupBroadcasts({
+      profileId: query!.profileId,
+    });
+  }
 }

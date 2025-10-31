@@ -31,6 +31,7 @@ import { startTwitchChannelBroadcast } from "./actions/startTwitchChannelBroadca
 import { startCustomRtmpChannelBroadcast } from "./actions/startCustomRtmpChannelBroadcast";
 import { startChannelBroadcast } from "./actions/startChannelBroadcast";
 import { updateBroadcast } from "./actions/updateBroadcast";
+import { cleanupBroadcasts } from "./actions/cleanupBroadcasts";
 
 export class StreamsService extends BaseService {
   public readonly startEgress: typeof startEgress;
@@ -44,6 +45,7 @@ export class StreamsService extends BaseService {
   public readonly startCustomRtmpChannelBroadcast: typeof startCustomRtmpChannelBroadcast;
   public readonly startChannelBroadcast: typeof startChannelBroadcast;
   public readonly updateBroadcast: typeof updateBroadcast;
+  public readonly cleanupBroadcasts: typeof cleanupBroadcasts;
 
   constructor(args: BaseServiceArgs) {
     super(args);
@@ -58,6 +60,7 @@ export class StreamsService extends BaseService {
     this.startCustomRtmpChannelBroadcast = startCustomRtmpChannelBroadcast.bind(this);
     this.startChannelBroadcast = startChannelBroadcast.bind(this);
     this.updateBroadcast = updateBroadcast.bind(this);
+    this.cleanupBroadcasts = cleanupBroadcasts.bind(this);
   }
 
   public async getStreamTemplates(input: GetStreamTemplatesInput) {
