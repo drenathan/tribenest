@@ -31,11 +31,14 @@ function Scenes() {
   const handleAddScene = (sceneType: SceneType) => {
     if (!localTemplate) return;
 
+    const isCountdownScene = sceneType === SceneType.Countdown;
+
     const newScene = {
       id: uuid(),
       title: `Scene ${(localTemplate.scenes.length ?? 0) + 1}`,
       layout: SceneLayout.Solo,
       type: sceneType,
+      ...(isCountdownScene && { countdown: { duration: 30, color: "#FFFFFF" } }),
     };
 
     setLocalTemplate({

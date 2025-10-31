@@ -7,14 +7,20 @@ import { DB } from "@src/db/types";
 
 export async function startChannelBroadcast(
   this: StreamsService,
-  input: { broadcastId: string; channel: Selectable<IStreamChannel>; title: string },
+  input: {
+    broadcastId: string;
+    channel: Selectable<IStreamChannel>;
+    title: string;
+    description?: string;
+    thumbnailUrl?: string;
+  },
   trx?: Transaction<DB>,
 ) {
-  const { broadcastId, channel, title } = input;
+  const { broadcastId, channel, title, description, thumbnailUrl } = input;
 
   switch (channel.channelProvider) {
     case StreamChannelProvider.Youtube:
-      return this.startYoutubeChannelBroadcast({ broadcastId, channel, title }, trx);
+      return this.startYoutubeChannelBroadcast({ broadcastId, channel, title, description, thumbnailUrl }, trx);
     case StreamChannelProvider.Twitch:
       return this.startTwitchChannelBroadcast({ broadcastId, channel }, trx);
     case StreamChannelProvider.CustomRTMP:

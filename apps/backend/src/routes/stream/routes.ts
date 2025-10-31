@@ -34,6 +34,7 @@ const init: InitRouteFunction = ({ services, workers }) => {
 
   // Broadcasts
   router.get("/broadcasts/:id/comments", (...args) => controller.getBroadcastComments(...args));
+  router.put("/broadcasts/:id", (...args) => controller.updateBroadcast(...args));
 
   return router;
 };

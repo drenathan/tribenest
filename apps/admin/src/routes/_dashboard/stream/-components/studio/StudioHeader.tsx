@@ -9,6 +9,7 @@ import type { IStreamBroadcast, IStreamTemplateChannel } from "@/types/event";
 import { useParticipantStore } from "../store";
 import { useState } from "react";
 import SelectEventDialog from "./SelectEventDialog";
+import UpdateBroadcastDialog from "./UpdateBroadcastDialog";
 
 interface Props {
   handleBack: () => void;
@@ -35,6 +36,7 @@ export function StudioHeader({
 }: Props) {
   const { localTemplate, linkedEvent } = useParticipantStore();
   const [isSelectEventOpen, setIsSelectEventOpen] = useState(false);
+  const [isUpdateBroadcastOpen, setIsUpdateBroadcastOpen] = useState(false);
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4 z-[100000] bg-background">
@@ -48,14 +50,24 @@ export function StudioHeader({
         {linkedEvent ? (
           <div className="flex items-center gap-2">
             <p> Live Event: {linkedEvent.title}</p>
-            <Button variant="outline" size="icon" onClick={() => setIsSelectEventOpen(true)}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsSelectEventOpen(true)}
+              disabled={isLive || isLoadingLive}
+            >
               <Pencil className="w-4 h-4 text-foreground hover:text-primary cursor-pointer" />
             </Button>
           </div>
         ) : (
           <div className="font-medium flex items-center gap-2">
             <p>{broadcast?.title || localTemplate?.title}</p>
-            <Button variant="outline" size="icon">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsUpdateBroadcastOpen(true)}
+              disabled={isLive || isLoadingLive}
+            >
               <Pencil className="w-4 h-4 text-foreground hover:text-primary cursor-pointer" />
             </Button>
           </div>
@@ -63,7 +75,7 @@ export function StudioHeader({
 
         {!linkedEvent && (
           <div>
-            <Button variant="outline" onClick={() => setIsSelectEventOpen(true)}>
+            <Button variant="outline" onClick={() => setIsSelectEventOpen(true)} disabled={isLive || isLoadingLive}>
               <LinkIcon /> Link to Event
             </Button>
           </div>
@@ -76,7 +88,7 @@ export function StudioHeader({
         </Button>
         {isLive && <LiveIcon />}
         <Button onClick={isLive ? handleStopLive : handleGoLive} disabled={isLoadingLive}>
-          {isLive ? "Stop Live" : "Go Live"} {isLoadingLive && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
+          {isLive ? "End Live" : "Go Live"} {isLoadingLive && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
         </Button>
       </div>
       <SelectChannel open={isSelectChannelOpen} onOpenChange={setIsSelectChannelOpen} />
@@ -86,6 +98,7 @@ export function StudioHeader({
         onOpenChange={setIsSelectEventOpen}
         events={[]}
       />
+      <UpdateBroadcastDialog open={isUpdateBroadcastOpen} onOpenChange={setIsUpdateBroadcastOpen} />
     </header>
   );
 }

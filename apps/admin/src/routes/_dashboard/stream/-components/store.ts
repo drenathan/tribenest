@@ -1,6 +1,14 @@
 import httpClient from "@/services/httpClient";
 import type { ApiError } from "@tribe-nest/frontend-shared";
-import type { IBanner, IEvent, IStreamBroadcastComment, IStreamTemplate, ITicker, MediaDevice } from "@/types/event";
+import type {
+  IBanner,
+  IEvent,
+  IStreamBroadcast,
+  IStreamBroadcastComment,
+  IStreamTemplate,
+  ITicker,
+  MediaDevice,
+} from "@/types/event";
 import type { TrackReference } from "@livekit/components-react";
 import type { Participant } from "livekit-client";
 import { create } from "zustand";
@@ -22,6 +30,7 @@ interface ParticipantStore {
   localTemplate: IStreamTemplate | null;
   comments: IStreamBroadcastComment[];
   linkedEvent: IEvent | null;
+  localBroadcast: IStreamBroadcast | null;
   sceneParticipants: {
     [key: string]: {
       participant: Participant;
@@ -43,6 +52,7 @@ interface ParticipantStore {
     [key: string]: { tracks: TrackReference[]; participant: Participant };
   }) => void;
   setLocalTemplate: (localTemplate: IStreamTemplate, persist?: boolean) => void;
+  setLocalBroadcast: (localBroadcast: IStreamBroadcast, persist?: boolean) => void;
   setComments: (comments: IStreamBroadcastComment[]) => void;
   setLinkedEvent: (linkedEvent: IEvent | null) => void;
 }
@@ -63,6 +73,7 @@ export const useParticipantStore = create<ParticipantStore>((set, get) => ({
   sceneParticipants: {},
   comments: [],
   localTemplate: null,
+  localBroadcast: null,
   setComments: (newComments) => {
     const comments = get().comments;
     set({ comments: uniqBy([...comments, ...newComments], "id") });
@@ -95,6 +106,25 @@ export const useParticipantStore = create<ParticipantStore>((set, get) => ({
         return data;
       } catch (error) {
         const errorMessage = (error as ApiError).response?.data?.message || "Failed to update template";
+        toast.error(errorMessage);
+        console.error(error);
+      }
+    }
+  },
+
+  setLocalBroadcast: async (localBroadcast, persist = true) => {
+    set({ localBroadcast });
+
+    if (persist) {
+      try {
+        const { data } = await httpClient.put(`/streams/broadcasts/${localBroadcast.id}`, {
+          title: localBroadcast.title,
+          description: localBroadcast.description,
+          thumbnailUrl: localBroadcast.thumbnailUrl,
+        });
+        return data;
+      } catch (error) {
+        const errorMessage = (error as ApiError).response?.data?.message || "Failed to update broadcast";
         toast.error(errorMessage);
         console.error(error);
       }

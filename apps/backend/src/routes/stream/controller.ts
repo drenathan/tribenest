@@ -26,6 +26,8 @@ import {
   CreateCustomRtmpChannelInput,
   startEgressSchema,
   StartEgressInput,
+  updateBroadcastSchema,
+  UpdateBroadcastInput,
 } from "./schema";
 import * as policy from "./policy";
 import {
@@ -34,13 +36,10 @@ import {
   GOOGLE_CLIENT_SECRET,
   LIVEKIT_API_SECRET,
   LIVEKIT_API_KEY,
-  LIVEKIT_URL,
 } from "@src/configuration/secrets";
-import { BadRequestError } from "@src/utils/app_error";
 import { ProfileIdInput, profileIdQuerySchema } from "../schema";
 import { AccessToken } from "livekit-server-sdk";
 import { add } from "date-fns";
-import { createCustomRtmpChannel } from "@src/services/admin/stream/actions/createCustomRtmpChannel";
 
 const GOOGLE_REDIRECT_URI = `${ADMIN_URL}/stream/youtube/oauth`;
 
@@ -260,6 +259,21 @@ export class StreamsController extends BaseController {
     return this.services.admin.streams.getStreamBroadcastComments({
       broadcastId: req.params.id,
       cursor: query!.cursor,
+    });
+  }
+
+  @RouteHandler()
+  @ValidateSchema(updateBroadcastSchema)
+  @isAuthorized(policy.update)
+  public async updateBroadcast(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    @Body body?: UpdateBroadcastInput,
+  ): Promise<any> {
+    return this.services.admin.streams.updateBroadcast({
+      broadcastId: req.params.id,
+      ...body!,
     });
   }
 }

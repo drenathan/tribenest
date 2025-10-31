@@ -16,9 +16,16 @@ import {
 
 export async function startEgress(
   this: StreamsService,
-  input: { templateId: string; profileId: string; eventId?: string; title?: string },
+  input: {
+    templateId: string;
+    profileId: string;
+    eventId?: string;
+    title?: string;
+    description?: string;
+    thumbnailUrl?: string;
+  },
 ) {
-  const { templateId, profileId, eventId, title } = input;
+  const { templateId, profileId, eventId, title, description, thumbnailUrl } = input;
   const template = await this.models.StreamTemplate.findOne({ id: templateId, profileId });
   if (!template) {
     throw new ValidationError("Template not found");
@@ -134,7 +141,13 @@ export async function startEgress(
 
     await this.models.StreamBroadcast.updateOne(
       { id: broadcast.id },
-      { egressId: egress.egressId, generatedThumbnailUrl, thumbnailUrl: eventCoverImage, liveUrl, vodUrl },
+      {
+        egressId: egress.egressId,
+        generatedThumbnailUrl,
+        thumbnailUrl: eventCoverImage || thumbnailUrl,
+        liveUrl,
+        vodUrl,
+      },
       trx,
     );
     await trx.commit().execute();

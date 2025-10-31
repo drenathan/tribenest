@@ -2,7 +2,7 @@ import type { TrackReference } from "@livekit/components-react";
 import { VideoTile } from "./VideoTile";
 import { useMainVideoTrack } from "./hooks/useMainVideoTrack";
 import { useParticipantStore } from "./store";
-import { SceneLayout } from "@/types/event";
+import { SceneLayout, SceneType } from "@/types/event";
 import React from "react";
 
 function VideosContainer({ tracks }: { tracks: TrackReference[] }) {
@@ -16,8 +16,10 @@ function VideosContainer({ tracks }: { tracks: TrackReference[] }) {
 
   const isPictureInPicture = selectedScene?.layout === SceneLayout.PictureInPicture;
   const mainVideoTrack = useMainVideoTrack();
+  const isCountdownScene = selectedScene?.type === SceneType.Countdown;
 
   if (!mainVideoTrack) return null;
+  if (isCountdownScene) return null;
   let bottomPadding = "0px";
 
   if ((!!currentBackground && tickerText) || (!currentBackground && tickerText)) {

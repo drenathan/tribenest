@@ -52,3 +52,36 @@ export function getContrastColor(hex: string) {
   // Return black for light backgrounds, white for dark
   return brightness > 128 ? "#000000" : "#FFFFFF";
 }
+
+export const getImageTextColor = (imageUrl: string) => {
+  if (!imageUrl) return;
+  const img = new Image();
+  img.crossOrigin = "anonymous"; // Needed for external images
+  img.src = imageUrl;
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const w = (canvas.width = img.width);
+  const h = (canvas.height = img.height);
+  if (!ctx) return;
+  ctx.drawImage(img, 0, 0, w, h);
+
+  const { data } = ctx.getImageData(0, 0, w, h);
+  let r = 0,
+    g = 0,
+    b = 0;
+  const count = w * h;
+  for (let i = 0; i < data.length; i += 4) {
+    r += data[i];
+    g += data[i + 1];
+    b += data[i + 2];
+  }
+  r /= count;
+  g /= count;
+  b /= count;
+
+  // perceived brightness formula
+  const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+
+  return brightness > 128 ? "#000000" : "#FFFFFF";
+};

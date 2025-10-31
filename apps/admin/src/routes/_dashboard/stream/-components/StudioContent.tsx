@@ -1,7 +1,7 @@
 import "hacktimer";
 import { useAuth } from "@/hooks/useAuth";
 import httpClient, { getLiveKitUrl } from "@/services/httpClient";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LocalTrackPublication, Room, Track, VideoPresets } from "livekit-client";
 import { useRoomContext, RoomAudioRenderer } from "@livekit/components-react";
 import { cn, FontFamily, getContrastColor, sleep, type ApiError } from "@tribe-nest/frontend-shared";
@@ -16,9 +16,10 @@ import Controls from "./Controls";
 import { COLORS } from "@/services/contants";
 import { useCanvasAudio } from "./hooks/useCanvasAudio";
 import { useGetTemplateChannels } from "@/hooks/queries/useStreams";
-import { SceneLayout, type IStreamBroadcast } from "@/types/event";
+import { SceneLayout, SceneType, type IStreamBroadcast } from "@/types/event";
 import { StudioHeader } from "./studio/StudioHeader";
 import VideosContainer from "./VideosContainer";
+import CountdownScene from "./CountdownScene";
 
 export const StudioContent = () => {
   const { currentProfileAuthorization } = useAuth();
@@ -31,6 +32,7 @@ export const StudioContent = () => {
   const [isSelectChannelOpen, setIsSelectChannelOpen] = useState(false);
   const [broadcast, setBroadcast] = useState<IStreamBroadcast | null>(null);
   const canvasStream = useRef<MediaStream | null>(null);
+  const egressRoom = useRef<Room | null>(null);
   // const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
   const { videoDeviceId, videoEnabled, sceneTracks, localTemplate, comments, setComments, linkedEvent } =
@@ -63,7 +65,7 @@ export const StudioContent = () => {
 
   const cameraTracks = sceneTracks;
 
-  // CANVAS AUDIO TEST PLAYBACK
+  // // CANVAS AUDIO TEST PLAYBACK
   // const isLoadedAudio = useRef(false);
   // useEffect(() => {
   //   if (!combinedAudioStream) return;
@@ -109,6 +111,27 @@ export const StudioContent = () => {
     outputVideoRef.current!.srcObject = s;
     outputVideoRef.current!.play().catch(() => {});
   }, []);
+
+  const handleCleanup = useCallback(() => {
+    if (combinedAudioStream) {
+      combinedAudioStream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+    if (room) {
+      room.localParticipant.trackPublications.forEach((publication) => {
+        publication.track?.stop();
+      });
+      room.disconnect();
+    }
+  }, [combinedAudioStream, room]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleCleanup);
+    return () => {
+      window.removeEventListener("beforeunload", handleCleanup);
+    };
+  }, [handleCleanup]);
 
   useEffect(() => {
     const processStreams = async () => {
@@ -210,6 +233,11 @@ export const StudioContent = () => {
       setIsLoadingLive(false);
       setBroadcast(null);
       setComments([]);
+
+      if (egressRoom.current) {
+        egressRoom.current.disconnect();
+        egressRoom.current = null;
+      }
     } catch (error) {
       const errorMessage = (error as ApiError).response?.data?.message || "Error stopping live";
       toast.error(errorMessage);
@@ -242,15 +270,8 @@ export const StudioContent = () => {
           videoEncoding: VideoPresets.h1080.encoding,
         },
       });
+      egressRoom.current = room;
       await room.connect(getLiveKitUrl(), data.token);
-
-      room.on("connected", () => {
-        console.log("connected to room");
-      });
-
-      room.on("trackPublished", (track) => {
-        console.log("track published", track);
-      });
 
       await room.localParticipant.publishTrack(videoTracks[0], {
         name: "egress-video",
@@ -258,7 +279,9 @@ export const StudioContent = () => {
         simulcast: false,
       });
 
-      await room.localParticipant.publishTrack(combinedAudioStream.getAudioTracks()[0], {
+      const audioTrack = combinedAudioStream.getAudioTracks()[0];
+
+      await room.localParticipant.publishTrack(audioTrack.clone(), {
         name: "egress-audio",
         source: Track.Source.Microphone,
         simulcast: false,
@@ -270,7 +293,10 @@ export const StudioContent = () => {
         eventId: linkedEvent?.id,
         profileId: currentProfileAuthorization.profileId,
         title: linkedEvent?.title || localTemplate?.title,
+        description: linkedEvent?.description || localTemplate?.description,
+        thumbnailUrl: localTemplate?.thumbnailUrl,
       });
+
       setIsLive(true);
       setIsLoadingLive(false);
       setBroadcast(res.data);
@@ -279,21 +305,6 @@ export const StudioContent = () => {
       const errorMessage = (error as ApiError).response?.data?.message || "Error going live";
       toast.error(errorMessage);
       setIsLoadingLive(false);
-    }
-  };
-
-  const handleCleanup = () => {
-    if (combinedAudioStream) {
-      combinedAudioStream.getTracks().forEach((track) => {
-        track.stop();
-      });
-    }
-    if (room) {
-      room.localParticipant.trackPublications.forEach((publication) => {
-        publication.track?.stop();
-      });
-
-      room.disconnect();
     }
   };
 
@@ -365,6 +376,7 @@ export const StudioContent = () => {
             )}
 
             <VideosContainer tracks={cameraTracks} />
+            {selectedScene?.type === SceneType.Countdown && <CountdownScene />}
 
             {selectedScene?.logo && (
               <img

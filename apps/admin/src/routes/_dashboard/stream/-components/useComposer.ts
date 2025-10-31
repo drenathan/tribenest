@@ -365,6 +365,26 @@ export const useComposer = ({
         const height = rect.height * scaleY;
         ctx.drawImage(logo as HTMLImageElement, x, y, width, height);
       }
+
+      const countdown = stage.querySelector("[data-countdown]");
+      if (countdown) {
+        const rect = countdown.getBoundingClientRect();
+        const x = (rect.left - stageRect.left) * scaleX;
+        const y = (rect.top - stageRect.top) * scaleY;
+        const fontSize = 120 * scaleY;
+        const computedStyle = window.getComputedStyle(countdown);
+        const countdownColor = computedStyle.color || "#FFFFFF";
+        const countdownFontFamily = computedStyle.fontFamily || fontFamily;
+        ctx.font = `bold ${fontSize}px ${countdownFontFamily}`;
+        ctx.fillStyle = countdownColor;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        const text = countdown.textContent || "";
+        // Center the text in the canvas
+        ctx.fillText(text, x + (rect.width * scaleX) / 2, y + (rect.height * scaleY) / 2);
+        ctx.textAlign = "left"; // Reset to default
+        ctx.textBaseline = "alphabetic"; // Reset to default
+      }
       // raf = requestAnimationFrame(drawLoop);
     }
     // raf = requestAnimationFrame(drawLoop);

@@ -90,6 +90,8 @@ export const startEgressSchema = z.object({
     profileId: z.string().uuid(),
     eventId: z.string().uuid().optional(),
     title: z.string().optional(),
+    description: z.string().optional(),
+    thumbnailUrl: z.string().optional(),
   }),
 });
 
@@ -102,6 +104,16 @@ export const createCustomRtmpChannelSchema = z.object({
     title: z.string().min(1, "Title is required"),
   }),
 });
+
+export const updateBroadcastSchema = z.object({
+  body: z.object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().optional(),
+    thumbnailUrl: z.string().optional(),
+  }),
+});
+
+export type UpdateBroadcastInput = z.infer<typeof updateBroadcastSchema>["body"];
 
 export type CreateCustomRtmpChannelInput = z.infer<typeof createCustomRtmpChannelSchema>["body"];
 

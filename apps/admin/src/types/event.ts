@@ -111,6 +111,11 @@ export interface IScene {
   currentTickerId?: string;
   currentBannerId?: string;
   currentComment?: IStreamBroadcastComment;
+  countdown?: {
+    duration: number;
+    color?: string;
+    fontFamily?: string;
+  };
 }
 
 export interface ITicker {
@@ -146,6 +151,7 @@ export interface IStreamTemplate {
   createdAt: string;
   updatedAt: string;
   scenes: IScene[];
+  thumbnailUrl?: string;
 }
 
 export enum StreamChannelProvider {
@@ -183,4 +189,6 @@ export interface IStreamBroadcast {
   startedAt: string;
   endedAt: string;
   title: string;
+  description?: string;
+  thumbnailUrl?: string;
 }
