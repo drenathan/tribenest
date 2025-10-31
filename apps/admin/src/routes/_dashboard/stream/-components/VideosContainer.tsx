@@ -19,7 +19,8 @@ function VideosContainer({ tracks }: { tracks: TrackReference[] }) {
 
   if (!mainVideoTrack) return null;
   let bottomPadding = "0px";
-  if (!!currentBackground && tickerText) {
+
+  if ((!!currentBackground && tickerText) || (!currentBackground && tickerText)) {
     bottomPadding = "50px";
   } else if (!!currentBackground && !tickerText) {
     bottomPadding = "20px";
