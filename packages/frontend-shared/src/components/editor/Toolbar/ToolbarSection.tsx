@@ -22,7 +22,7 @@ export const ToolbarSection = ({ title, props, summary, children, defaultExpande
   }));
 
   return (
-    <Accordion collapsible type="single" defaultValue={defaultExpanded ? title : undefined} className="mt-2">
+    <Accordion collapsible type="single" defaultValue={defaultExpanded ? title : undefined} className="mt-2 ">
       <AccordionItem value={title} className="border-b-0">
         <AccordionTrigger className="hover:no-underline px-4">
           <div className="w-full text-foreground flex justify-between items-center">
@@ -39,7 +39,7 @@ export const ToolbarSection = ({ title, props, summary, children, defaultExpande
             ) : null}
           </div>
         </AccordionTrigger>
-        <AccordionContent>
+        <AccordionContent className="overflow-visible">
           <Grid container spacing={1} className="px-4">
             {children}
           </Grid>

@@ -113,7 +113,8 @@ export const Container = (props: Partial<ContainerProps>) => {
         alignItems,
         position: "relative",
         justifyContent,
-        background: backgroundImage ? "transparent" : (background ?? themeSettings.colors.background),
+        backgroundColor:
+          backgroundImage || backgroundVideo ? "transparent" : (background ?? themeSettings.colors.background),
         color: color ?? themeSettings.colors.text,
         padding: `${paddingVertical}px ${paddingHorizontal}px`,
         margin: `${marginVertical}px ${marginHorizontal}px`,
@@ -156,7 +157,7 @@ export const Container = (props: Partial<ContainerProps>) => {
           <video src={backgroundVideo} autoPlay loop muted playsInline className="object-cover w-[100%] h-[100%]" />
         </div>
       )}
-      <div className="z-1 w-full h-full max-w-[1440px] mx-auto">
+      <div className="z-1 w-full h-full max-w-[1440px] mx-auto flex flex-col items-center">
         {children}
 
         {!hasChildren && enabled && (

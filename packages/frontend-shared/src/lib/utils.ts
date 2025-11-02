@@ -85,3 +85,21 @@ export const getImageTextColor = (imageUrl: string) => {
 
   return brightness > 128 ? "#000000" : "#FFFFFF";
 };
+
+export const rgbToHex = (r: number, g: number, b: number, a: number) => {
+  // Ensure values are within valid ranges
+  r = Math.max(0, Math.min(255, r));
+  g = Math.max(0, Math.min(255, g));
+  b = Math.max(0, Math.min(255, b));
+
+  // Convert to 2-digit hex
+  const toHex = (x: number) => x.toString(16).padStart(2, "0");
+
+  // If alpha exists and is less than 1, include it in hex
+  if (a !== undefined && a < 1) {
+    const alpha = Math.round(a * 255);
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(alpha)}`;
+  }
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};

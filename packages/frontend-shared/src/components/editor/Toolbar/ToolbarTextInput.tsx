@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChromePicker } from "react-color";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
+import { rgbToHex } from "../../../lib/utils";
 
 export type ToolbarTextInputProps = {
   prefix?: string;
@@ -46,9 +47,10 @@ export const ToolbarTextInput = ({ onChange, value, label, type }: ToolbarTextIn
             }}
           ></div>
           <ChromePicker
+            className="z-50"
             color={value}
             onChange={(color: any) => {
-              onChange?.(color.hex);
+              onChange?.(rgbToHex(color.rgb.r, color.rgb.g, color.rgb.b, color.rgb.a));
             }}
           />
         </div>

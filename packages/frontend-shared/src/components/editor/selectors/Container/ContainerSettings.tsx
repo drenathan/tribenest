@@ -12,6 +12,7 @@ export const ContainerSettings = () => {
   return (
     <React.Fragment>
       <ToolbarSection
+        defaultExpanded={true}
         title="Dimensions"
         props={["width", "height"]}
         summary={({ width, height }: any) => {
@@ -24,6 +25,7 @@ export const ContainerSettings = () => {
       <ToolbarSection
         title="Colors"
         props={["background", "color"]}
+        defaultExpanded={true}
         summary={({ background, color }: any) => {
           return (
             <div className="flex flex-row-reverse text-foreground">
@@ -98,14 +100,14 @@ export const ContainerSettings = () => {
       )}
 
       <ToolbarSection title="Alignment">
-        <ToolbarItem propKey="flexDirection" type="radio" label="Flex Direction">
+        {/* <ToolbarItem propKey="flexDirection" type="radio" label="Flex Direction">
           <ToolbarRadio value="row" label="Row" />
           <ToolbarRadio value="column" label="Column" />
         </ToolbarItem>
         <ToolbarItem propKey="fillSpace" type="radio" label="Fill space">
           <ToolbarRadio value="yes" label="Yes" />
           <ToolbarRadio value="no" label="No" />
-        </ToolbarItem>
+        </ToolbarItem> */}
         <ToolbarItem propKey="alignItems" type="radio" label="Align Items">
           <ToolbarRadio value="flex-start" label="Left" />
           <ToolbarRadio value="center" label="Center" />

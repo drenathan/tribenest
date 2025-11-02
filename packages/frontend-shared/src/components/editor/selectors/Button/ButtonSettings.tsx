@@ -8,6 +8,7 @@ export const ButtonSettings = () => {
     <React.Fragment>
       <ToolbarSection
         title="Colors"
+        defaultExpanded={true}
         props={["background", "color"]}
         summary={({ background, color }: ButtonProps) => {
           return (
