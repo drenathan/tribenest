@@ -18,7 +18,7 @@ app.prepare().then(() => {
 
       // Inject runtime environment variables into the request
       req.runtimeConfig = {
-        rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000",
+        rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3001",
         apiUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
       };
 
@@ -37,7 +37,7 @@ app.prepare().then(() => {
     .listen(port, () => {
       console.log(`> Ready on http://${hostname}:${port}`);
       console.log(`> Runtime config:`, {
-        rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000",
+        rootDomain: process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3001",
         apiUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
       });
     });

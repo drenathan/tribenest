@@ -37,7 +37,7 @@ const Content = ({ children }: { children: React.ReactNode }) => {
   const params = useParams<{ subdomain: string; path: string }>();
   const ref = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  const { httpClient, setHttpClientToken } = useConfig();
+  const { httpClient, setHttpClientToken, rootDomain } = useConfig();
 
   useEffect(() => {
     const fetchWebPage = async () => {
@@ -72,6 +72,13 @@ const Content = ({ children }: { children: React.ReactNode }) => {
   if (!smartLink) {
     return <div>404</div>;
   }
+
+  const formatPath = (path: string) => {
+    if (path.startsWith("/")) {
+      return `${window.location.protocol}//${rootDomain}${path}`;
+    }
+    return path;
+  };
 
   const trackEvent = (eventType: string, eventData: Record<string, unknown> = {}) => {
     const key = `tribe_nest_smart_${smartLink.path}_session_id`;
@@ -109,9 +116,9 @@ const Content = ({ children }: { children: React.ReactNode }) => {
           pages={[]}
           navigate={(path, options) => {
             if (options?.replace) {
-              router.replace(path);
+              router.replace(formatPath(path));
             } else {
-              router.push(path);
+              router.push(formatPath(path));
             }
           }}
         >

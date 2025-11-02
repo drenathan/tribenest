@@ -71,7 +71,13 @@ const PageContent = ({ webPage }: { webPage: WebPage }) => {
   const font = fontMap[selectedFont as keyof typeof fontMap];
 
   return (
-    <div className={`w-full h-full`} style={{ fontFamily: font?.style?.fontFamily || FontFamily.Inter }}>
+    <div
+      className={`w-full h-full mx-auto`}
+      style={{
+        fontFamily: font?.style?.fontFamily || FontFamily.Inter,
+        backgroundColor: webPage.themeSettings?.colors?.background,
+      }}
+    >
       <Frame data={webPage.page.content}></Frame>
     </div>
   );

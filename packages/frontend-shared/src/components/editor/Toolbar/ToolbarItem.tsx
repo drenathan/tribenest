@@ -11,6 +11,7 @@ import { RadioGroup } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
 import { Slider } from "../../ui/slider";
 import { Checkbox } from "../../ui/checkbox";
+import { cn } from "../../../lib/utils";
 
 export type ToolbarItemProps = {
   prefix?: string;
@@ -23,8 +24,9 @@ export type ToolbarItemProps = {
   onChange?: (value: unknown) => unknown;
   min?: number;
   max?: number;
+  className?: string;
 };
-export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }: ToolbarItemProps) => {
+export const ToolbarItem = ({ full = false, propKey, type, onChange, className, ...props }: ToolbarItemProps) => {
   const {
     actions: { setProp },
     propValue,
@@ -34,7 +36,7 @@ export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }:
   const value = propValue;
 
   return (
-    <Grid size={{ xs: full ? 12 : 6 }}>
+    <Grid size={{ xs: full ? 12 : 6 }} className={cn("px-4", className)}>
       <div className="mb-2">
         {["text", "color", "bg", "number"].includes(type) && (
           <ToolbarTextInput
@@ -49,7 +51,7 @@ export const ToolbarItem = ({ full = false, propKey, type, onChange, ...props }:
           />
         )}
         {type === "slider" && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             {props.label ? <Label>{props.label}</Label> : null}
             <Slider
               max={props.max || 100}

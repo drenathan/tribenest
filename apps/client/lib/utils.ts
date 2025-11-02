@@ -17,7 +17,7 @@ const fetchRuntimeConfig = async (): Promise<{ rootDomain: string }> => {
   configPromise = (async () => {
     try {
       // Get the current origin to make the API call
-      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3001";
       const response = await fetch(`${origin}/api/config`);
       const config = await response.json();
 
@@ -29,7 +29,7 @@ const fetchRuntimeConfig = async (): Promise<{ rootDomain: string }> => {
       console.error("Utils: Failed to fetch runtime config:", error);
       // Fallback to localhost
       return {
-        rootDomain: "localhost:3000",
+        rootDomain: "localhost:3001",
       };
     }
   })();
@@ -45,14 +45,14 @@ const getRootDomainValue = async (): Promise<string> => {
     return config.rootDomain;
   } else {
     // Server-side: use environment variables directly
-    return process.env.ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3000";
+    return process.env.ROOT_DOMAIN || process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3001";
   }
 };
 
 export const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 
 // Initialize with fallback
-let rootDomain = "localhost:3000";
+let rootDomain = "localhost:3001";
 
 // Update rootDomain with runtime config on client-side
 if (typeof window !== "undefined") {

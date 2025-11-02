@@ -23,7 +23,7 @@ export const ConfigProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+    const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3001";
     fetch(`${origin}/api/config`)
       .then((res) => res.json())
       .then((config) => {

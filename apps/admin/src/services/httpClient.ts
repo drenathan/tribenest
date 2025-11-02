@@ -45,7 +45,7 @@ export const getLiveKitUrl = () => {
   const hostname = window.location.hostname;
   // If we're on admin subdomain, use api subdomain
   if (hostname.startsWith("admin.")) {
-    return `https://media_server.${hostname.substring(6)}`;
+    return `https://media.${hostname.substring(6)}`;
   }
 
   return "http://localhost:7880";

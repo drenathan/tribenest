@@ -14,13 +14,14 @@ export type EmailListProps = {
   buttonId?: string;
   emailListId?: string;
   successMessage?: string;
+  alignItems?: "flex-start" | "center" | "flex-end";
 };
 
 export const EmailList: UserComponent<EmailListProps> = ({
   title,
   description,
   buttonText,
-
+  alignItems = "flex-start",
   emailListId,
   successMessage,
 }: EmailListProps) => {
@@ -78,36 +79,41 @@ export const EmailList: UserComponent<EmailListProps> = ({
           connect(ref);
         }
       }}
-      className="w-full @md:p-8 p-4"
+      className="w-full @md:p-8 p-4 flex flex-col"
+      style={{ alignItems }}
     >
-      <h1 className="text-2xl font-bold text-center @md:text-left mb-4">{title}</h1>
-      <p className="text-center @md:text-left mb-4">{description}</p>
-      <div className="flex gap-4 flex-col max-w-[400px] w-full items-start">
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        {isJoinSuccess && (
-          <p style={{ color: themeSettings.colors.primary }}>{successMessage || "Thank you! Will be in touch soon!"}</p>
-        )}
+      <div>
+        <h1 className="text-2xl font-bold text-center @md:text-left mb-4">{title}</h1>
+        <p className="text-center @md:text-left mb-4">{description}</p>
+        <div className="flex gap-4 flex-col max-w-[400px] w-full items-start">
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {isJoinSuccess && (
+            <p style={{ color: themeSettings.colors.primary }}>
+              {successMessage || "Thank you! Will be in touch soon!"}
+            </p>
+          )}
 
-        {!isJoinSuccess && (
-          <>
-            <div className="w-full flex-1">
-              <EditorInput
-                width="100%"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(value) => setEmail(value)}
+          {!isJoinSuccess && (
+            <>
+              <div className="w-full flex-1">
+                <EditorInput
+                  width="100%"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(value) => setEmail(value)}
+                />
+              </div>
+
+              <EditorButton
+                disabled={isLoading}
+                fullWidth={false}
+                text={buttonText}
+                marginVertical="10"
+                onClick={handleJoinClick}
               />
-            </div>
-
-            <EditorButton
-              disabled={isLoading}
-              fullWidth={false}
-              text={buttonText}
-              marginVertical="10"
-              onClick={handleJoinClick}
-            />
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -120,6 +126,7 @@ EmailList.craft = {
     description: "Never miss an update about my new music, sound packs, and more!",
     buttonText: "Join",
     buttonId: "join-email-list",
+    alignItems: "flex-start",
   },
   related: {
     toolbar: EmailListSettings,

@@ -26,6 +26,7 @@ export type ContainerProps = {
   className: string;
   backgroundVideo: string;
   backgroundBrightness: number;
+  backgroundBlur: number;
 };
 
 const defaultProps: Partial<ContainerProps> = {
@@ -42,6 +43,8 @@ const defaultProps: Partial<ContainerProps> = {
   justifyContent: "flex-start",
   fillSpace: "no",
   className: "",
+  backgroundBrightness: 100,
+  backgroundBlur: 0,
 };
 
 export const Container = (props: Partial<ContainerProps>) => {
@@ -91,8 +94,11 @@ export const Container = (props: Partial<ContainerProps>) => {
     width,
     className,
     backgroundVideo,
-    backgroundBrightness,
+    backgroundBrightness = 100,
+    backgroundBlur = 0,
   } = props;
+
+  const filter = `brightness(${round(Number(backgroundBrightness) / 100, 2)}) blur(${backgroundBlur}px)`;
   return (
     <div
       ref={(ref) => {
@@ -127,10 +133,7 @@ export const Container = (props: Partial<ContainerProps>) => {
             backgroundSize: "cover",
             backgroundPosition: "top",
             backgroundRepeat: "no-repeat",
-            filter: backgroundBrightness
-              ? `brightness(${round(Number(backgroundBrightness) / 100, 2)})`
-              : "brightness(0.6)",
-            zIndex: -1,
+            filter,
             position: "absolute",
             top: 0,
             left: 0,
@@ -142,26 +145,26 @@ export const Container = (props: Partial<ContainerProps>) => {
       {backgroundVideo && (
         <div
           style={{
-            zIndex: -1,
             position: "absolute",
             top: 0,
             left: 0,
             width: "100%",
             height: "100%",
-            filter: backgroundBrightness
-              ? `brightness(${round(Number(backgroundBrightness) / 100, 2)})`
-              : "brightness(0.5)",
+            filter,
           }}
         >
           <video src={backgroundVideo} autoPlay loop muted playsInline className="object-cover w-[100%] h-[100%]" />
         </div>
       )}
-      {children}
-      {!hasChildren && enabled && (
-        <div className="w-full text-sm text-muted-foreground flex items-center justify-center">
-          Drag and drop content here
-        </div>
-      )}
+      <div className="z-1 w-full h-full max-w-[1440px] mx-auto">
+        {children}
+
+        {!hasChildren && enabled && (
+          <div className="w-full text-sm text-muted-foreground flex items-center justify-center">
+            Drag and drop content here
+          </div>
+        )}
+      </div>
     </div>
   );
 };

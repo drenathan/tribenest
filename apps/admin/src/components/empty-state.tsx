@@ -12,7 +12,7 @@ function EmptyState({ title, description, action, className }: EmptyStateProps) 
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 items-center justify-center border border-dashed border-border rounded-lg p-12",
+        "flex flex-col gap-6 items-center justify-center border border-dashed border-border rounded-lg p-12 mt-8",
         className,
       )}
     >

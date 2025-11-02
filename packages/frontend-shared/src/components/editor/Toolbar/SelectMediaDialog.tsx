@@ -106,7 +106,7 @@ export function SelectImageDialog({ onImageSelect, value, onRemove, type = "imag
           )}
         </div>
       </DialogTrigger>
-      <DialogContent className="min-w-[700px] min-h-[500px] overflow-hidden overflow-y-scroll text-foreground flex flex-col">
+      <DialogContent className="md:min-w-[700px] min-w-[100%] min-h-[500px] max-h-[80vh] overflow-hidden overflow-y-scroll text-foreground flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex justify-between mr-7 items-center shrink-0">
             Select {type === "image" ? "Image" : "Video"}
@@ -131,7 +131,7 @@ export function SelectImageDialog({ onImageSelect, value, onRemove, type = "imag
         <div className="grid grid-cols-3 gap-4">
           <input
             type="file"
-            accept={type === "image" ? "image/*" : "video/mp4"}
+            accept={type === "image" ? ".jpg,.jpeg,.png" : ".mp4,.mov"}
             ref={inputRef}
             hidden
             onChange={(e) => {

@@ -38,7 +38,7 @@ export const Sidebar = () => {
           height={!layersVisible ? "full" : "55%"}
           visible={toolbarVisible}
           onChange={(val) => setToolbarVisible(val)}
-          className="overflow-auto"
+          className="overflow-auto pb-10"
         >
           <Toolbar />
         </SidebarItem>

@@ -2,8 +2,13 @@ import React from "react";
 
 import { ToolbarItem, ToolbarSection } from "../../Toolbar";
 import { ToolbarRadio } from "../../Toolbar/ToolbarRadio";
+import { useNode } from "@craftjs/core";
 
 export const ContainerSettings = () => {
+  const { backgroundImage, backgroundVideo } = useNode((node) => ({
+    backgroundImage: node.data.props.backgroundImage || null,
+    backgroundVideo: node.data.props.backgroundVideo,
+  }));
   return (
     <React.Fragment>
       <ToolbarSection
@@ -67,16 +72,31 @@ export const ContainerSettings = () => {
       <ToolbarSection title="Background Video" props={["backgroundVideo"]}>
         <ToolbarItem full={true} propKey="backgroundVideo" type="video" label="Background Video" />
       </ToolbarSection>
-      <ToolbarSection title="Background Brightness" props={["backgroundBrightness"]}>
-        <ToolbarItem
-          full={true}
-          propKey="backgroundBrightness"
-          type="slider"
-          label="Background Brightness"
-          min={0}
-          max={100}
-        />
-      </ToolbarSection>
+
+      {(backgroundImage || backgroundVideo) && (
+        <>
+          <ToolbarItem
+            className="my-6"
+            full={true}
+            propKey="backgroundBrightness"
+            type="slider"
+            label="Background Brightness"
+            min={0}
+            max={100}
+          />
+
+          <ToolbarItem
+            className="my-6"
+            full={true}
+            propKey="backgroundBlur"
+            type="slider"
+            label="Background Blur"
+            min={0}
+            max={100}
+          />
+        </>
+      )}
+
       <ToolbarSection title="Alignment">
         <ToolbarItem propKey="flexDirection" type="radio" label="Flex Direction">
           <ToolbarRadio value="row" label="Row" />
@@ -87,14 +107,14 @@ export const ContainerSettings = () => {
           <ToolbarRadio value="no" label="No" />
         </ToolbarItem>
         <ToolbarItem propKey="alignItems" type="radio" label="Align Items">
-          <ToolbarRadio value="flex-start" label="Flex start" />
+          <ToolbarRadio value="flex-start" label="Left" />
           <ToolbarRadio value="center" label="Center" />
-          <ToolbarRadio value="flex-end" label="Flex end" />
+          <ToolbarRadio value="flex-end" label="Right" />
         </ToolbarItem>
         <ToolbarItem propKey="justifyContent" type="radio" label="Justify Content">
-          <ToolbarRadio value="flex-start" label="Flex start" />
+          <ToolbarRadio value="flex-start" label="Top" />
           <ToolbarRadio value="center" label="Center" />
-          <ToolbarRadio value="flex-end" label="Flex end" />
+          <ToolbarRadio value="flex-end" label="Bottom" />
         </ToolbarItem>
       </ToolbarSection>
     </React.Fragment>

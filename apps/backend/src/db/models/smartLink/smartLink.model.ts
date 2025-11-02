@@ -40,7 +40,7 @@ export class SmartLinkModel extends BaseModel<"smartLinks", "id"> {
           eb
             .selectFrom("profiles")
             .whereRef("profiles.id", "=", "smartLinks.profileId")
-            .select(["profiles.name", "profiles.id"]),
+            .select(["profiles.name", "profiles.id", "profiles.subdomain"]),
         ).as("profile"),
       ])
       .executeTakeFirst();
